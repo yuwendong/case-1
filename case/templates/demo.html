@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>系统管理——参数设置</title>
+<script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+<script>
+function add_field(){
+	fl = 1;
+	$.ajax({   
+        type:"POST",  
+        url:"/add_field",
+        dataType: "json",
+        async:false,
+        data:{topic : fl},
+        success: function(data){
+            if(data == 'Right') {
+                alert("添加领域成功！");
+            } 
+            else{
+                alert("领域已存在！");
+            }
+        }              
+      })
+}
+</script>
+<body>
+	<button type="button" class="btn btn-info" onClick="add_field()">添加</button>
+<body>
