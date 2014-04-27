@@ -13,4 +13,4 @@ else:
     # 219.224.135.60
     MYSQL_HOST = '219.224.135.60'
     MYSQL_USER = 'root'
-    MYSQL_DB = 'weibo'
+    MYSQL_DB = 'weibocase'
