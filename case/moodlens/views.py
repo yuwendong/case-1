@@ -4,6 +4,6 @@ import os
 
 mod = Blueprint('moodlens', __name__, url_prefix='/moodlens')
 
-@mod.route('/')
+@mod.route('/weibo')
 def weibo():
     return render_template('moodlens/weibo.html')

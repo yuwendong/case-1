@@ -4,10 +4,6 @@ import os
 
 mod = Blueprint('opinion', __name__, url_prefix='/opinion')
 
-@mod.route('/')
-def index():
-    return render_template('opinion/index.html')
-
 @mod.route('/weibo')
 def weibo():
     return render_template('opinion/meaning.html')
