@@ -1,0 +1,21 @@
+.navbar-inner {
+  background-color: rgb(19, 112, 218);
+  background-image: none;
+  background-repeat: no-repeat;
+  filter: none;
+}
+
+
+.navbar-fixed-top .nav>li>a, .navbar-fixed-top .brand{
+  color:white;
+}
+
+.navbar-fixed-top .nav>li>a:hover{
+  color:#0088cc;
+  background-color: #FFFFFF;
+}
+
+.navbar-fixed-top .nav>.active>a, .navbar-fixed-top .nav>.active>a:hover,.navbar-fixed-top .nav>.active>a:focus{
+  color: #0088cc;
+  background-color: #EEEEEE;
+}
