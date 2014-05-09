@@ -13,7 +13,8 @@
     <link href="../../static/opinion/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../../static/opinion/css/navbar-fixed-top.css" rel="stylesheet">
+    <!--link href="../../static/opinion/css/navbar-fixed-top.css" rel="stylesheet"-->
+    <link href="../../static/moodlens/css/datarangepiker.css'" rel="stylesheet"></link>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -60,12 +61,31 @@
 
       <div class="jumbotron">
         <p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>
-        <legend>语义分析</legend>
-        <div id="all_emotion" class="inline">
-          <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>内容简介</b></font>
-          <p>
-          <a class="btn btn-primary" href="meaning.html">查看 &raquo;</a>
-          </p>
+        <legend>情感分析</legend>
+        <div id="field_emotion" class="inline">
+          <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>时间范围:</b></font>
+          <div id="reportrange_2" class="btn dropdown-toggle">
+            <i class="icon-calendar icon-large"></i>
+              <span id="field_time">{{ time_range }}</span> 
+            <b class="caret"></b>
+          </div>
+          <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>&nbsp&nbsp&nbsp时间间隔:</b></font>
+            <div class="btn dropdown-toggle" style="position:relative;height: 30px;margin-top: 0px;">
+            <span style="position:relative;margin-left:100px;width:18px;overflow:hidden;">
+              <select name="fie_dur" style="width:110px;margin-left:-100px;" onchange="this.parentNode.nextSibling.value=this.value">
+                <option value="15分钟"> 15分钟 </option>
+                <option value="30分钟"> 30分钟 </option>
+                <option value="1小时"> 1小时 </option>
+                <option value="12小时"> 12小时 </option>
+                <option value="1天"> 1天 </option>
+                </select></span><input id="field_durtime" name="fie_dur" style="width:75px;position:absolute;left:15px;overflow:hidden;" value="15分钟">
+            </div>
+          <div class="btn dropdown-toggle" style="position:relative;height: 30px;margin-top: 0px;">
+            <span style="position:relative;margin-left:100px;width:18px;overflow:hidden;">
+            <select name="fie_nam" style="width:110px;margin-left:-100px;" onchange="this.parentNode.nextSibling.value=this.value">
+            </select></span><input id="field_name" name="fie_nam" style="width:75px;position:absolute;left:15px;overflow:hidden;"value="{{ field_zh }}">
+          </div>
+          <input type="submit" class="btn btn-primary" value="搜索" id="search_field">
         </div>
       </div>
 
