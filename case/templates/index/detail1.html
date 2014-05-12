@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="bootstrap/assets/ico/favicon.png">
+
+    <title>管理界面</title>
+
+    <!-- Bootstrap core CSS -->
+    
+
+    <!-- Custom styles for this template -->
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/justified-nav.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
+
+
+
+
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+    <script src="/static/index/js/jquery-1.9.1.min.js"></script>
+    <script src="/static/index/js/bootstrap.min.js"></script>
+    <script src="/static/index/js/highcharts.js"></script>
+    <script src="/static/index/js/highcharts1.js"></script>
+    <script src="/static/index/js/highcharts-more.js"></script>
+    <script src="/static/index/js/timeline.js"></script>
+    <script src="/static/index/js/highstock.js"></script>
+    <script src="/static/index/js/exporting.js"></script>
+    <script src="/static/index/js/jquery.tagcanvas.min.js"></script>
+    <script src="/static/index/js/jquery.totemticker.js"></script>
+    <script src="/static/index/js/jquery.reveal.js"></script>
+
+
+
+
+
+    
+
+    <style type="text/css">
+        body {
+          font: 10pt;
+          font-family: verdana, sans, arial, sans-serif;
+         }
+    </style>
+
+        <script type="text/javascript">
+
+$("#search_all").click(function() {
+
+      window.location.href="meaning.html#";
+    });
+
+$(function() {
+    $('#bubble_chart').highcharts({
+        credits: {
+            enabled: false
+        },
+        chart: {
+            type: 'bubble',
+            plotBorderWidth: 1,
+            zoomType: 'xy'
+        },
+
+        title: {
+            text: '缩放图示例'
+        },
+
+        xAxis: {
+            
+            gridLineWidth: 1
+        },
+
+        yAxis: {
+          
+            startOnTick: false,
+            endOnTick: false
+        },
+
+        series: [{
+            name: '话题1',
+            data: [
+                [5, 50, 14],
+                [8, 50, 20],
+                [13, 50, 26],
+                [16, 50, 35],
+                [20, 50, 42],
+                [24, 50, 50],
+                [30, 55, 60],
+                [40, 60, 70],
+                [50, 75, 80],
+                [60, 75, 90],
+                [30, 45, 40],
+                [40, 40, 30],
+                [50, 35, 20],
+                [60, 25, 10]
+            ],
+            marker: {
+                 fillColor: {
+                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                     stops: [
+                         [0, 'rgba(255,255,255,0.5)'],
+                         [1, 'rgba(69,114,167,0.5)']
+                     ]
+                 }
+            }
+        }, {
+            name: '话题2',
+            data: [
+                [42, 38, 20],
+                [6, 18, 1],
+                [1, 93, 55],
+                [57, 2, 90],
+                [80, 76, 22],
+                [11, 74, 96],
+                [88, 56, 10],
+                [30, 47, 49],
+                [57, 62, 98],
+                [4, 16, 16],
+                [46, 10, 11],
+                [22, 87, 89],
+                [57, 91, 82],
+                [45, 15, 98]
+            ],
+            marker: {
+                 fillColor: {
+                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                     stops: [
+                         [0, 'rgba(255,255,255,0.5)'],
+                         [1, 'rgba(170,70,67,0.5)']
+                     ]
+                 }
+            }
+        }]
+
+    });
+});
+    </script>
+
+     <script type="text/javascript">
+        var timeline;
+        var data;
+
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create a JSON data table
+            data = [
+                {
+                    'start': new Date(2014,7,23),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,7,23,23,0,0),
+                    'end': new Date(2014,7,2,10,10,0),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,6,26),
+                    'end': new Date(2014,7,2),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,7,26),
+                    'end': new Date(2014,8,2),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,7,13,23,0,0),
+                    'end': new Date(2014,7,20,10,10,0),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,7,29),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,7,31),
+                    'end': new Date(2014,8,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                },
+                {
+                    'start': new Date(2014,8,31),
+                    'end': new Date(2014,9,3),
+                    'content': '观点'
+                }
+            ];
+
+            // specify options
+            var options = {
+                'width':  '100%',
+                'height': '300px',
+                'editable': true,   // enable dragging and editing events
+                'style': 'box'
+            };
+
+            // Instantiate our timeline object.
+            timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+            // Draw our timeline with the created data and options
+            timeline.draw(data, options);
+        }
+    </script>
+    <script type="text/javascript" src="js/reveal/jquery.reveal.js"></script>
+    <style type="text/css">
+    .reveal-modal-bg { position: fixed; height: 100%; width: 100%; z-index: 100; display: none; top: 0; left: 0; background:rgba(00, 00, 00, 0.8) }
+    
+    .reveal-modal { visibility: hidden; top: 150px; left: 50%; margin-left: -300px; width: 520px; position: absolute; z-index: 101; padding: 30px 40px 34px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0 0 10px rgba(0,0,0,.4); -webkit-box-shadow: 0 0 10px rgba(0,0,0,.4); -box-shadow: 0 0 10px rgba(0,0,0,.4); background-color: #FFF;      }
+        
+    .reveal-modal.small         { width: 200px; margin-left: -140px;}
+    .reveal-modal.medium        { width: 400px; margin-left: -240px;}
+    .reveal-modal.large         { width: 600px; margin-left: -340px;}
+    .reveal-modal.xlarge        { width: 800px; margin-left: -440px;}
+    
+    .reveal-modal .close-reveal-modal { font-size: 22px; line-height: 0.5; position: absolute; top: 8px; right: 11px; color: #333; text-shadow: 0 -1px 1px rbga(0,0,0,.6); font-weight: bold; cursor: pointer;      } 
+body { background-color: #F2F2F2; }
+
+</style>
+
+
+
+  </head>
+
+  <body onload="drawVisualization();">
+  <div class="navbar navbar-fixed-top">
+   <div class="navbar-inner">
+      <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand brand-title" href="#"><strong>案例管理</strong></a>
+       <form class="navbar-form navbar-right" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="按案例关键字">
+      </div>
+      <button type="submit" class="btn btn-default">搜索</button>
+    </form>
+      </div>
+      </div>
+    </div>
+    
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-2">
+        
+        </div>
+        <div class="nav nav-tabs">
+        <div class="col-lg-2">
+          <a href="#mood" data-toggle="tab"><button type="button"  class="btn btn-lg btn-primary btn-block">情绪</button></a>
+        </div>
+        <div class="col-lg-4">
+        </div>
+        <div class="col-lg-2">
+          <a href="#semantic" data-toggle="tab"><button type="button"  class="btn btn-lg btn-primary btn-block">语义</button></a>
+        </div>
+      </div>
+      </div>
+      
+      <div class="panel panel-default panel-top">
+  <!-- Default panel contents -->
+  <div class="panel-heading panel-color"><h4>两会</h4></div>
+  <div class="panel-body">
+    <p>新华社北京３月５日电 第十二届全国人民代表大会第二次会议５日上午在人民大会堂开幕。近３０００名全国人大代表肩负人民重托，履行宪法和法律赋予的神圣职责。
+    大会主席团常务主席、执行主席张德江主持大会。
+    习近平、李克强、俞正声、刘云山、王岐山、张高丽和大会主席团成员在主席台就座。
+    十二届全国人大二次会议应出席代表２９８３人。今天的会议，出席２９３２人，缺席５１人，出席人数符合法定人数。
+    上午９时，张德江宣布：中华人民共和国第十二届全国人民代表大会第二次会议开幕。会场全体起立，高唱国歌。
+    随后，全体与会人员为３月１日晚在云南昆明火车站发生的严重暴力恐怖事件中的遇难群众默哀。
+    根据会议议程，国务院总理李克强代表国务院向大会作政府工作报告。报告共分三个部分：一、２０１３年工作回顾；二、２０１４年工作总体部署；三、２０１４年重点工作。
+    根据会议议程，大会印发了国务院关于２０１３年国民经济和社会发展计划执行情况与２０１４年国民经济和社会发展计划草案的报告、国务院关于２０１３年中央和地方预算执行情况与２０１４年中央和地方预算草案的报告，提请审查批准。</p>
+  </div>
+  </div>
+   
+
+   <div class="row">
+      <div class="tab-content">
+      <div class="tab-pane active" id="mood">
+        <div class="col-lg-12 col-sm-12">
+          <h2>两会</h2>
+          <p>“两会”代指“全国人民代表大会”和“中国人民政治协商会议”，由于两场会议于每年3月份先后召开全体会议，大部分会议进程基本上同时进行，故简称做“两会”。 </p>
+          <p><a class="btn btn-default" href="#">查看详细 &raquo;</a></p>
+        </div>
+        </div>
+        <div class="tab-pane" id="semantic">
+        <div class="col-lg-12 col-sm-12">
+          <h2>新浪微博上市</h2>
+          <p>北京时间4月18日，新浪旗下微博(Nasdaq：WB)正式登陆美国纳斯达克股票交易所。微博首日收盘股价大涨3.24美元，收于20.24美元，涨幅达19.06%，这也使得微博总市值超过了40亿美元。</p>
+          <p><a class="btn btn-default" href="#">查看详细 &raquo;</a></p>
+        </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row-fluid">
+            <div style="text-align: center">
+                <p style="font-size:24px;font-weight:bold;">全网情绪分析</p>
+            </div>
+            <hr class="soften">
+        </div>
+        <div id="emotion_chart_div" class="row-fluid">
+            <div class="span8">
+                <div class="control-group" id="togglecount">
+                    <div class="controls btn switch switch-two">
+                        <input id="relative" name="view" type="radio" checked>
+                        <label for="relative" onclick="load_relative();">相对比例</label>
+
+                        <input id="absolute" name="view" type="radio">    
+                        <label for="absolute" onclick="load_absolute();">绝对数量</label>                       
+                        <span class="slide-button btn btn-success"></span>
+                    </div>
+                </div>
+                <div id="emotion_container" style="width:900px;"></div>
+            </div>
+            <div id="weibo_container" class="span4">
+                <ul id="vertical-ticker">
+                </ul>
+                <p><span class="label label-info" id="event_title"></span>
+                   <span class="label label-success">关键微博列表</span>
+                <!--<a href="#" id="ticker-previous">向上滚动</a> / <a href="#" id="ticker-next">向下滚动</a> / <a id="stop" href="#">停止滚动</a> / <a id="start" href="#">开始滚动</a>--></p>
+            </div>
+        </div>
+        <div class="row-fluid" style="border:1px solid gray;">
+            <div id="tag_cloud_div" class="span8">
+                <canvas width="900px" height="200px" id="myCanvas">
+                    <p>Anything in here will be replaced on browsers that support the canvas element</p>
+                </canvas>
+                <div id="tags_div">
+                    <ul id="tags_ul"><li><a style="font-size:1ex">关键词云数据为空</a></li></ul>
+                </div>
+            </div>
+            <div id="emotion_pie_container" class="span4" >情绪饼图数据为空
+            </div>
+        </div>
+    </div>
+
+<script>
+var oopts = {textHeight: 25,maxSpeed: 0.03,decel: 0.98,depth: 0.92,outlineColour: '#f6f',outlineThickness: 3,pulsateTo: 0.2,pulsateTime: 0.5,wheelZoom: false,textColour:'#00f',shadow:'#ccf',minBrightness:0.2,shadowBlur:3,weight:true,weightMode:'both'};
+    var max_word_size = 10;
+    var min_word_size = 1;
+    
+    var emotion_keys = ['happy', 'angry', 'sad'];
+
+$(document).ready(function(){  
+        redraw_tagcanvas();
+    })
+
+
+function redraw_tagcanvas() {
+        if(!$('#myCanvas').tagcanvas(oopts,'tags_div')) {
+            $('#myCanvas').hide();
+        }
+    }
+    function defscale(count, mincount, maxcount, minsize, maxsize){
+      if(maxcount == mincount){
+        return (maxsize + minsize) / 2
+      }else{
+        return minsize + (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+      }
+    }
+    
+    function chg_tagcloud(data) {
+        $("#tags_ul").empty();
+        var cloud_list = [];
+        var max_count = 0;
+        var min_count = 0;
+        for (var i in data) {
+            if(max_count < parseInt(data[i])){
+                max_count = parseInt(data[i]);
+            }
+            if(min_count > parseInt(data[i])){
+                min_count = parseInt(data[i]);
+            }
+            cloud_list.push([parseInt(data[i]), i]);
+        }
+        for (var i=0;i<cloud_list.length;i++) {
+            $("#tags_ul").append("<li><a href='#tag_cloud_div' style=\"font-size:"+ defscale(cloud_list[i][0], min_count, max_count, min_word_size, max_word_size) +"ex\">"+ cloud_list[i][1] +"</a></li>");
+        }
+        redraw_tagcanvas();
+    }
+    function chg_weibos(data){
+        var html = "";
+        var emotion_content = ['happy', 'angry', 'sad'];
+        for(var i=0;i<data.length;i+=1){
+            var emotion = emotion_content[data[i]['sentiment']-1];
+            var name = data[i]['user'];
+            var user_link = 'http://weibo.com/u/'+data[i]['user'];
+            var text = data[i]['text'];
+            var weibo_link = data[i]['weibo_link'];
+            var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', parseInt(data[i]['timestamp']) * 1000);
+            var repost_count = data[i]['reposts_count'];
+            var retweeted_text = 'None';
+            html += "<li><div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"; 
+            html += "<div class=\"chartclient-annotation-title\"><a href='" + user_link + "' target='_blank' >" + name + "</a> 发布 </div>";
+            html += "<div class=\"chartclient-annotation-content\"><a href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
+            if(retweeted_text != 'None'){
+                html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
+            }
+            html += "<div class=\"chartclient-annotation-date\"> " + time + "<span style=\"float:right\"> 转发数：" +  repost_count + "</span></div></li>";
+        }
+        $("#vertical-ticker").append(html);
+        display_vertical_list();
+    }
+
+    function chg_emotion_pie(raw_data){
+        $('#emotion_pie_container').empty();
+        if(raw_data[3] != 0){
+            var data = [['高兴', raw_data[0]], ['愤怒', raw_data[1]], ['悲伤', raw_data[2]]];
+            display_emotion_pie(data);
+        }
+    }
+</script>
+
+      <!-- Site footer -->
+      <div class="footer">
+        <p>&copy; IDEC 2014</p>
+      </div>
+    </div> <!-- /container -->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
+
+</html>
+
+
+
+
+
+
+

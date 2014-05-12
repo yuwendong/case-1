@@ -1,0 +1,55 @@
+#PK
+id 编号
+
+#领域
+field 领域
+fieldName 领域名
+
+#话题
+topic 话题
+topicName 话题名
+
+#博主
+user 博主
+uid 博主ID
+userName 博主昵称
+location 地域
+gender 性别
+profileImageUrl 头像地址
+description 自我介绍
+verified 认证用户
+verifiedType 认证类型
+statusesCount 微博数
+followersCount 粉丝数
+friendsCount 关注数
+biFollowersCount 好友数（双向关注）
+createdAt 创建时间
+
+#微博
+text 文本
+geo 地理信息
+sourcePlatform 平台
+postDate 时间
+retweetedMid 被转发微博ID
+repostsCount 转发数
+commentsCount 评论数
+attitudesCount 赞同数
+
+#转发关系
+mid 微博ID
+souceMid 被转发微博ID
+sourceUid 被转发博主ID
+sourceMid 被转发微博ID
+
+#关注关系
+fid 被关注博主ID
+
+#用户识别
+wholeUserIdentification 用户识别
+areaUserIdentification 用户识别
+burstUserIdentification 用户识别
+rank 排名
+userId 用户ID
+identifyDate 识别日期
+identifyWindow 识别窗口
+identifyMethod 识别方法
