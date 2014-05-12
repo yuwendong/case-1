@@ -1,0 +1,167 @@
+{% extends "propagate/base.html" %}
+{% block head %}
+{{ super() }}
+    	<link href="../../static/propagate/css/bootstrap.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../static/propagate/css/jquery-ui.css" />
+        <link rel="stylesheet" href="../../static/propagate/css/microblog.css" />
+{% endblock %}    
+    {% block content %}   
+    <div class="row">
+                
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">开始时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-1 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">截止时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-5 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">信息源：<span class="badge badge-success" style="font-size:18px">微博</span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">    
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">用户覆盖：<span class="badge badge-success" style="font-size:18px"> 200</span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">媒体覆盖：<span class="badge badge-success" style="font-size:18px"> 37 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">    
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">意见领袖覆盖：<span class="badge badge-success" style="font-size:18px">105 </span></label>
+                </div>
+            </div>
+            <hr class="soften"> 
+    <div class="row">
+       <div class="col-lg-12" id="index-tabs">
+            <ul class="nav nav-pills tab_container">
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_contents" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">代表内容</a></li>
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_path" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播路径</a></li>
+                <li  c style="width:200px;height:40px;"><a href="/propagate/ajax_track_source" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播溯源</a></li>
+                
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_key_person" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">关键人物</a></li>
+                <li  class="btn btn-primary" style="width:200px;height:40px;"><a href="/propagate/ajax_media" align="center" style="padding-top:2px;padding-bottom: 2px;color:black;">媒体参与</a></li>
+                  
+            </ul>
+        </div>
+    </div>
+    <hr class="soften">
+           <div class="row">
+                <div class="well">
+                <div class="WB_feed_type SW_fun  S_line2">
+                <div class="WB_feed_datail S_line2 clearfix">
+                
+                <div class="WB_detail">
+                    <div class="WB_info"><a class="WB_name S_func1"> 神时评 </a>
+                    <div class="WB_text" node-type="feed_list_content">他10次往返美国筹集资金250万美元，建立燕京大学，燕大33年间，其任校长27年，在不到一万名毕业生中，为中国培养53名院士。他提倡学术自由,支持学生运动，九一八事变后，他带领学生上街示威,后因保护燕大学生，被日本囚禁三年。1949年因《别了，司徒雷登》而声名狼籍,今日因微博而知真相</div>
+                    <div class="WB_func clearfix">
+                    <div class="WB_handle">
+                      <a>转发数量:736</a><i class="S_txt3">|</i>
+                      <a id="store" name ="store" style="color:red;">导入素材库</a>
+                    </div>
+                    <div class="WB_from">
+                      <a class="S_link2 WB_time" id="weibo_time">2014-04-1 10:22:58</a> 
+                      <em class="S_txt2">来自</em><a class="S_link2" >微博</a>                           
+                    </div>
+                  </div>
+                  <div node-type="feed_list_repeat" class="WB_media_expand repeat S_line1 S_bg4" style="display:none;"></div>
+                </div>
+
+
+              </div>
+            </div>
+            </div>
+            
+          </div>
+
+            </div>
+            <div class="row">
+                <div class="well">
+                <div class="WB_feed_type SW_fun  S_line2">
+                <div class="WB_feed_datail S_line2 clearfix">
+                
+                <div class="WB_detail">
+                    <div class="WB_info"><a class="WB_name S_func1"> 商业女记者部落 </a>
+                    <div class="WB_text" node-type="feed_list_content">菲律宾有意思，承认被抓捕的中国渔船上海龟是自己渔船捕的，然后卖给中国渔船，还盯了5天才动手。这不就是钓鱼执法吗？在中国这招几乎人人都知道[可爱][哈哈]，这是想学当年日本的九一八先栽赃后用武吗？有美兵驻扎就异想天开，这次菲菲恐怕要被啪啪扇耳光了！</div>
+                    <div class="WB_func clearfix">
+                    <div class="WB_handle">
+                      <a>转发数量:648</a><i class="S_txt3">|</i>
+                      <a id="store" name ="store" style="color:red;">导入素材库</a>
+                    </div>
+                    <div class="WB_from">
+                      <a class="S_link2 WB_time" id="weibo_time">2014-04-1 10:22:58</a> 
+                      <em class="S_txt2">来自</em><a class="S_link2" >微博</a>                           
+                    </div>
+                  </div>
+                  <div node-type="feed_list_repeat" class="WB_media_expand repeat S_line1 S_bg4" style="display:none;"></div>
+                </div>
+
+                
+              </div>
+            </div>
+            </div>
+            
+          </div>
+
+            </div>
+            <div class="row">
+                <div class="well">
+                <div class="WB_feed_type SW_fun  S_line2">
+                <div class="WB_feed_datail S_line2 clearfix">
+                
+                <div class="WB_detail">
+                    <div class="WB_info"><a class="WB_name S_func1"> 历史之碎 </a>
+                    <div class="WB_text" node-type="feed_list_content">【关东军】1905年日俄战争后，日本关东军建立，驻屯旅大及南满铁路沿线。司令官直隶于天皇，有“帷幄上奏”之特权。1928年以后，关东军成为日本侵华阴谋的设计者与执行者，张作霖的炸毙，九一八事变的发动，伪满洲傀儡组织的制造，几乎完全出自关东军将校石原莞尔、板恒征四郎、土肥原贤二等人之手。</div>
+                    <div class="WB_func clearfix">
+                    <div class="WB_handle">
+                      <a>转发数量:548</a><i class="S_txt3">|</i>
+                      <a id="store" name ="store" style="color:red;">导入素材库</a>
+                    </div>
+                    <div class="WB_from">
+                      <a class="S_link2 WB_time" id="weibo_time">2014-04-1 10:22:58</a> 
+                      <em class="S_txt2">来自</em><a class="S_link2" >微博</a>                           
+                    </div>
+                  </div>
+                  <div node-type="feed_list_repeat" class="WB_media_expand repeat S_line1 S_bg4" style="display:none;"></div>
+                </div>
+
+                
+              </div>
+            </div>
+            </div>
+            
+          </div>
+
+            </div>
+            <div class="row">
+                <div class="well">
+                <div class="WB_feed_type SW_fun  S_line2">
+                <div class="WB_feed_datail S_line2 clearfix">
+                
+                <div class="WB_detail">
+                    <div class="WB_info"><a class="WB_name S_func1"> 辽沈晚报 </a>
+                    <div class="WB_text" node-type="feed_list_content">【近代碑刻拓片展开展 5件为国家一级】26日沈阳”九一八”历史博物馆与旅顺日俄监狱旧址博物馆联合主办的“旅顺日俄监狱旧址博物馆藏近代碑刻拓片展”将在沈阳开展。共展出50幅旅顺日俄监狱旧址博物馆藏精碑刻拓片，有5件国家一级碑刻的拓片，其余均为定级以上的碑刻拓片。北国网、辽沈晚报记者王志东</div>
+                    <div class="WB_func clearfix">
+                    <div class="WB_handle">
+                      <a>转发数量:358</a><i class="S_txt3">|</i>
+                      <a id="store" name ="store" style="color:red;">导入素材库</a>
+                    </div>
+                    <div class="WB_from">
+                      <a class="S_link2 WB_time" id="weibo_time">2014-04-1 10:22:58</a> 
+                      <em class="S_txt2">来自</em><a class="S_link2" >微博</a>                           
+                    </div>
+                  </div>
+                  <div node-type="feed_list_repeat" class="WB_media_expand repeat S_line1 S_bg4" style="display:none;"></div>
+                </div>
+
+                
+              </div>
+            </div>
+            </div>
+            
+          </div>
+
+            </div>
+		</div>
+         {% endblock %}
+{% block script %}
+    <script src="../../static/propagate/js/jquery.min.js"></script>
+    <script src="../../static/propagate/js/highstock.js"></script>
+    <script src="../../static/propagate/js/exporting.js"></script>
+{% endblock script %}
