@@ -1,0 +1,905 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns:viz="http://www.gexf.net/1.1draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.gephi.org/gexf/1.2draft" xmlns:ns0="xsi" version="1.2" ns0:schemaLocation="http://www.gephi.org/gexf/1.1draft http://gephi.org/gexf/1.2draft.xsd">
+  <meta lastmodified="2013-11-26">
+    <creator>Yang Han &lt;hanyang213@gmail.com&gt;</creator>
+    <description>Retweets evolution graph based on sail layout.</description>
+  </meta>
+  <graph timeformat="double" defaultedgetype="directed" mode="static" label="retweets evolution graph">
+    <nodes>
+      <node id="1" label="财经网">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0" z="5.9160797831"/>
+        <viz:size value="5.9160797831"/>
+      </node>
+      <node id="10" label="幸运上海郁闷">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.09" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="100" label="2013-01-05 14:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="0" y="-2.88888888889" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="101" label="2013-01-05 22:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="2" y="-2.05555555556" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="102" label="2013-01-06 10:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="5" y="-2.16666666667" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="103" label="2013-01-06 14:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="6" y="-3.0" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="104" label="2013-01-06 18:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="7" y="-2.77777777778" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="105" label="2013-01-06 22:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="8" y="-2.27777777778" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="106" label="2013-01-07 02:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="9" y="-2.05555555556" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="107" label="2013-01-07 06:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="10" y="-2.05555555556" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="108" label="财经网 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.00" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="109" label="武志涛Tony 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.01" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="11" label="lucky鱼鱼鱼">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.10" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="110" label="解甲-归田 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.02" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="111" label="虹光 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.03" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="112" label="吴冬律师 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.04" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="113" label="瀚海万里西风 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.05" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="114" label="西瓜奇小瘦子 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.06" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="115" label="郑小花喵 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.07" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="116" label="偏寝无我奈衣空腹虫 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.08" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="117" label="幸运上海郁闷 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.09" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="118" label="lucky鱼鱼鱼 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.10" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="119" label="和平门内双 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.11" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="12" label="和平门内双">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.11" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="120" label="宵读页 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.12" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="121" label="肥仔梁子 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.13" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="122" label="金白水清- 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.14" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="123" label="岁月这是把杀猪刀 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.15" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="124" label="对对呆 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.16" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="125" label="大宝这里见 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.17" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="126" label="Jeremeynull 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.18" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="127" label="Cynthia号外 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.19" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="128" label="凌倚之间 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.20" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="129" label="王洪辉天德嘉 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.21" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="13" label="宵读页">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.12" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="130" label="nttv明星大乐透 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.22" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="131" label="张瑾Jean 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.23" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="132" label="赵旭_Ryan 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.24" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="133" label="看时间如何飞逝 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.25" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="134" label="海鹰LIN 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.26" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="135" label="通路快建韩培斌 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.27" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="136" label="吴桐桐学 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.28" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="137" label="黄青青青 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.29" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="138" label="汤克柔 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.30" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="139" label="千惠CHU 2 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.4" y="0.31" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="14" label="肥仔梁子">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.13" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="140" label="0">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.31" z="0"/>
+        <viz:size value="0.01"/>
+      </node>
+      <node id="142" label="黑老师BT 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.32" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="143" label="周丁艺 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.33" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="144" label="效郡 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.34" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="145" label="Elisa-HE 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.35" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="146" label="我叫廖小妹 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.36" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="147" label="新浪财经 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.00" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="148" label="筑成世方 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.01" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="149" label="许小年 2 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.4" y="1.02" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="15" label="金白水清-">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.14" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="150" label="0">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.02" z="0"/>
+        <viz:size value="0.01"/>
+      </node>
+      <node id="152" label="秦如山 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.03" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="153" label="李振华 2 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.4" y="1.04" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="154" label="0">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.04" z="0"/>
+        <viz:size value="0.01"/>
+      </node>
+      <node id="156" label="政经观察员范利祥 2 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.4" y="1.05" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="157" label="0">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.05" z="0"/>
+        <viz:size value="0.01"/>
+      </node>
+      <node id="159" label="yunny-zj 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.06" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="16" label="岁月这是把杀猪刀">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.15" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="160" label="易鹏 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.07" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="161" label="瀚海星光 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.08" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="162" label="bettercity 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.09" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="163" label="sunny小净 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.10" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="164" label="杨陈天一 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.11" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="165" label="尚衡知本张兴旺 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.12" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="166" label="微房产编辑部 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.13" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="167" label="任志强 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.14" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="168" label="胡释之 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.15" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="169" label="腾晓东 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.16" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="17" label="对对呆">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.16" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="170" label="晓峰_徐 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="1.17" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="18" label="大宝这里见">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.17" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="19" label="Jeremeynull">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.18" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="2" label="武志涛Tony">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.01" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="20" label="Cynthia号外">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.19" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="21" label="凌倚之间">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.20" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="22" label="王洪辉天德嘉">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.21" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="23" label="nttv明星大乐透">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.22" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="24" label="赵旭_Ryan">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.24" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="25" label="张瑾Jean">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.23" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="26" label="看时间如何飞逝">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.25" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="27" label="海鹰LIN">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.26" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="28" label="通路快建韩培斌">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.27" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="29" label="吴桐桐学">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.28" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="3" label="解甲-归田">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.02" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="30" label="黄青青青">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.29" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="31" label="汤克柔">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="7" y="0.30" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="32" label="千惠CHU">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="8" y="0.31" z="1.0"/>
+        <viz:size value="1.0"/>
+      </node>
+      <node id="33" label="黑老师BT">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="8" y="0.32" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="34" label="周丁艺">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="8" y="0.33" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="35" label="效郡">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="8" y="0.34" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="36" label="Elisa-HE">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="9" y="0.35" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="37" label="我叫廖小妹">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="10" y="0.36" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="38" label="2013-01-06 14:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="6" y="-3.0" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="39" label="2013-01-06 18:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="7" y="-2.82352941176" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="4" label="虹光">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.03" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="40" label="2013-01-06 22:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="8" y="-2.29411764706" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="41" label="2013-01-07 02:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="9" y="-2.05882352941" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="42" label="2013-01-07 06:00">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="10" y="-2.05882352941" z="0"/>
+        <viz:size value="5"/>
+      </node>
+      <node id="43" label="财经网 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.00" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="44" label="武志涛Tony 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.01" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="45" label="解甲-归田 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.02" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="46" label="虹光 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.03" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="47" label="吴冬律师 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.04" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="48" label="瀚海万里西风 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.05" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="49" label="西瓜奇小瘦子 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.06" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="5" label="吴冬律师">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.04" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="50" label="郑小花喵 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.07" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="51" label="偏寝无我奈衣空腹虫 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.08" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="52" label="幸运上海郁闷 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.09" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="53" label="lucky鱼鱼鱼 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.10" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="54" label="和平门内双 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.11" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="55" label="宵读页 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.12" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="56" label="肥仔梁子 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.13" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="57" label="金白水清- 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.14" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="58" label="岁月这是把杀猪刀 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.15" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="59" label="对对呆 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.16" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="6" label="瀚海万里西风">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.05" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="60" label="大宝这里见 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.17" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="61" label="Jeremeynull 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.18" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="62" label="Cynthia号外 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.19" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="63" label="凌倚之间 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.20" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="64" label="王洪辉天德嘉 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.21" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="65" label="nttv明星大乐透 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.22" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="66" label="张瑾Jean 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.23" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="67" label="赵旭_Ryan 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.24" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="68" label="看时间如何飞逝 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.25" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="69" label="海鹰LIN 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.26" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="7" label="西瓜奇小瘦子">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.06" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="70" label="通路快建韩培斌 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.27" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="71" label="吴桐桐学 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.28" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="72" label="黄青青青 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.29" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="73" label="汤克柔 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.30" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="74" label="千惠CHU 2 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.4" y="0.31" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="75" label="0">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.31" z="0"/>
+        <viz:size value="0.01"/>
+      </node>
+      <node id="77" label="黑老师BT 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.32" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="78" label="周丁艺 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.33" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="79" label="效郡 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.34" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="8" label="郑小花喵">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.07" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="80" label="Elisa-HE 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.35" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="81" label="我叫廖小妹 1 time(s)">
+        <viz:color r="0" g="0" b="0"/>
+        <viz:position x="-2.2" y="0.36" z="0"/>
+        <viz:size value="0.1"/>
+      </node>
+      <node id="82" label="新浪财经">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1" z="1.73205080757"/>
+        <viz:size value="1.73205080757"/>
+      </node>
+      <node id="83" label="筑成世方">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.01" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="84" label="许小年">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.02" z="3.46410161514"/>
+        <viz:size value="3.46410161514"/>
+      </node>
+      <node id="85" label="秦如山">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.03" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="86" label="李振华">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.04" z="1.0"/>
+        <viz:size value="1.0"/>
+      </node>
+      <node id="87" label="易鹏">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.07" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="88" label="瀚海星光">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.08" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="89" label="bettercity">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.09" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="9" label="偏寝无我奈衣空腹虫">
+        <viz:color r="243" g="61" b="143"/>
+        <viz:position x="6" y="0.08" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="90" label="sunny小净">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.10" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="91" label="杨陈天一">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.11" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="92" label="尚衡知本张兴旺">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.12" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="93" label="微房产编辑部">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.13" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="94" label="任志强">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.14" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="95" label="晓峰_徐">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="0" y="1.17" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="96" label="胡释之">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="2" y="1.15" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="97" label="政经观察员范利祥">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="5" y="1.05" z="1.0"/>
+        <viz:size value="1.0"/>
+      </node>
+      <node id="98" label="yunny-zj">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="5" y="1.06" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+      <node id="99" label="腾晓东">
+        <viz:color r="12" g="229" b="132"/>
+        <viz:position x="6" y="1.16" z="0"/>
+        <viz:size value="0.0"/>
+      </node>
+    </nodes>
+    <edges>
+      <edge source="9" target="1" id="10"/>
+      <edge source="10" target="1" id="11"/>
+      <edge source="11" target="1" id="12"/>
+      <edge source="12" target="1" id="13"/>
+      <edge source="13" target="1" id="14"/>
+      <edge source="14" target="1" id="15"/>
+      <edge source="74" target="75" id="151"/>
+      <edge source="15" target="1" id="16"/>
+      <edge source="83" target="82" id="165"/>
+      <edge source="84" target="82" id="166"/>
+      <edge source="85" target="84" id="169"/>
+      <edge source="16" target="1" id="17"/>
+      <edge source="86" target="84" id="170"/>
+      <edge source="87" target="84" id="171"/>
+      <edge source="88" target="84" id="172"/>
+      <edge source="89" target="84" id="173"/>
+      <edge source="90" target="84" id="174"/>
+      <edge source="91" target="84" id="175"/>
+      <edge source="92" target="84" id="176"/>
+      <edge source="95" target="82" id="177"/>
+      <edge source="94" target="84" id="178"/>
+      <edge source="17" target="1" id="18"/>
+      <edge source="96" target="84" id="180"/>
+      <edge source="99" target="84" id="183"/>
+      <edge source="18" target="1" id="19"/>
+      <edge source="98" target="97" id="195"/>
+      <edge source="19" target="1" id="20"/>
+      <edge source="100" target="101" id="201"/>
+      <edge source="101" target="102" id="203"/>
+      <edge source="102" target="103" id="205"/>
+      <edge source="103" target="104" id="207"/>
+      <edge source="104" target="105" id="209"/>
+      <edge source="20" target="1" id="21"/>
+      <edge source="105" target="106" id="211"/>
+      <edge source="106" target="107" id="213"/>
+      <edge source="21" target="1" id="22"/>
+      <edge source="22" target="1" id="23"/>
+      <edge source="23" target="1" id="24"/>
+      <edge source="24" target="1" id="25"/>
+      <edge source="25" target="1" id="26"/>
+      <edge source="26" target="1" id="27"/>
+      <edge source="27" target="1" id="28"/>
+      <edge source="139" target="140" id="281"/>
+      <edge source="28" target="1" id="29"/>
+      <edge source="2" target="1" id="3"/>
+      <edge source="29" target="1" id="30"/>
+      <edge source="149" target="150" id="301"/>
+      <edge source="153" target="154" id="309"/>
+      <edge source="30" target="1" id="31"/>
+      <edge source="156" target="157" id="315"/>
+      <edge source="31" target="1" id="32"/>
+      <edge source="32" target="1" id="33"/>
+      <edge source="34" target="1" id="35"/>
+      <edge source="35" target="1" id="36"/>
+      <edge source="36" target="1" id="37"/>
+      <edge source="37" target="1" id="38"/>
+      <edge source="3" target="1" id="4"/>
+      <edge source="4" target="1" id="5"/>
+      <edge source="5" target="1" id="6"/>
+      <edge source="33" target="32" id="65"/>
+      <edge source="6" target="1" id="7"/>
+      <edge source="38" target="39" id="77"/>
+      <edge source="39" target="40" id="79"/>
+      <edge source="7" target="1" id="8"/>
+      <edge source="40" target="41" id="81"/>
+      <edge source="41" target="42" id="83"/>
+      <edge source="8" target="1" id="9"/>
+    </edges>
+  </graph>
+</gexf>

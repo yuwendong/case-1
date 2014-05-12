@@ -1,0 +1,528 @@
+{% extends "propagate/base.html" %}
+{% block head %}
+{{ super() }}
+<!--link href="../../static/propagate/css/bootstrap.css" rel="stylesheet"-->
+        <link rel="stylesheet" href="../../static/propagate/css/jquery-ui.css" />
+        <link rel="stylesheet" href="../../static/propagate/css/microblog.css" />
+    <style>
+  .sub_item{
+    width:350px;
+    height:24px;   
+    padding: 5px;
+    margin:5px;
+    float:left;
+    font-size:22px;
+    color:#2E2E2E;
+    text-align:center;
+    display:block;
+  }
+  .itemlabel{
+    width:200px;
+    min-height:5px;   
+    padding: 5px;
+    margin:5px;
+    float:left;
+    font-size:20px;
+    color:#0080FF;
+    text-align:center;
+    display:block;
+  }
+  .itemtext{
+    width:100px;
+    min-height:5px;   
+    padding: 5px;
+    margin:5px;
+    float:left;
+    font-size:20px;
+    color:black;
+    text-align:left;
+    display:block;
+  }
+</style>
+{% endblock %}
+    
+{% block content %}
+<div class="row">
+                
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">开始时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-1 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">截止时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-5 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">信息源：<span class="badge badge-success" style="font-size:18px">微博</span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">    
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">用户覆盖：<span class="badge badge-success" style="font-size:18px"> 200</span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">媒体覆盖：<span class="badge badge-success" style="font-size:18px"> 37 </span></label>
+                </div>
+                <div style="float:left;padding-top:10px;margin-left:8px;">    
+                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">意见领袖覆盖：<span class="badge badge-success" style="font-size:18px">105 </span></label>
+                </div>
+            </div>
+            <hr class="soften">
+    <div class="row">
+       <div class="col-lg-12" id="index-tabs">
+            <ul class="nav nav-pills tab_container">
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_contents" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">代表内容</a></li>
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_path" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播路径</a></li>
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_track_source" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播溯源</a></li>
+                
+                <li  class="btn btn-primary" style="width:200px;height:40px;"><a href="/propagate/ajax_key_person" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">关键人物</a></li>
+                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_media" align="center" style="padding-top:2px;padding-bottom: 2px;color:black;">媒体参与</a></li>
+                  
+            </ul>
+        </div>
+    </div>
+    <hr class="soften">
+    
+    <div class="well">
+    <legend>关键人物</legend>
+    <div>
+      <p>
+        <a class="btn btn-small btn-success" href="#" id="out"><i class="icon-download-alt"></i> 导出</a>
+        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库"><i class="icon-file"></i> 加入知识库</a>
+        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库"><i class="icon-file"></i> 移出知识库</a>
+        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单"><i class="icon-ban-circle"></i> 加入垃圾名单</a>
+      </p>
+    </div>
+    <div>
+      <div id="users_area">
+          </div><table class="table table-bordered" id="topic_table">
+        <thead>
+          <tr>
+            <th style="text-align:center;display:none;">博主ID</th>
+            <th style="text-align:center;">博主昵称</th>
+            <th style="text-align:center;">博主地域</th>
+            <th style="text-align:center;">粉丝数</th>
+            <th style="text-align:center;">关注数</th>
+            <th style="text-align:center;">微博数</th>
+            <th style="text-align:center;">所属领域</th>
+            <th style="text-align:center;">敏感状态</th>
+            <th><input id="select_all" type="checkbox">全选</th>
+          </tr>
+        </thead>
+        <tbody id="word_table"><tr><td style="text-align:center;display:none;">1618051664</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=头条新闻">头条新闻</a></td><td style="text-align:center">北京 海淀区</td><td style="text-align:center">22979685</td><td style="text-align:center">194</td><td style="text-align:center">77427</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_1618051664" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">2803301701</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=人民日报">人民日报</a></td><td style="text-align:center">北京</td><td style="text-align:center">11469332</td><td style="text-align:center">225</td><td style="text-align:center">18147</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_2803301701" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">2656274875</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=央视新闻">央视新闻</a></td><td style="text-align:center">北京</td><td style="text-align:center">10211314</td><td style="text-align:center">153</td><td style="text-align:center">21589</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_2656274875" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1699432410</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=新华视点">新华视点</a></td><td style="text-align:center">北京</td><td style="text-align:center">8228719</td><td style="text-align:center">632</td><td style="text-align:center">40747</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_1699432410" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">2286908003</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=人民网">人民网</a></td><td style="text-align:center">北京 朝阳区</td><td style="text-align:center">6858458</td><td style="text-align:center">206</td><td style="text-align:center">31095</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_2286908003" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1252373132</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=全球热门排行榜">全球热门排行榜</a></td><td style="text-align:center">广东 广州</td><td style="text-align:center">6115668</td><td style="text-align:center">323</td><td style="text-align:center">62799</td><td style="text-align:center">草根</td><td><i class="icon-remove"></i></td><td><input id="uid_1252373132" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1642512402</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=中国新闻周刊">中国新闻周刊</a></td><td style="text-align:center">北京 西城区</td><td style="text-align:center">6042905</td><td style="text-align:center">1983</td><td style="text-align:center">47338</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_1642512402" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1640601392</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=新浪视频">新浪视频</a></td><td style="text-align:center">北京 海淀区</td><td style="text-align:center">5839407</td><td style="text-align:center">1995</td><td style="text-align:center">58985</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_1640601392" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1643971635</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=凤凰卫视">凤凰卫视</a></td><td style="text-align:center">香港</td><td style="text-align:center">5557488</td><td style="text-align:center">224</td><td style="text-align:center">25870</td><td style="text-align:center">境外机构</td><td><i class="icon-remove"></i></td><td><input id="uid_1643971635" type="checkbox" name="now_user"></td></tr><tr><td style="text-align:center;display:none;">1314608344</td><td style="text-align:center"><a target="_blank" href="/profile/search/person?nickname=新闻晨报">新闻晨报</a></td><td style="text-align:center">上海 闵行区</td><td style="text-align:center">5189461</td><td style="text-align:center">488</td><td style="text-align:center">36978</td><td style="text-align:center">境内媒体</td><td><i class="icon-remove"></i></td><td><input id="uid_1314608344" type="checkbox" name="now_user"></td></tr></tbody>
+        
+      </table>
+      <div id="page-selection" class="pagination pagination-centered"><li data-lp="1" class="prev disabled"><a href="javascript:void(0);">«</a></li><li data-lp="1" class="disabled"><a href="javascript:void(0);">1</a></li><li data-lp="2"><a href="javascript:void(0);">2</a></li><li data-lp="3"><a href="javascript:void(0);">3</a></li><li data-lp="4"><a href="javascript:void(0);">4</a></li><li data-lp="5"><a href="javascript:void(0);">5</a></li><li data-lp="6"><a href="javascript:void(0);">6</a></li><li data-lp="7"><a href="javascript:void(0);">7</a></li><li data-lp="8"><a href="javascript:void(0);">8</a></li><li data-lp="9"><a href="javascript:void(0);">9</a></li><li data-lp="10"><a href="javascript:void(0);">10</a></li><li data-lp="11" class="next"><a href="javascript:void(0);">»</a></li></ul></div>
+        <script src="/static/js/profile/jquery.bootpag.min.js"></script>
+    </div>
+  </div>
+  <div class="well">
+    <legend>转发网络</legend>
+    <img src="../../static/img/show.png">
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+    $('#content_container').empty();
+    $('#content_container').load("/profile/person_tab_ajax/personaltopic/1853590162?start_ts=1379174400&end_ts=1379692800", function() {});
+
+    tabIdArr = ['tab1', 'tab2', 'tab3', 'tab4', 'tab5'];
+    tabUrlArr = ["/profile/person_tab_ajax/personalweibocount/1853590162?start_ts=1379174400&end_ts=1379692800", "/profile/person_tab_ajax/personaltopic/1853590162?start_ts=1379174400&end_ts=1379692800", "/profile/person_tab_ajax/personalnetwork/1853590162?start_ts=1379174400&end_ts=1379692800", "/profile/person_tab_ajax/personalnetwork_follow/1853590162?start_ts=1379174400&end_ts=1379692800", "/profile/person_tab_ajax/personalinteractnetwork/1853590162?start_ts=1379174400&end_ts=1379692800"];
+    for (var i = 0, len = tabIdArr.length; i < len; i++) {
+      document.getElementById(tabIdArr[i]).onclick = function(data) {
+        var tabId = data.srcElement.id;
+        var tabIdx = parseInt(tabId.substring(3, 4));
+        $('#content_container').empty();
+        for (var j = 0, len = tabIdArr.length; j < len; j++){
+          if(j != tabIdx - 1){
+            $("#" + tabIdArr[j]).removeClass('btn-primary');
+          }
+        }
+        $("#" + tabId).addClass('btn-primary');
+        $('#content_container').load(tabUrlArr[tabIdx - 1], function() {});
+      }
+    }
+
+    function submit_search_profile_person(){
+        var person_time = $('#person_date').html();
+        document.getElementById('during_time').value = person_time;
+        $.ajax({
+          url: "/profile/person.json?nickname=" + $('#input_nickname').val(),
+          type: 'GET',
+          dataType: 'json',
+          success: function(data){
+              if(data.status == 'success'){
+                var uid = data.uid;
+                window.location.href = '/profile/person/' + uid + '?during_time=' + person_time;
+              }else{
+                alert("您搜索的结果为空！");
+              }
+          }
+        })
+    }
+
+    $(document).ready(function() {
+      var person_time = $('#person_date').html();
+      document.getElementById('during_time').value = person_time;
+      $('#person_window_size_choosen').daterangepicker({
+        ranges: {
+           '1天': [moment(), moment()],
+           '1周': [moment().subtract('days', 6), moment()],
+           '1个月': [moment().startOf('month'), moment().endOf('month')],
+           '3个月': [moment().subtract('month', 3).startOf('month'), moment().subtract('month', 3).endOf('month')]
+        },
+        startDate: moment().subtract('days', 29),
+        endDate: moment()
+      },  
+        function(start, end) {
+          $('#person_window_size_choosen span').html(start.format('MMMM D日, YYYY') + ' - ' + end.format('MMMM D日, YYYY'));
+        }
+      );
+    }
+    );
+  </script>
+  <script>
+  $('#select_all').click(function(){
+      var $this = $(this);
+      this.checked = !this.checked;
+      $.each($('#topic_table :checkbox'), function(i, val) {
+    if ($(this) != $this)
+        this.checked = !this.checked;
+      });  
+  });
+  if(( 3 + 103 + 3 + 178 + 0 + 3 +  +  +  +  + 287 + 223)>0){
+    
+    display_user_second_field_dist();
+  }
+  else{
+    $("#working_count_second").append("舆情领域计算为空");
+  }
+  
+
+   function display_user_second_field_dist(){
+  $('#working_count_second').highcharts({
+      chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false
+      },
+      title: {
+          text: '舆情领域分布'
+      },
+      tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+        percentageDecimals: 1
+      },
+      plotOptions: {
+          pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                  enabled: true,
+                  color: '#000000',
+                  connectorColor: '#000000',
+                  formatter: function() {
+                      return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +' %';
+                  }
+              }
+          }
+      },
+      series: [{
+        type: 'pie',
+        name: '占比',
+        data: [
+            ['高校微博',   3],
+            ['境内机构',   103],
+            ['境外机构',   3],
+            ['境内媒体',   178],
+            ['境外媒体',   0],
+            ['民间组织',   3],
+            ['律师',   1],
+            ['政府官员',   8],
+            ['媒体人士',   0],
+            ['活跃人士',   191],
+            ['草根',   287],
+            ['其他',   223]
+        ]
+      }]
+    });
+  }
+
+  var options = {
+      numOfCol: 8,
+      offsetX: 8,
+      offsetY: 8
+  };
+
+  $('#thumbnail').BlocksIt(options);
+
+//window resize
+  var currentWidth = 1100;
+  $(window).resize(function() {
+    var winWidth = $(window).width();
+    var conWidth;
+    if(winWidth < 660) {
+      conWidth = 440;
+      col = 2
+    } else if(winWidth < 880) {
+      conWidth = 660;
+      col = 3
+    } else if(winWidth < 1100) {
+      conWidth = 880;
+      col = 4;
+    } else {
+      conWidth = 1100;
+      col = 5;
+    }
+    
+    if(conWidth != currentWidth) {
+      currentWidth = conWidth;
+      $('#thumbnail').width(conWidth);
+      $('#thumbnail').BlocksIt({
+        numOfCol: col,
+        offsetX: 8,
+        offsetY: 8
+      });
+    }
+  });  
+
+var countperpage_args = 10;
+var limit_arg = 1000000;
+//var topic_key_user_list = '[{&#39;bi_followers_count&#39;: 194L, &#39;statuses_count&#39;: 77427L, &#39;name&#39;: u&#39;\u5934\u6761\u65b0\u95fb&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1618051664/50/5661558324/0&#39;, &#39;followers_count&#39;: 22979685L, &#39;id&#39;: 1618051664, &#39;description&#39;: u&#39;\u6bcf\u65e5\u64ad\u62a5\u5168\u7403\u5404\u7c7b\u91cd\u8981\u8d44\u8baf\u3001\u7a81\u53d1\u65b0\u95fb\uff0c\u5168\u592924\u5c0f\u65f6\u5373\u65f6\u53d1\u5e03\u3002\u6b22\u8fce\u62a5\u6599\u3001\u6295\u7a3f\uff0c\u8bf7\u53d1\u79c1\u4fe1\u6216\u8005\u90ae\u4ef6\uff1axlttnews@vip.sina.com\u3002&#39;}, {&#39;bi_followers_count&#39;: 225L, &#39;statuses_count&#39;: 18147L, &#39;name&#39;: u&#39;\u4eba\u6c11\u65e5\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2803301701/50/40021767685/1&#39;, &#39;followers_count&#39;: 11469332L, &#39;id&#39;: 2803301701, &#39;description&#39;: u&#39;\u53c2\u4e0e \u6c9f\u901a \u8bb0\u5f55\u65f6\u4ee3&#39;}, {&#39;bi_followers_count&#39;: 153L, &#39;statuses_count&#39;: 21589L, &#39;name&#39;: u&#39;\u592e\u89c6\u65b0\u95fb&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2656274875/50/5662046341/1&#39;, &#39;followers_count&#39;: 10211314L, &#39;id&#39;: 2656274875, &#39;description&#39;: u&#39;\u65e0\u5904\u4e0d\u5728\u7684\u592e\u89c6\uff0c\u968f\u65f6\u968f\u5730\u7684\u65b0\u95fb&#39;}, {&#39;bi_followers_count&#39;: 632L, &#39;statuses_count&#39;: 40747L, &#39;name&#39;: u&#39;\u65b0\u534e\u89c6\u70b9&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1699432410/50/5662098304/1&#39;, &#39;followers_count&#39;: 8228719L, &#39;id&#39;: 1699432410, &#39;description&#39;: u&#39;\u65b0\u534e\u793e\u65b0\u534e\u89c6\u70b9\u5fae\u535a\u3002\u91cd\u5927\u65b0\u95fb\u6743\u5a01\u9996\u53d1\uff0c\u73af\u7403\u4fe1\u606f\u53ca\u65f6\u64ad\u62a5\u3002\u89c1\u8bc1\u4e2d\u56fd\u53d1\u5c55\uff0c\u9886\u7565\u4e16\u754c\u7cbe\u5f69\uff0c\u5171\u4eab\u6587\u660e\u6210\u5c31\u3002&#39;}, {&#39;bi_followers_count&#39;: 206L, &#39;statuses_count&#39;: 31095L, &#39;name&#39;: u&#39;\u4eba\u6c11\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2286908003/50/40021812141/1&#39;, &#39;followers_count&#39;: 6858458L, &#39;id&#39;: 2286908003, &#39;description&#39;: u&#39;\u62a5\u9053\u5168\u7403 \u4f20\u64ad\u4e2d\u56fd&#39;}, {&#39;bi_followers_count&#39;: 323L, &#39;statuses_count&#39;: 62799L, &#39;name&#39;: u&#39;\u5168\u7403\u70ed\u95e8\u6392\u884c\u699c&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1252373132/50/22847149042/1&#39;, &#39;followers_count&#39;: 6115668L, &#39;id&#39;: 1252373132, &#39;description&#39;: u&#39;\u3010\u597d\u8bc4\u7387100%\u3011\u4e00\u4e2a\u6709\u6001\u5ea6\u7684\u70ed\u95e8\u8d44\u8baf\u5e73\u53f0\u2014\u2014\u5206\u4eab\u5168\u7403\u6700\u65b0\u9c9c\u3001\u65f6\u5c1a\u3001\u6709\u8da3\u7684\u8bdd\u9898\u3002\u6b22\u8fce\u5173\u6ce8@\u5168\u7403\u70ed\u95e8\u6392\u884c\u699c \uff01\u8ba9\u6211\u4eec\u50cf\u5bb6\u4eba\u4e00\u6837\u5ea6\u8fc7\u7cbe\u5f69\u7684\u6bcf\u4e00\u5929\uff01&#39;}, {&#39;bi_followers_count&#39;: 1983L, &#39;statuses_count&#39;: 47338L, &#39;name&#39;: u&#39;\u4e2d\u56fd\u65b0\u95fb\u5468\u520a&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1642512402/50/5662445299/1&#39;, &#39;followers_count&#39;: 6042905L, &#39;id&#39;: 1642512402, &#39;description&#39;: u&#39;\u300a\u4e2d\u56fd\u65b0\u95fb\u5468\u520a\u300b\u5b98\u65b9\u5fae\u535a&#39;}, {&#39;bi_followers_count&#39;: 1995L, &#39;statuses_count&#39;: 58985L, &#39;name&#39;: u&#39;\u65b0\u6d6a\u89c6\u9891&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1640601392/50/5661594314/1&#39;, &#39;followers_count&#39;: 5839407L, &#39;id&#39;: 1640601392, &#39;description&#39;: u&#39;\u63d0\u4f9b\u6bcf\u65e5\u6700\u65b0\u65f6\u4e8b\u3001\u8f7b\u677e\u641e\u7b11\u3001\u5a31\u4e50\u516b\u5366\u89c6\u9891\u4ee5\u53ca\u5f71\u89c6\u5927\u7247\uff0c\u5168\u592924\u5c0f\u65f6\u5373\u65f6\u53d1\u5e03\u3002\u6b22\u8fce\u7206\u6599\u3001\u6295\u7a3f\uff0c\u8bf7\u53d1\u79c1\u4fe1@\u65b0\u6d6a\u89c6\u9891\uff0c\u6216\u8005\u90ae\u4ef6\uff1avideovideo@sina.cn&#39;}, {&#39;bi_followers_count&#39;: 224L, &#39;statuses_count&#39;: 25870L, &#39;name&#39;: u&#39;\u51e4\u51f0\u536b\u89c6&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1643971635/50/5662076147/1&#39;, &#39;followers_count&#39;: 5557488L, &#39;id&#39;: 1643971635, &#39;description&#39;: u&#39;\u62c9\u8fd1\u5168\u7403\u534e\u4eba\u8ddd\u79bb&#39;}, {&#39;bi_followers_count&#39;: 488L, &#39;statuses_count&#39;: 36978L, &#39;name&#39;: u&#39;\u65b0\u95fb\u6668\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1314608344/50/40021777547/1&#39;, &#39;followers_count&#39;: 5189461L, &#39;id&#39;: 1314608344, &#39;description&#39;: u&#39;\u505a\u62a5\u7eb8\uff0c\u6211\u4eec\u6709200\u4e07\u8bfb\u8005\uff0c\u662f\u4e0a\u6d77\u53d1\u884c\u91cf\u6700\u5927\u7684\u65e5\u62a5\uff1b\u505a\u5fae\u535a\uff0c\u6211\u4eec\u6709516\u4e07\u7c89\u4e1d\uff0c\u662f\u4e0a\u6d77\u6700\u6709\u5f71\u54cd\u529b\u7684\u65b0\u95fb\u7c7b\u5fae\u535a\u2014\u2014\u3010\u8ffd\u6c42\u6700\u9c9c\u6d3b\u6700\u5b9e\u7528\u7684\u65b0\u95fb\u3011&#39;}, {&#39;bi_followers_count&#39;: 1116L, &#39;statuses_count&#39;: 1484L, &#39;name&#39;: u&#39;\u8bc4\u8bba\u5458\u6768\u79b9&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1647497355/50/5604289286/1&#39;, &#39;followers_count&#39;: 5078872L, &#39;id&#39;: 1647497355, &#39;description&#39;: u&#39;\u4e2d\u592e\u7535\u89c6\u53f0\u7279\u7ea6\u8bc4\u8bba\u5458&#39;}, {&#39;bi_followers_count&#39;: 485L, &#39;statuses_count&#39;: 32826L, &#39;name&#39;: u&#39;\u4e2d\u56fd\u4e4b\u58f0&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1699540307/50/5667980154/1&#39;, &#39;followers_count&#39;: 4535234L, &#39;id&#39;: 1699540307, &#39;description&#39;: u&#39;\u7f51\u7edc\u76f4\u64ad\u5728\u7ebf\u6536\u542c\uff1a china.cnr.cn\u3002\u4e2d\u56fd\u552f\u4e00\u8986\u76d6\u5168\u56fd\u768424\u5c0f\u65f6\u65b0\u95fb\u76f4\u64ad\u9891\u7387\u3002&#39;}, {&#39;bi_followers_count&#39;: 424L, &#39;statuses_count&#39;: 38756L, &#39;name&#39;: u&#39;\u7cbe\u5f69\u8bed\u5f55&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1644572034/50/40021490273/1&#39;, &#39;followers_count&#39;: 4525917L, &#39;id&#39;: 1644572034, &#39;description&#39;: u&#39;\u221a\u8be0\u91ca\u4e16\u95f4\u9053\u7406\u221a\u611f\u609f\u7cbe\u5f69\u4eba\u751f\u221a\u54c1\u4f18\u96c5\u7684\u6587\u5b57\u221a\u4eab\u552f\u7f8e\u7684\u56fe\u7247\u3002\u6bcf\u65e5\u5e26\u6765\u7cbe\u5f69\u8a00\u8bba\u548c\u72ec\u7279\u7684\u89c6\u89d2\u3002\u878d\u6c47\u6700\u7ecf\u5178\u8a00\u8bba\u3002\u671f\u5f85\u5173\u6ce8 \u6b22\u8fce\u4ea4\u6d41 wazu@foxmail.com&#39;}, {&#39;bi_followers_count&#39;: 87L, &#39;statuses_count&#39;: 13442L, &#39;name&#39;: u&#39;\u5fae\u7fa4\u5c0f\u52a9\u624b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1821898647/50/5663481913/0&#39;, &#39;followers_count&#39;: 4244494L, &#39;id&#39;: 1821898647, &#39;description&#39;: u&#39;\u672c\u5e10\u53f7\u4e3a\u65b0\u6d6a\u5fae\u7fa4\u5b98\u65b9\u5e10\u53f7\u3002   &lt;br /&gt;\n &lt;br /&gt;\n\u610f\u89c1\u5efa\u8bae\u8bf7\u52a0\u5165\u201c\u5fae\u7fa4\u610f\u89c1\u53cd\u9988\u201dhttp://t.cn/aoeSsV   &lt;br /&gt;\n &lt;br /&gt;\n\u5408\u4f5c\u4e8b\u5b9c\u8bf7\u8054\u7cfb@\u738b\u5c0f\u65edhttp://we\u2026&#39;}, {&#39;bi_followers_count&#39;: 659L, &#39;statuses_count&#39;: 38845L, &#39;name&#39;: u&#39;\u65b0\u5feb\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1652484947/50/40021477581/0&#39;, &#39;followers_count&#39;: 4090943L, &#39;id&#39;: 1652484947, &#39;description&#39;: u&#39;\u300a\u65b0\u5feb\u62a5\u300b\u7531\u7f8a\u57ce\u665a\u62a5\u62a5\u4e1a\u96c6\u56e2\u4e3b\u7ba1\u4e3b\u529e\uff0c1998\u5e743\u670830\u65e5\u521b\u520a\u3002\u793e\u4f1a\u4f7f\u547d\uff1a\u77e5\u60c5\u5c31\u662f\u529b\u91cf+\u529e\u62a5\u7406\u5ff5\uff1a\u65b0\u9510\u3001\u65b0\u77e5\u3001\u65b0\u89c1+\u53d7\u4f17\u5b9a\u4f4d\uff1a\u767d\u9886\u3001\u4e2d\u4ea7\u7684\u62a5\u7eb8&#39;}, {&#39;bi_followers_count&#39;: 127L, &#39;statuses_count&#39;: 13284L, &#39;name&#39;: u&#39;\u70ed\u95e8\u8da3\u4e8b\u6392\u884c\u699c&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/2799843092/50/40025878921/1&#39;, &#39;followers_count&#39;: 4000939L, &#39;id&#39;: 2799843092, &#39;description&#39;: u&#39;\u4e00\u5207\u53ea\u4e3a\u8ba9\u4f60\u5feb\u4e50\uff01\u731b\u70b9\u201c\u52a0\u5173\u6ce8\u201d\u5427\uff01&#39;}, {&#39;bi_followers_count&#39;: 1234L, &#39;statuses_count&#39;: 7733L, &#39;name&#39;: u&#39;\u4e2d\u56fd\u56fd\u9645\u6551\u63f4\u961f&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1701600025/50/5662099927/1&#39;, &#39;followers_count&#39;: 3938012L, &#39;id&#39;: 1701600025, &#39;description&#39;: u&#39;\u56fd\u5bb6\u5730\u9707\u707e\u5bb3\u7d27\u6025\u6551\u63f4\u961f\u4e8e2001\u5e744\u670827\u65e5\u6210\u7acb\uff0c\u7531\u4e2d\u56fd\u5730\u9707\u5c40\u300138\u519b\u67d0\u5de5\u5175\u56e2\u3001\u6b66\u8b66\u603b\u533b\u9662\u7ec4\u6210\uff0c\u5bf9\u5916\u79f0\u4e2d\u56fd\u56fd\u9645\u6551\u63f4\u961f\u3002\u7ec4\u5efa\u4ee5\u6765\uff0c\u5171\u6267\u884c\u6c76...&#39;}, {&#39;bi_followers_count&#39;: 894L, &#39;statuses_count&#39;: 42148L, &#39;name&#39;: u&#39;\u5e7f\u5dde\u65e5\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1887790981/50/40021903217/1&#39;, &#39;followers_count&#39;: 3881346L, &#39;id&#39;: 1887790981, &#39;description&#39;: u&#39;\u300a\u5e7f\u5dde\u65e5\u62a5\u300b\u521b\u520a\u4e8e1952\u5e7412\u67081\u65e5\uff0c\u662f\u5e7f\u4e1c\u7701\u53d1\u884c\u91cf\u7b2c\u4e00\u3001\u8ba2\u9605\u91cf\u7b2c\u4e00\u3001\u96f6\u552e\u91cf\u7b2c\u4e00\u548c\u4f20\u9605\u7387\u7b2c\u4e00\u7684\u62a5\u7eb8\u3002&#39;}, {&#39;bi_followers_count&#39;: 153L, &#39;statuses_count&#39;: 3231L, &#39;name&#39;: u&#39;\u80e1\u9521\u8fdb&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1989660417/50/5616416587/1&#39;, &#39;followers_count&#39;: 3870826L, &#39;id&#39;: 1989660417, &#39;description&#39;: u&#39;\u80e1\u9521\u8fdb\uff0c\u4e00\u4e2a\u201c\u590d\u6742\u4e2d\u56fd\u201d\u7684\u62a5\u9053\u8005\u3002&#39;}, {&#39;bi_followers_count&#39;: 499L, &#39;statuses_count&#39;: 19117L, &#39;name&#39;: u&#39;\u592e\u89c6\u8d22\u7ecf&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2258727970/50/5669630685/1&#39;, &#39;followers_count&#39;: 3574105L, &#39;id&#39;: 2258727970, &#39;description&#39;: u&#39;\u592e\u89c6\u8d22\u7ecf\u5c31\u5728\u4f60\u8eab\u8fb9\uff01&#39;}, {&#39;bi_followers_count&#39;: 306L, &#39;statuses_count&#39;: 10787L, &#39;name&#39;: u&#39;\u63ed\u9732\u5730\u7403&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1724367710/50/40022120291/1&#39;, &#39;followers_count&#39;: 3320946L, &#39;id&#39;: 1724367710, &#39;description&#39;: u&#39;\u3010\u5730\u7403\u4e0a\u6700\u5927\u7684\u63ed\u9732\u5e2e\u52a9\u5fae\u535a\u3011\u4e00\u4e2a\u5e73\u51e1\u7684\u4f1a\u8ba9\u4f60\u54ed\u7684\u5fae\u535a/\u7f51\u7ad9\uff01\u4e00\u9897\u5e73\u5eb8\u768490\u540e\u7684\u826f\u5fc3\uff01\r\n\u53f7\u53ec:\u4e3a\u4e86\u4fdd\u62a4\u5730\u7403\u7684\u548c\u5e73\u4e0e\u6b63\u4e49,\u8ba9\u6211\u4eec\u4e00\u8d77\u63ed\u9732\u5730...&#39;}, {&#39;bi_followers_count&#39;: 673L, &#39;statuses_count&#39;: 14974L, &#39;name&#39;: u&#39;\u540c\u7a0b\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1644881682/50/40021751301/0&#39;, &#39;followers_count&#39;: 3030423L, &#39;id&#39;: 1644881682, &#39;description&#39;: u&#39;\u505a\u4e2d\u56fd\u6700\u597d\u7684\u65c5\u6e38\u7f51\u7ad9\uff0c\u63d0\u4f9b\u9152\u5e97\u3001\u673a\u7968\u3001\u666f\u533a\u3001\u79df\u8f66 \u65c5\u6e38\u5ea6\u5047\u4e00\u7ad9\u5f0f\u7684\u5728\u7ebf\u9884\u8ba2\uff1b\u5e76\u63d0\u4f9b\u65c5\u6e38\u653b\u7565\u548c\u65c5\u6e38\u8d44\u8baf\u3002 \u9884\u8ba2\u7535\u8bdd4007-777-777...&#39;}, {&#39;bi_followers_count&#39;: 146L, &#39;statuses_count&#39;: 16757L, &#39;name&#39;: u&#39;\u65b0\u534e\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2810373291/50/5662102893/1&#39;, &#39;followers_count&#39;: 3026199L, &#39;id&#39;: 2810373291, &#39;description&#39;: u&#39;\u4f20\u64ad\u4e2d\u56fd\uff0c\u62a5\u9053\u4e16\u754c\uff1b\u6743\u5a01\u58f0\u97f3\uff0c\u4eb2\u5207\u8868\u8fbe\uff01&#39;}, {&#39;bi_followers_count&#39;: 1305L, &#39;statuses_count&#39;: 6103L, &#39;name&#39;: u&#39;\u59dc\u5c9a\u6615&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1284032347/50/1279876851/1&#39;, &#39;followers_count&#39;: 3008392L, &#39;id&#39;: 1284032347, &#39;description&#39;: u&#39;\u4e00\u4e2a\u7528\u5fc3\u8df5\u884c\u4f7f\u547d\u3001\u5d07\u5c1a\u5927\u7231\u7684\u4eba\uff0c\u4e00\u4e2a\u79c9\u627f\u7126\u70b9\u5229\u4f17\u3001\u4f17\u4eba\u6210\u5168\u7684\u4eba\uff0c\u4e00\u4e2a\u575a\u4fe1\u5fc3\u4e2d\u65e0\u6211\u3001\u6210\u5c31\u65e0\u9650\u7684\u4eba\uff014009993333\u3002&#39;}, {&#39;bi_followers_count&#39;: 756L, &#39;statuses_count&#39;: 9719L, &#39;name&#39;: u&#39;\u65b0\u7586\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2541592687/50/5662340181/1&#39;, &#39;followers_count&#39;: 2832668L, &#39;id&#39;: 2541592687, &#39;description&#39;: u&#39;\u5927\u5bb6\u597d\uff0c\u65b0\u7586\u7ef4\u543e\u5c14\u81ea\u6cbb\u533a\u4eba\u6c11\u653f\u5e9c\u65b0\u95fb\u529e\u516c\u5ba4\u5b98\u65b9\u5fae\u535a\u2014\u2014\u201c\u65b0\u7586\u53d1\u5e03\u201d\u5f00\u901a\u5566\uff01\u6211\u4eec\u5c06\u4f5c\u4e3a\u65b0\u7586\u65b0\u95fb\u53d1\u5e03\u3001\u653f\u52a1\u4fe1\u606f\u516c\u5f00\u7684\u4e00\u4e2a\u7a97\u53e3\uff0c\u6b22\u8fce\u7f51\u53cb\u4eec\u56f4\u89c2\uff01&#39;}, {&#39;bi_followers_count&#39;: 401L, &#39;statuses_count&#39;: 14956L, &#39;name&#39;: u&#39;\u7ecf\u6d4e\u4e4b\u58f0&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1704819467/50/5662104480/1&#39;, &#39;followers_count&#39;: 2756187L, &#39;id&#39;: 1704819467, &#39;description&#39;: u&#39;\u4e2d\u592e\u4eba\u6c11\u5e7f\u64ad\u7535\u53f0\u7ecf\u6d4e\u4e4b\u58f0\u662f\u4e2d\u56fd\u6700\u6709\u5f71\u54cd\u529b\u7684\u8d22\u7ecf\u5e7f\u64ad\uff0c\u4e5f\u662f\u552f\u4e00\u4e00\u5957\u8986\u76d6\u5168\u56fd\u7684\u8d22\u7ecf\u4e13\u4e1a\u5a92\u4f53\uff0c\u8986\u76d6\u5168\u56fd3\u4ebf\u591a\u4ee5\u57ce\u5e02\u4e3a\u4e3b\u4f53\u7684\u5e7f\u64ad\u542c\u4f17\u3002\u7ecf\u6d4e\u4e4b\u58f0\u7acb\u8db3\u2026&#39;}, {&#39;bi_followers_count&#39;: 354L, &#39;statuses_count&#39;: 24778L, &#39;name&#39;: u&#39;\u4eac\u534e\u65f6\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1697601814/50/5662012108/1&#39;, &#39;followers_count&#39;: 2741500L, &#39;id&#39;: 1697601814, &#39;description&#39;: u&#39;\u516c\u4fe1\u529b          \u4f20\u64ad\u529b           \u5f71\u54cd\u529b&#39;}, {&#39;bi_followers_count&#39;: 139L, &#39;statuses_count&#39;: 6966L, &#39;name&#39;: u&#39;CCTV\u97f3\u4e50&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2684112141/50/5661652341/1&#39;, &#39;followers_count&#39;: 2754763L, &#39;id&#39;: 2684112141, &#39;description&#39;: u&#39;\u4e2d\u592e\u7535\u89c6\u53f0\u97f3\u4e50\u9891\u9053\u4f5c\u4e3a\u4e2d\u56fd\u6210\u7acb\u6700\u65e9\uff0c\u8986\u76d6\u6700\u5e7f\uff0c\u5f71\u54cd\u6700\u5927\u7684\u552f\u4e00\u7684\u56fd\u5bb6\u7ea7\u97f3\u4e50\u9891\u9053\uff0c\u662f\u4e2d\u56fd\u6700\u5927\u7684\u97f3\u4e50\u4f20\u64ad\u5e73\u53f0\u3002\u9891\u9053\u64ad\u51fa\u7684\u5185\u5bb9\u96c6\u4e2d\u5916\u53e4\u5178\u97f3\u4e50\u4e4b\u5927\u6210\u2026&#39;}, {&#39;bi_followers_count&#39;: 617L, &#39;statuses_count&#39;: 7584L, &#39;name&#39;: u&#39;\u9752\u5c9b\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2239082677/50/5662253153/1&#39;, &#39;followers_count&#39;: 2747761L, &#39;id&#39;: 2239082677, &#39;description&#39;: u&#39;\u9752\u5c9b\u5e02\u4eba\u6c11\u653f\u5e9c\u65b0\u95fb\u529e\u516c\u5ba4\u5b98\u65b9\u5fae\u535a&#39;}, {&#39;bi_followers_count&#39;: 699L, &#39;statuses_count&#39;: 25952L, &#39;name&#39;: u&#39;\u73af\u7403\u8d44\u8baf\u5e7f\u64ad&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1656831930/50/5662099332/0&#39;, &#39;followers_count&#39;: 2632417L, &#39;id&#39;: 1656831930, &#39;description&#39;: u&#39;\u73af\u7403\u8d44\u8baf\u5e7f\u64ad\uff0c\u4e16\u754c\u5728\u4f60\u8033\u8fb9.    \u56fd\u9645\u5316\u751f\u6d3b,\u4ece\u73af\u7403\u8d44\u8baf\u5e7f\u64ad\u5f00\u59cb&#39;}, {&#39;bi_followers_count&#39;: 449L, &#39;statuses_count&#39;: 7638L, &#39;name&#39;: u&#39;\u7518\u8083\u516c\u5b89&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2607534827/50/5627797785/1&#39;, &#39;followers_count&#39;: 2509490L, &#39;id&#39;: 2607534827, &#39;description&#39;: u&#39;\u7518\u8083\u7701\u516c\u5b89\u5385\u5b98\u65b9\u5fae\u535a\u3002\u63d0\u793a\uff1a\u7d27\u6025\u8b66\u60c5\u3001\u62a5\u8b66\u6c42\u52a9\u8bf7\u62e8\u6253110\u3002&#39;}, {&#39;bi_followers_count&#39;: 1692L, &#39;statuses_count&#39;: 11413L, &#39;name&#39;: u&#39;\u5929\u7ffc\u9605\u8bfb&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1839224480/50/40021838517/1&#39;, &#39;followers_count&#39;: 2422595L, &#39;id&#39;: 1839224480, &#39;description&#39;: u&#39;None&#39;}, {&#39;bi_followers_count&#39;: 1663L, &#39;statuses_count&#39;: 16902L, &#39;name&#39;: u&#39;Vista\u770b\u5929\u4e0b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1323527941/50/22841440531/1&#39;, &#39;followers_count&#39;: 2288496L, &#39;id&#39;: 1323527941, &#39;description&#39;: u&#39;\u505a\u6700\u597d\u770b\u7684\u65b0\u95fb\u6742\u5fd7 \u3002\u5fae\u4fe1\u53f7\uff1avistaweek &lt;br /&gt;\r\n\u90ae\u53d1\u4ee3\u53f7\uff1a74-37&#39;}, {&#39;bi_followers_count&#39;: 209L, &#39;statuses_count&#39;: 7391L, &#39;name&#39;: u&#39;\u56fd\u9645\u5728\u7ebf&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1645705403/50/40022272769/1&#39;, &#39;followers_count&#39;: 2266445L, &#39;id&#39;: 1645705403, &#39;description&#39;: u&#39;\u201c\u4e16\u754c\u89c2\uff0c\u89c2\u4e16\u754c\u3002\u201d\u56fd\u9645\u5728\u7ebf\uff08CRI online\uff09\u4ee5\u201c\u4e2d\u56fd\u7acb\u573a \u4e16\u754c\u773c\u5149 \u4eba\u7c7b\u80f8\u6000\u201d\u4e3a\u62a5\u9053\u7406\u5ff5\uff0c\u752861\u79cd\u8bed\u8a00\u5411\u4e16\u754c\u8fdb\u884c\u4f20\u64ad\u3002&#39;}, {&#39;bi_followers_count&#39;: 46L, &#39;statuses_count&#39;: 5546L, &#39;name&#39;: u&#39;\u70ed\u95e8\u5fae\u535a&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2257175873/50/5661825150/0&#39;, &#39;followers_count&#39;: 2200780L, &#39;id&#39;: 2257175873, &#39;description&#39;: u&#39;\u5fae\u535a\u70ed\u70b9\u5c3d\u5728\u638c\u63e1\uff01\nhttp://hot.weibo.com&#39;}, {&#39;bi_followers_count&#39;: 434L, &#39;statuses_count&#39;: 18883L, &#39;name&#39;: u&#39;\u65b0\u56fd\u9645&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2641686425/50/5677635793/1&#39;, &#39;followers_count&#39;: 2160706L, &#39;id&#39;: 2641686425, &#39;description&#39;: u&#39;\u5173\u6ce8\u5168\u7403\u65b0\u95fb \u56de\u5e94\u56fd\u9645\u70ed\u70b9&#39;}, {&#39;bi_followers_count&#39;: 147L, &#39;statuses_count&#39;: 4705L, &#39;name&#39;: u&#39;\u5317\u4eac\u7535\u89c6\u53f0&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2992050891/50/5661739200/1&#39;, &#39;followers_count&#39;: 2155295L, &#39;id&#39;: 2992050891, &#39;description&#39;: u&#39;\u9996\u5584\u5a92\u4f53 \u5927\u7f8e\u54c1\u8d28&#39;}, {&#39;bi_followers_count&#39;: 182L, &#39;statuses_count&#39;: 10736L, &#39;name&#39;: u&#39;\u524d\u53f2\u4e4b\u9274&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/2307318984/50/40011997027/1&#39;, &#39;followers_count&#39;: 2136498L, &#39;id&#39;: 2307318984, &#39;description&#39;: u&#39;\u4ee5\u53f2\u4e3a\u9274\u53ef\u4ee5\u77e5\u5174\u8870\uff0c\u8fd8\u539f\u5386\u53f2\u672c\u8d28\uff0c\u4f20\u64ad\u793e\u4f1a\u6b63\u80fd\u91cf\uff0c\u79c1\u4fe1\u5df2\u5f00\u653e\uff0c\u5468\u8fb9\u5408\u4f5cQQ\uff1a441065462&#39;}, {&#39;bi_followers_count&#39;: 457L, &#39;statuses_count&#39;: 36832L, &#39;name&#39;: u&#39;\u65b0\u6c11\u665a\u62a5\u65b0\u6c11\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1737737970/50/40028919957/0&#39;, &#39;followers_count&#39;: 2056460L, &#39;id&#39;: 1737737970, &#39;description&#39;: u&#39;\u6211\u4eec\u662f\u65b0\u6c11\u665a\u62a5 \u6211\u4eec\u4e5f\u662f\u65b0\u6c11\u7f51 \u6211\u4eec\u662f\u6700\u65b0\u9c9c\u7684\u53cc\u62fc\u996d \u597d\u73a9\u5b9e\u7528 \u70b9\u4e86\u5173\u6ce8\u4f60\u5c31\u77e5\u9053 \u4e0a\u6d77\u65b0\u95fb\u7206\u6599\u8bf7\u79c1\u4fe1\u6211\u4eec~ \u62a5\u6599\u7535\u8bdd\uff1a15900430043 or 021-962288&#39;}, {&#39;bi_followers_count&#39;: 260L, &#39;statuses_count&#39;: 10226L, &#39;name&#39;: u&#39;\u6cb3\u5317\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2698146894/50/40021408991/1&#39;, &#39;followers_count&#39;: 2061434L, &#39;id&#39;: 2698146894, &#39;description&#39;: u&#39;\u54b1\u5bb6\u6cb3\u5317\uff0c\u4eac\u757f\u91cd\u5730\uff0c\u5185\u73af\u4eac\u6d25\u3001\u5916\u6cbf\u6e24\u6d77\u3002\u5dcd\u5dcd\u592a\u884c\uff0c\u5927\u597d\u6cb3\u5c71\u6c14\u52bf\u58ee\uff1b\u98ce\u9aa8\u71d5\u8d75\uff0c\u6587\u5316\u53e4\u97f5\u5473\u60a0\u957f\u3002\u54b1\u5bb6\u4eba\u6177\u6168\u8c6a\u8fc8\uff0c\u6df3\u6734\u5584\u826f\u3002\u6cb3\u5317\u53d1\u5e03\u5385\u662f\u54b1\u7684e\u8a00\u2026&#39;}, {&#39;bi_followers_count&#39;: 239L, &#39;statuses_count&#39;: 26050L, &#39;name&#39;: u&#39;\u65b0\u6d6a\u519b\u4e8b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1499104401/50/5661566730/1&#39;, &#39;followers_count&#39;: 2042333L, &#39;id&#39;: 1499104401, &#39;description&#39;: u&#39;\u64ad\u62a5\u6700\u70ed\u519b\u4e8b\u8d44\u8baf\uff0c\u4ecb\u7ecd\u6b66\u5668\u88c5\u5907\u3001\u5404\u56fd\u519b\u961f\u3001\u519b\u4e8b\u5386\u53f2\u7b49\u519b\u4e8b\u77e5\u8bc6\u3002\u79c1\u4fe1\u5f00\u653e\uff0c\u6b22\u8fce\u6295\u7a3f\uff01&#39;}, {&#39;bi_followers_count&#39;: 975L, &#39;statuses_count&#39;: 5018L, &#39;name&#39;: u&#39;\u891a\u5cf0&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1400340051/50/5661433614/1&#39;, &#39;followers_count&#39;: 2015761L, &#39;id&#39;: 1400340051, &#39;description&#39;: u&#39;\u5171\u9752\u56e2\u4e2d\u592e\u7ec4\u7ec7\u90e8\u526f\u90e8\u957f&#39;}, {&#39;bi_followers_count&#39;: 853L, &#39;statuses_count&#39;: 4930L, &#39;name&#39;: u&#39;\u5409\u6797\u5171\u9752\u56e2&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2762892110/50/5630309032/1&#39;, &#39;followers_count&#39;: 1831929L, &#39;id&#39;: 2762892110, &#39;description&#39;: u&#39;\u5171\u9752\u56e2\u5409\u6797\u7701\u59d4\u5b98\u65b9\u5fae\u535a\uff0c\u4e3a\u5409\u6797\u5168\u4f53\u9752\u5e74\u642d\u5efa\u6d3b\u52a8\u4ea4\u6d41\u5e73\u53f0\uff0c\u66f4\u597d\u7684\u7ec4\u7ec7\u9752\u5e74\u3001\u5f15\u5bfc\u9752\u5e74\u3001\u670d\u52a1\u9752\u5e74\u548c\u7ef4\u62a4\u9752\u5c11\u5e74\u5408\u6cd5\u6743\u76ca\u3002\uff20\u5409\u6797\u5171\u9752\u56e2\uff0c\u8ba9\u6211\u4eec\u4e0e\u9752\u6625\u2026&#39;}, {&#39;bi_followers_count&#39;: 234L, &#39;statuses_count&#39;: 8070L, &#39;name&#39;: u&#39;\u6cb3\u5357\u65e5\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/3288875501/50/22853206161/1&#39;, &#39;followers_count&#39;: 1796604L, &#39;id&#39;: 3288875501, &#39;description&#39;: u&#39;\u7acb\u8db3\u4e2d\u539f\uff0c\r\n\u611f\u77e5\u4e00\u4ebf\u4eba\u51b7\u6696\uff1b\r\n\u80f8\u6000\u7406\u60f3\uff0c\r\n\u89e6\u6478\u5927\u65f6\u4ee3\u98ce\u4e91\u3002&#39;}, {&#39;bi_followers_count&#39;: 183L, &#39;statuses_count&#39;: 88529L, &#39;name&#39;: u&#39;\u7f51\u7edc\u65b0\u95fb\u8054\u64ad&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1977460817/50/5661932535/1&#39;, &#39;followers_count&#39;: 1666124L, &#39;id&#39;: 1977460817, &#39;description&#39;: u&#39;\u592e\u89c6\u7f51\u65b0\u95fb\u5b98\u65b9\u5fae\u535a\uff0c\u5168\u7403\u8d44\u8baf\u901f\u9012\u3002\u5a92\u4f53\u5408\u4f5c\u3001\u65b0\u95fb\u7ebf\u7d22\u8054\u7cfbQQ\uff1a2578615789&#39;}, {&#39;bi_followers_count&#39;: 424L, &#39;statuses_count&#39;: 11358L, &#39;name&#39;: u&#39;\u6c5f\u897f\u536b\u89c6&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1288429914/50/40021560174/1&#39;, &#39;followers_count&#39;: 1715622L, &#39;id&#39;: 1288429914, &#39;description&#39;: u&#39;\u6c5f\u897f\u536b\u89c6\u4e92\u52a8\u5fae\u535a\uff0c\u52aa\u529b\u642d\u5efa\u7535\u89c6\u4e0e\u89c2\u4f17\u96f6\u8ddd\u79bb\u4ea4\u6d41\u5e73\u53f0\u3002\u66f4\u591a\u8282\u76ee\u52a8\u6001\u8bf7\u767b\u5f55\u6211\u4eec\u5b98\u65b9\u7f51\u7ad9\u67e5\u770bwww.cjxtv.com\uff1b\u90ae\u7bb1\uff1ajxtv@188.com&#39;}, {&#39;bi_followers_count&#39;: 848L, &#39;statuses_count&#39;: 23625L, &#39;name&#39;: u&#39;\u6d4e\u5357\u516c\u5b89&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1702549133/50/22849053164/1&#39;, &#39;followers_count&#39;: 1643837L, &#39;id&#39;: 1702549133, &#39;description&#39;: u&#39;\u6211\u4eec\u5728\u60a8\u8eab\u8fb9\uff01&#39;}, {&#39;bi_followers_count&#39;: 633L, &#39;statuses_count&#39;: 10415L, &#39;name&#39;: u&#39;\u5317\u4eac\u9752\u8054&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2081773115/50/5597481490/1&#39;, &#39;followers_count&#39;: 1634156L, &#39;id&#39;: 2081773115, &#39;description&#39;: u&#39;\u5317\u4eac\u5e02\u9752\u5e74\u8054\u5408\u4f1a\uff08BEIJING YOUTH FEDERATION\uff09\u7b80\u79f0\u4e3a\u5317\u4eac\u5e02\u9752\u8054\u6216\u5317\u4eac\u9752\u8054\uff08BYF\uff09,\u662f\u4e2d\u56fd\u5171\u4ea7\u515a\u9886\u5bfc\u4e0b\u7684\u5317\u4eac\u5e02\u57fa\u672c\u4eba\u6c11\u56e2\u4f53\uff0c\u662f\u4ee5\u5317\u4eac\u5171\u9752\u56e2\u4e3a\u6838\u5fc3\u2026&#39;}, {&#39;bi_followers_count&#39;: 1995L, &#39;statuses_count&#39;: 6416L, &#39;name&#39;: u&#39;\u7f57\u5d07\u654f&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2419062270/50/40008342692/1&#39;, &#39;followers_count&#39;: 1594220L, &#39;id&#39;: 2419062270, &#39;description&#39;: u&#39;\u7f57\u5d07\u654f\u767e\u5ea6\u767e\u79d1http://baike.baidu.com/view/795144.htm&#39;}, {&#39;bi_followers_count&#39;: 343L, &#39;statuses_count&#39;: 16739L, &#39;name&#39;: u&#39;\u5357\u98ce\u7a97&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1645578093/50/40030983955/1&#39;, &#39;followers_count&#39;: 1572271L, &#39;id&#39;: 1645578093, &#39;description&#39;: u&#39;\u5357\u98ce\u7a97\u6742\u5fd7\u521b\u520a\u4e8e1985\u5e74\uff0c\u603b\u90e8\u4f4d\u4e8e\u5e7f\u5dde\uff0c\u96b6\u5c5e\u4e8e\u4e2d\u56fd\u7b2c\u4e00\u5927\u62a5\u4e1a\u96c6\u56e2\u2014\u2014\u5e7f\u5dde\u65e5\u62a5\u62a5\u4e1a\u96c6\u56e2\u3002\u53cc\u5468\u51fa\u7248\uff0c\u662f\u4e2d\u56fd\u53d1\u884c\u91cf\u6700\u5927\u7684\u653f\u7ecf\u65b0\u95fb\u6742\u5fd7\u3002&#39;}, {&#39;bi_followers_count&#39;: 398L, &#39;statuses_count&#39;: 2160L, &#39;name&#39;: u&#39;\u970d\u5c14\u8328&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1899886225/50/5667886828/1&#39;, &#39;followers_count&#39;: 1564639L, &#39;id&#39;: 1899886225, &#39;description&#39;: u&#39;\u970d\u5c14\u8328\u4ea7\u54c1\u5b9a\u4f4d\u4e8e\u4e2d\u9ad8\u7aef \u970d\u5c14\u8328\u662f\u4e13\u4e1a\u81f4\u529b\u4e8e\u5fb7\u5f0f\u201cT\u201d\u578b\u95e8\u5236\u9020\u4e0e\u9500\u552e\u7684\u9876\u7ea7\u54c1\u724c\uff0c\u51ed\u501f\u5353\u8d8a\u7684\u8d28\u91cf\u63a7\u5236\u80fd\u529b\u548c\u4e0e\u56fd\u9645\u540c\u6b65\u7684\u6280\u672f\u7814\u53d1\u80fd\u529b\uff0c\u4e3a\u6d88\u8d39\u516c...&#39;}, {&#39;bi_followers_count&#39;: 1672L, &#39;statuses_count&#39;: 3292L, &#39;name&#39;: u&#39;\u5317\u4eac\u751f\u6d3b\u7cbe\u9009&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2824513774/50/40009998367/1&#39;, &#39;followers_count&#39;: 1543040L, &#39;id&#39;: 2824513774, &#39;description&#39;: u&#39;\u5317\u4eac\u6700\u5927\u7684\u751f\u6d3b\u5206\u4eab\u5e73\u53f0\uff1b\u5317\u4eac\u751f\u6d3b\uff0c\u5317\u4eac\u65c5\u6e38\uff0c\u5317\u4eac\u7f8e\u98df\uff0c\u5317\u4eac\u65b0\u95fb\uff0c\u5317\u4eac\u5403\u559d\u73a9\u4e50\u8baf\u606f\u3001\u6b22\u8fce\u79c1\u4fe1\u7206\u6599\u6295\u7a3f\uff01&#39;}, {&#39;bi_followers_count&#39;: 511L, &#39;statuses_count&#39;: 40509L, &#39;name&#39;: u&#39;\u534e\u897f\u90fd\u5e02\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1496814565/50/40021818468/1&#39;, &#39;followers_count&#39;: 1482247L, &#39;id&#39;: 1496814565, &#39;description&#39;: u&#39;\u4e2d\u56fd\u7b2c\u4e00\u5f20\u90fd\u5e02\u62a5\u3001\u897f\u90e8\u7b2c\u4e00\u4e3b\u6d41\u5927\u62a5\u2014\u2014\u534e\u897f\u90fd\u5e02\u62a5\u5b98\u65b9\u5fae\u535a&#39;}, {&#39;bi_followers_count&#39;: 101L, &#39;statuses_count&#39;: 4986L, &#39;name&#39;: u&#39;\u5927\u664b\u826f\u54c1\u4e1d\u5dfe&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2751630801/50/5671355059/1&#39;, &#39;followers_count&#39;: 1487919L, &#39;id&#39;: 2751630801, &#39;description&#39;: u&#39;\u4e1d \u8695\u4e1d \u6851\u8695\u4e1d \u65f6\u5c1a\u5927\u6c14 \u65f6\u5c1a\u5973\u795e \u98ce\u9761\u5168\u7403 \u65f6\u5c1a\u7ecf\u5178 \u65f6\u5c1a\u6f6e\u6d41 \u7537\u4eba\u5973\u4eba \u6211\u7684\u65f6\u5c1a TEL 13731086866&#39;}, {&#39;bi_followers_count&#39;: 311L, &#39;statuses_count&#39;: 5139L, &#39;name&#39;: u&#39;\u6742\u8c08\u5fae\u5427&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2155226773/50/5661758861/1&#39;, &#39;followers_count&#39;: 1407979L, &#39;id&#39;: 2155226773, &#39;description&#39;: u&#39;\u70b9\u6b64\u8fdb\u5165\u6742\u8c08\u5fae\u5427\uff1a\nhttp://weiba.weibo.com/zatanba \n@\u6742\u8c08\u5fae\u5427 \u6bcf\u65e5\u63a8\u8350\u5427\u5185\u7cbe\u534e\uff0c\u671f\u5f85\u60a8\u7684\u4f73\u4f5c\uff01\n\u3010\u7206\u6599\u70ed\u7ebf\u3011\nweibabaoliao@sina.cn&#39;}, {&#39;bi_followers_count&#39;: 127L, &#39;statuses_count&#39;: 2767L, &#39;name&#39;: u&#39;95013\u4e91\u53f7&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/2851002164/50/5661927785/0&#39;, &#39;followers_count&#39;: 1370477L, &#39;id&#39;: 2851002164, &#39;description&#39;: u&#39;95013\u4e91\u53f7\u662f\u6b3e\u795e\u5947\u7684\u4e00\u673a\u591a\u53f7\u901a\u8bdd\u8f6f\u4ef6\uff08\u975e\u7f51\u7edc\u7535\u8bdd\uff09\uff0c\u53ef\u4ee5\u5728\u4e0d\u66f4\u6362\u539f\u6709\u624b\u673a\u53f7\u53ca\u901a\u8baf\u8bbe\u5907\u7684\u57fa\u7840\u4e0a\u4e3a\u60a8\u514d\u8d39\u63d0\u4f9b\u4e00\u4e2a95013\u5f00\u5934\u768413\u4f4d\u771f...&#39;}, {&#39;bi_followers_count&#39;: 397L, &#39;statuses_count&#39;: 189667L, &#39;name&#39;: u&#39;CCTV\u8bc1\u5238\u8d44\u8baf\u535a\u89c8&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2032139271/50/5662077959/1&#39;, &#39;followers_count&#39;: 1174895L, &#39;id&#39;: 2032139271, &#39;description&#39;: u&#39;\u8fd9\u91cc\u662f\u300aCCTV\u8bc1\u5238\u8d44\u8baf\u9891\u9053\u300b\u8d22\u7ecf\u5fae\u76f4\u64ad\uff0c\u672c\u535a\u4ec5\u4ee3\u8868\u8282\u76ee\u5c0f\u7ec4\uff0c\u4e0d\u4ee3\u8868\u5b98\u65b9\u9891\u9053\u89c2\u70b9\u3002 \u672c\u535a\u8d44\u8baf\u4ec5\u4f9b\u53c2\u8003\uff0c\u98ce\u9669\u81ea\u8d1f\u3002&#39;}, {&#39;bi_followers_count&#39;: 198L, &#39;statuses_count&#39;: 31440L, &#39;name&#39;: u&#39;\u91cd\u5e86\u5546\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1884334303/50/40029811485/1&#39;, &#39;followers_count&#39;: 1320288L, &#39;id&#39;: 1884334303, &#39;description&#39;: u&#39;\u7b2c\u4e00\u624b\u7684\u521b\u5bcc\u4fe1\u606f\uff0c\u91cd\u5e86\u6700\u6743\u5a01\u7684\u7ecf\u6d4e\u62a5\u9053\uff0c\u6700\u5feb\u7684\u90fd\u5e02\u65b0\u95fb\uff0c\u6211\u4eec\u8ffd\u6c42\u7ed9\u60a8\u6700\u6709\u7528\u7684\u65b0\u95fb\u3002&#39;}, {&#39;bi_followers_count&#39;: 652L, &#39;statuses_count&#39;: 18146L, &#39;name&#39;: u&#39;\u5317\u4eac\u9752\u5e74\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1749990115/50/5661696695/1&#39;, &#39;followers_count&#39;: 1327380L, &#39;id&#39;: 1749990115, &#39;description&#39;: u&#39;\u65b0\u95fb\u70ed\u7ebf\uff1a65902020\uff1b\u53d1\u884c\u70ed\u7ebf\uff1a67756666\uff1b\u5fae\u4fe1\u516c\u4f17\u8d26\u53f7\uff1abeijingqingnianbao&#39;}, {&#39;bi_followers_count&#39;: 361L, &#39;statuses_count&#39;: 6520L, &#39;name&#39;: u&#39;\u4e07\u8fbe\u5e7f\u573a&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2607667467/50/5635694074/1&#39;, &#39;followers_count&#39;: 1331903L, &#39;id&#39;: 2607667467, &#39;description&#39;: u&#39;\u4e2d\u56fd\u5546\u4e1a\u5730\u4ea7\u7b2c\u4e00\u54c1\u724c \r\n\u4e00\u5ea7\u4e07\u8fbe\u5e7f\u573a\uff0c\u4e00\u4e2a\u57ce\u5e02\u4e2d\u5fc3&#39;}, {&#39;bi_followers_count&#39;: 385L, &#39;statuses_count&#39;: 7123L, &#39;name&#39;: u&#39;\u98ce\u6d41\u6c38\u4e0d\u8001&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1777807805/50/22837925937/1&#39;, &#39;followers_count&#39;: 1311818L, &#39;id&#39;: 1777807805, &#39;description&#39;: u&#39;\u624d\u534e\u51fa\u4f17,\u81ea\u6210\u4e00\u6d3e,\u4e0d\u62d8\u6ce5\u4e8e\u793c\u6559\uff0c\u662f\u771f\u540d\u58eb\u81ea\u98ce\u6d41\u3002\u6570\u98ce\u6d41\u4eba\u7269,\u8fd8\u770b\u4eca\u671d\uff01&#39;}, {&#39;bi_followers_count&#39;: 303L, &#39;statuses_count&#39;: 50209L, &#39;name&#39;: u&#39;\u8d22\u65b0\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1663937380/50/5662096328/1&#39;, &#39;followers_count&#39;: 1261843L, &#39;id&#39;: 1663937380, &#39;description&#39;: u&#39;\u8d22\u65b0\u7f51\uff08www.caixin.com)\u2014\u2014 \u539f\u521b\u8d22\u7ecf\u65b0\u5a92\u4f53   \u6709\u673a\u6574\u5408\u8d44\u8baf\u3001\u89c2\u70b9\u3001\u591a\u5a92\u4f53\u3001\u4e92\u52a8\u7b49\u4fe1\u606f\u65f6\u4ee3\u5f62\u6001\u4e30\u5bcc\u7684\u8d44\u8baf\u4ea7\u54c1\uff0c\u4ee5\u5ba2\u89c2\u3001\u4e13\u4e1a\u7684\u89c6\u89d2\uff0c7\u592924\u5c0f\u65f6\u8f93\u51fa\u2026&#39;}, {&#39;bi_followers_count&#39;: 585L, &#39;statuses_count&#39;: 11074L, &#39;name&#39;: u&#39;\u738b\u4e8e\u4eac&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1729736051/50/40018551765/1&#39;, &#39;followers_count&#39;: 1299074L, &#39;id&#39;: 1729736051, &#39;description&#39;: u&#39;\u575a\u6301\u516c\u5e73\u516c\u6b63\u516c\u7406&#39;}, {&#39;bi_followers_count&#39;: 1998L, &#39;statuses_count&#39;: 10532L, &#39;name&#39;: u&#39;\u77f3\u8ff0\u601d&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1338738570/50/5614419105/1&#39;, &#39;followers_count&#39;: 1291287L, &#39;id&#39;: 1338738570, &#39;description&#39;: u&#39;\u610f\u601d\u6bd4\u610f\u4e49\u91cd\u8981&#39;}, {&#39;bi_followers_count&#39;: 820L, &#39;statuses_count&#39;: 20224L, &#39;name&#39;: u&#39;\u4e0a\u94c1\u8d44\u8baf&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1919688583/50/40021734474/1&#39;, &#39;followers_count&#39;: 1262573L, &#39;id&#39;: 1919688583, &#39;description&#39;: u&#39;\u8ba9\u98de\u9a70\u7684\u5217\u8f66\u62c9\u8fd1\u4f60\u6211\u8ddd\u79bb\uff1b\u8ba9\u6e29\u99a8\u7684\u670d\u52a1\u76f8\u4f34\u6f2b\u6f2b\u65c5\u7a0b\u3002\u8fd9\u91cc\u662f\u4e0a\u6d77\u94c1\u8def\u5c40\u5b98\u65b9\u5fae\u535a\uff0c\u6211\u4eec\u5c06\u7aed\u8bda\u4e3a\u60a8\u63d0\u4f9b\u4e30\u5bcc\u5b9e\u7528\u7684\u670d\u52a1\u8d44\u8baf\u3002\u6b22\u8fce\u60a8\u7684\u5173\u6ce8\uff01\u5ba2\u670d\u70ed\u7ebf\u2026&#39;}, {&#39;bi_followers_count&#39;: 1971L, &#39;statuses_count&#39;: 19823L, &#39;name&#39;: u&#39;\u91d1\u9675\u665a\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1774181624/50/5662105354/0&#39;, &#39;followers_count&#39;: 1253095L, &#39;id&#39;: 1774181624, &#39;description&#39;: u&#39;\u5357\u4eac\u57ce\u5e02\u6587\u5316\u540d\u7247 | \u90fd\u5e02\u5708\u6700\u5177\u5f71\u54cd\u529b\u62a5\u7eb8&#39;}, {&#39;bi_followers_count&#39;: 142L, &#39;statuses_count&#39;: 8359L, &#39;name&#39;: u&#39;\u6c88\u9633\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2760402625/50/22852314943/1&#39;, &#39;followers_count&#39;: 1254282L, &#39;id&#39;: 2760402625, &#39;description&#39;: u&#39;\u6c88\u9633\uff0c\u4e00\u4e2a\u7115\u53d1\u4e86\u9752\u6625\u4e0e\u6d3b\u529b\u7684\u57ce\u5e02\uff01\u4f5c\u4e3a\u5386\u53f2\u6587\u5316\u540d\u57ce\u3001\u4e2d\u56fd\u88c5\u5907\u5236\u9020\u4e1a\u57fa\u5730\u3001\u6700\u5177\u6d3b\u529b\u4e4b\u90fd\u3001\u751f\u6001\u5b9c\u5c45\u57ce\u5e02\uff0c\u5e78\u798f\u6c88\u9633\u4e0e\u60a8\u5171\u4eab\u7f8e\u597d\u751f\u6d3b\u3002\u8fd9\u91cc\u662f\u6c88\u9633\u5e02\u2026&#39;}, {&#39;bi_followers_count&#39;: 1342L, &#39;statuses_count&#39;: 34800L, &#39;name&#39;: u&#39;\u603b\u88c1\u8bed\u5f55&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1940798632/50/5676634565/1&#39;, &#39;followers_count&#39;: 1221176L, &#39;id&#39;: 1940798632, &#39;description&#39;: u&#39;None&#39;}, {&#39;bi_followers_count&#39;: 48L, &#39;statuses_count&#39;: 2355L, &#39;name&#39;: u&#39;\u8bdd\u9898&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2807295185/50/5661825188/0&#39;, &#39;followers_count&#39;: 1252353L, &#39;id&#39;: 2807295185, &#39;description&#39;: u&#39;\uff08\u4e00\uff09\nQ\uff1a\u4e3a\u4ec0\u4e48\u6211\u770b\u4e0d\u5230\u7533\u8bf7\u6309\u94ae\uff1f\nA\uff1a\u76ee\u524d\u8bdd\u9898\u4e3b\u6301\u4eba\u7533\u8bf7\u4ec5\u5411\u5fae\u535a\u8fbe\u4eba\u3001\u8ba4\u8bc1\u7528\u6237\u5f00\u653e\uff0c\u4e0d\u6ee1\u8db3\u7684\u7f51\u53cb\u5c06\u65e0\u6cd5\u7533\u8bf7\u3002\n\uff08\u4e8c\uff09\nQ\uff1a\u4e3a\u4ec0\u4e48\u6211\u70b9...&#39;}, {&#39;bi_followers_count&#39;: 2399L, &#39;statuses_count&#39;: 6743L, &#39;name&#39;: u&#39;\u4e0a\u6d77\u5f90\u6c47\u7075\u7075&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1977002641/50/5631112344/0&#39;, &#39;followers_count&#39;: 1226684L, &#39;id&#39;: 1977002641, &#39;description&#39;: u&#39;\u70ed\u60c5,\u6d3b\u6cfc,\u5f00\u6717,\u7387\u771f,\u70ed\u7231\u751f\u6d3b,\u66f4\u70ed\u7231\u4ea4\u901a\u6e2f\u822a\u4e8b\u4e1a!&#39;}, {&#39;bi_followers_count&#39;: 72L, &#39;statuses_count&#39;: 3474L, &#39;name&#39;: u&#39;\u56db\u5ddd\u536b\u89c6&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2042019413/50/40023138147/1&#39;, &#39;followers_count&#39;: 1229153L, &#39;id&#39;: 2042019413, &#39;description&#39;: u&#39;\u201c\u5fc3\u6709\u754c\uff0c\u7231\u65e0\u7586\u201d\uff0c\u56db\u5ddd\u536b\u89c6\u4ee5\u5021\u5bfc\u5927\u7231\u4e3a\u5df1\u4efb\uff0c\u7528\u7231\u7684\u89c6\u89d2\uff0c\u4e3a\u5e7f\u5927\u89c2\u4f17\u6253\u9020\u4e00\u4e2a\u51dd\u805a\u529b\u91cf\u3001\u627f\u8f7d\u8d23\u4efb\u3001\u5851\u9020\u7cbe\u795e\u3001\u5f18\u626c\u6b63\u4e49\u7684\u4f18\u8d28\u5a92\u4ecb\uff0c\u6210\u4e3a\u4f20\u64ad\u4e2d\u56fd\u7231\u2026&#39;}, {&#39;bi_followers_count&#39;: 545L, &#39;statuses_count&#39;: 1137L, &#39;name&#39;: u&#39;\u5e7f\u5dde\u5403\u559d\u73a9\u4e50\u8d2d\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2090373675/50/40024592823/0&#39;, &#39;followers_count&#39;: 1226171L, &#39;id&#39;: 2090373675, &#39;description&#39;: u&#39;\u5e7f\u4e1c\u4eba\u5728\u5e7f\u5dde \u8354\u6e7e \u8d8a\u79c0 \u767d\u4e91 \u756a\u79ba \u5929\u6cb3 \u6d77\u73e0 \u9ec4\u57d4 \u82b1\u90fd \u841d\u5c97 \u5357\u6c99 \u589e\u57ce \u4ece\u5316&#39;}, {&#39;bi_followers_count&#39;: 1995L, &#39;statuses_count&#39;: 88815L, &#39;name&#39;: u&#39;\u6c88\u9633\u665a\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1280846847/50/22841533897/0&#39;, &#39;followers_count&#39;: 1113766L, &#39;id&#39;: 1280846847, &#39;description&#39;: u&#39;\u65b0\u95fb\u62a5\u6599\uff1a024-96009  &lt;br /&gt;\n&lt;br /&gt;\n\u53d1\u884c\u670d\u52a1\uff1a024-22933333  &lt;br /&gt;\n&lt;br /&gt;\n\u5fae\u535a\u4e92\u52a8QQ\u7fa4\uff1a78311711  &lt;br /&gt;\n&lt;br /&gt;\n\u672c\u535a\u7535\u8bdd\uff1a024-22690304&#39;}, {&#39;bi_followers_count&#39;: 244L, &#39;statuses_count&#39;: 10076L, &#39;name&#39;: u&#39;139\u90ae\u7bb1&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1869216200/50/40021497892/1&#39;, &#39;followers_count&#39;: 1184426L, &#39;id&#39;: 1869216200, &#39;description&#39;: u&#39;\u4e2d\u56fd\u79fb\u52a8139\u90ae\u7bb1 \r\n\u624b\u673a\u90ae\u7bb1\u7b2c\u4e00\u54c1\u724c\r\n\u624b\u673a\u8bbf\u95ee\uff1ay.10086.cn\r\n\u7f51\u9875\u8bbf\u95ee\uff1amail.10086.cn&#39;}, {&#39;bi_followers_count&#39;: 402L, &#39;statuses_count&#39;: 10987L, &#39;name&#39;: u&#39;\u5929\u6d25\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2489610225/50/22841680850/1&#39;, &#39;followers_count&#39;: 1178281L, &#39;id&#39;: 2489610225, &#39;description&#39;: u&#39;\u5728\u6d77\u6cb3\u548c\u6d77\u6d0b\u6587\u5316\u7684\u54fa\u80b2\u4e0b\uff0c\u5929\u6d25\u4ee5\u9ad8\u5ea6\u5f00\u653e\u7684\u59ff\u6001\u878d\u5165\u4e16\u754c\u7ecf\u6d4e\u53d1\u5c55\u7684\u5927\u683c\u5c40\uff0c\u6b63\u5728\u5411\u72ec\u5177\u7279\u8272\u7684\u56fd\u9645\u6027\u3001\u73b0\u4ee3\u5316\u5b9c\u5c45\u57ce\u5e02\u8fc8\u8fdb\u3002\u8fd9\u91cc\u662f\u5929\u6d25\u5e02\u653f\u5e9c\u65b0\u95fb\u529e\u2026&#39;}, {&#39;bi_followers_count&#39;: 929L, &#39;statuses_count&#39;: 9693L, &#39;name&#39;: u&#39;\u7ca4\u84b2\u7ca4\u641e\u91ce&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1671268762/50/5638426161/0&#39;, &#39;followers_count&#39;: 1173417L, &#39;id&#39;: 1671268762, &#39;description&#39;: u&#39;\u7ca4\u8bed\u5730\u533a\u6700\u5730\u9053\u6700\u597d\u73a9\u5605\u5fae\u535a\u3002\u5b9a\u671f\u7ec4\u7ec7\u7279\u8272\u6d3b\u52a8\uff0c\u5fae\u4fe1\u53f7\uff1aGZ_2898168 \u5927\u5bb6\u5feb\u52a0\u6211\u5566\uff01&#39;}, {&#39;bi_followers_count&#39;: 71L, &#39;statuses_count&#39;: 3430L, &#39;name&#39;: u&#39;\u5b6b\u589e\u6f64&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/2114296240/50/5659058856/1&#39;, &#39;followers_count&#39;: 1169911L, &#39;id&#39;: 2114296240, &#39;description&#39;: u&#39;\u4e3e\u5343\u65a4\u82e5\u625b\u4e00\u7fbd\uff0c\u6000\u5929\u4e0b\u82e5\u6367\u4e00\u82a5\uff01\u62e5\u4e07\u7269\u82e5\u643a\u5fae\u6beb\uff01&#39;}, {&#39;bi_followers_count&#39;: 371L, &#39;statuses_count&#39;: 32649L, &#39;name&#39;: u&#39;\u73af\u7403\u65f6\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1974576991/50/5662090891/1&#39;, &#39;followers_count&#39;: 1125185L, &#39;id&#39;: 1974576991, &#39;description&#39;: u&#39;\u62a5\u9053\u591a\u5143\u4e16\u754c    \u89e3\u8bfb\u590d\u6742\u4e2d\u56fd&#39;}, {&#39;bi_followers_count&#39;: 209L, &#39;statuses_count&#39;: 5055L, &#39;name&#39;: u&#39;\u56fd\u8d44\u5c0f\u65b0&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2752396553/50/5662077661/1&#39;, &#39;followers_count&#39;: 1143323L, &#39;id&#39;: 2752396553, &#39;description&#39;: u&#39;\u9080\u60a8\u4e00\u8d77\u53c2\u4e0e\u56fd\u8d44\u76d1\u7763\u4e0e\u7ba1\u7406 \u548c\u60a8\u4e00\u8d77\u5173\u6ce8\u56fd\u4f01\u6539\u9769\u4e0e\u53d1\u5c55&#39;}, {&#39;bi_followers_count&#39;: 254L, &#39;statuses_count&#39;: 71939L, &#39;name&#39;: u&#39;\u8fbd\u6c88\u665a\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1801817195/50/22841774988/1&#39;, &#39;followers_count&#39;: 1074363L, &#39;id&#39;: 1801817195, &#39;description&#39;: u&#39;\u4e1c\u5317\u7b2c\u4e00\u90fd\u5e02\u62a5\uff0c\u6c88\u9633\u62a5\u4e1a\u96f6\u552e\u5e02\u573a\u4efd\u989d\u7b2c\u4e00\uff0c\u8d85\u7b2c\u4e8c\u540d11\u767e\u5206\u70b9\uff1b\u8ba2\u9605\u5e02\u573a\u4efd\u989d\u7b2c\u4e00\uff0c\u8d85\u7b2c\u4e8c\u540d30\u767e\u5206\u70b9\uff1b\u8bfb\u8005\u6ee1\u610f\u5ea6\u6700\u9ad8\u7684\u62a5\u7eb8\u3002\u65b0\u95fb\u70ed\u7ebf\uff1a024-96006\u3002&#39;}, {&#39;bi_followers_count&#39;: 588L, &#39;statuses_count&#39;: 5482L, &#39;name&#39;: u&#39;\u4e2d\u56fd\u7535\u4fe1\u6cb3\u5357\u5ba2\u670d&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1974230380/50/5678752769/0&#39;, &#39;followers_count&#39;: 1135122L, &#39;id&#39;: 1974230380, &#39;description&#39;: u&#39;\u60a8\u6709\u4efb\u4f55\u95ee\u9898\u3001\u610f\u89c1\u6216\u5efa\u8bae\uff0c\u8bf7\u62e810000\u53f7\u6216\u767b\u5f55\u7f51\u4e0a\u8425\u4e1a\u5385ha.ct10000.com\u8fd8\u53ef\u4ee5\u901a\u8fc7\u60a8\u7684QQ\u6dfb\u52a0800010000\uff08QQ\u5ba2\u670d...&#39;}, {&#39;bi_followers_count&#39;: 973L, &#39;statuses_count&#39;: 16599L, &#39;name&#39;: u&#39;\u4e1c\u65b9\u4eca\u62a5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1672519561/50/5661763915/1&#39;, &#39;followers_count&#39;: 1122953L, &#39;id&#39;: 1672519561, &#39;description&#39;: u&#39;\u548c\u4f60\u4e00\u8d77\u770b\u89c1 \u8fd9\u91cc\u662f\u65b0\u9510\u7684\u5168\u5a92\u4f53\u62a5\u7eb8\u2014\u4e1c\u65b9\u4eca\u62a5 \u4e2d\u56fd\u5341\u5927\u4f20\u64ad\u529b\u90fd\u5e02\u62a5 \u6cb3\u5357\u57ce\u5e02\u53d1\u884c\u7b2c\u4e00\u62a5 \u6211\u4eec\u7528\u6700\u597d\u770b\u7684\u65b0\u95fb \u6700\u6e29\u6696\u7684\u5173\u6ce8 \u4e0e\u6cb3\u535718\u5ea7\u57ce\u5e02\u4e00\u8d77\u5954\u8dd1&#39;}, {&#39;bi_followers_count&#39;: 848L, &#39;statuses_count&#39;: 19317L, &#39;name&#39;: u&#39;\u5546\u90fd\u7f51&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1732480923/50/5662424336/1&#39;, &#39;followers_count&#39;: 1113990L, &#39;id&#39;: 1732480923, &#39;description&#39;: u&#39;\u5546\u90fd\u7f51\uff08www.shangdu.com\uff09\uff0c\u6cb3\u5357\u95e8\u6237\u7f51\u7ad9\uff0c\u6cb3\u5357\u7b2c\u4e00\u7f51\u7edc\u5a92\u4f53\uff0c\u662f\u4e2d\u539f\u5730\u533a\u6210\u7acb\u6700\u65e9\u3001\u5f71\u54cd\u529b\u6700\u5f3a\u3001\u8bbf\u95ee\u91cf\u6700\u5927\u7684\u7efc\u5408\u6027\u95e8\u6237\u7f51\u7ad9\uff0c\u662f\u6cb3\u5357\u7701\u6700\u5927\u7684\u7f51\u7edc\u2026&#39;}, {&#39;bi_followers_count&#39;: 1962L, &#39;statuses_count&#39;: 8480L, &#39;name&#39;: u&#39;\u756a\u79ba\u6c47&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1933565760/50/5635814501/0&#39;, &#39;followers_count&#39;: 1117166L, &#39;id&#39;: 1933565760, &#39;description&#39;: u&#39;\u70b9\u6ef4\u5206\u4eab\uff0c\u53d1\u73b0\u751f\u6d3b\uff01\u756a\u79ba\u6c47 \u5fae\u5206\u4eab\u5e73\u53f0&#39;}, {&#39;bi_followers_count&#39;: 315L, &#39;statuses_count&#39;: 1067L, &#39;name&#39;: u&#39;\u6df1\u5733\u5403\u559d\u73a9\u4e50\u751f\u6d3b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1816835210/50/40008777030/1&#39;, &#39;followers_count&#39;: 1120196L, &#39;id&#39;: 1816835210, &#39;description&#39;: u&#39;\u2764\u10e6\u2661\u6700IN\uff0c\u6700\u6f6e\uff0c\u6700\u5febShen Zhen Life \u5c31\u5728\u8fd9\u91cc\u2661 \u5408\u4f5cQQ\uff1a671146682&#39;}, {&#39;bi_followers_count&#39;: 287L, &#39;statuses_count&#39;: 13895L, &#39;name&#39;: u&#39;\u77ad\u671b\u4e1c\u65b9\u5468\u520a&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1326410461/50/40022165433/1&#39;, &#39;followers_count&#39;: 1079704L, &#39;id&#39;: 1326410461, &#39;description&#39;: u&#39;\u65b0\u534e\u901a\u8baf\u793e\u4e3b\u7ba1 &lt;br /&gt;\n\u77ad\u671b\u5468\u520a\u793e\u4e3b\u529e &lt;br /&gt;\n\u7f51\u5740\uff1awww.lwdf.cn &lt;br /&gt;\n\u5173\u4e8e\u5fae\u535a\u7684\u610f\u89c1\u5efa\u8bae\uff0c\u8bf7\u53d1\u81f3\u90ae\u7bb1\uff1alwdf888@vip.126.com&#39;}, {&#39;bi_followers_count&#39;: 1999L, &#39;statuses_count&#39;: 61245L, &#39;name&#39;: u&#39;\u5b81\u7075&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1603143252/50/5622004581/1&#39;, &#39;followers_count&#39;: 1026967L, &#39;id&#39;: 1603143252, &#39;description&#39;: u&#39;\u9ad8\u6821\u6559\u6388\uff0c\u535a\u58eb\u751f\u5bfc\u5e08\uff0c\u5168\u56fd\u4f18\u79c0\u6559\u5e08\uff0c \u62ff\u81ea\u5df1\u7684\u5b66\u8bc6\u4e0e\u7f51\u53cb\u4ea4\u6d41\uff0c\u5411\u7f51\u53cb\u5b66\u4e60\u3002&#39;}, {&#39;bi_followers_count&#39;: 1690L, &#39;statuses_count&#39;: 13305L, &#39;name&#39;: u&#39;\u4e50\u6d3b\u5317\u4eac&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2094332313/50/5609026445/0&#39;, &#39;followers_count&#39;: 1061673L, &#39;id&#39;: 2094332313, &#39;description&#39;: u&#39;\u8fd9\u662f\u8001\u5317\u4eac\u7684\u6839\uff0c\u4e5f\u627f\u8f7d\u65e0\u6570\u5317\u6f02\u68a6\u3002\u8fd9\u6709\u5317\u4eac\u65b0\u95fb\u8d44\u8baf\uff0c\u5403\u559d\u73a9\u4e50\u60c5\u62a5\uff0c\u6700\u8349\u6839\u7684\u751f\u6d3b\u4f53\u9a8c\u3002\u540c\u57ce\u5e73\u53f0\uff0c\u7b49\u4f60\u5173\u6ce8\uff01&#39;}, {&#39;bi_followers_count&#39;: 399L, &#39;statuses_count&#39;: 2530L, &#39;name&#39;: u&#39;\u5f20\u56fd\u5e86\u770b\u5929\u4e0b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/1497042545/50/5657297535/1&#39;, &#39;followers_count&#39;: 1066955L, &#39;id&#39;: 1497042545, &#39;description&#39;: u&#39;\u4e2d\u56fd\u793e\u79d1\u9662\u7f8e\u56fd\u6240\u56fd\u9645\u95ee\u9898\u4e13\u5bb6\u3002\u8fd1\u8457\u6709\u300a\u5a92\u4f53\u8bdd\u8bed\u6743\u300b\u300a\u88ab\u6298\u817e\u7684\u4e16\u754c\u300b\u53ca\u968f\u60f3\u5f55\u300a\u5feb\u4e50\u624b\u4e66\u300b\u7b49\u3002\u672c\u5fae\u535a\u539f\u521b\u5185\u5bb9\uff0c\u5a92\u4f53\u5982\u9700\u8f6c\u8f7d\uff0c\u8bf7\u7535\u8bdd\u6216\u79c1\u4fe1\u8054\u7cfb\u3002&#39;}, {&#39;bi_followers_count&#39;: 139L, &#39;statuses_count&#39;: 4160L, &#39;name&#39;: u&#39;\u978d\u5c71\u53d1\u5e03&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2826139505/50/22841604510/0&#39;, &#39;followers_count&#39;: 1062512L, &#39;id&#39;: 2826139505, &#39;description&#39;: u&#39;\u94a2\u810a\u94c1\u9aa8\uff0c\u56fd\u8109\u7389\u6839\u3002\u786c\u6717\u5176\u8868\uff0c\u6e29\u6da6\u5176\u5fc3\u3002\u8fd9\u91cc\u662f\u978d\u5c71\u5e02\u59d4\u5ba3\u4f20\u90e8\u5b98\u65b9\u5fae\u535a\u2014\u2014\u6b22\u8fce\u4e92\u52a8\uff0c\u6709\u8bdd\u597d\u8bf4\u3002&#39;}, {&#39;bi_followers_count&#39;: 1649L, &#39;statuses_count&#39;: 1515L, &#39;name&#39;: u&#39;\u4e0a\u6d77\u70ed\u95e8\u5168\u641c\u7f57&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2949895402/50/5662086061/0&#39;, &#39;followers_count&#39;: 1062940L, &#39;id&#39;: 2949895402, &#39;description&#39;: u&#39;\u7f51\u7f57\u4e0a\u6d77\u70ed\u95e8\u8d44\u8baf\u3001\u5403\u559d\u73a9\u4e50\u653b\u7565\u3001\u5404\u79cd\u4e0a\u6d77\u70ed\u95e8\u8bdd\u9898\u8bf7\u5173\u6ce8@\u4e0a\u6d77\u70ed\u95e8\u5168\u641c\u7f57 \u6295\u7a3fQ\uff1a26300585&#39;}, {&#39;bi_followers_count&#39;: 210L, &#39;statuses_count&#39;: 4879L, &#39;name&#39;: u&#39;\u4ffa\u4eec\u4f3c\u5c71\u897f\u4ec1&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2514793111/50/5619049646/1&#39;, &#39;followers_count&#39;: 1060009L, &#39;id&#39;: 2514793111, &#39;description&#39;: u&#39;\u6ca1\u4ec0\u4e48\uff0c\u5c31\u662f\u559c\u6b22\u5230\u5904\u8f6c\u8f6c\uff0c\u6709\u597d\u7684\u5c31\u53d1\u4e0a\u6765\u3002\u7167\u5f97\u968f\u610f\uff0c\u53d1\u5f97\u968f\u65f6\u3002\u4f46\u5168\u771f\u8d27\uff0c\u597d\u4e0d\u597d\u5927\u5bb6\u770b\u5427\u3002\u4e0d\u6015\u62cd\u7816\uff0c\u5934\u76ae\u8f83\u786c\uff0c\u8138\u76ae\u8f83\u539a\uff0c\u54c8\u54c8\u54c8\uff0c\u4eb2\u4eec\u6765\u7c89\u5427\u3002&#39;}, {&#39;bi_followers_count&#39;: 1522L, &#39;statuses_count&#39;: 10483L, &#39;name&#39;: u&#39;\u90ed\u677e\u6c11&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/1065618283/50/40017205370/1&#39;, &#39;followers_count&#39;: 1045763L, &#39;id&#39;: 1065618283, &#39;description&#39;: u&#39;\u524d\u7a7a\u519b\u822a\u7a7a\u5175\u90e8\u961f\u98de\u884c\u5458\u3002\u4e2d\u56fd\u4f01\u4e1a\u6539\u9769\u4e0e\u53d1\u5c55\u7814\u7a76\u4f1a\u4f1a\u5458\u3002\u7b2c15\u5c4a\u201c\u4e2d\u56fd\u65b0\u95fb\u5956\u201d\u4e00\u7b49\u5956\u83b7\u5f97\u8005\u3002\u7f51\u7edc\u3001\u7eb8\u5a92\u548c\u7535\u89c6\u8bc4\u8bba\u5458\u3002&#39;}, {&#39;bi_followers_count&#39;: 827L, &#39;statuses_count&#39;: 32362L, &#39;name&#39;: u&#39;\u98de\u5e38\u51c6&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1743757504/50/40021822730/1&#39;, &#39;followers_count&#39;: 1024466L, &#39;id&#39;: 1743757504, &#39;description&#39;: u&#39;\u8bd5\u8bd5\u7528\uff1a\r\n\u822a\u73ed\u53f7@\u98de\u5e38\u51c6\r\n\u57ce\u5e02@\u98de\u5e38\u51c6\r\n\u5ba2\u670d\u7535\u8bdd\uff1a0551-62319112\r\n\u5546\u52a1\u5408\u4f5c\uff1a0551-62679001\r\n\u66f4\u591a\u8bf7\u8bbf\u95ee...&#39;}, {&#39;bi_followers_count&#39;: 2883L, &#39;statuses_count&#39;: 20698L, &#39;name&#39;: u&#39;\u7f51\u4e0a\u89e3\u653e\u7891-\u674e\u6ee8\u8679&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/1810465684/50/40017121374/1&#39;, &#39;followers_count&#39;: 1019985L, &#39;id&#39;: 1810465684, &#39;description&#39;: u&#39;\u79fb\u52a8APP\u5f00\u53d1 360\u641c\u72d7\u8c37\u6b4c\u641c\u7d22 \u5fae\u535a\u8425\u9500 \u7f51\u5740\u57df\u540d \u53ef\u4fe1\u7f51\u7ad9 \u7f51\u7ad9\u5907\u6848 \u7f51\u7edc\u8425\u9500 \u7535\u5b50\u5546\u52a1 \u7f51\u7edc\u8c03\u67e5 \u667a\u4f73\u79d1\u6280-\u7f51\u4e0a\u89e3\u653e\u7891(http://www.cqhot.cn)&#39;}, {&#39;bi_followers_count&#39;: 2000L, &#39;statuses_count&#39;: 16176L, &#39;name&#39;: u&#39;\u56db\u5ddd\u53f8\u6cd5&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/1897723622/50/40021819156/1&#39;, &#39;followers_count&#39;: 1024634L, &#39;id&#39;: 1897723622, &#39;description&#39;: u&#39;\u6839\u636e\u300a\u4e2d\u5171\u56db\u5ddd\u7701\u59d4 \u56db\u5ddd\u7701\u4eba\u6c11\u653f\u5e9c\u5173\u4e8e\u5370\u53d1\u3008\u56db\u5ddd\u7701\u4eba\u6c11\u653f\u5e9c\u673a\u6784\u6539\u9769\u65b9\u6848\u3009\u548c\u3008\u5173\u4e8e\u56db\u5ddd\u7701\u4eba\u6c11\u653f\u5e9c\u673a\u6784\u6539\u9769\u65b9\u6848\u7684\u5b9e\u65bd\u610f\u89c1\u3009\u7684\u901a\u77e5\u300b\uff08\u5ddd\u59d4\u53d1\u3014200\u2026&#39;}, {&#39;bi_followers_count&#39;: 104L, &#39;statuses_count&#39;: 2292L, &#39;name&#39;: u&#39;\u5b85\u7537\u8150\u5973\u7684\u90a3\u4e9b\u4e8b&#39;, &#39;profile_image_url&#39;: u&#39;http://tp2.sinaimg.cn/2134975605/50/5645793770/0&#39;, &#39;followers_count&#39;: 1034535L, &#39;id&#39;: 2134975605, &#39;description&#39;: u&#39;\u9752\u6625\u5c31\u50cf\u9ebb\u5c06\uff0c\u8981\u4e48\u653e\u70ae\uff0c\u8981\u4e48\u81ea\u6478\u3002\u591a\u5c11\u5b85\u7537\u8150\u5973\uff0c\u51e0\u591a\u673a\u5173\u7b97\u5c3d\uff0c\u53ea\u4e3a\u4eab\u53d7\u63a8\u5012\u90a3\u4e00\u523b\u3002\u3002\u3002&#39;}, {&#39;bi_followers_count&#39;: 112L, &#39;statuses_count&#39;: 1078L, &#39;name&#39;: u&#39;\u5fae\u53cb&#39;, &#39;profile_image_url&#39;: u&#39;http://tp4.sinaimg.cn/2455291971/50/5662084631/1&#39;, &#39;followers_count&#39;: 1032717L, &#39;id&#39;: 2455291971, &#39;description&#39;: u&#39;\u5fae\u53cb\uff0c\u5728\u5bf9\u7684\u5730\u65b9\u9047\u5230\u5bf9\u7684\u4eba\r\n\u4e0b\u8f7d\u5730\u5740\uff1ahttp://liao.sina.cn/&#39;}, {&#39;bi_followers_count&#39;: 1014L, &#39;statuses_count&#39;: 1448L, &#39;name&#39;: u&#39;\u6700IN\u6210\u90fd&#39;, &#39;profile_image_url&#39;: u&#39;http://tp3.sinaimg.cn/2885896690/50/40021843302/0&#39;, &#39;followers_count&#39;: 1027975L, &#39;id&#39;: 2885896690, &#39;description&#39;: u&#39;\u6700IN\u7684\u7f8e\u98df\uff0c\u6700IN\u7684\u516b\u5366\uff0c\u6700IN\u7684\u751f\u6d3b\uff0c\u6700IN\u7684\u6210\u90fd\uff01\u6295\u7a3fQQ:26300585&#39;}, {&#39;bi_followers_count&#39;: 2429L, &#39;statuses_count&#39;: 2251L, &#39;name&#39;: u&#39;\u6211\u7231\u4f11\u95f2\u6210\u90fd&#39;, &#39;profile_image_url&#39;: u&#39;http://tp1.sinaimg.cn/2159781124/50/40021841559/0&#39;, &#39;followers_count&#39;: 1025511L, &#39;id&#39;: 2159781124, &#39;description&#39;: u&#39;\u5929\u5e9c\u4e4b\u56fd\uff0c\u4f11\u95f2\u4e4b\u90fd\uff0c\u5a31\u4e50\u7f8e\u98df\u6587\u5316\u65c5\u6e38\u65b0\u9c9c\u8d44\u8baf\u9f50\u5206\u4eab\uff01\uff01\uff01 @\u6211\u7231\u4f11\u95f2\u6210\u90fd \u4e0e\u4f60\u4e00\u8d77\u7f16\u7ec7\u6210\u90fd\u4eba\u7684\u5730\u9053\u751f\u6d3b~~~\u6295\u7a3f\u8054\u7cfbQQ\uff1a26300585&#39;}]';
+
+function getRankData(countperpage_args, limit_arg){
+    var total_page_number;
+    
+    $.ajax({
+        url: "/propagate/topic_rank/?page=1&countperpage=" + countperpage_args + "&limit=" + limit_arg + "&topic_id=17",
+        dataType: 'json',   
+        type: "GET",
+        success: function (data) {
+          total_page_number = parseInt(data['pages']);
+          var html = "";
+          for(var i=0;i < data['news'].length;i += 1){
+            user = data['news'][i];
+            console.log(user);
+            html += "<tr><td style='text-align:center;display:none;'>" + user['id'] + "</td>";
+            html += "<td style='text-align:center'><a target=\"_blank\" href=\"/profile/search/person?nickname=" + user['name'] +  "\">" + user['name'] +"</td>";
+            html += "<td style='text-align:center'>" + user['location'] + "</td>";
+            html += "<td style='text-align:center'>" + user['followers_count'] + "</td>";
+            html += "<td style='text-align:center'>" + user['bi_followers_count'] + "</td>";
+            html += "<td style='text-align:center'>" + user['statuses_count'] + "</td>";
+            html += "<td style='text-align:center'>" + user['domain'] + "</td>";
+            if(user['status'] == 1){
+              html += "<td><i class='icon-ok'></i></td>";
+            }
+            else{
+              html += "<td><i class='icon-remove'></i></td>";
+            }
+            html += '<td><input id="uid_'+ user['id'] + '" type="checkbox" name="now_user"></td></tr>';
+          }
+          $("#word_table").empty();
+          $("#word_table").append(html);
+          $('#page-selection').bootpag({
+              total: total_page_number,
+              maxVisible: 10
+          }).on("page", function(event, /* page number here */ num){
+            $("#word_table").empty();
+        $.ajax({
+            url: "/propagate/topic_rank/?page=" + num + "&countperpage=" + countperpage_args + "&limit=" + limit_arg+ "&topic_id=17",
+            dataType: 'json',   
+            type: "GET",
+            success: function (data) {
+              var html = "";
+              //var user_list = topic_key_user_list[data['start']:data['end']];
+              for(var i=0;i < data['news'].length;i += 1){
+                  user = data['news'][i];
+                  html += "<tr><td style='text-align:center;display:none;'>" + user['id'] + "</td>";
+                  html += "<td style='text-align:center'><a target=\"_blank\" href=\"/profile/search/person?nickname=" + user['name'] +  "\">" + user['name'] +"</td>";
+                  html += "<td style='text-align:center'>" + user['location'] + "</td>";
+                  html += "<td style='text-align:center'>" + user['followers_count'] + "</td>";
+                  html += "<td style='text-align:center'>" + user['bi_followers_count'] + "</td>";
+                  html += "<td style='text-align:center'>" + user['statuses_count'] + "</td>";
+                  html += "<td style='text-align:center'>" + user['domain'] + "</td>";
+                  if(user['status'] == 1){
+                    html += "<td><i class='icon-ok'></i></td>";
+                  }
+                  else{
+                    html += "<td><i class='icon-remove'></i></td>";
+                  }
+                  html += '<td><input id="uid_'+ user['id'] + '" type="checkbox" name="now_user"></td></tr>';
+              }
+              $("#word_table").append(html);
+            }
+        });
+      });
+    }
+  });
+}
+$(document).ready(function(){
+    
+    getRankData(countperpage_args, limit_arg);
+})
+
+function exportTableToCSV($table, filename) {
+                
+            //  alert(filename);
+                  var ta=$("#topic_table");  
+                  var $head = ta.find("thead");
+                  var $body = ta.find("tbody");
+                  var $r_head = $head.find("tr");
+                  var $rows = $body.find("tr");
+                  var tmpColDelim = String.fromCharCode(11); // vertical tab character
+                  var tmpRowDelim = String.fromCharCode(0); // null character
+
+              // actual delimiter characters for CSV format
+                  var colDelim = ",";
+                  var rowDelim = "\r\n";
+
+              // Grab text from table into CSV formatted string
+                  var c_head = $r_head.find("th");
+                  var csv_head = '';
+                  for(var count=0;count<(c_head.length-1);count++){ 
+                      if(count == (c_head.length-2)){
+                          csv_head = csv_head + c_head[count].innerHTML + rowDelim;
+                        }
+                        else{
+                          csv_head = csv_head + c_head[count].innerHTML + colDelim;
+                        }
+                    }
+                                      
+                csv = $rows.map(function (i, row) {
+                  var $row = $(row),
+                    $cols = $row.find('td');
+
+                  return $cols.map(function (j, col) {
+                      var $col = $(col);
+                      if($col.find('i').length == 1){
+                          var pic = $col.find('i');                        
+                          if(pic.attr('class') == "icon-ok"){
+                              var text = '是';
+                          }
+                          else{
+                              var text = '否';
+                          }
+                      }
+                      else{
+                          var text = $col.text();
+                      }
+                      return text.replace('"', '"'); // escape double quotes                                                                 
+
+                  }).get().join(tmpColDelim);
+
+              }).get().join(tmpRowDelim).split(tmpRowDelim).join(rowDelim).split(tmpColDelim).join(colDelim);              
+
+              csv = csv_head + csv;
+
+              // Data URI
+              csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+            $(this)
+                .attr({
+                  'download': filename,
+                    'href': csvData,
+                    'target': '_blank'
+              });
+        }
+
+
+        $("a[id='out']").on('click', function (event) {
+          exportTableToCSV.apply(this, [$('#dvData>table'), 'Topic_Bloggers.csv']);
+          alert("导出成功！");
+        });
+
+//添加垃圾名单
+    $("#add_trash").click(function() {
+        n = 0;
+        $("[name='now_user']").each(function(){
+                              
+            if(this.checked)
+            {
+                var fa = $(this).parent();
+                var ne = $(fa).prev().prev().prev().prev().prev().prev().prev().prev();
+                var f_id = $(ne).html();
+                $.ajax({   
+                    type:"POST",  
+                    url:"/propagate/add_trash/",
+                    dataType: "json",
+                    async:false,
+                    data:{f_id : f_id},
+                    success: function(data){
+                        if( data =='Right'){
+                            n = n + 1;
+                        }
+                    }           
+                });
+            }   
+        });
+        if(n > 0){
+            alert("添加成功！");
+        }
+        //location.reload();
+    });
+
+    //添加知识库
+    $("#add_kd").click(function() {
+        n = 0;
+        $("[name='now_user']").each(function(){
+                              
+            if(this.checked)
+            {
+                var fa = $(this).parent();
+                var ne = $(fa).prev().prev().prev().prev().prev().prev().prev().prev();
+                var f_id = $(ne).html();
+                var type = showModalDialog("/propagate/page/",f_id,"DialogWidth:300px;dialogHeight=180px;status:no");
+                $.ajax({   
+                    type:"POST",  
+                    url:"/propagate/add_kd/",
+                    dataType: "json",
+                    async:false,
+                    data:{f_id : f_id,type : type},
+                    success: function(data){
+                        if( data =='Right'){
+                            n = n + 1;
+                        }
+                    }           
+                });
+            }   
+        });
+        if(n > 0){
+            alert("添加成功！");
+        }
+        else{
+          alert("添加错误！");
+        }
+
+      location.reload();
+    });
+
+    //移除知识库
+    $("#remove_kd").click(function() {
+        n = 0;
+        $("[name='now_user']").each(function(){
+                              
+            if(this.checked)
+            {
+                var fa = $(this).parent();
+                var ne = $(fa).prev().prev().prev().prev().prev().prev().prev().prev();
+                var f_id = $(ne).html();
+                $.ajax({   
+                    type:"POST",  
+                    url:"/propagate/remove_kd/",
+                    dataType: "json",
+                    async:false,
+                    data:{f_id : f_id},
+                    success: function(data){
+                        if( data =='Right'){
+                            n = n + 1;
+                        }
+                    }           
+                });
+            }   
+        });
+        if(n > 0){
+            alert("移除成功！");
+        }
+        location.reload();
+    });
+</script>
+    <script src="../../static/propagate/js/jquery.min.js"></script>
+    <script src="../../static/propagate/js/highstock.js"></script>
+    <script src="../../static/propagate/js/exporting.js"></script>
+{% endblock script %}

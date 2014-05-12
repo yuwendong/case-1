@@ -9,14 +9,27 @@ emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3}
 
 mod = Blueprint('moodlens', __name__, url_prefix='/moodlens')
 
-@mod.route('/weibo')
-def weibo():
-    return render_template('moodlens/weibo2.html')
-
 @mod.route('/index')
 def index():
     return render_template('root/index.html')
 
+@mod.route('/weibo')
+def weibo():
+    return render_template('moodlens/weibo.html')
+
+'''
+@mod.route('/news')
+def weibo():
+    return render_template('moodlens/news.html')
+
+@mod.route('/blog')
+def weibo():
+    return render_template('moodlens/blog.html')
+
+@mod.route('/forum')
+def weibo():
+    return render_template('moodlens/forum.html')
+'''
 @mod.route('/data/')
 def data():
     query = request.args.get('query',None)

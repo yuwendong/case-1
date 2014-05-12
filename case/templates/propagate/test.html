@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+  .sigma-expand {
+      position: relative;
+      margin: 0px auto;
+      height: 320px;
+  }
+  </style>
+</head>
+<body>
+    <div class="sigma-expand" id="sigma-graph"></div>
+    <script src="../../static/propagate/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/propagate/sigma.min.js"></script>
+    <script type="text/javascript" src="../../static/propagate/sigma.parseGexf.js"></script>
+    <script>
+      var flag = 1;
+      if(flag == '0'){
+        var html = "计算结果为空！"
+        $("#sigma-graph").empty();
+        $("#sigma-graph").append(html);
+      }
+      else{
+      $.get("../../static/propagate/forestaa.gexf", function(data) {
+        console.log(data);
+        var sigInst = sigma.init($('#sigma-graph')[0]).drawingProperties({
+        	defaultLabelColor: '#fff'
+        }).graphProperties({
+           minNodeSize: 0.5,
+           maxNodeSize: 5
+        });
+
+        sigInst.parseGexf(data);
+
+        sigInst.draw();
+      }, "xml");
+      }
+    </script>
+  </body>
+</html>
