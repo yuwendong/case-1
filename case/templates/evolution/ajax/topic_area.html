@@ -1,0 +1,363 @@
+{% extends "evolution/evolution.html" %}
+{% block title %}演化分析{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link href="../../static/moodlens/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="../../static/moodlens/css/toggle_switch.css">
+{% endblock %}
+    
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="caption" style="float:left">
+          <div style="float:left;padding-left:50px;">
+            <div style="float:left;padding-top:10px;padding-left:30px;">
+              <label style="font-size:18px">起始时间：<span class="badge badge-info" style="font-size:18px">2014.4.3</span> </label>
+              <label class="appendedInput" style="font-size:18px;padding-top:10px;">终止时间：<span class="badge badge-info" style="font-size:18px">2014.4.6</span></label>  
+            </div>
+            <div style="float:left;padding-top:10px;padding-left:30px;">
+              <label style="font-size:18px">信息媒体：<span class="badge badge-info" style="font-size:18px">10000</span> </label>
+              <label class="appendedInput" style="font-size:18px;padding-top:10px;">用户数量：<span class="badge badge-info" style="font-size:18px">30000</span></label>  
+            </div>
+            <div style="float:left;padding-top:10px;padding-left:30px;">                
+                <label class="appendedInput" style="font-size:18px">地域数量：<span class="badge badge-warning" style="font-size:18px">３０</span></label>
+                <label class="appendedInput" style="font-size:18px;padding-top:10px;">媒体数量：<span class="badge badge-warning" style="font-size:18px"> １００</span></label>                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!--上侧基本信息-->
+          
+    <div class="row-fluid" style="padding-top:20px;padding-left:80px;">
+      <div class="span12" id="index-tabs">
+        <ul class="nav nav-pills tab_container">
+          <li class="btn span2" style="width:150px;height:20px;"><a href="/evolution/topic_ajax_hot/?keyword={{keyword}}&time={{dur_time}}" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">热度演化</a></li>
+          <li class="btn span2 btn-primary" style="width:150px;height:20px;"><a href="/evolution/topic_ajax_area/?keyword={{keyword}}&time={{dur_time}}" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">领域演化</a></li>
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/evolution/topic_ajax_spatial/?keyword={{keyword}}&time={{dur_time}}" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">地域演化</a></li>
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/evolution/topic_ajax_stat/?keyword={{keyword}}&time={{dur_time}}" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">热度指标</a></li>        
+        </ul>
+        <div id="content_container">
+          <div class="row" style="border:soft">
+                    <div class="col-lg-12">
+                        <!-- 在此插入div是为了换行 -->
+                        <div>
+                            <p></p>
+                        </div>
+                        <div id="line_container" style="height:500px;"></div>
+                    </div>
+                      
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+<script src="../../static/moodlens/js/jquery.min.js"></script>
+<script src="../../static/moodlens/js/highstock.js"></script>
+<script src="../../static/moodlens/js/exporting.js"></script>
+<script src="../../static/moodlens/js/jquery.tagcanvas.min.js"></script>
+<script src="../../static/moodlens/js/jquery.totemticker.js"></script>
+<script>
+    var query = "九一八";
+    var START_TS = 1396368000;
+    var END_TS = 1396454400;
+    var DURING_INTERGER = 24*3600;
+    var WEIBOS_LIMIT = 10;
+    var KEYWORDS_LIMIT = 10;
+    var click_flag=false;
+    var status_flag = 'relative';
+    var series_flag = [1, 1, 1, 1, 1, 1, -1, -1, -1]; //记录9个series选中与否的状态
+
+    var emotion_ratio = {};
+    var emotion_absolute={};
+
+    var happy_absolute = [];
+    var angry_absolute = [];
+    var sad_absolute = [];
+
+    var happy_ratio = [];
+    var angry_ratio = [];
+    var sad_ratio = [];
+
+    var happy_list = [];
+    var angry_list = [];
+    var sad_list = [];
+    var ts_list = [];
+
+    var happy_alist = [];
+    var angry_alist = [];
+    var sad_alist = [];
+    var ts_alist = [];
+
+    var oopts = {textHeight: 25,maxSpeed: 0.03,decel: 0.98,depth: 0.92,outlineColour: '#f6f',outlineThickness: 3,pulsateTo: 0.2,pulsateTime: 0.5,wheelZoom: false,textColour:'#00f',shadow:'#ccf',minBrightness:0.2,shadowBlur:3,weight:true,weightMode:'both'};
+    var max_word_size = 10;
+    var min_word_size = 1;
+    
+    var emotion_keys = ['happy', 'angry', 'sad'];
+    var source_status=1;//1 2 3 4分别代表微博 新闻 博客 论坛
+//启动处
+  $(document).ready(function(){  
+        display_realtime_emotion();
+    });
+function display_realtime_emotion(){
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+        $('#line_container').highcharts({
+            chart: {
+                type: 'line',//spline,
+                animation: Highcharts.svg, // don't animate in old IE
+                //marginTop: 20,
+                marginRight: 10,
+                //marginLeft: 10,
+                events: {
+                    load: function() {
+                        var during = DURING_INTERGER;
+                        var begin_ts = START_TS;
+                        var end_ts = END_TS;
+                        var total_nodes = (end_ts - begin_ts) / during;
+                        var times_init = 0;
+                        init_statistics(end_ts, end_ts - begin_ts);
+                        pull_emotion_count(total_nodes, times_init, begin_ts, during, this.series[0], this.series[1], this.series[2], this.series[3], this.series[4], this.series[5], this.series[6], this.series[7], this.series[8]);
+                    }
+                }
+            },
+            plotOptions:{
+                line:{
+                    events: {
+                        legendItemClick: function () {
+                            var seriesIndex = this.index;
+                            series_flag[seriesIndex] = - series_flag[seriesIndex];
+                            if(seriesIndex <= 2){
+                                if(status_flag == 'absolute'){
+                                    if(series_flag[seriesIndex] != series_flag[seriesIndex+6]){
+                                        $(this.chart.series[seriesIndex+6].legendItem.element).trigger('click');
+                                    }
+                                }
+                                else{
+                                    if (series_flag[seriesIndex] != series_flag[seriesIndex+3]){
+                                        $(this.chart.series[seriesIndex+3].legendItem.element).trigger('click');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            title : {
+                text: '领域热度走势图'
+            },
+
+            rangeSelector: {
+                selected: 4,
+                inputEnabled: false,
+                buttons: [{
+                    type: 'week',
+                    count: 1,
+                    text: '1w'
+                }, {
+                    type: 'month',
+                    count: 1,
+                    text: '1m'
+                }, {
+                    type: 'month',
+                    count: 3,
+                    text: '3m'
+                }]
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: '时间'
+                },
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ' 条 数'
+                },
+            },
+            tooltip: {
+                valueDecimals: 2,
+                xDateFormat: '%Y-%m-%d %H:%M'
+            },
+            legend: {
+                layout: 'horizontal',
+                //verticalAlign: true,
+                //floating: true,
+                align: 'center', //'right',
+                verticalAlign: 'bottom',
+                x: 0,
+                y: -2,
+                borderWidth: 1,
+                //enabled: true,
+                //itemHiddenStyle: {
+                    //color: 'white'
+                //}
+            },
+            exporting: {
+                enabled: true
+            },
+            series: [{
+                name: '经济',
+                data: [],
+                id: 'happy',
+                color: '#006600',
+                marker : {
+                    enabled : false,    
+                }
+            },{
+                name: '教育',
+                data: [],
+                id: 'angry',
+                color: '#FF0000',
+                marker : {
+                    enabled : false,    
+                }
+            },{
+                name: '媒体',
+                data: [],
+                id: 'sad',
+                color: '#000099',
+                marker : {
+                    enabled : false,    
+                }
+            },{
+                name: '相对拐点(经济)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'happy',
+                shape : 'circlepin',
+                width : 2,
+                color: '#006600'
+            },{
+                name: '相对拐点(教育)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'angry',
+                shape : 'circlepin',
+                width : 2,
+                color: '#FF0000'
+            },{
+                name: '相对拐点(媒体)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'sad',
+                shape : 'circlepin',
+                width : 2,
+                color: '#000099'
+            },{
+                name: '绝对拐点(经济)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'happy',
+                shape : 'circlepin',
+                width : 2,
+                color: '#006600',
+                //visible:false
+                showInLegend: false
+            },{
+                name: '绝对拐点(教育)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'angry',
+                shape : 'circlepin',
+                width : 2,
+                color: '#FF0000',
+                //visible:false
+                showInLegend: false
+            },{
+                name: '绝对拐点(媒体)',
+                type : 'flags',
+                data : [],
+                cursor: 'pointer',
+                onSeries : 'sad',
+                shape : 'circlepin',
+                width : 2,
+                color: '#000099',
+                //visible:false
+                showInLegend: false
+            }]
+            });
+
+        
+    }
+function pull_emotion_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6,series7,series8,series9){        
+        var ts = begin_ts + times * during;
+        $.ajax({
+            url: "/moodlens/data/?ts=" + ts + '&query=' + query,
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+                var isShift = false;
+                var happy_emotion_count = data['happy'];
+                var angry_emotion_count = data['angry'];
+                var sad_emotion_count = data['sad'];
+
+                var total_emotion_count = happy_emotion_count + angry_emotion_count + sad_emotion_count;
+                if(total_emotion_count > 0){
+                    var happy_emotion_ratio = parseInt(happy_emotion_count * 10000 / total_emotion_count) / 10000.0;
+                    var angry_emotion_ratio = parseInt(angry_emotion_count * 10000 / total_emotion_count) / 10000.0;
+                    var sad_emotion_ratio = parseInt(sad_emotion_count * 10000 / total_emotion_count) / 10000.0;
+                    series1.addPoint([ts * 1000, happy_emotion_ratio], true, isShift);
+                    series2.addPoint([ts * 1000, angry_emotion_ratio], true, isShift);
+                    series3.addPoint([ts * 1000, sad_emotion_ratio], true, isShift);
+
+                    emotion_ratio[ts * 1000] = [happy_emotion_ratio, angry_emotion_ratio, sad_emotion_ratio, total_emotion_count];
+                    emotion_absolute[ts*1000]=[happy_emotion_count, angry_emotion_count, sad_emotion_count, total_emotion_count];
+
+                    happy_absolute.push([ts * 1000, happy_emotion_count]);
+                    angry_absolute.push([ts * 1000, angry_emotion_count]);
+                    sad_absolute.push([ts * 1000, sad_emotion_count]);
+
+                    happy_ratio.push([ts * 1000, happy_emotion_ratio]);
+                    angry_ratio.push([ts * 1000, angry_emotion_ratio]);
+                    sad_ratio.push([ts * 1000, sad_emotion_ratio]);
+
+                    happy_list.push(happy_emotion_ratio);
+                    angry_list.push(angry_emotion_ratio);
+                    sad_list.push(sad_emotion_ratio);
+                    ts_list.push(ts);
+
+                    happy_alist.push(happy_emotion_count);
+                    angry_alist.push(angry_emotion_count);
+                    sad_alist.push(sad_emotion_count);
+                    ts_alist.push(ts);
+                }
+                else{
+                    emotion_ratio[ts * 1000] = [0, 0, 0, 0];
+                    emotion_absolute[ts*1000]= [0, 0, 0, 0];
+                }
+                times++;
+                pull_emotion_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6, series7,series8, series9);
+            }
+        });
+    }
+function init_statistics(end_ts, duration){
+        //end_ts为截止时间戳, duration为整个时间段的秒数
+        $.ajax({
+            url: "/moodlens/data/?ts=" + end_ts + "&query=" + query,
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+                var happy_emotion_count = data['happy'];
+                var angry_emotion_count = data['angry'];
+                var sad_emotion_count = data['sad'];
+                var total_count = parseInt(happy_emotion_count) + parseInt(angry_emotion_count) + parseInt(sad_emotion_count);
+            }
+        })
+    }
+</script>
+{% endblock script %}
