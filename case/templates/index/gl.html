@@ -10,30 +10,35 @@
     <title>管理界面</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    <link href="bootstrap/dist/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="bootstrap/dist/css/style.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/justified-nav.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
+
+
+
+    
     
     
 
     <!-- Custom styles for this template -->
-    <link href="bootstrap/justified-nav.css" rel="stylesheet">
-
+    
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
       <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
+    <script src="/static/index/js/jquery-1.9.1.min.js"></script>
+    <script src="/static/index/js/bootstrap.min.js"></script>
+    <script src="/static/index/js/highcharts.js"></script>
+    <script src="/static/index/js/highcharts1.js"></script>
+    <script src="/static/index/js/highcharts-more.js"></script>
+    <script src="/static/index/js/timeline.js"></script>
+    
 
-    <script src="js/jquery-1.9.1.min.js"></script>
-    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="js/highcharts.js"></script>
-    <script src="Highcharts-3.0.10/js/highcharts.js"></script>
-    <script src="Highcharts-3.0.10/js/highcharts-more.js"></script>
 
-    <script type="text/javascript" src="timeline-2.7.0/timeline.js"></script>
-    <link rel="stylesheet" type="text/css" href="timeline-2.7.0/timeline.css">
+    
 
     <style type="text/css">
         body {
@@ -97,8 +102,8 @@ $(function() {
                  fillColor: {
                      radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                      stops: [
-                         [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(69,114,167,0.5)']
+                         [0, 'hsla(0, 0%, 100%, 0.5)'],
+                         [1, 'hsla(212, 42%, 46%, 0.5)']
                      ]
                  }
             }
@@ -124,8 +129,8 @@ $(function() {
                  fillColor: {
                      radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                      stops: [
-                         [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(170,70,67,0.5)']
+                         [0, 'hsla(0, 0%, 100%, 0.5)'],
+                         [1, 'hsla(2, 43%, 46%, 0.5)']
                      ]
                  }
             }
@@ -235,17 +240,17 @@ $(function() {
     </script>
     <script type="text/javascript" src="js/reveal/jquery.reveal.js"></script>
     <style type="text/css">
-    .reveal-modal-bg { position: fixed; height: 100%; width: 100%; z-index: 100; display: none; top: 0; left: 0; background:rgba(00, 00, 00, 0.8) }
+    .reveal-modal-bg { position: fixed; height: 100%; width: 100%; z-index: 100; display: none; top: 0; left: 0; background:hsla(0, 0%, 0%, 0.8) }
     
-    .reveal-modal { visibility: hidden; top: 150px; left: 50%; margin-left: -300px; width: 520px; position: absolute; z-index: 101; padding: 30px 40px 34px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0 0 10px rgba(0,0,0,.4); -webkit-box-shadow: 0 0 10px rgba(0,0,0,.4); -box-shadow: 0 0 10px rgba(0,0,0,.4); background-color: #FFF;      }
+    .reveal-modal { visibility: hidden; top: 150px; left: 50%; margin-left: -300px; width: 520px; position: absolute; z-index: 101; padding: 30px 40px 34px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); -webkit-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); -box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); background-color: hsl(0, 0%, 100%);      }
         
     .reveal-modal.small         { width: 200px; margin-left: -140px;}
     .reveal-modal.medium        { width: 400px; margin-left: -240px;}
     .reveal-modal.large         { width: 600px; margin-left: -340px;}
     .reveal-modal.xlarge        { width: 800px; margin-left: -440px;}
     
-    .reveal-modal .close-reveal-modal { font-size: 22px; line-height: 0.5; position: absolute; top: 8px; right: 11px; color: #333; text-shadow: 0 -1px 1px rbga(0,0,0,.6); font-weight: bold; cursor: pointer;      } 
-body { background-color: #F2F2F2; }
+    .reveal-modal .close-reveal-modal { font-size: 22px; line-height: 0.5; position: absolute; top: 8px; right: 11px; color: hsl(0, 0%, 20%); text-shadow: 0 -1px 1px rbga(0,0,0,.6); font-weight: bold; cursor: pointer;      } 
+body { background-color: hsl(0, 0%, 95%); }
 
 </style>
 
@@ -312,7 +317,7 @@ body { background-color: #F2F2F2; }
       <div class="tab-content">
       <div class="tab-pane active" id="home">
         <div class="col-lg-4 col-sm-6">
-          <h2><a href="./detail.html">两会</a></h2>
+          <h2><a href="/index/detail/">两会</a></h2>
           <p>“两会”代指“全国人民代表大会”和“中国人民政治协商会议”，由于两场会议于每年3月份先后召开全体会议，大部分会议进程基本上同时进行，故简称做“两会”。 </p>
           <p><a class="btn btn-default" href="./detail.html">查看详细 &raquo;</a></p>
         </div>
@@ -321,6 +326,7 @@ body { background-color: #F2F2F2; }
           <p>18日，北京宣布队伍集合时，一位老对打出“毛主席我们想念您”这个口号提出了反对，他说：“将这种维护国家尊严和民族大义的愿望集寄托在毛泽东身上是错误的，也是不可能实现的。”一年轻人听后上去就给了老人两耳光，说这是在侮辱毛主席。两人互骂对方是汉奸</p>
           <p><a class="btn btn-default" href="./detail.html">查看详细 &raquo;</a></p>
        </div>
+       
         <div class="col-lg-4 col-sm-6">
           <h2><a href="./detail.html">钓鱼岛事件</a></h2>
           <p>近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？</p>

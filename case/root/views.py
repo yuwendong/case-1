@@ -10,7 +10,3 @@ mod = Blueprint('index', __name__, url_prefix='')
 def loading():
     return render_template('root/index.html')
 
-    
-
-    
-    

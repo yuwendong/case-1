@@ -1,0 +1,522 @@
+
+p#back-to-nation-view {
+    position: absolute;
+    right: 98px;
+    top: 29px;
+    width: 120px;
+    border: 1px solid #000;
+    z-index: 1;
+}
+
+p#back-to-nation-view span {
+    display: block;
+    width: 118px;
+    padding: 1px 0;
+    border: 1px solid #707070;
+    border-right-color: #D0D0D0;
+    border-bottom-color: #D0D0D0;
+    text-align: center;
+    font-family: Arial,sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    color: #EB1E23;
+    background: #FFF;
+    cursor: pointer;
+    z-index: 5;
+}
+
+#slider_container{
+    position:relative;
+    top:80px;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+}
+#slider.ui-widget-content {
+    border: 1px solid #61CCAA;/*#FF0000;*/
+    background-color: #EEE;/*#E2E2E2;*/
+    color: #333;
+}
+
+#play_pause{
+    position:relative;
+    width:150px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#right_panel{
+	position:absolute;
+	width: 169px;
+	height: 705px;
+	margin-top:-715px;
+	margin-left:1180px;
+}
+
+#play_pause1{
+    margin-left:auto;
+    margin-right:auto;
+    float:left
+}
+
+#play_pause2{
+    margin-left:auto;
+    margin-right:auto;
+    float:left
+}
+
+#play_pause3 {
+    margin-left: auto;
+    margin-right: auto;
+    float: left;
+}
+
+#tooltip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 9999;
+    padding: 0 0 24px 0;
+    background: url(/static/mapweibo/images/bg-tooltip.png) no-repeat bottom center;
+}
+
+#tooltip.hidden {
+    display: none;
+}
+
+#tooltip .inner {
+    padding: 5px 10px;
+    color: #FFF;    
+    background: #0B0E21;
+}
+
+
+
+
+#console{
+    position:relative;	
+    float:right;
+    width: 320px;
+    z-index: 4;
+}
+#console ul#helpers {
+    float: left;
+    margin: 0px;
+    -webkit-padding-start: 0px;
+}
+
+#console ul#helpers li {
+    float: left;
+    width: 60px;
+    height: 22px;
+    padding: 53px 10px 0 10px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#helpers li.active {
+    color: #3E2C26;
+}
+
+#console ul#helpers li#all {
+    background: url(/static/mapweibo/images/bg-categories-all.png) no-repeat center -71px;
+}
+
+#console ul#helpers li#all.active {
+    background-position: center 12px;
+}
+
+#console ul#categories {
+    float: left;
+    margin: 0;
+    -webkit-padding-start: 0px;
+}
+
+#console ul#categories li {
+    float: left;
+    width: 80px;
+    height: 22px;
+    padding: 53px 0px 0 0px;
+    text-align: center;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#categories li.active {
+    color: #3E2C26;
+}
+
+#console ul#categories li#fipost {
+    background: url(/static/mapweibo/images/bg-categories-fipost.png) no-repeat center -71px;
+}
+#console ul#categories li#fipost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#equalpost {
+    background: url(/static/mapweibo/images/bg-categories-equalpost.png) no-repeat center -71px;
+}
+#console ul#categories li#equalpost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#repost {
+    background: url(/static/mapweibo/images/bg-categories-repost.png) no-repeat center -71px;
+}
+#console ul#categories li#repost.active {
+    background-position: center 12px;
+}
+
+#info-window {
+    background:url(/static/mapweibo/images/info_window.png);
+    position: absolute;
+    z-index: 1000;
+    left: -9999px;
+    top: -9999px;    
+    width: 70px;
+    height: 55px;
+}
+
+#info-window .inner {
+    margin: 7px auto auto 18px;
+/*background: #E9EAEB;*/
+}
+
+#info-window .inner h2 {
+    padding: 0 0 0 0;
+    margin:auto auto;
+    font-size: 8px;
+    font-weight: 700;
+    color: black;
+}
+
+#info-window .inner p {
+    margin-top: 10px;
+}
+
+#info-window .inner p#report-misplaced {
+    position: absolute;
+    bottom: 13px;
+    left: 15px;
+    color: green;
+}
+
+#info-window .inner p#report-misplaced.active {
+    text-decoration: underline;
+    color: #ED1C24;
+    cursor: pointer;
+}
+
+#info-window.video .inner p#report-misplaced {
+    display: none;
+}
+
+#info-window .inner p a.read-more {
+    color: #ED1C24;
+    font-weight: 700;
+}
+
+#info-window .inner .thumb {
+    position: relative;
+    float: right;
+    width: 120px;
+    height: 90px;
+    margin: 10px 0 0 10px;
+    cursor: pointer;
+}
+
+#info-window .inner .thumb .label {
+    position: absolute;
+    left: 42px;
+    top: 27px;
+    z-index: 100;
+}
+
+/*main.css end*/
+
+/*time size begin*/
+#time_size{
+    float:left;
+    margin:5px auto;
+}
+a.sctble_display span {
+    height: 22px;
+    width: 123px;
+    padding:0 0 0 6px;
+    
+}
+#select_timeInterval_mat{
+    width:129px;
+}
+div.sctble_mat a.selected {
+    color: #1972EA;
+}
+div.sctble_mat a {
+    color: #333;
+}
+/*time size end*/
+/*keywords style begin*/
+#keywords{
+    width:1010px;
+    padding:5px;
+    font: 13px Helvetica Neue;
+}
+#s_keyword{
+    float:left;
+    margin:5px auto;
+}
+#hour_section{
+	float:left;
+    margin:5px auto;
+}
+#number{
+    width:1010px;
+    padding:5px;
+    margin: 0 auto 0 auto;
+    background-color: white;
+    position: relative;
+    font: 13px Helvetica Neue;
+}
+#keywords input{
+    width:125px;
+    border: 1px solid #CCC;
+}
+#keywords input:hover{
+    border: 1px solid steelBlue;
+}
+#total_number,#real_number{
+    width:124px;
+    border: 1px outset #B5A642;
+	text-align:center;
+}
+
+
+/*keywords style end*/
+#se_time{
+    float:left;
+    margin:5px auto;
+}
+#ui-datepicker-div{
+/*width:129px;*/
+}
+/*se_time style begin*/
+
+
+/*later added*/
+.panel-outer{
+    padding-top:10px;
+    position:relative;
+}
+.panel {
+    width: 1020px;
+    margin: 20px auto 0 auto;
+    background-color:white;/*#E2E2E2;*/
+    position:relative;
+}
+.panel-nav {
+    position: absolute;
+    left: 13px;
+    color: #61CCAA;
+    background: #FCFAFA;
+    display: block;
+    padding-top: 10px;
+    height: 24px;
+    width: 150px;
+    box-shadow: 0px 2px 2px #DDD;
+    -webkit-box-shadow: 0px 2px 2px #DDD;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    z-index:100;
+}
+
+#event .item {
+    width: 488px;
+    margin: 15px 10px 5px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #CCC;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+}
+#event .item:hover{
+    width: 488px;
+    margin: 15px 10px 5px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid steelBlue;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+}
+#event .inner {
+    padding: 10px;
+}
+#event .inner .title{
+    border-bottom: 1px solid #E5E5E5;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    color:#3B5998;
+}
+#event .inner .content{
+    
+}
+/*timeline navigatior css*/
+#event .timeline_container {
+    width: 16px;
+    text-align: center;
+    margin: 0 auto;
+    cursor: default;
+    display: block;
+}
+#event .timeline{
+    margin: 0 auto;
+    background-color: #CCC;/*#3B5998;*/
+    display: block;
+    float: left;
+    height: 100%;
+    left: 508px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    position: absolute;
+    width: 4px;
+}
+/*
+  #event .timeline:hover{
+  cursor: default;
+  margin: 0 auto;
+  }
+  */
+/*
+  #event .timeline div.plus{
+  width: 14px;
+  height: 14px;
+  position:relative;
+  left: -6px;
+  }*/
+/*arrow css style*/
+#event .rightCorner {
+    background-image: url("/static/mapweibo/images/timeline/right.png");
+    display: block;
+    height: 15px;
+    margin-left: 488px;
+    margin-top: 8px;
+    padding: 0;
+    vertical-align: top;
+    width: 13px;
+    z-index: 2;
+    position: absolute;
+}
+#event .leftCorner {
+    background-image:url("/static/mapweibo/images/timeline/left.png");
+    display: block;
+    height: 15px;
+    width: 13px;
+    margin-left: -13px;
+    margin-top: 8px;
+    position: absolute;
+    z-index: 2;
+}
+
+
+h3.uiHeaderTitle {
+    background: #A9B5D3;
+    width:200px;
+    margin:0px auto 0px auto;
+    -webkit-border-radius: 3px;
+    color: white;
+    text-align:center;
+    font-weight: normal;
+    font-size: 15px;
+    padding: 3px 5px;
+    word-wrap: normal;
+    outline: none;
+}
+
+#timedist{
+    margin:15px auto 5px 5px;
+    width:1010px;
+    height:400px;
+    background-color:white;
+}
+
+/*button style begin*/
+#footer {
+    /*position:relative;*/
+    width:100%;
+    height:55px;
+    text-align:center;
+    /*margin:10px auto 0 auto;*/
+    background-color: #251B15;
+    color: #fff;
+    font-size: 12px;
+    z-index:2000;
+}
+#footer-text{
+    position:relative;
+    top:20px;
+}
+/*footer style end*/
+/*
+  #click_event{
+  position: absolute;
+  top: 40px;
+  left: 549px;
+  }
+  #click_time{
+  position: absolute;
+  top: 40px;
+  left: 699px;
+  }
+  #click_data{
+  position: absolute;
+  top: 40px;
+  left: 849px;
+  }*/
+#demo{
+    position:relative;
+    float:right;
+    top:-45px;
+    /*
+      top: 50px;
+      left: 630px;
+      */
+    color:#555;
+    
+}
+#demo a:hover{
+    color:#FFFFFF;
+    background-image: url(/static/mapweibo/images/btn_selected.jpg);
+    border:none;
+}
+#demo a {
+    background: #EEE repeat-x;
+    display: inline-block;
+    padding: 3px 8px;
+    color: #555;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 10px;
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+    font-size: 9pt;
+}
+.demo-nav {
+    float: left;
+    margin: 2px;
+    display: block;
+    text-align: center;
+    display: block;
+}
+p#date_p span {
+    font-size: 15px;
+}
