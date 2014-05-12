@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="static/index/pic/favicon.png">
+  <script type="text/javascript" src="/static/index/js/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery-ui-1.8.16.custom.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery.masonry.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/amstock.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery.tagcanvas.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/static/index/js/sentiment_report.js"></script>
+  <script type="text/javascript" src="/static/index/js/bootstrap.min.js"></script>
+
+  <title>管理界面</title>
+
+  <!-- Bootstrap core CSS -->
+
+
+  <!-- Custom styles for this template -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/jquery-ui-1.8.18.custom.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/justified-nav-detail.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/toggle_switch.css') }}">
+
+
+
+
+
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+      <![endif]-->
+
+      <style type="text/css">
+        body {
+          font: 10pt;
+          font-family: verdana, sans, arial, sans-serif;
+          background-color: #F2F2F2;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+        <div class="panel panel-default panel-top">
+          <!-- Default panel contents -->
+          <div class="panel-heading panel-color"><span>九一八</span></div>
+          <div class="panel-body">
+            <p>九一八事变是日本帝国主义长期以来推行对华侵略扩张政策的必然的结果，也是企图把中国变为其独占的殖民地而采取的重要步骤。
+            </p>
+          </div>
+        </div>
+
+
+
+
+        <div class="row">
+          <div class="col-lg-12 well-big">
+            <div class="well well-con">
+              <strong>标签：</strong><i>国耻、日货、钓鱼岛、历史</i>
+              <button type="button" class="btn pull-right" >
+                修改标签
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        <label class="appendedInput" style="font-size:18px;padding-top:10px;margin-left:20px;">开始时间：<span class="badge badge-success" style="font-size:18px"> 2012.9.18</span></label>
+        <label class="appendedInput" style="font-size:18px;padding-top:10px;margin-left:20px;">结束时间：<span class="badge badge-success" style="font-size:18px"> 2013.9.18</span></label>
+        <label class="appendedInput" style="font-size:18px;padding-top:10px;margin-left:20px;">总数：<span class="badge badge-success" style="font-size:18px"> 10000条</span></label>
+        <label class="appendedInput" style="font-size:18px;padding-top:10px;margin-left:20px;">参与人数：<span class="badge badge-success" style="font-size:18px"> 2000人</span></label>
+        <label class="appendedInput" style="font-size:18px;padding-top:10px;margin-left:20px;">地域：<span class="badge badge-success" style="font-size:18px"> 北京、上海、广州</span></label>
+
+        <div class="panel-outer-d">
+          <div class="panel-nav-d">关键词云及通道占比分析</div>
+          <div id="panel-d" class="row-fluid" style="border:1px solid gray;">
+            <div class="col-lg-8 pic-left">
+              <div id="tag_cloud_div" class="span8">
+                <canvas width="900px" height="200px" id="myCanvas">
+                  <p>Anything in here will be replaced on browsers that support the canvas element</p>
+                </canvas>
+                <div id="tags_div" style="display:none;">
+                  <ul id="tags_ul">
+                    <li><a href="#tag_cloud_div" style="font-size:3.250418312804116ex">钓鱼岛</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:1.297064516093913ex">中国</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:3.250418312804116ex">日货</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:1.298434001099274ex">日本</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:10ex">国耻</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:3.25ex">九一八</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:9.58574977005141ex">铭记历史</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:2.182489461402386ex">靖国神社</a></li>
+                    <li><a href="#tag_cloud_div" style="font-size:1.3359537454169699ex">教科书修改</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 pic-right">
+              <div id="emotion_pie_container" class="span4" data-higcharts-chart="1">
+                <div class="highcharts-container" id="highcharts-5" style="position: relative; overflow: hidden; width: 414px; height: 200px; text-align: left; line-height: normal; z-index: 0; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif; font-size: 12px;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="414" height="200"><desc>Created with Highstock 1.3.1</desc><defs><clipPath id="highcharts-6"><rect rx="0" ry="0" fill="none" x="0" y="0" width="9999" height="200"></rect></clipPath><clipPath id="highcharts-7"><rect fill="none" x="0" y="0" width="394" height="108"></rect></clipPath><linearGradient x1="0" y1="0" x2="0" y2="1" id="highcharts-9"><stop offset="0" stop-color="#FFF" stop-opacity="1"></stop><stop offset="1" stop-color="#ACF" stop-opacity="1"></stop></linearGradient><linearGradient x1="0" y1="0" x2="0" y2="1" id="highcharts-10"><stop offset="0" stop-color="#9BD" stop-opacity="1"></stop><stop offset="1" stop-color="#CDF" stop-opacity="1"></stop></linearGradient></defs><rect rx="5" ry="5" fill="#FFFFFF" x="0" y="0" width="414" height="200"></rect><g class="highcharts-button" style="cursor:default;" title="Chart context menu" stroke-linecap="round" transform="translate(380,143)"><title>Chart context menu</title><rect rx="2" ry="2" fill="white" x="0.5" y="0.5" width="24" height="22" stroke="none" stroke-width="1"></rect><path fill="#E0E0E0" d="M 6 6.5 L 20 6.5 M 6 11.5 L 20 11.5 M 6 16.5 L 20 16.5" stroke="#666" stroke-width="3" zIndex="1"></path><text x="0" y="13" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:12px;color:black;fill:black;" zIndex="1"></text></g><g class="highcharts-series-group" zIndex="3"><g class="highcharts-series highcharts-tracker" visibility="visible" zIndex="0.1" transform="translate(10,40) scale(1 1)" style="cursor:pointer;"><path fill="none" d="M 248.98243778618894 112.8907558209252 C 243.98243778618894 112.8907558209252 238.6130163249102 106.96038372710518 231.23006181565194 98.80612209810265 L 223.84710730639367 90.65186046910011" stroke="#006600" stroke-width="1" visibility="visible"></path><path fill="none" d="M 129.4138982398589 29.647490268412977 C 134.4138982398589 29.647490268412977 141.56659558387503 33.230634237737206 151.4015544318972 38.157457195558024 L 161.2365132799194 43.08428015337884" stroke="#FF0000" stroke-width="1" visibility="visible"></path><path fill="none" d="M 166.62891232181698 -4.24038557539302 C 171.62891232181698 -4.24038557539302 174.5284651993236 3.215658490366181 178.51535040589522 13.467719080785084 L 182.50223561246685 23.719779671203987" stroke="#000099" stroke-width="1" visibility="visible"></path><path fill="#006600" d="M 196.9918530718522 21.00000082965552 A 40 40 0 1 1 157.19352386704682 57.07005625019568 L 197 61 A 0 0 0 1 0 197 61 Z" stroke="#FFFFFF" stroke-width="1" stroke-linejoin="round" transform="translate(0,0.008740212543054682)"></path><path fill="#FF0000" d="M 157.19747371337803 57.03025174566885 A 40 40 0 0 1 169.95799309218836 31.525776305424696 L 197 61 A 0 0 0 0 0 197 61 Z" stroke="#FFFFFF" stroke-width="1" stroke-linejoin="round" transform="translate(0,-0.00006168471042045098)"></path><path fill="#000099" d="M 169.9874808319729 31.498749040134516 A 40 40 0 0 1 196.94444080247715 21.000038585324035 L 197 61 A 0 0 0 0 0 197 61 Z" stroke="#FFFFFF" stroke-width="1" stroke-linejoin="round" transform="translate(0,-0.011237416126784083)"></path></g><g class="highcharts-markers" visibility="visible" zIndex="0.1" transform="translate(10,40) scale(1 1)"></g></g><text x="207" y="25" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:16px;color:#274b6d;fill:#274b6d;" text-anchor="middle" class="highcharts-title" zIndex="4"><tspan x="207">各通道占比图</tspan></text><g class="highcharts-data-labels highcharts-tracker" visibility="visible" zIndex="6" transform="translate(10,40) scale(1 1)" style="cursor:pointer;"><g zIndex="1" style="cursor:default;" transform="translate(254,103)" visibility="visible"><text x="3" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:11px;color:#666;line-height:14px;fill:#666;" zIndex="1"><tspan style="font-weight:bold" x="3">微博</tspan><tspan dx="0">76.59%</tspan></text></g><g zIndex="1" style="cursor:default;" transform="translate(51,20)" visibility="visible"><text x="3" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:11px;color:#666;line-height:14px;fill:#666;" zIndex="1"><tspan style="font-weight:bold" x="3">论坛</tspan><tspan dx="0">11.61%</tspan></text></g><g zIndex="1" style="cursor:default;" transform="translate(89,-14)" visibility="visible"><text x="3" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:11px;color:#666;line-height:14px;fill:#666;" zIndex="1"><tspan style="font-weight:bold" x="3">新闻</tspan><tspan dx="0">11.80%</tspan></text></g></g><g class="highcharts-legend" zIndex="7" transform="translate(124,158)"><rect rx="5" ry="5" fill="none" x="0.5" y="0.5" width="166" height="26" stroke="#909090" stroke-width="1" visibility="visible"></rect><g zIndex="1" clip-path="url(#highcharts-6)"><g><g class="highcharts-legend-item" zIndex="1" transform="translate(8,3)"><text x="21" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:12px;cursor:pointer;color:#274b6d;fill:#274b6d;" text-anchor="start" zIndex="2"><tspan x="21">微博</tspan></text><rect rx="2" ry="2" fill="#006600" x="0" y="4" width="16" height="12" zIndex="3"></rect></g><g class="highcharts-legend-item" zIndex="1" transform="translate(61,3)"><text x="21" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:12px;cursor:pointer;color:#274b6d;fill:#274b6d;" text-anchor="start" zIndex="2"><tspan x="21">论坛</tspan></text><rect rx="2" ry="2" fill="#FF0000" x="0" y="4" width="16" height="12" zIndex="3"></rect></g><g class="highcharts-legend-item" zIndex="1" transform="translate(114,3)"><text x="21" y="15" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:12px;cursor:pointer;color:#274b6d;fill:#274b6d;" text-anchor="start" zIndex="2"><tspan x="21">新闻</tspan></text><rect rx="2" ry="2" fill="#000099" x="0" y="4" width="16" height="12" zIndex="3"></rect></g></g></g></g><g class="highcharts-tooltip" zIndex="8" style="cursor:default;padding:0;white-space:nowrap;" visibility="hidden" opacity="0" transform="translate(28,45)"><rect rx="3" ry="3" fill="none" x="0.5" y="0.5" width="145" height="48" fill-opacity="0.85" isShadow="true" stroke="black" stroke-opacity="0.049999999999999996" stroke-width="5" transform="translate(1, 1)"></rect><rect rx="3" ry="3" fill="none" x="0.5" y="0.5" width="145" height="48" fill-opacity="0.85" isShadow="true" stroke="black" stroke-opacity="0.09999999999999999" stroke-width="3" transform="translate(1, 1)"></rect><rect rx="3" ry="3" fill="none" x="0.5" y="0.5" width="145" height="48" fill-opacity="0.85" isShadow="true" stroke="black" stroke-opacity="0.15" stroke-width="1" transform="translate(1, 1)"></rect><rect rx="3" ry="3" fill="rgb(255,255,255)" x="0.5" y="0.5" width="145" height="48" fill-opacity="0.85" stroke="#000099" stroke-width="1" anchorX="-11.663945177922685" anchorY="-0.0073394775390625"></rect><text x="8" y="21" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:12px;color:#333333;fill:#333333;" zIndex="1"><tspan style="font-size: 10px" x="8">悲伤</tspan><tspan style="fill:" x="8" dy="16">情绪数值</tspan><tspan dx="0">: </tspan><tspan style="font-weight:bold" dx="0">2,910,300</tspan></text></g><text x="404" y="195" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif;font-size:9px;cursor:pointer;color:#909090;fill:#909090;" text-anchor="end" zIndex="8"></text></svg><div class="highcharts-contextmenu" style="position: absolute; z-index: 1000; padding: 24px; display: none; right: -14px; bottom: 33px;"><div style="-webkit-box-shadow: rgb(136, 136, 136) 3px 3px 10px; box-shadow: rgb(136, 136, 136) 3px 3px 10px; border: 1px solid rgb(160, 160, 160); background-color: rgb(255, 255, 255); padding: 5px 0px; background-position: initial initial; background-repeat: initial initial;"><div style="cursor: pointer; padding: 0px 10px; background-image: none; color: rgb(48, 48, 48); font-size: 11px; background-position: initial initial; background-repeat: initial initial;">Print chart</div><hr><div style="cursor: pointer; padding: 0px 10px; background-image: none; color: rgb(48, 48, 48); font-size: 11px; background-position: initial initial; background-repeat: initial initial;">Download PNG image</div><div style="cursor: pointer; padding: 0px 10px; background-image: none; color: rgb(48, 48, 48); font-size: 11px; background-position: initial initial; background-repeat: initial initial;">Download JPEG image</div><div style="cursor: pointer; padding: 0px 10px; background-image: none; color: rgb(48, 48, 48); font-size: 11px; background-position: initial initial; background-repeat: initial initial;">Download PDF document</div><div style="cursor: pointer; padding: 0px 10px; background-image: none; color: rgb(48, 48, 48); font-size: 11px; background-position: initial initial; background-repeat: initial initial;">Download SVG vector image</div></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-outer-d">
+          <div class="panel-nav-d">鱼骨图分析</div>
+          <div id="panel-d" style="border:1px solid gray;">
+            <div class="ygt-title">
+              <button type="button" href="" class="btn btn-success " >微博</button>
+              <button type="button" href="" class="btn btn-success " >论坛</button>
+              <button type="button" href="" class="btn btn-success " >博客</button>
+              <button type="button" href="" class="btn btn-success " >新闻</button>
+            </div>
+            <div class="panel-outer">
+              <div id="container" >
+                <!-- timeline导航 -->
+                <div class="timeline_container" >
+                  <div class="timeline" >
+                    <div class="plus" ></div>
+                  </div>
+                </div>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="wb">
+                    <div class="item" >
+                      <div class="inner">
+                        <span class="title">2012.9.19 腾讯新闻：韩德强微博说明为何打人 称不让“汉奸”放肆</span>
+                        <hr />
+                        <span>昨日在北京的中，有网友在微博上说：“在游行的队伍集合时，一个老人对几个人打出的“毛主席我们想念您”这个口号提出了反对，他说：将这种维护国家尊严和民族大义的愿望寄托在毛泽东身上是错误的，也是不可能实现的等等。年轻人听后上去就给这个老人两个耳光，说：这是在侮辱毛主席。两人互骂对方是汉奸，警察拉开了事。”</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.9.21 21CN新闻：韩德强打人不认错，那就让法律来制裁</span>
+                        <hr />
+                        <span>韩德强教授打人并发表声明，声称对自己的行为负责且没有必要认错。作为“乌有之乡”的作者之一，秉持着“毛左”的思想遗风。在示威游行的过程中，老者开始咒骂毛泽东主席。原本这应该属于言论自由的领域内，没有任何政治纠葛。但却被韩德强斥之为玷污领袖的光荣，被斥之为汉奸。那么，韩德强作为北航的教授并没有权力和资格将人分为三六九等，更不能将人评价为汉奸还是爱国者。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.9.21 新浪财经 大词崇拜的危害 打人的韩德强为何理直气壮？</span>
+                        <hr />
+                        <span>近日，北京航天航空大学教授韩德强扮演路上法官，判定某位同行的老人卖国，遂替想象中的正义行道，打了老人两记耳光。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner">
+                        <span class="title">2012.9.26 网易新闻：北航教授韩德强掌掴老人 学生“罢”课是否妥当</span>
+                        <hr />
+                        <span>2012年9月24日，辽宁师范大学政治与行政学院博士生导师木然在其认证的腾讯微博上称，在“保钓”游行中因观点不合而殴打八旬老人的韩德强已连续四堂课没有一个学生。此微博内容一发就引起了众多网友的热议。不少网友力挺北航学子的做法，支持封杀韩德强。但也有一些网友对韩德强表示了同情，觉得教学和个人品德是两码事，认为有些学生是在跟风罢课。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.9.27 搜狐新闻 洪振快：再评韩德强打人 领袖可以批评</span>
+                        <hr />
+                        <span>韩德强的支持者们认为，批评毛泽东违反宪法。这与事实不符。现行1982年宪法的序言中有一处提到毛泽东，但属于事实陈述，两处提到毛泽东思想，属于观念表达，都没有明确规定不能批评毛泽东。而且，宪法序言不同于正文，正文具有法律效力，而序言是否具有法律效力存在很大争议，全国人大法工委原主任高锴先生算是权威人物，他就认为宪法序言是不具有法律效力的。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.9.28 搜狐新闻 白岩松:韩德强打八旬老人 实是另一种“汉奸”</span>
+                        <hr />
+                        <span>据央视报道，在北京的保钓游行活动中，北京航空航天大学教授韩德强证实因观点不一致，自己曾两次打一名80多岁老人耳光，并称这个老人是“汉奸”。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.10.13 网易财经 韩德强 毛是Teacher</span>
+                        <hr />
+                        <span>“毛主席在我心目当中的地位跟穆罕默德（在阿拉伯世界的地位）是一样的。”温文尔雅、说话慢声细语的韩德强这样解释他愤怒的由来。“忍无可忍，不能再忍！”随着音调拔高，他颤抖得更加显著。</span>
+                      </div>
+                    </div>
+                    <div class="item" >
+                      <div class="inner" >
+                        <span class="title">2012.10.13 凤凰网 韩德强谈砸烧日系车:普通人就一蚂蚁 被踩死没办法</span>
+                        <hr />
+                        <span>在游行队伍当中，我就是一名爱国的、反日的公民；我回到大学讲堂上，我是大学老师。</span></div>
+                      </div>
+                      <div class="item" >
+                        <div class="inner" >
+                          <span class="title">2012.10.16 新浪新闻 韩德强谈砸车:大象走路怎能顾得蚂蚁螳螂?</span>
+                          <hr />
+                          <span>人物周刊：那日系车和日系车主就变成了殉道者？韩德强：那没办法，那没办法。大象走路，它能顾得了蚂蚁螳螂？一个国家一个社会的行动，它就是这样的呀，它不可能是一点损失都没有的呀。</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+<div class="container-d">
+                <div class="row">
+                  <ul class="thumbnails child-sites">
+                    <div class="col-md-4">
+                      <li class="span3" style="display:none;">
+                        <a class="thumbnail" href="/evolution/topic_ajax_hot/" target="_blank">
+                          <img src="/static/index/pic/yh.jpg" alt="演化" width="260" height="200">
+                        </a>
+                        <h4 style="text-align:center;">演化要素</h4>
+                      </li>
+                    </div>
+                    <div class="col-md-4">
+                      <li class="span3" style="display:none;">
+                        <a class="thumbnail" href="/opinion/weibo
+                        " target="_blank">
+                        <img src="/static/index/pic/yuyi.jpg" alt="语义" width="260" height="200">
+                      </a>
+                      <h4 style="text-align:center;">语义要素</h4>
+                    </li>
+                  </div>
+                  </ul>
+  </div>
+</div>
+          <div class="panel-outer-d">
+            <div class="panel-nav-d">要素分析</div>
+            <div id="panel-d panel-d-high" style="border:1px solid gray;">
+              <div class="container">
+                <div class="row">
+                  <ul class="thumbnails child-sites">
+                    <div class="col-md-4">
+                      <li class="span3" style="display:none;">
+                        <a class="thumbnail" href="/evolution/topic_ajax_hot/" target="_blank">
+                          <img src="/static/index/pic/yh.jpg" alt="演化" width="260" height="200">
+                        </a>
+                        <h4 style="text-align:center;">演化要素</h4>
+                      </li>
+                    </div>
+                    <div class="col-md-4">
+                      <li class="span3" style="display:none;">
+                        <a class="thumbnail" href="/opinion/weibo
+                        " target="_blank">
+                        <img src="/static/index/pic/yuyi.jpg" alt="语义" width="260" height="200">
+                      </a>
+                      <h4 style="text-align:center;">语义要素</h4>
+                    </li>
+                  </div>
+      <!--<div class="col-md-4">
+        <li class="span3" style="display:none;">
+          <a class="thumbnail" href="profile1" target="_blank">
+            <img src="/static/index/pic/qx.jpg" alt="情绪" width="260" height="200">
+          </a>
+          <h4 style="text-align:center;">情绪要素</h4>-->
+          <!--<p>该模块主要识别各类热点舆情传播的关键人物，提供其全特征数据，可以为网民的定点监控和干预提供策略建议。</p>
+          <p><a class="btn" id="profile2" target="_blank">查看详情 »</a></p>-->
+        <!--</li>
+      </div>
+      <div class="col-md-4">
+        <li class="span3" style="display:none;">
+          <a class="thumbnail" href="propagate1" target="_blank">
+            <img src="/static/index/pic/cb.jpg" alt="传播" width="260" height="200">
+          </a>
+          <h4 style="text-align:center;">传播要素</h4>-->
+          <!--<p>该模块用于找到给定话题下的一条或几条敏感微博中的关键用户，并将结果可视化展示。</p>
+          <p><a class="btn" id="propagate2" target="_blank">查看详情 »</a></p>-->
+        <!--</li>
+      </div> -->
+    </ul>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+</div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 well-big">
+    <div class="well well-con">
+      <strong>评价：</strong><i>两会是非常重要的会议</i>
+      <button type="button" class="btn pull-right" >
+        修改评价
+      </button>
+    </div>
+  </div>
+</div>
+
+<div  class="anli-download">
+  <p>
+    <a class="btn btn-small btn-success" href="#" id="out"><i class="icon-download-alt"></i> <b>导出案例</b></a>
+  </p>
+</div>
+<script src="../../static/index/js/highstock.js"></script>
+<script src="../../static/index/js/exporting.js"></script>
+<script src="../../static/index/js/jquery.tagcanvas.min.js"></script>
+<script src="../../static/index/js/jquery.totemticker.js"></script>
+
+    <!--<script>
+      var query = "九一八";
+      var START_TS = 1396368000;
+      var END_TS = 1396454400;
+      var DURING_INTERGER = 24*3600;
+      var WEIBOS_LIMIT = 10;
+      var KEYWORDS_LIMIT = 10;
+      var click_flag=false;
+      var status_flag = 'relative';
+    var series_flag = [1, 1, 1, 1, 1, 1, -1, -1, -1]; //记录9个series选中与否的状态
+
+    var emotion_ratio = {};
+    var emotion_absolute={};
+
+    var happy_absolute = [];
+    var angry_absolute = [];
+    var sad_absolute = [];
+
+    var happy_ratio = [];
+    var angry_ratio = [];
+    var sad_ratio = [];
+
+    var happy_list = [];
+    var angry_list = [];
+    var sad_list = [];
+    var ts_list = [];
+
+    var happy_alist = [];
+    var angry_alist = [];
+    var sad_alist = [];
+    var ts_alist = [];
+
+    var oopts = {textHeight: 25,maxSpeed: 0.03,decel: 0.98,depth: 0.92,outlineColour: '#f6f',outlineThickness: 3,pulsateTo: 0.2,pulsateTime: 0.5,wheelZoom: false,textColour:'#00f',shadow:'#ccf',minBrightness:0.2,shadowBlur:3,weight:true,weightMode:'both'};
+    var max_word_size = 10;
+    var min_word_size = 1;
+    var emotion_keys = ['happy', 'angry', 'sad'];
+//启动处
+$(document).ready(function(){
+  display_realtime_emotion();
+})
+
+function display_emotion_pie(data){
+  Highcharts.setOptions({
+    colors: ['#006600', '#FF0000', '#000099']
+  });
+        // Build the chart
+        $('#pie').highcharts({
+          chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+          },
+          title: {
+            text: '微博情绪饼图',
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                formatter:function(){
+                  return '<b>'+this.point.name+'</b>'+this.percentage.toFixed(2)+'%';}
+
+                },
+                showInLegend: true
+              }
+            },
+            navigation: {
+              buttonOptions: {
+                verticalAlign: 'bottom',
+                y: -20
+              }
+            },
+            series: [{
+              type: 'pie',
+              name: '情绪数值',
+              data: data
+            }]
+          });
+      }
+
+      function chg_emotion_pie(raw_data){
+        $('#pie').empty();
+        if(raw_data[3] != 0){
+          var data = [['高兴', raw_data[0]], ['愤怒', raw_data[1]], ['悲伤', raw_data[2]]];
+          display_emotion_pie(data);
+        }
+
+      }
+
+      function isEmptyObject(obj){
+        for ( var name in obj ) { 
+          return false;
+        } 
+        return true; 
+      } 
+
+      function redraw_tagcanvas() {
+        if(!$('#myCanvas').tagcanvas(oopts,'tags_div')) {
+          $('#myCanvas').hide();
+        }
+      }
+
+      function defscale(count, mincount, maxcount, minsize, maxsize){
+        if(maxcount == mincount){
+          return (maxsize + minsize) / 2
+        }else{
+          return minsize + (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+        }
+      }
+
+      function chg_tagcloud(data) {
+        $("#tags_ul").empty();
+        var cloud_list = [];
+        var max_count = 0;
+        var min_count = 0;
+        for (var i in data) {
+          if(max_count < parseInt(data[i])){
+            max_count = parseInt(data[i]);
+          }
+          if(min_count > parseInt(data[i])){
+            min_count = parseInt(data[i]);
+          }
+          cloud_list.push([parseInt(data[i]), i]);
+        }
+        for (var i=0;i<cloud_list.length;i++) {
+          $("#tags_ul").append("<li><a href='#tag_cloud_div' style=\"font-size:"+ defscale(cloud_list[i][0], min_count, max_count, min_word_size, max_word_size) +"ex\">"+ cloud_list[i][1] +"</a></li>");
+        }
+        redraw_tagcanvas();
+      }
+
+      function init_statistics(end_ts, duration){
+        //end_ts为截止时间戳, duration为整个时间段的秒数
+        
+        /*$.ajax({
+            url: "/moodlens/weibos_data/?query="+query,
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+                $("#vertical-ticker").empty();
+                var happy_length = data['happy'].length;
+                var sad_length = data['sad'].length;
+                var angry_length = data['angry'].length;
+                var total_length  = happy_length + sad_length + angry_length;
+                if(total_length > 0) {
+                    var weibos = [];
+                    for(var e in emotion_keys){
+                        for(var i=0; i< data[emotion_keys[e]].length; i+=1)
+                            weibos.push(data[emotion_keys[e]][i]);
+                    }
+                    chg_weibos(weibos);
+                }
+                else{
+                    $("#vertical-ticker").empty();
+                    $("#vertical-ticker").append("关键微博为空！");
+                }
+            }
+          });*/
+$.ajax({
+  url: "/moodlens/keywords_data/?ts=" + end_ts + "&emotion=whole&query=" + query,
+  type: "GET",
+  dataType:"json",
+  success: function(data){
+    if(data=='search function undefined'){
+      $("#tags_ul").empty();
+      $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+      redraw_tagcanvas();
+    }
+    else{
+      if(isEmptyObject(data[0]['word']) ){
+        $("#tags_ul").empty();
+        $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+        redraw_tagcanvas();
+      }
+      else{
+        var cloud = new Array();
+        for (var i=0;i<data.length;i++){
+          var name = data[i]['word'];
+          cloud[name] = data[i]['weight'];
+        }
+        chg_tagcloud(cloud);
+      }
+    }
+  }
+});
+$.ajax({
+  url: "/moodlens/data/?ts=" + end_ts + "&query=" + query,
+  type: "GET",
+  dataType:"json",
+  success: function(data){
+    var happy_emotion_count = data['happy'];
+    var angry_emotion_count = data['angry'];
+    var sad_emotion_count = data['sad'];
+    var total_count = parseInt(happy_emotion_count) + parseInt(angry_emotion_count) + parseInt(sad_emotion_count);
+    chg_emotion_pie([happy_emotion_count, angry_emotion_count, sad_emotion_count, total_count]);
+  }
+})
+}
+</script> -->
+
+<script>
+  var oopts = {textHeight: 25,maxSpeed: 0.03,decel: 0.98,depth: 0.92,outlineColour: '#f6f',outlineThickness: 3,pulsateTo: 0.2,pulsateTime: 0.5,wheelZoom: false,textColour:'#00f',shadow:'#ccf',minBrightness:0.2,shadowBlur:3,weight:true,weightMode:'both'};
+  var max_word_size = 10;
+  var min_word_size = 1;
+
+  var emotion_keys = ['happy', 'angry', 'sad'];
+
+  $(document).ready(function(){
+    redraw_tagcanvas();
+  })
+
+
+  function redraw_tagcanvas() {
+    if(!$('#myCanvas').tagcanvas(oopts,'tags_div')) {
+      $('#myCanvas').hide();
+    }
+  }
+  function defscale(count, mincount, maxcount, minsize, maxsize){
+    if(maxcount == mincount){
+      return (maxsize + minsize) / 2
+    }else{
+      return minsize + (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+    }
+  }
+
+  function chg_tagcloud(data) {
+    $("#tags_ul").empty();
+    var cloud_list = [];
+    var max_count = 0;
+    var min_count = 0;
+    for (var i in data) {
+      if(max_count < parseInt(data[i])){
+        max_count = parseInt(data[i]);
+      }
+      if(min_count > parseInt(data[i])){
+        min_count = parseInt(data[i]);
+      }
+      cloud_list.push([parseInt(data[i]), i]);
+    }
+    for (var i=0;i<cloud_list.length;i++) {
+      $("#tags_ul").append("<li><a href='#tag_cloud_div' style=\"font-size:"+ defscale(cloud_list[i][0], min_count, max_count, min_word_size, max_word_size) +"ex\">"+ cloud_list[i][1] +"</a></li>");
+    }
+    redraw_tagcanvas();
+  }
+  function chg_weibos(data){
+    var html = "";
+    var emotion_content = ['happy', 'angry', 'sad'];
+    for(var i=0;i<data.length;i+=1){
+      var emotion = emotion_content[data[i]['sentiment']-1];
+      var name = data[i]['user'];
+      var user_link = 'http://weibo.com/u/'+data[i]['user'];
+      var text = data[i]['text'];
+      var weibo_link = data[i]['weibo_link'];
+      var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', parseInt(data[i]['timestamp']) * 1000);
+      var repost_count = data[i]['reposts_count'];
+      var retweeted_text = 'None';
+      html += "<li><div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"; 
+      html += "<div class=\"chartclient-annotation-title\"><a href='" + user_link + "' target='_blank' >" + name + "</a> 发布 </div>";
+      html += "<div class=\"chartclient-annotation-content\"><a href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
+      if(retweeted_text != 'None'){
+        html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
+      }
+      html += "<div class=\"chartclient-annotation-date\"> " + time + "<span style=\"float:right\"> 转发数：" +  repost_count + "</span></div></li>";
+    }
+    $("#vertical-ticker").append(html);
+    display_vertical_list();
+  }
+
+  function chg_emotion_pie(raw_data){
+    $('#emotion_pie_container').empty();
+    if(raw_data[3] != 0){
+      var data = [['高兴', raw_data[0]], ['愤怒', raw_data[1]], ['悲伤', raw_data[2]]];
+      display_emotion_pie(data);
+    }
+  }
+</script>
+
+<!-- Site footer -->
+<div class="footer">
+  <p>&copy; IDEC 2014</p>
+</div>
+</div> <!-- /container -->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
+
+  </html>
+
+
+
+
+
+
+
