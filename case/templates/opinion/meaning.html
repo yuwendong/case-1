@@ -9,12 +9,25 @@
     <title>系统界面</title>
 
     <!-- Bootstrap core CSS -->
+    <!-- <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="../../static/opinion/css/bootstrap.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap-responsive.min.css') }}" rel="stylesheet"> -->
 
     <!-- Custom styles for this template -->
+    <!-- <link href="../../static/opinion/css/justified-nav.css" rel="stylesheet"> -->
+    <!-- <link href="../../static/opinion/css/style.css" rel="stylesheet"> -->
+    <!-- <link href="../../static/opinion/css/base.css" rel="stylesheet"> -->
+
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="../../static/opinion/css/bootstrap.css" rel="stylesheet">
     <link href="../../static/opinion/css/justified-nav.css" rel="stylesheet">
     <link href="../../static/opinion/css/style.css" rel="stylesheet">
     <link href="../../static/opinion/css/base.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/jquery-ui.css" />
+
 
     <script src="../../static/opinion/js/jquery-1.9.1.min.js"></script>
     <script src="../../static/opinion/js/highcharts.js"></script>
@@ -178,13 +191,13 @@
 
     <!-- 弹出层 -->
     <style>
-        body{font:12px/1.2 Verdana, sans-serif; padding:0 10px;}
+       /* body{font:12px/1.2 Verdana, sans-serif; padding:0 10px;}*/
         a:link, a:visited{text-decoration:none; color:#416CE5; border-bottom:1px solid #416CE5;}
         h2{font-size:20px; margin:15px 0 0 0;}
         /*定义积极文本等的标题样式*/
-        h3{font-size:18px; margin:15px 1080px 0 0; color:#333333; font-weight: bold;background-color:rgba(124,181,236,0.5); padding:5px}
-        h4{font-size:18px; margin:15px 1080px 0 0; color:#333333; font-weight: bold;background-color:rgba(67,67,72,0.5); padding:5px}
-        h5{font-size:18px; margin:15px 1080px 0 0; color:#333333; font-weight: bold;background-color:rgba(144,237,125,0.5); padding:5px}
+        h3{font-size:18px; margin:15px 850px 0 0; color:#333333; font-weight: bold;background-color:rgba(124,181,236,0.5); padding:5px}
+        h4{font-size:18px; margin:15px 850px 0 0; color:#333333; font-weight: bold;background-color:rgba(67,67,72,0.5); padding:5px}
+        h5{font-size:18px; margin:15px 850px 0 0; color:#333333; font-weight: bold;background-color:rgba(144,237,125,0.5); padding:5px}
     </style>
     <script>
         $(document).ready(function(){
@@ -217,46 +230,35 @@
         });
     </script>
 </head>
+<div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container">
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="brand" href="/login"><strong><font size="+2">语义要素:九一八</font></strong></a>
+            <a class="brand"><small><font size="+1"> > </font></small></a>
+              <a class="brand" href="/evolution/topic_ajax_hot/"><small><font size="+1">微博</font></small></a>
+              <a class="brand" href="/evolution/topic_ajax_hot/"><small><font size="+1">新闻</font></small></a>
+              <a class="brand" href="/evolution/topic_ajax_hot/"><small><font size="+1">博客</font></small></a>
+              <a class="brand" href="/evolution/topic_ajax_hot/"><small><font size="+1">论坛</font></small></a>
+            </div>
+          </div>
+        </div>
 <body onload="drawVisualization();">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="text-muted" size="+3"><strong>语义模块</strong></h2>
-            </div>
-            <hr class="soften">
-        </div>
-        <div class="row">
-            <div class="col-lg-2">
-                <button type="button" class="btn btn-lg btn-warning btn-block">九一八</button>
-                <hr class="soften">
-            </div>
-            <div class="col-lg-2">
-            </div>
-            <div class="col-lg-1">
-              <button type="button" class="btn btn-lg btn-primary btn-block">微博</button>
-            </div>
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-1">
-              <button type="button" class="btn btn-lg btn-primary btn-block">新闻</button>
-            </div>
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-1">
-              <button type="button" class="btn btn-lg btn-primary btn-block">博客</button>
-            </div>
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-1">
-              <button type="button" class="btn btn-lg btn-primary btn-block">论坛</button>
-            </div>
-        </div>
-        <div class="row">
-          <div id="mytimeline"></div>
+    <div class="container-fluid" style="padding-right:100px;padding-left:100px">
+        <div class="row-fluid">
+          <div id="mytimeline" style="padding=0px">
+            <hr></hr>
+            <h2>观点时间轴</h2>
+            <hr></hr>
+          </div>
           <hr class="soften">
         </div>
       <!-- Example row of columns -->
-        <div class="row">
+        <div class="row-fluid">
             <div class="col-lg-4">
             <h2>簇三元组</h2>
             <table class="table table-striped">
@@ -302,11 +304,11 @@
                 <div id="pie_chart"></div>
             </div>
         </div>
-        <div class="row">
+        <div class="row-fluid">
           <div id="area"></div>
           </div>
         <hr class="soften">
-        <div class="row">
+        <div class="row-fluid">
           <h2>观点情绪代表文本</h2>
           <h3>积极文本</h3>
           <p>博主最有爱了，，小伙伴们快来围观求抽中@周婷不做重口味好多年 @垦爷儿@怪咖么么-[亲亲]</p>
@@ -326,7 +328,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <div class="row">
+    <div class="row-fluid">
           <div id="info"></div>
           </div>
 </body>
