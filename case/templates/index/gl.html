@@ -180,6 +180,7 @@
         }
 
 
+<<<<<<< HEAD
 /**        var onadd = function () {
             var row = getSelectedRow();
             document.getElementById("info").innerHTML += "item " + row + " created<br>";
@@ -192,6 +193,61 @@
             else {
                 // cancel adding the item
                 timeline.cancelAdd();
+=======
+        series: [{
+            name: '话题1',
+            data: [
+                [5, 50, 14],
+                [8, 50, 20],
+                [13, 50, 26],
+                [16, 50, 35],
+                [20, 50, 42],
+                [24, 50, 50],
+                [30, 55, 60],
+                [40, 60, 70],
+                [50, 75, 80],
+                [60, 75, 90],
+                [30, 45, 40],
+                [40, 40, 30],
+                [50, 35, 20],
+                [60, 25, 10]
+            ],
+            marker: {
+                 fillColor: {
+                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                     stops: [
+                         [0, 'hsla(0, 0%, 100%, 0.5)'],
+                         [1, 'hsla(212, 42%, 46%, 0.5)']
+                     ]
+                 }
+            }
+        }, {
+            name: '话题2',
+            data: [
+                [42, 38, 20],
+                [6, 18, 1],
+                [1, 93, 55],
+                [57, 2, 90],
+                [80, 76, 22],
+                [11, 74, 96],
+                [88, 56, 10],
+                [30, 47, 49],
+                [57, 62, 98],
+                [4, 16, 16],
+                [46, 10, 11],
+                [22, 87, 89],
+                [57, 91, 82],
+                [45, 15, 98]
+            ],
+            marker: {
+                 fillColor: {
+                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                     stops: [
+                         [0, 'hsla(0, 0%, 100%, 0.5)'],
+                         [1, 'hsla(2, 43%, 46%, 0.5)']
+                     ]
+                 }
+>>>>>>> 139728f5f561c617b804d76081834767b81862db
             }
         };
 **/
@@ -457,73 +513,5 @@ body { background-color: hsl(0, 0%, 95%); }
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script>
-    var keyword = String('');
-    console.log(keyword);
-    // $(document).ready(function(){
-    //     init_statistics(keyword);
-    // })
-    function chg_emotion_pie(raw_data){
-        $('#pie_chart').empty();
-        Pie(raw_data)
-    }
-    function init_statistics(keyword){
-    $.ajax({
-            url: "/opinion/weibo/?keyword=" + keyword,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                chg_emotion_pie(data);
-            }
-        });
-    }
-    $(function Pie(data) {
-        $('#pie_chart').highcharts({
-            credits: {
-                enabled: false
-            },
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false
-            },
-            title: {
-                text: '代表观点比例'
-            },
-            tooltip: {
-              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        connectorColor: '#000000',
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: '代表观点比例',
-                data: [
-                    ['钓鱼岛',   45.0],
-                    ['日货',       26.8],
-                    {
-                        name: '九一八',
-                        y: 12.8,
-                        sliced: true,
-                        selected: true
-                    },
-                    ['国耻',    8.5],
-                    ['历史',     6.2],
-                    ['其他',   0.7]
-                ]
-            }]
-        });
-    });
-</script>
   </body>
 </html>

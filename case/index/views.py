@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+#-*- coding:utf-8 -*-
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 import json
 from case.model import *
@@ -13,6 +12,3 @@ def loading():
 @mod.route('/detail/')
 def detail():
     return render_template('index/detail.html')
-
-    
-    

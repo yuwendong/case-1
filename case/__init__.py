@@ -7,7 +7,9 @@ from model_view import SQLModelView
 from case.root.views import mod as rootModule
 from case.moodlens.views import mod as moodlensModule
 from case.opinion.views import mod as opinionModule
+from case.propagate.views import mod as propagateModule
 from case.index.views import mod as indexModule
+from case.evolution.views import mod as evolutionModule
 
 def create_app():
     app = Flask(__name__)
@@ -17,7 +19,9 @@ def create_app():
     app.register_blueprint(rootModule)
     app.register_blueprint(moodlensModule)
     app.register_blueprint(opinionModule)
+    app.register_blueprint(propagateModule)
     app.register_blueprint(indexModule)
+    app.register_blueprint(evolutionModule)
     
     # Enable the toolbar?
     app.config['DEBUG_TB_ENABLED'] = app.debug
