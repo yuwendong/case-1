@@ -79,11 +79,11 @@
                 <div class="row">
                     <hr></hr>
                     <div class="col-lg-6" >
-                        <div id="pie" style="height:400px;margin-top:50px;"></div>
+                        <div id="pie" style="height:400px;margin-top:50px;border-color:#d9d9d9;border-style:solid;border-width:1px 1px 1px 1px"></div>
                     </div>
                     
                     <div class="col-lg-6" >
-                        <div id="wordcloud" style="height:400px;width=500px">
+                        <div id="wordcloud" style="height:400px;margin-top:50px;width=500px;border-color:#d9d9d9;border-style:solid;border-width:1px 1px 1px 1px">
                              <canvas width="500px" height="400px" id="myCanvas" style="margin-left:0px;">
                                 <p>Anything in here will be replaced on browsers that support the canvas element</p>
                             </canvas>
@@ -118,8 +118,8 @@
 <script src="../../static/moodlens/js/jquery.totemticker.js"></script>
 <script>
     var query = "九一八";
-    var START_TS = 1396368000;
-    var END_TS = 1396454400;
+    var START_TS = 1396281600;
+    var END_TS = 1396540800;
     var DURING_INTERGER = 24*3600;
     var WEIBOS_LIMIT = 10;
     var KEYWORDS_LIMIT = 10;
@@ -155,28 +155,23 @@
     var emotion_keys = ['happy', 'angry', 'sad'];
     var source_status=1;//1 2 3 4分别代表微博 新闻 博客 论坛
 //启动处
-  $(document).ready(function(){  
+$(document).ready(function(){  
         display_realtime_emotion();
-    });
+    })
+
 function display_emotion_pie(data){
-        // Highcharts.setOptions({
-        //     colors: ['#006600', '#FF0000', '#000099']
-        // });
+        Highcharts.setOptions({
+            colors: ['#98FB98', '#FF7F50', '#4169E1']
+        });
         // Build the chart
         $('#pie').highcharts({
-            credits: {
-                enabled: false
-            },
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false
             },
             title: {
-                text: '热度饼图',
-            },
-            tooltip: {
-              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                text: '演化饼图',
             },
             plotOptions: {
                 pie: {
@@ -184,25 +179,23 @@ function display_emotion_pie(data){
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
-                        color: '#000000',
-                        connectorColor: '#000000',
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                    }
+                        formatter:function(){
+                            return '<b>'+this.point.name+'</b>'+this.percentage.toFixed(2)+'%';}
+
+                    },
+                    showInLegend: true
+                }
+            },
+            navigation: {
+                buttonOptions: {
+                    verticalAlign: 'bottom',
+                    y: -20
                 }
             },
             series: [{
                 type: 'pie',
-                name: '代表观点比例',
-                data: [
-                    ['原创',   45.0],
-                    ['转发',       20.0],
-                    {
-                        name: '评论',
-                        y: 35.0,
-                        sliced: true,
-                        selected: true
-                    }
-                ]
+                name: '演化数值',
+                data: data
             }]
         });
     }
@@ -210,8 +203,7 @@ function display_emotion_pie(data){
 function chg_emotion_pie(raw_data){
         $('#pie').empty();
         if(raw_data[3] != 0){
-            // var data = [['原创', raw_data[0]], ['转发', raw_data[1]], ['总量', raw_data[2]]];
-            var data = [['原创', raw_data[0]], ['转发', raw_data[1]]];
+            var data = [['原创', raw_data[0]], ['转发', raw_data[1]], ['评论', raw_data[2]]];
             display_emotion_pie(data);
         }
 
@@ -263,9 +255,9 @@ function redraw_tagcanvas() {
 
 function defscale(count, mincount, maxcount, minsize, maxsize){
       if(maxcount == mincount){
-        return (maxsize + minsize) / 2
+        return (maxsize + minsize) / 1.1
       }else{
-        return minsize + (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+        return (minsize + (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2))/1.1
       }
     }
    
@@ -811,7 +803,7 @@ function display_realtime_emotion(){
                 useUTC: false
             }
         });
-        $('#line_container').highcharts({
+        var chart_obj = $('#line_container').highcharts({
             chart: {
                 type: 'line',//spline,
                 animation: Highcharts.svg, // don't animate in old IE
@@ -853,7 +845,7 @@ function display_realtime_emotion(){
                 }
             },
             title : {
-                text: '微博热度走势图'
+                text: '微博演化走势图'
             },
 
             rangeSelector: {
@@ -925,7 +917,7 @@ function display_realtime_emotion(){
                     enabled : false,    
                 }
             },{
-                name: '总量',
+                name: '评论',
                 data: [],
                 id: 'sad',
                 color: '#000099',
@@ -951,7 +943,7 @@ function display_realtime_emotion(){
                 width : 2,
                 color: '#FF0000'
             },{
-                name: '相对拐点(总量)',
+                name: '相对拐点(评论)',
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
@@ -982,7 +974,7 @@ function display_realtime_emotion(){
                 //visible:false
                 showInLegend: false
             },{
-                name: '绝对拐点(总量)',
+                name: '绝对拐点(评论)',
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
@@ -998,249 +990,258 @@ function display_realtime_emotion(){
         
     }
 
-    function load_absolute(){ 
-        if(click_flag){
-            var chart = $('#line_container').highcharts();
-            chart.series[0].update({
-                data : happy_absolute
-            });
-            chart.series[1].update({
-                data : angry_absolute
-            });
-            chart.series[2].update({
-                data : sad_absolute
-            });
-
-            chart.series[3].update({
-                showInLegend: false
-            });
-            chart.series[4].update({
-                showInLegend: false
-            });
-            chart.series[5].update({
-                showInLegend: false
-            });
-            chart.series[6].update({
-                showInLegend: true
-            });
-            chart.series[7].update({
-                showInLegend: true
-            });
-            chart.series[8].update({
-                showInLegend: true
-            });
-            chart.series[3].hide();
-            chart.series[4].hide();
-            chart.series[5].hide();
-            chart.series[6].show();
-            chart.series[7].show();
-            chart.series[8].show();
-
-            status_flag = 'absolute';
-
-        }
-        else{
-            alert("请等待相对曲线加载完毕！");
-        }
-    }
-    function load_relative(){
+function load_absolute(){ 
+    if(click_flag){
         var chart = $('#line_container').highcharts();
         chart.series[0].update({
-            data : happy_ratio
+            data : happy_absolute
         });
         chart.series[1].update({
-            data : angry_ratio
+            data : angry_absolute
         });
         chart.series[2].update({
-            data : sad_ratio
+            data : sad_absolute
         });
-            chart.series[6].update({
-                showInLegend: false
-            });
-            chart.series[7].update({
-                showInLegend: false
-            });
-            chart.series[8].update({
-                showInLegend: false
-            });
-            chart.series[3].update({
-                showInLegend: true
-            });
-            chart.series[4].update({
-                showInLegend: true
-            });
-            chart.series[5].update({
-                showInLegend: true
-            });
-        chart.series[6].hide();
-        chart.series[7].hide();
-        chart.series[8].hide();
-        chart.series[3].show();
-        chart.series[4].show();
-        chart.series[5].show();
-        status_flag = 'relative';
-       
-    } 
-    function chg2weibo(){
-        var chart1 = $('#line_container').highcharts();
-        chart1.setTitle({text:'微博热度走势图'}); 
-        var chart2 = $('#pie').highcharts();
-        chart2.setTitle({text:'微博热度饼图'});
-        list=document.getElementById("list");
-        list.innerHTML="关键微博列表";
-        switch(source_status)
-        {
-            case 1:{
 
-                break;                                    
-            };
+        chart.series[3].update({
+            showInLegend: false
+        });
+        chart.series[4].update({
+            showInLegend: false
+        });
+        chart.series[5].update({
+            showInLegend: false
+        });
+        chart.series[6].update({
+            showInLegend: true
+        });
+        chart.series[7].update({
+            showInLegend: true
+        });
+        chart.series[8].update({
+            showInLegend: true
+        });
+        chart.series[3].hide();
+        chart.series[4].hide();
+        chart.series[5].hide();
+        chart.series[6].show();
+        chart.series[7].show();
+        chart.series[8].show();
 
-            case 2:{
-                $('#news_button').removeClass('btn-success');
-                $('#news_button').addClass('btn-primary');
-                $('#weibo_button').removeClass('btn-primary');
-                $('#weibo_button').addClass('btn-success');
-                break;
-            };
-            
-            case 3:{
-                $('#blog_button').removeClass('btn-success');
-                $('#blog_button').addClass('btn-primary');
-                $('#weibo_button').removeClass('btn-primary');
-                $('#weibo_button').addClass('btn-success');
-                break;
-            };
-        
-            case 4:{
-                $('#forum_button').removeClass('btn-success');
-                $('#forum_button').addClass('btn-primary');
-                $('#weibo_button').removeClass('btn-primary');
-                $('#weibo_button').addClass('btn-success');
-                break;
-            };
-        }
-        
-        
-        source_status=1;
+        status_flag = 'absolute';
+
     }
-    function chg2news(){
-        var chart1 = $('#line_container').highcharts();
-        chart1.setTitle({text:'新闻热度走势图'}); 
-        var chart2 = $('#pie').highcharts();
-        chart2.setTitle({text:'新闻热度饼图'});
-        list=document.getElementById("list");
-        list.innerHTML="关键新闻列表";
-        switch(source_status)
-        {
-            case 1:{
-                $('#weibo_button').removeClass('btn-success');
-                $('#weibo_button').addClass('btn-primary');
-                $('#news_button').removeClass('btn-primary');
-                $('#news_button').addClass('btn-success');
-                break;
-            };
-        
-            case 2:{
-                break;
-            };
-            case 3:{
-                $('#blog_button').removeClass('btn-success');
-                $('#blog_button').addClass('btn-primary');
-                $('#news_button').removeClass('btn-primary');
-                $('#news_button').addClass('btn-success');
-                break;
-            };
-            case 4:{
-                $('#forum_button').removeClass('btn-success');
-                $('#forum_button').addClass('btn-primary');
-                $('#news_button').removeClass('btn-primary');
-                $('#news_button').addClass('btn-success');
-                break;
-            };
-        }
-        
-        
-        source_status=2;
+    else{
+        alert("请等待相对曲线加载完毕！");
     }
-    function chg2blog(){
-        var chart1 = $('#line_container').highcharts();
-        chart1.setTitle({text:'博客热度走势图'}); 
-        var chart2 = $('#pie').highcharts();
-        chart2.setTitle({text:'博客热度饼图'});
-        list=document.getElementById("list");
-        list.innerHTML="关键博客列表";
-        switch(source_status)
-        {
-            case 1:{
-                $('#weibo_button').removeClass('btn-success');
-                $('#weibo_button').addClass('btn-primary');
-                $('#blog_button').removeClass('btn-primary');
-                $('#blog_button').addClass('btn-success');
-                break;
-            };
-            
-            case 2:{
-                $('#news_button').removeClass('btn-success');
-                $('#news_button').addClass('btn-primary');
-                $('#blog_button').removeClass('btn-primary');
-                $('#blog_button').addClass('btn-success');
-                break;
-            };
+}
+function load_relative(){
+    var chart = $('#line_container').highcharts();
+    chart.series[0].update({
+        data : happy_ratio
+    });
+    chart.series[1].update({
+        data : angry_ratio
+    });
+    chart.series[2].update({
+        data : sad_ratio
+    });
+        chart.series[6].update({
+            showInLegend: false
+        });
+        chart.series[7].update({
+            showInLegend: false
+        });
+        chart.series[8].update({
+            showInLegend: false
+        });
+        chart.series[3].update({
+            showInLegend: true
+        });
+        chart.series[4].update({
+            showInLegend: true
+        });
+        chart.series[5].update({
+            showInLegend: true
+        });
+    chart.series[6].hide();
+    chart.series[7].hide();
+    chart.series[8].hide();
+    chart.series[3].show();
+    chart.series[4].show();
+    chart.series[5].show();
+    status_flag = 'relative';
+   
+} 
+function chg2weibo(){
+    var chart1 = $('#line_container').highcharts();
+    chart1.setTitle({text:'微博演化走势图'}); 
+    var chart2 = $('#pie').highcharts();
+    chart2.setTitle({text:'微博演化饼图'});
+    list=document.getElementById("list");
+    list.innerHTML="关键微博列表";
+    switch(source_status)
+    {
+        case 1:{
+
+            break;                                    
+        };
+
+        case 2:{
+            $('#news_button').removeClass('btn-success');
+            $('#news_button').addClass('btn-primary');
+            $('#weibo_button').removeClass('btn-primary');
+            $('#weibo_button').addClass('btn-success');
+            break;
+        };
         
-            case 3:{
-                break;
-            };
-            
-            case 4:{
-                $('#forum_button').removeClass('btn-success');
-                $('#forum_button').addClass('btn-primary');
-                $('#blog_button').removeClass('btn-primary');
-                $('#blog_button').addClass('btn-success');
-                break;
-            };
-        }
-        
-        
-        source_status=3;
+        case 3:{
+            $('#blog_button').removeClass('btn-success');
+            $('#blog_button').addClass('btn-primary');
+            $('#weibo_button').removeClass('btn-primary');
+            $('#weibo_button').addClass('btn-success');
+            break;
+        };
+    
+        case 4:{
+            $('#forum_button').removeClass('btn-success');
+            $('#forum_button').addClass('btn-primary');
+            $('#weibo_button').removeClass('btn-primary');
+            $('#weibo_button').addClass('btn-success');
+            break;
+        };
     }
-    function chg2forum(){
-        var chart1 = $('#line_container').highcharts();
-        chart1.setTitle({text:'论坛热度走势图'}); 
-        var chart2 = $('#pie').highcharts();
-        chart2.setTitle({text:'论坛热度饼图'});
-        list=document.getElementById("list");
-        list.innerHTML="关键帖子列表";
-        switch(source_status)
-        {
-            case 1:{
-                $('#weibo_button').removeClass('btn-success');
-                $('#weibo_button').addClass('btn-primary');
-                $('#forum_button').removeClass('btn-primary'); 
-                $('#forum_button').addClass('btn-success');
-                break;
-            };
-            case 2:{
-                $('#news_button').removeClass('btn-success');
-                $('#news_button').addClass('btn-primary');
-                $('#forum_button').removeClass('btn-primary'); 
-                $('#forum_button').addClass('btn-success');
-                break;
-            };
-        
-            case 3:{
-                $('#blog_button').removeClass('btn-success');
-                $('#blog_button').addClass('btn-primary');
-                $('#forum_button').removeClass('btn-primary'); 
-                $('#forum_button').addClass('btn-success');
-                break;
-            };
-            case 4:{
-                break;
-            };
-        }
-        
-        
-        source_status=4;
+    
+    
+    source_status=1;
+}
+function chg2news(){
+    var chart1 = $('#line_container').highcharts();
+    chart1.setTitle({text:'新闻演化走势图'}); 
+    var chart2 = $('#pie').highcharts();
+    chart2.setTitle({text:'新闻演化饼图'});
+    list=document.getElementById("list");
+    list.innerHTML="关键新闻列表";
+    switch(source_status)
+    {
+        case 1:{
+            $('#weibo_button').removeClass('btn-success');
+            $('#weibo_button').addClass('btn-primary');
+            $('#news_button').removeClass('btn-primary');
+            $('#news_button').addClass('btn-success');
+            break;
+        };
+    
+        case 2:{
+            break;
+        };
+        case 3:{
+            $('#blog_button').removeClass('btn-success');
+            $('#blog_button').addClass('btn-primary');
+            $('#news_button').removeClass('btn-primary');
+            $('#news_button').addClass('btn-success');
+            break;
+        };
+        case 4:{
+            $('#forum_button').removeClass('btn-success');
+            $('#forum_button').addClass('btn-primary');
+            $('#news_button').removeClass('btn-primary');
+            $('#news_button').addClass('btn-success');
+            break;
+        };
     }
+    
+    
+    source_status=2;
+}
+function chg2blog(){
+    var chart1 = $('#line_container').highcharts();
+    chart1.setTitle({text:'博客演化走势图'}); 
+    var chart2 = $('#pie').highcharts();
+    chart2.setTitle({text:'博客演化饼图'});
+    list=document.getElementById("list");
+    list.innerHTML="关键博客列表";
+    switch(source_status)
+    {
+        case 1:{
+            $('#weibo_button').removeClass('btn-success');
+            $('#weibo_button').addClass('btn-primary');
+            $('#blog_button').removeClass('btn-primary');
+            $('#blog_button').addClass('btn-success');
+            break;
+        };
+        
+        case 2:{
+            $('#news_button').removeClass('btn-success');
+            $('#news_button').addClass('btn-primary');
+            $('#blog_button').removeClass('btn-primary');
+            $('#blog_button').addClass('btn-success');
+            break;
+        };
+    
+        case 3:{
+            break;
+        };
+        
+        case 4:{
+            $('#forum_button').removeClass('btn-success');
+            $('#forum_button').addClass('btn-primary');
+            $('#blog_button').removeClass('btn-primary');
+            $('#blog_button').addClass('btn-success');
+            break;
+        };
+    }
+    
+    
+    source_status=3;
+}
+function chg2forum(){
+    var chart1 = $('#line_container').highcharts();
+    chart1.setTitle({text:'论坛演化走势图'}); 
+    var chart2 = $('#pie').highcharts();
+    chart2.setTitle({text:'论坛演化饼图'});
+    list=document.getElementById("list");
+    list.innerHTML="关键帖子列表";
+    switch(source_status)
+    {
+        case 1:{
+            $('#weibo_button').removeClass('btn-success');
+            $('#weibo_button').addClass('btn-primary');
+            $('#forum_button').removeClass('btn-primary'); 
+            $('#forum_button').addClass('btn-success');
+            break;
+        };
+        case 2:{
+            $('#news_button').removeClass('btn-success');
+            $('#news_button').addClass('btn-primary');
+            $('#forum_button').removeClass('btn-primary'); 
+            $('#forum_button').addClass('btn-success');
+            break;
+        };
+    
+        case 3:{
+            $('#blog_button').removeClass('btn-success');
+            $('#blog_button').addClass('btn-primary');
+            $('#forum_button').removeClass('btn-primary'); 
+            $('#forum_button').addClass('btn-success');
+            break;
+        };
+        case 4:{
+            break;
+        };
+    }
+    
+    
+    source_status=4;
+}
+function download1(){
+
+    var canvas=document.getElementById('myCanvas');
+    
+    var dataURL=canvas.toDataURL();
+
+    window.open('', '_blank').location.href=dataURL;
+
+};
 </script>
 {% endblock script %}
