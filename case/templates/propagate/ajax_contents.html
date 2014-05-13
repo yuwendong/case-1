@@ -7,40 +7,38 @@
     
 {% endblock %}    
 	{% block content %}
-  <div class="row">
-                
-                <div style="float:left;padding-top:10px;margin-left:8px;">
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">开始时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-1 </span></label>
-                </div>
-                <div style="float:left;padding-top:10px;margin-left:8px;">
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">截止时间：<span class="badge badge-success" style="font-size:18px"> 2014-4-5 </span></label>
-                </div>
-                <div style="float:left;padding-top:10px;margin-left:8px;">
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">信息源：<span class="badge badge-success" style="font-size:18px">微博</span></label>
-                </div>
-                <div style="float:left;padding-top:10px;margin-left:8px;">    
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">用户覆盖：<span class="badge badge-success" style="font-size:18px"> 200</span></label>
-                </div>
-                <div style="float:left;padding-top:10px;margin-left:8px;">
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">媒体覆盖：<span class="badge badge-success" style="font-size:18px"> 37 </span></label>
-                </div>
-                <div style="float:left;padding-top:10px;margin-left:8px;">    
-                    <label class="appendedInput" style="font-size:18px;padding-top:10px;">意见领袖覆盖：<span class="badge badge-success" style="font-size:18px">105 </span></label>
-                </div>
+ <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="caption" style="float:left">
+          <div style="float:left;padding-left:50px;">
+            <div style="float:left;padding-top:10px;padding-left:30px;">
+              <label style="font-size:18px">起始时间：<span class="badge badge-info" style="font-size:18px">2014.4.3</span> </label>
+              <label class="appendedInput" style="font-size:18px;padding-top:10px;">终止时间：<span class="badge badge-info" style="font-size:18px">2014.4.6</span></label>  
             </div>
-            <hr class="soften">
-		<div class="row">
-       <div class="col-lg-12" id="index-tabs">
-            <ul class="nav nav-pills tab_container">
-                <li  class="btn btn-primary" style="width:200px;height:40px;"><a href="/propagate/ajax_contents" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">代表内容</a></li>
-                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_path" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播路径</a></li>
-                <li  style="width:200px;height:40px;"><a href="/propagate/ajax_track_source" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播溯源</a></li>
-                
-                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_key_person" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">关键人物</a></li>
-                <li   style="width:200px;height:40px;"><a href="/propagate/ajax_media" align="center" style="padding-top:2px;padding-bottom: 2px;color:black;">媒体参与</a></li>
-                  
-            </ul>
+            <div style="float:left;padding-top:10px;padding-left:30px;">
+              <label style="font-size:18px">信息源：<span class="badge badge-info" style="font-size:18px">微博</span> </label>
+              <label class="appendedInput" style="font-size:18px;padding-top:10px;">用户覆盖：<span class="badge badge-info" style="font-size:18px">3000</span></label>  
+            </div>
+            <div style="float:left;padding-top:10px;padding-left:30px;">                
+                <label class="appendedInput" style="font-size:18px">媒体覆盖：<span class="badge badge-warning" style="font-size:18px">37</span></label>
+                <label class="appendedInput" style="font-size:18px;padding-top:10px;">意见领袖覆盖：<span class="badge badge-warning" style="font-size:18px"> 105</span></label>                
+            </div>
+          </div>
         </div>
+      </div>
+    </div><!--上侧基本信息-->
+            <hr class="soften">
+		<div class="row-fluid" style="padding-top:20px;padding-left:80px;">
+      <div class="span12" id="index-tabs">
+        <ul class="nav nav-pills tab_container">
+          <li class="btn span2 btn-primary" style="width:150px;height:20px;"><a href="/propagate/ajax_contents" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">代表内容</a></li>
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/propagate/ajax_path" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播路径</a></li>
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/propagate/ajax_track_source" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">传播溯源</a></li>
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/propagate/ajax_key_person" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">关键人物</a></li> 
+          <li class="btn span2 " style="width:150px;height:20px;"><a href="/propagate/ajax_media" align="center" style="padding-top: 2px;padding-bottom: 2px;color:black;">媒体参与</a></li>       
+        </ul>
+      </div>
     </div>
     <hr class="soften">
             <div class="row">
