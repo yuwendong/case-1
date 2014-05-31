@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="static/index/pic/favicon.png">
+  <!--
+  <script type="text/javascript" src="/static/index/js/jquery-ui-1.8.16.custom.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery.masonry.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/amstock.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery.tagcanvas.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/static/index/js/sentiment_report.js"></script>
+-->
+<script type="text/javascript" src="/static/index/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/index/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/index/js/bootstrap-datetimepicker.min.js"></script>
+
+<title>案例定制</title>
+
+<!-- Bootstrap core CSS -->
+
+
+<!-- Custom styles for this template -->
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/manage.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/buttons.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/font-awesome.min.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/cikonss.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-datetimepicker.min.css') }}">
+  <!--
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/jquery-ui-1.8.18.custom.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/toggle_switch.css') }}">
+
+-->
+
+
+
+
+
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+      <![endif]-->
+
+      <style type="text/css">
+        body {
+          font: 10pt;
+          font-family: verdana, sans, arial, sans-serif;
+          background-color: #F2F2F2;
+        }
+      </style>
+      <script>
+        function drop_menu(){<!-- 选择下拉菜单 -->
+          var lis = document.getElementById("drop_f");
+          lis.style.display='block';
+        }
+
+        function declear_all(){<!-- 全选 -->
+          $(document).ready(function(){
+            var divs=$("input[name='field_f']");
+            for(var i = 0;i<divs.length;i++)
+              divs[i].checked = true;
+          })
+          var lis = document.getElementById("drop_f");
+          lis.style.display='none';
+        }
+
+        function declear_re(){<!-- 反选 -->
+          $("[name='field_f']").each(function(){
+            if(this.checked)
+            {
+              this.checked = false;
+            }
+            else
+            {
+              this.checked = true;
+            }
+
+          })
+          var lis = document.getElementById("drop_f");
+          lis.style.display='none';
+
+        }
+
+
+      </script>
+
+    </head>
+
+    <body>
+      <div class="container">
+        <div class="navbar navbar-fixed-top">
+         <div class="navbar-inner">
+          <div class="container">
+           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand brand-title" href="/index/manage/"><strong>案例定制</strong></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-style">
+      <!--案例推荐开始-->
+      <div class="col-lg-4">
+        <div class="well well-style">
+         <div class="btn-group select-style">
+           <p class="button-wrap"style="margin-left:108px;"><a class="button button-pill button-action dropdown-toggle " data-toggle="dropdown" href="#" style="width: 103px;" onclick="drop_menu()">
+             选择
+             <span class="caret"></span>
+           </a></p>
+           <ul class="dropdown-menu" id="drop_f">
+             <li><a href="#" onclick="declear_all()">全选</a></li>
+             <li><a href="#" onclick="declear_re()">反选</a></li>
+           </ul>
+         </div>
+         <table class="table table-bordered table-style">
+          <thead>
+            <tr>
+              <th style="text-align:center">案例编号</th>
+              <th style="text-align:center">案例名称</th>
+              <th style="text-align:center">是否选择</th>
+            </tr>
+          </thead>
+          <tbody id="word_table">
+            <tr>
+              <td style="text-align:center">1</td>
+              <td style="text-align:center"><a href="">九一八</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center">2</td>
+              <td style="text-align:center"><a href="">px项目</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">3</td>
+              <td style="text-align:center"><a href="">京东上市</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">4</td>
+              <td style="text-align:center"><a href="">锤子手机</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">5</td>
+              <td style="text-align:center"><a href="">端午节</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">6</td>
+              <td style="text-align:center"><a href="">爸爸去哪儿</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">7</td>
+              <td style="text-align:center"><a href="">欧冠决赛</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align:center">8</td>
+              <td style="text-align:center"><a href="">起床困难户</a></td>
+              <td style="text-align:center">
+                <input type="checkbox" name="field_f" style="font-size:12pt;">
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!--案例推荐结束-->
+
+  <!--增加或删减开始-->
+  <div class="col-lg-1 icon-style">
+    <!--<div class="well well-icon">-->
+    <a href=""><span class="icon icon-mid icon-rounded"><span class="icon-arrowRight icon-con-right" style="margin:-13px -13px 0"></span></span></a>
+    <!--<div class="well well-icon">-->
+    <a href=""><span class="icon icon-mid icon-rounded"><span class="icon-arrowLeft icon-con-left" style="margin:-13px -13px 0"></span></span></a>
+  </div>
+  <!--增加或删减结束-->
+
+  <!--案例定制表开始-->
+  <div class="col-lg-7">
+    <div class="well well-style" style="margin-right:13px;">
+      <div class="btn-alter btn-alter-style">
+        <span class="button-wrap" style="margin-left:140px;width:103px;margin-bottom:7px;"><button class="button button-pill button-action">增加</button></span>
+        <span class="button-wrap" style="margin-left:140px;width:103px;margin-bottom:7px;"><button class="button button-pill button-action">保存</button></span>
+      </div>
+      <div class="panel panel-success panel-style">
+        <div class="panel-heading" style="font-size:20px; color:#000000;"><strong>案例定制列表</strong></div>
+        <div class="panel-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>关键词</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="">九一八</a></td>
+                <td><a href="">历史</a></td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+              </tr>
+              <tr>
+                <td><a href="">两会</a></td>
+                <td><a href="">教改</a></td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+              </tr>
+              <tr>
+                <td><a href="">钓鱼岛</a></td>
+                <td><a href="">收复钓鱼岛</a></td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+              </tr>
+              <tr>
+                <td><a href="">恐怖袭击</a></td>
+                <td><a href="">乌鲁木齐</a></td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+              </tr>
+              <tr>
+                <td><a href="">马航失联</a></td>
+                <td><a href="">搜寻飞机</a></td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+                <td><div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                  <input size="16" type="text" value="2012-06-15" readonly>
+                  <span class="add-on"><i class="icon-remove"></i></span>
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
+                <script type="text/javascript">
+                  $(".form_datetime").datetimepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    todayBtn: true,
+                    startDate: "2013-02-14",
+                    minuteStep: 10
+                  });
+                </script> </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!--案例定制表结束-->
+</div>
+<!--保存功能开始-->
+<div class="well well-style">
+  <a href="#" class="btn btn-success btn-large btn-block">保存</a>
+</div>
+<!--保存功能结束-->
+
+<!-- Site footer -->
+<div class="footer">
+  <p>&copy; IDEC 2014</p>
+</div>
+</div> <!-- /container -->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
+
+  </html>

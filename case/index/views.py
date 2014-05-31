@@ -27,6 +27,14 @@ def loading():
 def detail():
     return render_template('index/detail.html')
 
+@mod.route('/manage/')
+def manage():
+    return render_template('index/manage.html')
+
+@mod.route('/eva/')
+def eva():
+    return render_template('index/eva.html')
+
 @mod.route('/show_tag_data/')
 def show_tag():
     return json.dumps({'tag': tag})
