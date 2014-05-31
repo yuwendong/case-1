@@ -249,7 +249,7 @@ function createStockChart2(){
     chart2.addListener("dataUpdated", zoomChart);
 
     // AXES
-    // category                
+    // category
     var categoryAxis = chart2.categoryAxis;
     categoryAxis.parseDates = true; // as our data is date-based, we set parseDates to true
     categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
@@ -290,7 +290,7 @@ function createStockChart2(){
     graph1.hideBulletsCount = 30;
     chart2.addGraph(graph1);
 
-    // second graph                
+    // second graph
     var graph2 = new AmCharts.AmGraph();
     graph2.valueAxis = valueAxis2; // we have to indicate which value axis should be used
     graph2.title = "原创微博数";
@@ -379,7 +379,6 @@ function createPieChart(){
 $(function(){
 	// masonry plugin call
 	$('#container').masonry({itemSelector : '.item',});
-	
 	redraw_tagcanvas();
 
 	//injecting arrow points

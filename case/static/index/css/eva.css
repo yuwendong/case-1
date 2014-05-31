@@ -1,0 +1,75 @@
+.footer {
+	border-top: 1px solid #eee;
+	margin-top: 100px;
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+.navbar .navbar-inner .container a.brand-title{
+	line-height: 50px;
+	font-size:25px;
+	text-align: center;
+	margin-top:40px;
+}
+.row-style{
+	width:1400px;
+	height: 100%;
+	margin-top:80px;
+	margin-left:-75px;
+}
+
+.con-spread{
+	margin-top:70px;
+}
+.con-expert{
+	margin-top:70px;
+}
+
+#button-mood{
+	margin-left:105px;
+}
+#button-point{
+	margin-left:93px;
+}
+#button-semanteme{
+	margin-left:37px;
+}
+#button-evolution{
+	margin-top: 20px;
+}
+#button-content{
+	margin-top: 20px;
+}
+#button-expert{
+	margin-left: 227px;
+}
+#spread-media {
+	background: #FFFFFF;
+}
+#semanteme-field{
+	background: #FFFFFF;
+}
+/*公共样式*/
+#con-left{
+	display: block;
+	height: 400px;
+	width:640px;
+	position: relative;
+	float:left;
+	margin-bottom: 50px;
+}
+#con-right{
+	display: block;
+	height: 400px;
+	width:640px;
+	position: relative;
+	float:left;
+	margin-bottom: 50px;
+	margin-left:15px;
+}
+
+.well-style{
+	background: #B8B8B8;
+}
+.well-style span{
+	margin-left:12px;
+}

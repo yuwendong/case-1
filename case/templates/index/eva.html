@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="static/index/pic/favicon.png">
+  <script type="text/javascript" src="/static/index/js/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/highcharts.js"></script>
+  <script type="text/javascript" src="/static/index/js/highcharts-more.js"></script>
+  <script type="text/javascript" src="/static/index/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/index/js/exporting.js"></script>
+  <script type="text/javascript" src="/static/index/js/sco.panes.js"></script>
+  <script type="text/javascript" src="/static/index/js/transition.js"></script>
+  <script type="text/javascript" src="/static/index/js/echarts-plain.js"></script>
+  <!--
+  <script type="text/javascript" src="/static/index/js/amstock.js"></script>
+  <script type="text/javascript" src="/static/index/js/jquery.tagcanvas.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/static/index/js/sentiment_report.js"></script>
+  <script type="text/javascript" src="/static/index/js/echarts-plain.js"></script>
+
+-->
+
+
+<title>案例评价</title>
+
+<!-- Bootstrap core CSS -->
+
+
+<!-- Custom styles for this template -->
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/scojs.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/buttons.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/font-awesome.min.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/cikonss.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/eva.css') }}">
+  <!--
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-datetimepicker.min.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/jquery-ui-1.8.18.custom.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/toggle_switch.css') }}">
+
+-->
+
+
+
+
+
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+      <![endif]-->
+
+      <style type="text/css">
+        body {
+          font: 10pt;
+          font-family: verdana, sans, arial, sans-serif;
+          background-color: #F2F2F2;
+        }
+      </style>
+      <script type="text/javascript">
+        Highcharts.theme = {
+          colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+          '#FF9655', '#FFF263', '#6AF9C4'],
+          chart: {
+            backgroundColor: {
+              linearGradient: [0, 0, 500, 500],
+              stops: [
+              [0, 'rgb(255, 255, 255)'],
+              [1, 'rgb(240, 240, 255)']
+              ]
+            },
+          },
+          title: {
+            style: {
+              color: '#000',
+              font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+            }
+          },
+          subtitle: {
+            style: {
+              color: '#666666',
+              font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
+            }
+          },
+
+          legend: {
+            itemStyle: {
+              font: '9pt Trebuchet MS, Verdana, sans-serif',
+              color: 'black'
+            },
+            itemHoverStyle:{
+              color: 'gray'
+            }
+          }
+        };
+
+// Apply the theme
+Highcharts.setOptions(Highcharts.theme);
+/*愤怒比例开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F']
+  $('#mood-anger').highcharts({
+    chart :{
+     renderTo: 'mood-anger',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '情绪比例'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '愤怒比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '愤怒情绪比例: '+ this.y + ", 情绪状态：" + name;
+  }
+},
+series: [{
+  name : '情绪比例',
+  data: [0.2],
+  yAxis: 0
+}]
+});
+});
+/*愤怒情绪比例结束*/
+/*悲伤情绪比例开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F']
+  $('#mood-sad').highcharts({
+    chart :{
+     renderTo: 'mood-sad',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '情绪比例'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '悲伤比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '悲伤情绪比例: '+ this.y + ", 情绪状态：" + name;
+  }
+},
+series: [{
+  name : '情绪比例',
+  data: [0.5],
+  yAxis: 0
+}]
+});
+});
+/*悲伤情绪比例结束*/
+
+/*愤怒拐点开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#mood-point-anger').highcharts({
+    chart :{
+     renderTo: 'mood-point-anger',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '情绪拐点'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '愤怒拐点比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '愤怒拐点比例: '+ this.y + ", 拐点状态：" + name;
+  }
+},
+series: [{
+  name : '情绪拐点比例',
+  data: [0.5],
+  yAxis: 0
+}]
+});
+});
+/*愤怒拐点结束*/
+
+/*悲伤拐点开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#mood-point-sad').highcharts({
+    chart :{
+     renderTo: 'mood-point-sad',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '情绪拐点'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '悲伤拐点比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '悲伤拐点比例: '+ this.y + ", 拐点状态：" + name;
+  }
+},
+series: [{
+  name : '情绪拐点比例',
+  data: [0.8],
+  yAxis: 0
+}]
+});
+});
+/*悲伤拐点结束*/
+
+
+
+/*演化维度开始*/
+
+/*民众热度开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-public').highcharts({
+    chart :{
+     renderTo: 'evolution-public',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '民众热度(总量/经验值)'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '民众热度',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "低";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "较低";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "中等";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "比较高";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常高";
+    return '民众热度: '+ this.y + ", 热度状态：" + name;
+  }
+},
+series: [{
+  name : '民众热度',
+  data: [0.3],
+  yAxis: 0
+}]
+});
+});
+/*民众热度结束*/
+
+/*峰度指标开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-top').highcharts({
+    chart :{
+     renderTo: 'evolution-top',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '峰度指标（top N点的数量占比）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '峰度指标',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '峰度指标: '+ this.y + ", 指标状态：" + name;
+  }
+},
+series: [{
+  name : '峰度指标',
+  data: [0.35],
+  yAxis: 0
+}]
+});
+});
+/*峰度指标结束*/
+
+/*境外热度开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-abroad').highcharts({
+    chart :{
+     renderTo: 'evolution-abroad',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '境外热度（境外内容占比）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '境外热度',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '境外热度: '+ this.y + ", 热度状态：" + name;
+  }
+},
+series: [{
+  name : '境外热度',
+  data: [0.5],
+  yAxis: 0
+}]
+});
+});
+/*境外热度结束*/
+
+/*地域覆盖开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-cover').highcharts({
+    chart :{
+     renderTo: 'evolution-cover',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '地域覆盖（覆盖的地域比例）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '地域覆盖',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '地域覆盖: '+ this.y + ", 覆盖状态：" + name;
+  }
+},
+series: [{
+  name : '地域覆盖',
+  data: [0.6],
+  yAxis: 0
+}]
+});
+});
+/*地域覆盖结束*/
+
+/*媒体热度开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-media').highcharts({
+    chart :{
+     renderTo: 'evolution-media',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '媒体热度（媒体内容占比）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '媒体热度',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '媒体热度: '+ this.y + ", 热度状态：" + name;
+  }
+},
+series: [{
+  name : '媒体热度',
+  data: [0.7],
+  yAxis: 0
+}]
+});
+});
+/*媒体热度结束*/
+
+/*时间跨度开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#evolution-time').highcharts({
+    chart :{
+     renderTo: 'evolution-time',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '时间跨度（持续天数/30）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '时间跨度',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '时间跨度: '+ this.y + ", 跨度状态：" + name;
+  }
+},
+series: [{
+  name : '时间跨度',
+  data: [0.8],
+  yAxis: 0
+}]
+});
+});
+/*时间跨度结束*/
+
+
+/*演化维度结束*/
+
+/*语义维度开始*/
+
+/*敏感词比例开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#semanteme-Senword').highcharts({
+    chart :{
+     renderTo: 'semanteme-Senword',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '敏感词比例'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '敏感词比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '敏感词比例: '+ this.y + ", 敏感词状态：" + name;
+  }
+},
+series: [{
+  name : '敏感词比例',
+  data: [0.15],
+  yAxis: 0
+}]
+});
+});
+/*敏感词比例结束*/
+
+/*事件发生地级别开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#semanteme-event').highcharts({
+    chart :{
+     renderTo: 'semanteme-event',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '事件发生地级别'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '事件发生地级别',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '事件发生地级别: '+ this.y + ", 级别状态：" + name;
+  }
+},
+series: [{
+  name : '事件发生地级别',
+  data: [0.5],
+  yAxis: 0
+}]
+});
+});
+/*事件发生地级别结束*/
+
+
+/*语义维度结束*/
+
+
+/*传播维度开始*/
+
+/*关键人物覆盖开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#spread-key').highcharts({
+    chart :{
+     renderTo: 'spread-key',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '关键人物覆盖(人数/10)'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '关键人物覆盖',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "低";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "较低";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "中等";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "比较高";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常高";
+    return '关键人物覆盖: '+ this.y + ", 覆盖状态：" + name;
+  }
+},
+series: [{
+  name : '关键人物覆盖',
+  data: [0.3],
+  yAxis: 0
+}]
+});
+});
+/*关键人物覆盖结束*/
+
+/*境外用户覆盖开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#spread-abroad').highcharts({
+    chart :{
+     renderTo: 'spread-abroad',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '境外用户覆盖(人数/50)'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '境外用户覆盖',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '境外用户覆盖: '+ this.y + ", 覆盖状态：" + name;
+  }
+},
+series: [{
+  name : '境外用户覆盖',
+  data: [0.35],
+  yAxis: 0
+}]
+});
+});
+/*境外用户覆盖结束*/
+
+/*敏感源比例开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#spread-Sensitive').highcharts({
+    chart :{
+     renderTo: 'spread-Sensitive',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '敏感源比例（敏感源/总源）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '敏感源比例',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '敏感源比例: '+ this.y + ", 敏感源状态：" + name;
+  }
+},
+series: [{
+  name : '敏感源比例',
+  data: [0.6],
+  yAxis: 0
+}]
+});
+});
+/*敏感源比例结束*/
+
+/*敏感内容转发开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#spread-content').highcharts({
+    chart :{
+     renderTo: 'spread-content',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '敏感内容转发占比（转发数/总量）'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '敏感内容转发',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '敏感内容转发比例: '+ this.y + ", 敏感内容转发状态：" + name;
+  }
+},
+series: [{
+  name : '敏感内容转发',
+  data: [0.7],
+  yAxis: 0
+}]
+});
+});
+/*敏感内容转发结束*/
+
+/*传播维度结束*/
+
+
+/*专家指标开始*/
+$(function () {
+  var colors = ['#07FD04','#FFFF00','#FF7805','#FA0100','#9E004F','#790222']
+  $('#expert').highcharts({
+    chart :{
+     renderTo: 'expert',
+     type: 'gauge',
+     plotBorderWidth: 1,
+       plotBackgroundColor: {//背景色
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [
+        [0, '#FFFFFF'],
+        [1, '#FFFFFF']
+        ]
+      },
+       plotBackgroundImage: null,//背景图片
+       height: 300
+     },
+     title : {
+       text: '专家指标'
+     },
+
+     pane : [{
+       startAngle: -90,
+       endAngle: 90,
+       background: null,
+       center: ['45%', '98%'],
+       size: 330
+     }],
+     yAxis : [{
+        //      tickLength:0,
+       //         minorTickLength:0,
+       min: 0,
+       max: 1,
+       minorTickPosition: 'inside',
+       tickPosition: 'inside',
+       labels: {
+            //        enabled:false,
+            rotation: 'auto',
+            distance: 10
+          },
+       plotBands: [{//分区段
+        from: 0,
+        to: 0.2,
+        color: colors[0],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.2,
+        to: 0.4,
+        color: colors[1],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.4,
+        to: 0.6,
+        color: colors[2],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.6,
+        to: 0.8,
+        color: colors[3],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      },{
+        from: 0.8,
+        to: 1,
+        color: colors[4],
+        innerRadius: '100%',
+        outerRadius: '65%'
+      }],
+      title: {
+        text: '专家指标',
+        style :{
+         fontSize : '14px',
+         marginTop : '10px'
+       },
+       y: 20
+     }
+   }],
+   exporting :{
+    enabled: true
+  },
+  plotOptions: {
+    gauge: {
+      dataLabels: {
+        enabled: true,
+        y : -20
+      },
+    dial: {//仪表盘指针
+      radius: '80%',
+      rearLength: '0%',
+      backgroundColor: 'silver',
+      borderColor: 'silver',
+      borderWidth: 1,
+      baseWidth: 10,
+      topWidth: 1,
+      baseLength: '30%'
+    }
+  }
+},
+tooltip :{
+  formatter: function() {
+    var name = '';
+    if(this.y >= 0 && this.y <=0.2)
+      name = "优";
+    else if(this.y > 0.2 && this.y <= 0.4)
+      name = "良";
+    else if (this.y > 0.4 && this.y <=0.6)
+      name = "一般";
+    else if(this.y > 0.6 && this.y <= 0.8)
+      name = "较严重";
+    else if(this.y > 0.8 && this.y <= 1.0)
+      name = "非常严重";
+    return '专家指标: '+ this.y + ", 指标状态：" + name;
+  }
+},
+series: [{
+  name : '专家指标',
+  data: [0.8],
+  yAxis: 0
+}]
+});
+});
+/*专家指标结束*/
+
+</script>
+<body>
+ <div class="container">
+   <div class="navbar navbar-fixed-top">
+     <div class="navbar-inner">
+      <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand brand-title" href="#"><strong>案例评价</strong></a>
+    </div>
+  </div>
+</div>
+<div class="row row-style" >
+  <!--
+    <div class="col-lg-6">
+      <div id="mood" style="height:400px"></div>
+    </div>
+    <div class="col-lg-6">
+      <div id="mood-point" style="height:400px"></div>
+    </div>
+  </div>-->
+  <!--<div class="span3 sidebar">
+    <ul class="nav nav-list sidenav affix-top" data-spy="affix" data-offset-top="200">
+      <li class="active"><a href="#mood"><i class="icon-chevron-right"></i>情绪维度</a></li>
+      <li class=""><a href="#evolution"><i class="icon-chevron-right"></i>演化维度</a></li>
+      <li class=""><a href="#semanteme"><i class="icon-chevron-right"></i>语义维度</a></li>
+      <li class=""><a href="#spread"><i class="icon-chevron-right"></i>传播维度</a></li>
+      <li class=""><a href="#specialist"><i class="icon-chevron-right"></i>专家指标</a></li>
+    </ul>
+  </div>
+  <div class="span9">
+    <section id="mood"> -->
+
+      <!--情绪比例开始-->
+      <div id="con-left">
+        <div class=" well well-style">
+          <div class="pane-wrapper" id="panes-mood" style="height:330px;">
+
+            <div id="mood-anger" style="height:330px"></div>
+            <div id="mood-sad" style="height:330px"></div>
+
+          </div>
+          <span id="button-mood" class="button-wrap"><button class="button button-pill button-action select-mood-anger">愤怒比例</button></span>
+          <span id="button-mood" class="button-wrap button-mood"><button class="button button-pill button-action select-mood-sad">悲伤比例</button></span>
+          <script>
+            $(function() {
+              var $panes = $.scojs_panes('#panes-mood', {easing: 'flip'});
+              $('.select-mood-anger').on('click', function() {
+                $panes.select(0);
+              });
+              $('.select-mood-sad').on('click', function() {
+                $panes.select(1);
+              });
+            });
+          </script>
+        </div>
+      </div>
+
+      <!--情绪比例开始-->
+
+      <!--情绪拐点开始-->
+      <div id="con-right">
+        <div class=" well well-style">
+          <div class="pane-wrapper" id="panes-point" style="height:330px;">
+            <div id="mood-point-anger" style="height:330px"></div>
+            <div id="mood-point-sad" style="height:330px"></div>
+          </div>
+          <span id="button-point" class="button-wrap"><button class="button button-pill button-action select-point-anger">愤怒拐点比例</button></span>
+          <span id="button-point" class="button-wrap"><button class="button button-pill button-action select-point-sad">悲伤拐点比例</button></span>
+          <script>
+            $(function() {
+              var $panes = $.scojs_panes('#panes-point', {easing: 'flip'});
+              $('.select-point-anger').on('click', function() {
+                $panes.select(0);
+              });
+              $('.select-point-sad').on('click', function() {
+                $panes.select(1);
+              });
+            });
+          </script>
+        </div>
+      </div>
+      <!--情绪拐点结束-->
+
+      <!--演化维度开始-->
+      <div id="con-left">
+        <div class=" well well-style">
+          <div class="pane-wrapper" id="panes-evolution" style="height:330px;">
+            <div id="evolution-public" style="height:330px"></div>
+            <div id="evolution-top" style="height:330px"></div>
+            <div id="evolution-abroad" style="height:330px"></div>
+            <div id="evolution-cover" style="height:330px"></div>
+            <div id="evolution-media" style="height:330px"></div>
+            <div id="evolution-time" style="height:330px"></div>
+          </div>
+          <span class="button-wrap"><button class="button button-pill button-action select-evolution-public">民众热度</button></span>
+          <span class="button-wrap"><button class="button button-pill button-action select-evolution-top">峰度指标</button></span>
+          <span class="button-wrap"><button class="button button-pill button-action select-evolution-abroad">境外热度</button></span>
+          <span class="button-wrap"><button class="button button-pill button-action select-evolution-cover">地域覆盖</button></span>
+          <span id="button-evolution" class="button-wrap"><button class="button button-pill button-action select-evolution-media">媒体热度</button></span>
+          <span id="button-evolution" class="button-wrap"><button class="button button-pill button-action select-evolution-time">时间跨度</button></span>
+          <script>
+            $(function() {
+              var $panes = $.scojs_panes('#panes-evolution', {easing: 'flip'});
+              $('.select-evolution-public').on('click', function() {
+                $panes.select(0);
+              });
+              $('.select-evolution-top').on('click', function() {
+                $panes.select(1);
+              });
+              $('.select-evolution-abroad').on('click', function() {
+                $panes.select(2);
+              });
+              $('.select-evolution-cover').on('click', function() {
+                $panes.select(3);
+              });
+              $('.select-evolution-media').on('click', function() {
+                $panes.select(4);
+              });
+              $('.select-evolution-time').on('click', function() {
+                $panes.select(5);
+              });
+            });
+          </script>
+        </div>
+      </div>
+      <!--演化维度结束-->
+
+
+      <!--语义维度开始-->
+      <div id="con-right">
+        <div class=" well well-style">
+          <div class="pane-wrapper" id="panes-semanteme" style="height:330px;">
+            <div id="semanteme-field" style="height:300px;width:600px;"></div>
+            <div id="semanteme-Senword" style="height:330px"></div>
+            <div id="semanteme-event" style="height:330px"></div>
+          </div>
+          <span id="button-semanteme" class="button-wrap"><button class="button button-pill button-action select-semanteme-field">领域类别</button></span>
+          <span id="button-semanteme" class="button-wrap"><button class="button button-pill button-action select-semanteme-Senword">敏感词比例</button></span>
+          <span id="button-semanteme" class="button-wrap"><button class="button button-pill button-action select-semanteme-event">事件发生地级别</button></span>
+          <script type="text/javascript">
+        // 路径配置
+        var myChart = echarts.init(document.getElementById('semanteme-field'));
+        option = {
+          tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+            orient : 'vertical',
+            x : 'left',
+            data:['科技','教育','体育','娱乐圈','金融']
+          },
+          title : {
+            text: '领域类别',
+            x: 'center'
+          },
+          toolbox: {
+            show : true,
+            feature : {
+              mark : {show: true},
+              dataView : {show: true, readOnly: false},
+              restore : {show: true},
+              saveAsImage : {show: true}
+            }
+          },
+          calculable : true,
+          series : [
+          {
+            name:'领域类别',
+            type:'pie',
+            radius : ['50%', '70%'],
+            itemStyle : {
+              normal : {
+                label : {
+                  show : false
+                },
+                labelLine : {
+                  show : false
+                }
+              },
+              emphasis : {
+                label : {
+                  show : true,
+                  position : 'center',
+                  textStyle : {
+                    fontSize : '30',
+                    fontWeight : 'bold'
+                  }
+                }
+              }
+            },
+            data:[
+            {value:335, name:'科技'},
+            {value:310, name:'教育'},
+            {value:234, name:'体育'},
+            {value:135, name:'娱乐圈'},
+            {value:1548, name:'金融'}
+            ]
+          }
+          ]
+        };
+        myChart.setOption(option);
+      </script>
+      <script>
+        $(function() {
+          var $panes = $.scojs_panes('#panes-semanteme', {easing: 'flip'});
+          $('.select-semanteme-field').on('click', function() {
+            $panes.select(0);
+          });
+          $('.select-semanteme-Senword').on('click', function() {
+            $panes.select(1);
+          });
+          $('.select-semanteme-event').on('click', function() {
+            $panes.select(2);
+          });
+        });
+      </script>
+    </div>
+  </div>
+
+  <!--语义维度结束-->
+
+  <!--传播维度开始-->
+  <div id="con-left">
+    <div class=" well well-style con-spread">
+      <div class="pane-wrapper" id="panes-spread" style="height:330px;">
+        <div id="spread-media" style="height:300px;width:600px;"></div>
+        <div id="spread-key" style="height:330px"></div>
+        <div id="spread-abroad" style="height:330px"></div>
+        <div id="spread-Sensitive" style="height:330px"></div>
+        <div id="spread-content" style="height:330px"></div>
+      </div>
+      <span class="button-wrap"><button class="button button-pill button-action select-spread-media">重点媒体</button></span>
+      <span class="button-wrap"><button class="button button-pill button-action select-spread-key">关键人物</button></span>
+      <span class="button-wrap"><button class="button button-pill button-action select-spread-abroad">境外用户</button></span>
+      <span class="button-wrap"><button class="button button-pill button-action select-spread-Sensitive">敏感源</button></span>
+      <span id="button-content" class="button-wrap"><button class="button button-pill button-action select-spread-content">敏感内容转发</button></span>
+
+      <script type="text/javascript">
+        // 路径配置
+        var myChart = echarts.init(document.getElementById('spread-media'));
+        option = {
+          tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          legend: {
+            orient : 'vertical',
+            x : 'left',
+            data:['网易','腾讯','新华网','人民网','新浪微博']
+          },
+          title : {
+            text: '重点媒体',
+            x: 'center'
+          },
+          toolbox: {
+            show : true,
+            feature : {
+              mark : {show: true},
+              dataView : {show: true, readOnly: false},
+              restore : {show: true},
+              saveAsImage : {show: true}
+            }
+          },
+          calculable : true,
+          series : [
+          {
+            name:'重点媒体',
+            type:'pie',
+            radius : ['50%', '70%'],
+            itemStyle : {
+              normal : {
+                label : {
+                  show : false
+                },
+                labelLine : {
+                  show : false
+                }
+              },
+              emphasis : {
+                label : {
+                  show : true,
+                  position : 'center',
+                  textStyle : {
+                    fontSize : '30',
+                    fontWeight : 'bold'
+                  }
+                }
+              }
+            },
+            data:[
+            {value:335, name:'网易'},
+            {value:310, name:'腾讯'},
+            {value:234, name:'新华网'},
+            {value:135, name:'人民网'},
+            {value:1548, name:'新浪微博'}
+            ]
+          }
+          ]
+        };
+        myChart.setOption(option);
+      </script>
+      <script>
+        $(function() {
+          var $panes = $.scojs_panes('#panes-spread', {easing: 'flip'});
+          $('.select-spread-media').on('click', function() {
+            $panes.select(0);
+          });
+          $('.select-spread-key').on('click', function() {
+            $panes.select(1);
+          });
+          $('.select-spread-abroad').on('click', function() {
+            $panes.select(2);
+          });
+          $('.select-spread-Sensitive').on('click', function() {
+            $panes.select(3);
+          });
+          $('.select-spread-content').on('click', function() {
+            $panes.select(4);
+          });
+        });
+      </script>
+    </div>
+  </div>
+  <!--传播维度结束-->
+
+  <!--专家指标开始-->
+  <div id="con-right">
+    <div class=" well well-style con-expert">
+      <div class="pane-wrapper" id="panes-expert" style="height:330px;">
+        <div id="expert" style="height:330px"></div>
+      </div>
+      <span id="button-expert" class="button-wrap"><button class="button button-pill button-action expert">指标修改</button></span>
+
+      <script>
+        $(function() {
+          var $panes = $.scojs_panes('#panes-expert', {easing: 'flip'});
+          $('.expert').on('click', function() {
+            $panes.select(0);
+          });
+        });
+      </script>
+    </div>
+  </div>
+  <!--专家指标结束-->
+
+
+
+
+</div>
+<!-- Site footer -->
+<div class="footer">
+  <p>&copy; IDEC 2014</p>
+</div>
+</div> <!-- /container -->
+<!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+</body>
+
+</html>

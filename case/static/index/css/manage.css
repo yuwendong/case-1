@@ -1,0 +1,54 @@
+.footer {
+	border-top: 1px solid #eee;
+	margin-top: 40px;
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+.navbar .navbar-inner .container a.brand-title{
+	line-height: 50px;
+	font-size:25px;
+	text-align: center;
+	margin-top:40px;
+}
+.row-style{
+	width:1184px;
+	height: 100%;
+	margin-top:80px;
+}
+/*案例推荐开始*/
+.select-style {
+	margin-bottom: 12px;
+}
+
+.table-style{
+	background-color: #FFCCFF;
+}
+/*案例推荐结束*/
+
+/*增加或删减开始*/
+.icon-style a{
+	display: block;
+	margin-top: 180px;
+	margin-left: 12px;
+}
+/*增加或删减结束*/
+
+
+/*案例定制表开始*/
+.btn-alter{
+	margin-bottom: 12px;
+}
+.btn-alter-style a{
+	margin-left:140px;
+	width: 103px;
+}
+.panel-style{
+	background-color: #FFCCFF;
+}
+/*案例定制表开始*/
+
+
+/*公共样式*/
+.well-style{
+	background: #FFFFFF;
+}
