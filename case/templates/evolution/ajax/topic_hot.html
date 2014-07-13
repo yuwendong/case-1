@@ -118,48 +118,48 @@
 <script src="../../static/moodlens/js/jquery.totemticker.js"></script>
 <script>
     var query = "九一八";
-    var START_TS = 1396281600;
-    var END_TS = 1396540800;
-    var DURING_INTERGER = 24*3600;
+    var START_TS = 1379433600;
+    var END_TS = 1379520000;
+    var DURING_INTERGER = 15*60;
     var WEIBOS_LIMIT = 10;
     var KEYWORDS_LIMIT = 10;
     var click_flag=false;
     var status_flag = 'relative';
     var series_flag = [1, 1, 1, 1, 1, 1, -1, -1, -1]; //记录9个series选中与否的状态
 
-    var emotion_ratio = {};
-    var emotion_absolute={};
+    var evolution_ratio = {};
+    var evolution_absolute={};
 
-    var happy_absolute = [];
-    var angry_absolute = [];
-    var sad_absolute = [];
+    var original_absolute = [];
+    var comment_absolute = [];
+    var forward_absolute = [];
 
-    var happy_ratio = [];
-    var angry_ratio = [];
-    var sad_ratio = [];
+    var original_ratio = [];
+    var comment_ratio = [];
+    var forward_ratio = [];
 
-    var happy_list = [];
-    var angry_list = [];
-    var sad_list = [];
+    var original_list = [];
+    var comment_list = [];
+    var forward_list = [];
     var ts_list = [];
 
-    var happy_alist = [];
-    var angry_alist = [];
-    var sad_alist = [];
+    var original_alist = [];
+    var comment_alist = [];
+    var forward_alist = [];
     var ts_alist = [];
 
     var oopts = {textHeight: 25,maxSpeed: 0.03,decel: 0.98,depth: 0.92,outlineColour: '#f6f',outlineThickness: 3,pulsateTo: 0.2,pulsateTime: 0.5,wheelZoom: false,textColour:'#00f',shadow:'#ccf',minBrightness:0.2,shadowBlur:3,weight:true,weightMode:'both'};
     var max_word_size = 10;
     var min_word_size = 1;
     
-    var emotion_keys = ['happy', 'angry', 'sad'];
+    var evolution_keys = ['original', 'comment', 'forward'];
     var source_status=1;//1 2 3 4分别代表微博 新闻 博客 论坛
 //启动处
 $(document).ready(function(){  
-        display_realtime_emotion();
+        display_realtime_evolution();
     })
 
-function display_emotion_pie(data){
+function display_evolution_pie(data){
         Highcharts.setOptions({
             colors: ['#98FB98', '#FF7F50', '#4169E1']
         });
@@ -200,34 +200,40 @@ function display_emotion_pie(data){
         });
     }
 
-function chg_emotion_pie(raw_data){
+function chg_evolution_pie(raw_data){
         $('#pie').empty();
         if(raw_data[3] != 0){
             var data = [['原创', raw_data[0]], ['转发', raw_data[1]], ['评论', raw_data[2]]];
-            display_emotion_pie(data);
+            display_evolution_pie(data);
         }
 
     }
-/*mid: "12345678990"
-posttime: "1396281600"
-repost: 6798
-stype: "sad"
-text: "难过，这不是篮球范畴里的动作，这也间歇性缩短了他的运动寿命。"
-uid: "8470987"
-user: "123"
-userurl: "#"
-weibourl: "#"*/
+function display_vertical_list(){
+        $('#vertical-ticker').totemticker({
+            row_height  :   '100px',
+            next        :   '#ticker-next',
+            previous    :   '#ticker-previous',
+            stop        :   '#stop',
+            start       :   '#start',
+            mousestop   :   true,
+        });
+    }
 function chg_weibos(data){
         var html = "";
         var emotion_content = ['happy', 'angry', 'sad'];
         for(var i=0;i<data.length;i+=1){
-            var emotion = data[i]['stype'];
+            if (data[i]['sentiment'] == 0){
+                var emotion = 'nomood'
+            }
+            else{
+                var emotion = emotion_content[data[i]['sentiment']-1];
+            }
             var name = data[i]['user'];
-            var user_link = data[i]['userurl'];
+            var user_link = 'http://weibo.com/u/'+data[i]['user'];
             var text = data[i]['text'];
-            var weibo_link = data[i]['weibourl'];
-            var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', parseInt(data[i]['posttime']) * 1000);
-            var repost_count = data[i]['repost'];
+            var weibo_link = data[i]['weibo_link'];
+            var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', parseInt(data[i]['timestamp']) * 1000);
+            var repost_count = data[i]['reposts_count'];
             var retweeted_text = 'None';
             html += "<li><div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"; 
             html += "<div class=\"chartclient-annotation-title\"><a href='" + user_link + "' target='_blank' >" + name + "</a> 发布 </div>";
@@ -238,6 +244,7 @@ function chg_weibos(data){
             html += "<div class=\"chartclient-annotation-date\"> " + time + "<span style=\"float:right\"> 转发数：" +  repost_count + "</span></div></li>";
         }
         $("#vertical-ticker").append(html);
+        display_vertical_list();
     }
 
 function isEmptyObject(obj){
@@ -285,24 +292,27 @@ function init_statistics(end_ts, duration){
         //end_ts为截止时间戳, duration为整个时间段的秒数
         
         $.ajax({
-            url: "/moodlens/weibos_data/?emotion=whole&query="+query+"&ts=" + end_ts ,
+            url: "/evolution/weibos_data/?evolution=forward&query="+query+"&ts=" + end_ts ,
             type: "GET",
             dataType:"json",
             success: function(data){
-                console.log(data);
                 $("#vertical-ticker").empty();
-                if(data.length > 0) {
-                    
-                    chg_weibos(data);
+                var original_length = data['forward'].length;
+                if(original_length > 0){
+                    var weibos = [];
+                    for(var i = 0; i < original_length; i+=1){
+                        weibos.push(data['forward'][i]);
+                    }
+                    chg_weibos(weibos);
                 }
                 else{
                     $("#vertical-ticker").empty();
-                    $("#vertical-ticker").append("关键列表为空！");
+                    $("#vertical-ticker").append("关键微博为空！");
                 }
             }
         });
         $.ajax({
-            url: "/moodlens/keywords_data/?ts=" + end_ts + "&emotion=whole&query=" + query,
+            url: "/evolution/keywords_data/?ts=" + end_ts + "&evolution=original&query=" + query,
             type: "GET",
             dataType:"json",
             success: function(data){
@@ -330,232 +340,56 @@ function init_statistics(end_ts, duration){
             }
         });
         $.ajax({
-            url: "/moodlens/data/?ts=" + end_ts + "&query=" + query,
+            url: "/evolution/count_data/?ts=" + end_ts + "&query=" + query,
             type: "GET",
             dataType:"json",
             success: function(data){
-                var happy_emotion_count = data['happy'];
-                var angry_emotion_count = data['angry'];
-                var sad_emotion_count = data['sad'];
-                var total_count = parseInt(happy_emotion_count) + parseInt(angry_emotion_count) + parseInt(sad_emotion_count);
-                chg_emotion_pie([happy_emotion_count, angry_emotion_count, sad_emotion_count, total_count]);
+                var original_evolution_count = data['original'];//1是original
+                var forward_evolution_count = data['forward'];//2是forward
+                var comment_evolution_count = data['comment'];//3是comment
+                var total_count = parseInt(original_evolution_count) + parseInt(comment_evolution_count) + parseInt(forward_evolution_count);
+                chg_evolution_pie([original_evolution_count, comment_evolution_count, forward_evolution_count, total_count]);
             }
-        })
-    }
-
-function get_peaks(series4, series5, series6, during){
-
-        $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=happy&query="+query,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-
-               
-              if ( data != 'Null Data'){
-              var isShift = false;
-
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
-                var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_absolute[this.x]);
-                    $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=happy&query="+query,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            if(data=='search function undefined'){
-                                $("#tags_ul").empty();
-                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                redraw_tagcanvas();
-                            }
-                            else{
-                                if(isEmptyObject(data[0]['word'])){
-                                    $("#tags_ul").empty();
-                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                    redraw_tagcanvas();
-                                }
-                                else{
-                                    var cloud_happy = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_happy[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_happy);
-
-                                }
-                            }
-                        }
-                    });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=happy&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
-                }
-                series4.addPoint({'x': x, 'emotion': 'happy', 'events': {'click': flagClick}}, true, isShift);
-              }
-            }
-        }
-        })
-        $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=angry&query=" + query, 
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-              if ( data != 'Null Data'){
-              var isShift = false;
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
-                var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_absolute[this.x]);
-                    $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=angry&query="+query,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            if(data=='search function undefined'){
-                                $("#tags_ul").empty();
-                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                redraw_tagcanvas();
-                            }
-                            else{
-                                if(isEmptyObject(data[0]['word'])){
-                                    $("#tags_ul").empty();
-                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                    redraw_tagcanvas();
-                                }
-                                else{
-                                    var cloud_angry = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_angry[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_angry);
-
-                                }
-                            }
-                        }
-                    });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=angry&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
-                }
-                series5.addPoint({'x': x, 'emotion': 'angry', 'events': {'click': flagClick}}, true, isShift);
-              }
-            }
-        }
-        })
-        $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=sad&query="+ query,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-              if ( data != 'Null Data'){
-              var isShift = false;
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
-                var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_absolute[this.x]);
-                    $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=sad&query="+query,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            if(data=='search function undefined'){
-                                $("#tags_ul").empty();
-                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                redraw_tagcanvas();
-                            }
-                            else{
-                                if(isEmptyObject(data[0]['word'])){
-                                    $("#tags_ul").empty();
-                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                                    redraw_tagcanvas();
-                                }
-                                else{
-                                    var cloud_sad = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_sad[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_sad);
-
-                                }
-                            }
-                        }
-                    });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=sad&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
-                }
-                series6.addPoint({'x': x, 'emotion': 'sad', 'events': {'click': flagClick}}, true, isShift);
-              }
-
-            }
-        }
         })
     }
 
 function get_absolute_peaks(series7, series8, series9, during){
         $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=happy&query=" + query,
+            url: "/evolution/evolutionpeak/?lis=" + original_alist.join(',') + "&ts=" + ts_alist + '&during=' + during + "&emotion=original",
             type: "GET",
             dataType:"json",
             success: function(data){
               if ( data != 'Null Data'){
               var isShift = false;
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                var original_title = title;
+                
+                var text = data[i]['text'];
+                var original_text = text;
                 
                 var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_ratio[this.x]);
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
                     $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=happy&query="+query,
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&during=" + during + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution + "&limit=" + KEYWORDS_LIMIT + "&query=" + QUERY_ARG+ "&during=" + during + "&customized=" + CUSTOMIZED,
                         type: "GET",
                         dataType:"json",
                         success: function(data){
@@ -565,61 +399,62 @@ function get_absolute_peaks(series7, series8, series9, during){
                                 redraw_tagcanvas();
                             }
                             else{
-                                if(isEmptyObject(data[0]['word'])){
+                                if(isEmptyObject(data[evolution])){
                                     $("#tags_ul").empty();
                                     $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
                                     redraw_tagcanvas();
                                 }
                                 else{
-                                    var cloud_happy_ratio = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_happy_ratio[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_happy_ratio);
-
+                                    chg_tagcloud(data[evolution]);
                                 }
                             }
                         }
                     });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=happy&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
+                    chg_evolution_pie(evolution_absolute[this.x]);     
                 }
-                series7.addPoint({'x': x,'emotion': 'happy', 'events': {'click': flagClick}}, true, isShift);
+                series7.addPoint({'x': x, 'title': original_title, 'text': original_text, 'evolution': 'original', 'events': {'click': flagClick}}, true, isShift);
               }
             }
         }
         })
         $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=angry&query=" + query,
+            url: "/evolution/evolutionpeak/?lis=" + comment_alist.join(',') + "&ts=" + ts_alist + '&during=' + during + "&evolution=comment",
             type: "GET",
             dataType:"json",
             success: function(data){
               if ( data != 'Null Data'){
               var isShift = false;
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
-                
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                //var original_title = title['original'];
+                var comment_title = title;
+                //var forward_title = title['forward'];
+                var text = data[i]['text'];
+                //var original_text = text['original'];
+                var comment_text = text;
+                //var forward_text = text['forward'];
                 var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_ratio[this.x]);
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
                     $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=angry&query="+query,
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&during=" + during + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution + "&limit=" + KEYWORDS_LIMIT + "&query=" + QUERY_ARG + "&during=" + during + "&customized=" + CUSTOMIZED,
                         type: "GET",
                         dataType:"json",
                         success: function(data){
@@ -629,61 +464,64 @@ function get_absolute_peaks(series7, series8, series9, during){
                                 redraw_tagcanvas();
                             }
                             else{
-                                if(isEmptyObject(data[0]['word'])){
+                                if(isEmptyObject(data[evolution])){
                                     $("#tags_ul").empty();
                                     $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
                                     redraw_tagcanvas();
                                 }
                                 else{
-                                    var cloud_angry_ratio = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_angry_ratio[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_angry_ratio);
-
+                                    chg_tagcloud(data[evolution]);
                                 }
                             }
                         }
                     });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=angry&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
+                    chg_evolution_pie(evolution_absolute[this.x]);     
                 }
-                series8.addPoint({'x': x, 'emotion': 'angry', 'events': {'click': flagClick}}, true, isShift);
+                //series4.addPoint({'x': x, 'title': original_title, 'text': original_text, 'evolution': 'original', 'events': {'click': flagClick}}, true, isShift);
+                series8.addPoint({'x': x, 'title': comment_title, 'text': comment_text, 'evolution': 'comment', 'events': {'click': flagClick}}, true, isShift);
+                //series6.addPoint({'x': x, 'title': forward_title, 'text': forward_text, 'evolution': 'forward', 'events': {'click': flagClick}}, true, isShift);
               }
             }
         }
         })
         $.ajax({
-            url: "/moodlens/emotionpeak/?emotion=sad&query=" + query,
+            url: "/evolution/evolutionpeak/?lis=" + forward_alist.join(',') + "&ts=" + ts_alist + '&during=' + during + "&evolution=forward",
             type: "GET",
             dataType:"json",
             success: function(data){
               if ( data != 'Null Data'){
               var isShift = false;
-              for(var i=0;i<data.length;i++){
-                var x = data[i]*1000;
-                
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                //var original_title = title['original'];
+                //var comment_title = title['comment'];
+                var forward_title = title;
+                var text = data[i]['text'];
+                //var original_text = text['original'];
+                //var comment_text = text['comment'];
+                var forward_text = text;
                 var flagClick = function(event){
-                    click_ts = this.x/1000;
-                    chg_emotion_pie(emotion_ratio[this.x]);
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
                     $.ajax({
-                        url: "/moodlens/keywords_data/?ts=" + click_ts + "&emotion=sad&query="+query,
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&during=" + during + "&customized=" + CUSTOMIZED, 
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution + "&limit=" + KEYWORDS_LIMIT + "&query=" + QUERY_ARG + "&during=" + during + "&customized=" + CUSTOMIZED,
                         type: "GET",
                         dataType:"json",
                         success: function(data){
@@ -693,42 +531,22 @@ function get_absolute_peaks(series7, series8, series9, during){
                                 redraw_tagcanvas();
                             }
                             else{
-                                if(isEmptyObject(data[0]['word'])){
+                                if(isEmptyObject(data[evolution])){
                                     $("#tags_ul").empty();
                                     $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
                                     redraw_tagcanvas();
                                 }
                                 else{
-                                    var cloud_sad_ratio = new Array();
-                                    for (var i=0;i<data.length;i++){
-                                    var name = data[i]['word'];
-                                    cloud_sad_ratio[name] = data[i]['weight'];
-                                    }
-                                    chg_tagcloud(cloud_sad_ratio);
-
+                                    chg_tagcloud(data[evolution]);
                                 }
                             }
                         }
                     });
-                    $.ajax({
-                        url: "/moodlens/weibos_data/?emotion=sad&query="+query+"&ts=" + click_ts ,
-                        type: "GET",
-                        dataType:"json",
-                        success: function(data){
-                            $("#vertical-ticker").empty();
-                            //$("#event_title").html(title);
-                            if(data.length>0){
-                                chg_weibos(data);
-                            }
-                            else{
-                                $("#vertical-ticker").append("关键列表为空！");
-                            }
-                        }
-                    });
-
-                       
+                    chg_evolution_pie(evolution_absolute[this.x]);     
                 }
-                series9.addPoint({'x': x,  'emotion': 'sad', 'events': {'click': flagClick}}, true, isShift);
+                //series4.addPoint({'x': x, 'title': original_title, 'text': original_text, 'evolution': 'original', 'events': {'click': flagClick}}, true, isShift);
+                //series5.addPoint({'x': x, 'title': comment_title, 'text': comment_text, 'evolution': 'comment', 'events': {'click': flagClick}}, true, isShift);
+                series9.addPoint({'x': x, 'title': forward_title, 'text': forward_text, 'evolution': 'forward', 'events': {'click': flagClick}}, true, isShift);
               }
 
             }
@@ -736,68 +554,272 @@ function get_absolute_peaks(series7, series8, series9, during){
         })
     }
 
-function pull_emotion_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6,series7,series8,series9){
+function get_peaks(series4, series5, series6, during){
+        $.ajax({
+            url: "/evolution/evolutionpeak/?lis=" + original_list.join(',') + "&ts=" + ts_list + '&during=' + during + "&evolution=original",
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+              if ( data != 'Null Data'){
+              var isShift = false;
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                var original_title = title;
+
+                var text = data[i]['text'];
+                var original_text = text;
+                var flagClick = function(event){
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
+                    $.ajax({
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + "&during=" + during + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution+"&limit=" + KEYWORDS_LIMIT + "&during=" + during + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            if(data=='search function undefined'){
+                                $("#tags_ul").empty();
+                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                redraw_tagcanvas();
+                            }
+                            else{
+                                if(isEmptyObject(data[evolution])){
+                                    $("#tags_ul").empty();
+                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                    redraw_tagcanvas();
+                                }
+                                else{
+                                    chg_tagcloud(data[evolution]);
+                                }
+                            }
+                        }
+                    });
+                    chg_evolution_pie(evolution_absolute[this.x]);     
+                }
+                series4.addPoint({'x': x, 'title': original_title, 'text': original_text, 'evolution': 'original', 'events': {'click': flagClick}}, true, isShift);
+              }
+            }
+            },
+            error: function(result) {
+                    console.log(result);
+                    //$("#loading_network_data").text("暂无结果!");
+                    console.log("Status: " + result.status);
+                    console.log("Status: " + result.textStatus);
+                    console.log("Error: " + result.errorThrown); 
+            }
+        })
+        $.ajax({
+            url: "/evolution/evolutionpeak/?lis=" + comment_list.join(',') + "&ts=" + ts_list + '&during=' + during + "&evolution=comment" ,
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+              if ( data != 'Null Data'){
+              var isShift = false;
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                //var original_title = title['original'];
+                var comment_title = title;
+                //var forward_title = title['forward'];
+                var text = data[i]['text'];
+                //var original_text = text['original'];
+                var comment_text = text;
+                //var forward_text = text['forward'];
+                var flagClick = function(event){
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
+                    $.ajax({
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + "&during=" + during + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution+"&limit=" + KEYWORDS_LIMIT + "&during=" + during + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            if(data=='search function undefined'){
+                                $("#tags_ul").empty();
+                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                redraw_tagcanvas();
+                            }
+                            else{
+                                if(isEmptyObject(data[evolution])){
+                                    $("#tags_ul").empty();
+                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                    redraw_tagcanvas();
+                                }
+                                else{
+                                    chg_tagcloud(data[evolution]);
+                                }
+                            }
+                        }
+                    });
+                    chg_evolution_pie(evolution_absolute[this.x]);     
+                }
+                //series4.addPoint({'x': x, 'title': original_title, 'text': original_text, 'evolution': 'original', 'events': {'click': flagClick}}, true, isShift);
+                series5.addPoint({'x': x, 'title': comment_title, 'text': comment_text, 'evolution': 'comment', 'events': {'click': flagClick}}, true, isShift);
+                //series6.addPoint({'x': x, 'title': forward_title, 'text': forward_text, 'evolution': 'forward', 'events': {'click': flagClick}}, true, isShift);
+              }
+            }
+        }
+        })
+        $.ajax({
+            url: "/evolution/evolutionpeak/?lis=" + forward_list.join(',') + "&ts=" + ts_list + '&during=' + during + "&evolution=forward",
+            type: "GET",
+            dataType:"json",
+            success: function(data){
+              if ( data != 'Null Data'){
+              var isShift = false;
+              for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                //var original_title = title['original'];
+                //var comment_title = title['comment'];
+                var forward_title = title;
+                var text = data[i]['text'];
+                //var original_text = text['original'];
+                //var comment_text = text['comment'];
+                var forward_text = text;
+                var flagClick = function(event){
+                    var click_ts = this.x / 1000;
+                    var evolution = this.evolution;
+                    var title = this.title;
+                    $.ajax({
+                        url: "/evolution/weibos_data/" + evolution + "/global/?ts=" + click_ts + "&during=" + during + '&limit=' + WEIBOS_LIMIT + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            $("#vertical-ticker").empty();
+                            $("#event_title").html(title);
+                            if(data[evolution].length>0){
+                                chg_weibos(data[evolution]);
+                            }
+                            else{
+                                $("#vertical-ticker").append("关键微博为空！");
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: "/evolution/keywords_data/global/?ts=" + click_ts + "&evolution=" + evolution+"&limit=" + KEYWORDS_LIMIT + "&during=" + during + "&query=" + QUERY_ARG + "&customized=" + CUSTOMIZED,
+                        type: "GET",
+                        dataType:"json",
+                        success: function(data){
+                            if(data=='search function undefined'){
+                                $("#tags_ul").empty();
+                                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                redraw_tagcanvas();
+                            }
+                            else{
+                                if(isEmptyObject(data[evolution])){
+                                    $("#tags_ul").empty();
+                                    $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
+                                    redraw_tagcanvas();
+                                }
+                                else{
+                                    chg_tagcloud(data[evolution]);
+                                }
+                            }
+                        }
+                    });
+                    chg_evolution_pie(evolution_absolute[this.x]);     
+                }
+                series6.addPoint({'x': x, 'title': forward_title, 'text': forward_text, 'evolution': 'forward', 'events': {'click': flagClick}}, true, isShift);
+              }
+
+            }
+        }
+        })
+    }
+
+function pull_evolution_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6,series7,series8,series9){
         if(times > total_days){
             get_peaks(series4, series5, series6, during);
             get_absolute_peaks(series7, series8, series9, during);
             click_flag=true;
             return;
         }
-        
         var ts = begin_ts + times * during;
         $.ajax({
-            url: "/moodlens/data/?ts=" + ts + '&query=' + query,
+            url: "/evolution/count_data/?ts=" + ts + '&query=' + query,
             type: "GET",
             dataType:"json",
             success: function(data){
                 var isShift = false;
-                var happy_emotion_count = data['happy'];
-                var angry_emotion_count = data['angry'];
-                var sad_emotion_count = data['sad'];
+                var original_evolution_count = data['original'];
+                var comment_evolution_count = data['comment'];
+                var forward_evolution_count = data['forward'];
 
-                var total_emotion_count = happy_emotion_count + angry_emotion_count + sad_emotion_count;
-                if(total_emotion_count > 0){
-                    var happy_emotion_ratio = parseInt(happy_emotion_count * 10000 / total_emotion_count) / 10000.0;
-                    var angry_emotion_ratio = parseInt(angry_emotion_count * 10000 / total_emotion_count) / 10000.0;
-                    var sad_emotion_ratio = parseInt(sad_emotion_count * 10000 / total_emotion_count) / 10000.0;
-                    series1.addPoint([ts * 1000, happy_emotion_ratio], true, isShift);
-                    series2.addPoint([ts * 1000, angry_emotion_ratio], true, isShift);
-                    series3.addPoint([ts * 1000, sad_emotion_ratio], true, isShift);
+                var total_evolution_count = original_evolution_count + comment_evolution_count + forward_evolution_count;
+                if(total_evolution_count > 0){
+                    var original_evolution_ratio = parseInt(original_evolution_count * 10000 / total_evolution_count) / 10000.0;
+                    var comment_evolution_ratio = parseInt(comment_evolution_count * 10000 / total_evolution_count) / 10000.0;
+                    var forward_evolution_ratio = parseInt(forward_evolution_count * 10000 / total_evolution_count) / 10000.0;
+                    series1.addPoint([ts * 1000, original_evolution_ratio], true, isShift);
+                    series2.addPoint([ts * 1000, comment_evolution_ratio], true, isShift);
+                    series3.addPoint([ts * 1000, forward_evolution_ratio], true, isShift);
 
-                    emotion_ratio[ts * 1000] = [happy_emotion_ratio, angry_emotion_ratio, sad_emotion_ratio, total_emotion_count];
-                    emotion_absolute[ts*1000]=[happy_emotion_count, angry_emotion_count, sad_emotion_count, total_emotion_count];
+                    evolution_ratio[ts * 1000] = [original_evolution_ratio, comment_evolution_ratio, forward_evolution_ratio, total_evolution_count];
+                    evolution_absolute[ts*1000]=[original_evolution_count, comment_evolution_count, forward_evolution_count, total_evolution_count];
 
-                    happy_absolute.push([ts * 1000, happy_emotion_count]);
-                    angry_absolute.push([ts * 1000, angry_emotion_count]);
-                    sad_absolute.push([ts * 1000, sad_emotion_count]);
+                    original_absolute.push([ts * 1000, original_evolution_count]);
+                    comment_absolute.push([ts * 1000, comment_evolution_count]);
+                    forward_absolute.push([ts * 1000, forward_evolution_count]);
 
-                    happy_ratio.push([ts * 1000, happy_emotion_ratio]);
-                    angry_ratio.push([ts * 1000, angry_emotion_ratio]);
-                    sad_ratio.push([ts * 1000, sad_emotion_ratio]);
+                    original_ratio.push([ts * 1000, original_evolution_ratio]);
+                    comment_ratio.push([ts * 1000, comment_evolution_ratio]);
+                    forward_ratio.push([ts * 1000, forward_evolution_ratio]);
 
-                    happy_list.push(happy_emotion_ratio);
-                    angry_list.push(angry_emotion_ratio);
-                    sad_list.push(sad_emotion_ratio);
+                    original_list.push(original_evolution_ratio);
+                    comment_list.push(comment_evolution_ratio);
+                    forward_list.push(forward_evolution_ratio);
                     ts_list.push(ts);
 
-                    happy_alist.push(happy_emotion_count);
-                    angry_alist.push(angry_emotion_count);
-                    sad_alist.push(sad_emotion_count);
+                    original_alist.push(original_evolution_count);
+                    comment_alist.push(comment_evolution_count);
+                    forward_alist.push(forward_evolution_count);
                     ts_alist.push(ts);
                 }
                 else{
-                    emotion_ratio[ts * 1000] = [0, 0, 0, 0];
-                    emotion_absolute[ts*1000]= [0, 0, 0, 0];
+                    evolution_ratio[ts * 1000] = [0, 0, 0, 0];
+                    evolution_absolute[ts*1000]= [0, 0, 0, 0];
                 }
                 times++;
-                pull_emotion_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6, series7,series8, series9);
+                pull_evolution_count(total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6, series7,series8, series9);
             }
         });
         //预防用户在series加载完毕前，变换相对绝对。
         document.getElementById("relative").checked="checked";
     }
 
-function display_realtime_emotion(){
+function display_realtime_evolution(){
         Highcharts.setOptions({
             global: {
                 useUTC: false
@@ -818,7 +840,7 @@ function display_realtime_emotion(){
                         var total_nodes = (end_ts - begin_ts) / during;
                         var times_init = 0;
                         init_statistics(end_ts, end_ts - begin_ts);
-                        pull_emotion_count(total_nodes, times_init, begin_ts, during, this.series[0], this.series[1], this.series[2], this.series[3], this.series[4], this.series[5], this.series[6], this.series[7], this.series[8]);
+                        pull_evolution_count(total_nodes, times_init, begin_ts, during, this.series[0], this.series[1], this.series[2], this.series[3], this.series[4], this.series[5], this.series[6], this.series[7], this.series[8]);
                     }
                 }
             },
@@ -903,7 +925,7 @@ function display_realtime_emotion(){
             series: [{
                 name: '原创',
                 data: [],
-                id: 'happy',
+                id: 'original',
                 color: '#006600',
                 marker : {
                     enabled : false,    
@@ -911,7 +933,7 @@ function display_realtime_emotion(){
             },{
                 name: '转发',
                 data: [],
-                id: 'angry',
+                id: 'comment',
                 color: '#FF0000',
                 marker : {
                     enabled : false,    
@@ -919,7 +941,7 @@ function display_realtime_emotion(){
             },{
                 name: '评论',
                 data: [],
-                id: 'sad',
+                id: 'forward',
                 color: '#000099',
                 marker : {
                     enabled : false,    
@@ -929,7 +951,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'happy',
+                onSeries : 'original',
                 shape : 'circlepin',
                 width : 2,
                 color: '#006600'
@@ -938,7 +960,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'angry',
+                onSeries : 'comment',
                 shape : 'circlepin',
                 width : 2,
                 color: '#FF0000'
@@ -947,7 +969,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'sad',
+                onSeries : 'forward',
                 shape : 'circlepin',
                 width : 2,
                 color: '#000099'
@@ -956,7 +978,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'happy',
+                onSeries : 'original',
                 shape : 'circlepin',
                 width : 2,
                 color: '#006600',
@@ -967,7 +989,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'angry',
+                onSeries : 'comment',
                 shape : 'circlepin',
                 width : 2,
                 color: '#FF0000',
@@ -978,7 +1000,7 @@ function display_realtime_emotion(){
                 type : 'flags',
                 data : [],
                 cursor: 'pointer',
-                onSeries : 'sad',
+                onSeries : 'forward',
                 shape : 'circlepin',
                 width : 2,
                 color: '#000099',
@@ -994,13 +1016,13 @@ function load_absolute(){
     if(click_flag){
         var chart = $('#line_container').highcharts();
         chart.series[0].update({
-            data : happy_absolute
+            data : original_absolute
         });
         chart.series[1].update({
-            data : angry_absolute
+            data : comment_absolute
         });
         chart.series[2].update({
-            data : sad_absolute
+            data : forward_absolute
         });
 
         chart.series[3].update({
@@ -1038,13 +1060,13 @@ function load_absolute(){
 function load_relative(){
     var chart = $('#line_container').highcharts();
     chart.series[0].update({
-        data : happy_ratio
+        data : original_ratio
     });
     chart.series[1].update({
-        data : angry_ratio
+        data : comment_ratio
     });
     chart.series[2].update({
-        data : sad_ratio
+        data : forward_ratio
     });
         chart.series[6].update({
             showInLegend: false
