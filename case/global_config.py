@@ -11,6 +11,6 @@ if IS_PROD == 1:
     pass
 else:
     # 219.224.135.60
-    MYSQL_HOST = '219.224.135.60'
+    MYSQL_HOST = '219.224.135.46'
     MYSQL_USER = 'root'
     MYSQL_DB = 'weibocase'
