@@ -5,7 +5,7 @@ from case.model import *
 from case.extensions import db
 mod = Blueprint('case', __name__, url_prefix='/index')
 
-tag = ['九一八','钓鱼岛','历史',]
+#tag = ['九一八','钓鱼岛','历史',]
 comment = ['历史是不能改变的',]
 '''
 title = ['2012.9.19 新浪微博：九一八 ','2012.9.21 新浪微博：九一八',
@@ -23,6 +23,7 @@ content = ['1905年，日本在日俄战争中获胜，通过日俄讲和条约�
 def loading():
     return render_template('index/gl.html')
 
+'''
 @mod.route('/detail/')
 def detail():
     return render_template('index/detail.html')
@@ -79,4 +80,4 @@ def show_lt_data():
 
 	results = {'title': title,'content': content}
 	return json.dumps(results)
-
+'''
