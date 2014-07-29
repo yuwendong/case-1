@@ -22,3 +22,13 @@ run.py作为测试入口，在浏览器上通过/moodlens/weibo查看该部分�
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_'
 ```
 注意：在初次安装MySQL时，不要设置密码。若此前有密码，在MySQL配置文件中做跳过验证处理
+
+##3.相关安装
+
+```
+    sudo pip install flask
+    sudo pip install flask_debugtoobal
+    sudo pip install flask_sqlalchemy
+    sudo pip install flask_admin
+    sudo pip install flask_login
+```
