@@ -11,6 +11,8 @@ run.py作为测试入口，在浏览器上通过/moodlens/weibo查看该部分�
     MYSQL_DB = 'weibocase'
     XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
 '''
+
+
 2.2 case/cron/config.py
 '''
     XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140724/'
