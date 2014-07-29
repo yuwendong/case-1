@@ -37,7 +37,20 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 ```
     sudo pip install flask
 ```
-完成flask安装后，将case/package_install/目录下的安装包复制到服务器/usr/local/lib/python2.7/dist-package/目录下。
+完成flask安装后，将case/package_install/目录下的压缩文件package_install.zip解压缩后，将以下文件复制到服务器/usr/local/lib/python2.7/dist-package/目录下。
+```
+    Flask_Admin-1.0.4-py2.7.egg
+    Flask_DebugToolbar-0.8.0-py2.7.egg
+    Flask_Login-0.1.3-py2.7.egg
+    Flask_PyMongo-0.1.2-py2.7.egg
+    Flask_PyMongo-0.2.1-py2.7.egg
+    Flask_SQLAlchemy-0.16-py2.7.egg
+    Flask_WTF-0.8.2-py2.7.egg
+    Flask-0.9-py2.7.egg
+    Flask-0.10.1-py2.7.egg-info
+    sqlalchemy
+    SQLAlchemy-0.8.0-py2.7-linux-x86_64.egg
+```
 在运行run.py过程中可能会出现'no module named ***'，则需要再使用easy_install对其进行安装。
 
 
