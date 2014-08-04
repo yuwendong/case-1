@@ -8,6 +8,7 @@ import simplejson as json
 import counts as countsModule
 import weibos as weibosModule
 import keywords as keywordsModule
+import ratio as ratioModule 
 from case.model import *
 from case.extensions import db
 from utils import weiboinfo2url
@@ -119,6 +120,32 @@ def data(area='topic'):
 
     return json.dumps(results)
 
+@mod.route('/ratio/<area>/', methods=['GET','POST'])
+def ratio(area='topic'):
+    """分类情感数据--相对值
+    """
+    query = request.args.get('query', None)
+    if query:
+        query = query.strip()
+    during = request.args.get('during', 24*3600)
+    during = int(during)
+    ts = request.args.get('ts', '')
+    ts = long(ts)
+    begin_ts = ts - during
+    end_ts = ts
+
+    emotion = request.args.get('emotion', 'happy')
+    results = {}
+    search_method = 'topic'
+    area = None   
+    search_func = getattr(ratioModule, 'search_%s_ratio' % search_method, None)
+    if search_func:
+        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area)
+    else:
+        return json.dumps('search function undefined')
+
+    return json.dumps(results)
+
 
 @mod.route('/keywords_data/<area>/')
 def keywords_data(area='topic'):
@@ -138,7 +165,7 @@ def keywords_data(area='topic'):
     end_ts = ts
     limit = request.args.get('limit', 50)
     limit = int(limit)
-    emotion = request.args.get('emotion', 'topic')
+    emotion = request.args.get('emotion', 'happy')
 
     results = {}
     search_method = 'topic'
@@ -154,7 +181,7 @@ def keywords_data(area='topic'):
     return json.dumps(results)
 
 @mod.route('/weibos_data/<emotion>/<area>/')
-def weibos_data(emotion='topic', area='topic'):
+def weibos_data(emotion='happy', area='topic'):
     """关键微博
     """
     
