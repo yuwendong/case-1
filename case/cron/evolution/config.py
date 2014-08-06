@@ -3,7 +3,7 @@
 import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from xapian_case.xapian_backend import XapianSearch
+from xapian_weibo.xapian_backend import XapianSearch
 
 cron_start = '2013-9-1'
 cron_end = '2013-9-6'
@@ -17,7 +17,7 @@ fields_id = {'culture': 1, 'education': 2, 'entertainment': 3, 'fashion': 4, 'fi
 DOMAIN_LIST = ['culture', 'education', 'entertainment', 'fashion', 'finance', 'media', 'sports', 'technology', 'oversea', \
                'university', 'homeadmin', 'abroadadmin', 'homemedia', 'abroadmedia', 'folkorg', \
                'lawyer', 'politician', 'mediaworker', 'activer', 'grassroot', 'other']
-mtype_kv = {'origin':1, 'forward':2, 'comment':3}  #message_type
+mtype_kv = {'origin':1, 'forward':2, 'comment':3, 'sum':4}
 
 IS_PROD = 3
 
@@ -48,17 +48,17 @@ elif IS_PROD == 2:
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@localhost/weibo?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/mirage/dev/data/stub/master_timeline_weibo_'
 elif IS_PROD == 3:
-    XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140724/'
+    XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140804/'
     XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
     XAPIAN_DOMAIN_DATA_PATH = '/opt/xapian_weibo/data/20131130/'  #无
     MASTER_TIMELINE_STUB = '/home/mirage/dev/data/stub/master_timeline_weibo_stub' #无
-    LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/'  
+    LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
     REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
     REDIS_PORT = 6379
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_'
     
-xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=5)
+xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 
 # Create application
 app = Flask('xxx')

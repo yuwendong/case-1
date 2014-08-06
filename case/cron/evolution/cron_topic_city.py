@@ -5,7 +5,7 @@ import datetime
 from topics import _all_topics
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration #获取一定时间段内的微博
-from config import mtype_kv, db  
+from config import mtype_kv, db
 from model import CityTopicCount
 
 
@@ -69,11 +69,11 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
 
             query_dict = {
                 'timestamp': {'$gt': begin_ts, '$lt': end_ts},
-                #'$or': [],
+                '$or': [],
             }
 
-           # for topic in topics:
-           #     query_dict['$or'].append({'text': topic})   #由于topic目前没有数据，所以测试阶段使用text中查询topic
+            for topic in topics:
+                query_dict['$or'].append({'topics': topic})   #由于topic目前没有数据，所以测试阶段使用text中查询topic
             ''' 
             count, weibo_results = xapian_search_weibo.search(query={'message_type': 1}, fields=fields_list)
             for r in weibo_results():
@@ -83,6 +83,7 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                 ccount={}
                 query_dict['message_type'] = v
                 count,weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list)# weibo_results是在指定时间段、topic、message_type的微博匹配集
+                print 'count:',count
                 #for r in weibo_results():
                 #    print r['_id']
                 for weibo_result in weibo_results():
@@ -119,5 +120,5 @@ def worker(topic, datestr):
 if __name__ == '__main__':
     datestr = '2013-09-01'
     # xapian_search_weibo = getXapianWeiboByDate(datestr)
-    topic = u"九一八"
+    topic = u"中国"
     worker(topic,datestr)

@@ -167,6 +167,40 @@ class QuicknessCount(db.Model):
         self.allnum = allnum
     
     
+class TopicStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    module = db.Column(db.String(10))# 显示是哪个模块---moodlens/evolution/propagate/identify
+    status = db.Column(db.Integer)# 1: completed 0: computing, -1:not compute, -2:delete
+    topic = db.Column(db.Text)
+    start = db.Column(db.BigInteger(10, unsigned=True))#起始时间
+    end = db.Column(db.BigInteger(10, unsigned=True))#终止时间
+    db_date = db.Column(db.BigInteger(10, unsigned=True))#入库时间❯
+
+    def __init__(self, module, status, topic, start, end, db_date):
+        self.module = module
+        self.status = status
+        self.topic = topic
+        self.start = start
+        self.end = end
+        self.db_date = db_date
+
+#网络模块--存放pagerank的计算结果
+class TopicIdentification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    userId = db.Column(db.BigInteger(11, unsigned=True))
+    identifyDate = db.Column(db.Date)
+    identifyWindow = db.Column(db.Integer, default=1)
+    identifyMethod = db.Column(db.String(20), default='pagerank')
+
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod):
+        self.topic = topic
+        self.rank = rank
+        self.userId = userId
+        self.identifyDate = identifyDate
+        self.identifyWindow = identifyWindow
+        self.identifyMethod = identifyMethod
 
 
 #以下是语义模块（李文文看）

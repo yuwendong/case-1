@@ -29,6 +29,7 @@ provinces = province_soup.findAll('option')
 
 def sum_pcount(item):
     pcount={}
+    print 'item:',item
     for r in item: # 遍历所有匹配集
         if r.ccount:
             rccount = json.loads(r.ccount)
@@ -70,6 +71,8 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
                                               SentimentCount.range==unit, \
                                               SentimentCount.topic==topic).first() # 查询出匹配微博集
         if item: # 若查询结果存在，计算ccount中属于同一个省份count和
+            if not isinstance(item, list):
+                item = [item]
             pcount=sum_pcount(item)
         else:
             pcount={} # 查询结果为空
@@ -91,6 +94,8 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
                                                 CityTopicCount.topic==topic).all()
 
         if item:
+            if not isinstance(item, list):
+                item = [item]
             pcount=sum_pcount(item)
         else:
             pcount = {}

@@ -17,8 +17,8 @@ fields_id = {'culture': 1, 'education': 2, 'entertainment': 3, 'fashion': 4, 'fi
 DOMAIN_LIST = ['culture', 'education', 'entertainment', 'fashion', 'finance', 'media', 'sports', 'technology', 'oversea', \
                'university', 'homeadmin', 'abroadadmin', 'homemedia', 'abroadmedia', 'folkorg', \
                'lawyer', 'politician', 'mediaworker', 'activer', 'grassroot', 'other']
+mtype_kv = {'origin':1, 'forward':2, 'comment':3}  #message_type
 
-mtype_kv = {'origin':1, 'forward':2, 'comment':3}
 IS_PROD = 3
 
 if IS_PROD == 1:
@@ -48,17 +48,19 @@ elif IS_PROD == 2:
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@localhost/weibo?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/mirage/dev/data/stub/master_timeline_weibo_'
 elif IS_PROD == 3:
-    XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140804/'
+    XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140803/'
     XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
     XAPIAN_DOMAIN_DATA_PATH = '/opt/xapian_weibo/data/20131130/'  #无
     MASTER_TIMELINE_STUB = '/home/mirage/dev/data/stub/master_timeline_weibo_stub' #无
-    LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
+    LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/'  
     REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
     REDIS_PORT = 6379
+    SSDB_PORT = 8888
+    SSDB_HOST = '219.224.135.47' # SSDB服务器在47
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_'
     
-#xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
+xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 
 # Create application
 app = Flask('xxx')
