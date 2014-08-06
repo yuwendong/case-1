@@ -3,8 +3,7 @@
 from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'EvolutionTopicCount', 'EvolutionTopicKeywords',\
-           'EvolutionTopicTopWeibos']
+           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount']
 
 
 class Topics(db.Model):
@@ -19,13 +18,13 @@ class Topics(db.Model):
         self.topic = topic
         self.iscustom = iscustom
         self.expire_date = expire_date  #实际上这一部分是需要重新修改的，但是在此次测试中用不到，就先不动。
-
+#sentiment部分
 class SentimentKeywords(db.Model):#情绪关键词---已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     query = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    limit = db.Column(db.BigInteger(10, unsigned=True))
     sentiment = db.Column(db.Integer(1, unsigned=True))
     kcount = db.Column(db.Text)
 
@@ -42,7 +41,7 @@ class SentimentWeibos(db.Model):#情绪微博--已改
     query = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    limit = db.Column(db.BigInteger(10, unsigned=True))
     sentiment = db.Column(db.Integer(1, unsigned=True))
     weibos = db.Column(db.Text)
 
@@ -80,18 +79,95 @@ class SentimentCount(db.Model):#情绪绝对数量曲线--已改
         self.sentiment = sentiment
         self.count = count
 
-class SentimentCountRatio(db.Model):#情绪相对比例曲线
+class SentimentCountRatio(db.Model):#情绪相对比例曲线--已改
     id = db.Column(db.Integer, primary_key=True)
-    topic = db.Column(db.String(20))#话题名
-    ts = db.Column(db.BigInteger(20, unsigned=True))#时间
-    ratio = db.Column(db.Float)#相对比例
-    stype = db.Column(db.String(20))#情绪类型（'happy','angry','sad'）
+    query = db.Column(db.String(20))#话题名
+    end = db.Column(db.BigInteger(20, unsigned=True))#时间
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    count = db.Column(db.BigInteger(20, unsigned=True))
+    allcount = db.Column(db.BigInteger(20, unsigned=True))
+    sentiment = db.Column(db.Integer(1, unsigned=True))#情绪类型（'happy','angry','sad'）
 
-    def __init__(self, topic, ts, ratio, stype):
+    def __init__(self, query, end, range, sentiment, count, allcount):
+        self.query = query
+        self.end = end
+        self.range = range
+        self.count = count
+        self.allcount = allcount
+        self.sentiment = sentiment
+
+#city模块
+class CityTopicCount(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))  #message_type:原创-1、转发-2、评论-3
+    ccount = db.Column(db.Text)                      #city_count:{city:count}
+
+    def __init__(self, topic, range, end, mtype, ccount):
+        self.topic = query 
+        self.range = range
+        self.end = end
+        self.mtype = mtype
+        self.ccount = ccount
+
+#时间分析模块
+class PropagateCount(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))   
+    dcount = db.Column(db.Text) # dcount={domain:count}领域对应的count                      
+
+    def __init__(self, topic, range, end, mtype, dcount):
+        self.topic = topic 
+        self.range = range
+        self.end = end
+        self.mtype = mtype
+        self.dcount = dcount
+
+class AttentionCount(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))   
+    domain = db.Column(db.String(20))
+    covernum = db.Column(db.BigInteger(20, unsigned=True))
+    allnum = db.Column(db.BigInteger(20, unsigned=True))
+
+    def __init__(self, topic, range, end, mtype, domain, covernum, allnum):
         self.topic = topic
-        self.ts = ts
-        self.ratio = ratio
-        self.stype = stype
+        self.range = range
+        self.end = end
+        self.mtype = mtype
+        self.domain = domain
+        self.covernum = covernum
+        self.allnum = allnum
+
+class QuicknessCount(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))   
+    domain = db.Column(db.String(20))
+    topnum = db.Column(db.BigInteger(20, unsigned=True))
+    allnum = db.Column(db.BigInteger(20, unsigned=True))
+
+    def __init__(self, topic, range, end, mtype, domain, topnum, allnum):
+        self.topic = topic
+        self.range = range
+        self.end = end
+        self.mtype = mtype
+        self.domain = domain
+        self.topnum = topnum
+        self.allnum = allnum
+    
+    
+
 
 #以下是语义模块（李文文看）
 class OpinionTopic(db.Model):#话题、观点对应表
@@ -158,51 +234,3 @@ class OpinionHot(db.Model):#观点热度值
         self.ts = ts
         self.count = count
 
-class EvolutionTopicCount(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    query = db.Column(db.String(20))
-    end = db.Column(db.BigInteger(10, unsigned=True))
-    range = db.Column(db.BigInteger(10, unsigned=True))
-    evolution = db.Column(db.Integer(1, unsigned=True))
-    count = db.Column(db.BigInteger(20, unsigned=True))
-
-    def __init__(self, query, range, end, evolution, count):
-        self.query = query 
-        self.range = range
-        self.end = end
-        self.evolution = evolution
-        self.count = count
-
-class EvolutionTopicKeywords(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    query = db.Column(db.String(20))
-    end = db.Column(db.BigInteger(10, unsigned=True))
-    range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
-    evolution = db.Column(db.Integer(1, unsigned=True))
-    kcount = db.Column(db.Text)
-
-    def __init__(self, query, range, limit, end, evolution, kcount):
-        self.query = query 
-        self.range = range
-        self.limit = limit
-        self.end = end
-        self.evolution = evolution
-        self.kcount = kcount
-
-class EvolutionTopicTopWeibos(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    query = db.Column(db.String(20))
-    end = db.Column(db.BigInteger(10, unsigned=True))
-    range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
-    evolution = db.Column(db.Integer(1, unsigned=True))
-    weibos = db.Column(db.Text)
-
-    def __init__(self, query, range, limit, end, evolution, weibos):
-        self.query = query 
-        self.range = range
-        self.limit = limit
-        self.end = end
-        self.evolution = evolution
-        self.weibos = weibos

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from config import db
+from config import db # 在config文件中配置mysqldb
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount']
+           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'TopicStatus']
 
 
 class Topics(db.Model):
@@ -53,17 +53,6 @@ class SentimentWeibos(db.Model):#情绪微博--已改
         self.sentiment = sentiment
         self.weibos = weibos
 
-class SentimentPoint(db.Model):#情绪拐点
-    id = db.Column(db.Integer, primary_key=True)
-    topic = db.Column(db.String(20))#话题名
-    stype = db.Column(db.String(20))#拐点情绪类型标签（'happy','angry','sad'）
-    ts = db.Column(db.BigInteger(20, unsigned=True))#拐点时间
-
-    def __init__(self, topic, stype, ts):
-        self.topic = topic
-        self.stype = stype
-        self.ts = ts
-
 class SentimentCount(db.Model):#情绪绝对数量曲线--已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     query = db.Column(db.String(20))
@@ -104,7 +93,7 @@ class CityTopicCount(db.Model):
     ccount = db.Column(db.Text)                      #city_count:{city:count}
 
     def __init__(self, topic, range, end, mtype, ccount):
-        self.topic = topic
+        self.topic = query 
         self.range = range
         self.end = end
         self.mtype = mtype
@@ -163,7 +152,43 @@ class QuicknessCount(db.Model):
         self.domain = domain
         self.topnum = topnum
         self.allnum = allnum
-    
+
+
+#统一对topic管理
+class TopicStatus(db.Model):  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    module = db.Column(db.String(10))# 显示是哪个模块---moodlens/evolution/propagate/identify
+    status = db.Column(db.Integer)# 1: completed 0: computing, -1: not_start -2:清空计算数据
+    topic = db.Column(db.Text)
+    start = db.Column(db.BigInteger(10, unsigned=True))#起始时间
+    end = db.Column(db.BigInteger(10, unsigned=True))#终止时间 
+    db_date = db.Column(db.BigInteger(10, unsigned=True))#入库时间---提交时间
+
+    def __init__(self, module, status, topic, start, end, db_date):
+        self.module = module
+        self.status = status
+        self.topic = topic
+        self.start = start
+        self.end = end
+        self.db_date = db_date
+
+#网络模块--存放pagerank的计算结果
+class TopicIdentification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    userId = db.Column(db.BigInteger(11, unsigned=True))
+    identifyDate = db.Column(db.Date)
+    identifyWindow = db.Column(db.Integer, default=1)
+    identifyMethod = db.Column(db.String(20), default='pagerank')
+
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod):
+        self.topic = topic
+        self.rank = rank
+        self.userId = userId
+        self.identifyDate = identifyDate
+        self.identifyWindow = identifyWindow
+        self.identifyMethod = identifyMethod 
     
 
 

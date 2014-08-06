@@ -22,7 +22,7 @@ def ajax_attention():
     begin_ts = ts - during
     end_ts = ts
 
-    results = ReadAttention(topic, domain, mtype, ts, durng)
+    results = ReadAttention(topic, domain, mtype, ts, during)
     
     return json.dumps(results)
     
@@ -39,7 +39,7 @@ def ajax_penetration():
     begin_ts = ts - during
     end_ts = ts
 
-    results = ReadPenetration(topic, domain, mtype, ts, durng)
+    results = ReadPenetration(topic, domain, mtype, ts, during)
 
     return json.dumps(results)
 
@@ -48,7 +48,7 @@ def ajax_quickness():
     mtype = request.args.get('style', '')
     mtype = int(mtype)
     topic = request.args.get('topic', '')
-    during = request.args.get('during', 900)
+    during = request.args.get('during', 2*900)
     during = int(during)
     ts = request.args.get('ts', '')
     ts = long(ts)
@@ -56,13 +56,7 @@ def ajax_quickness():
     begin_ts = ts - during
     end_ts = ts
 
-    results = ReadQuickness(topic, domain, mtype, ts, durng)
+    results = ReadQuickness(topic, domain, mtype, ts, during)
 
     return json.dumps(results)
-
-   
-
-
-
-
 

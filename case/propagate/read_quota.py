@@ -18,10 +18,11 @@ expr = 100 # 经验值的计算
 def Merge_Acount(item): # 计算指标值 
     results = {}
     s = 0
+    print 'item:',item
     for r in item:
         s += r.covernum
 
-    results = s / expr # 这里需要写一个方法，确定expr。先默认为100的常值
+    results =float(s) / expr # 这里需要写一个方法，确定expr。先默认为100的常值
     return results
 
 def Merge_Pcount(item):
@@ -32,7 +33,7 @@ def Merge_Pcount(item):
         cover += r.covernum
         total += r.allnum
         
-    results = cover / total
+    results = float(cover) / total
     return results
 
 def Merge_Qcount(item):
@@ -43,27 +44,29 @@ def Merge_Qcount(item):
         top += r.topnum
         total += r.allnum
         
-    results = top / total
+    results = float(top) / total
     return results
 
 
 
 
-def ReadAttention(topic, domain, mtype, ts, durng):
+def ReadAttention(topic, domain, mtype, end_ts, during, unit=MinInterval):
     if during <= unit:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
-            item = db.session.query(APCount).filter(Apcount.end==upbound, \
-                                                    Apcount.range==unit,  \
-                                                    Apcount.topic==topic, \
-                                                    Apount.domain==domain).all()                  
+            item = db.session.query(AttentionCount).filter(AttentionCount.end==upbound, \
+                                                    AttentionCount.range==unit,  \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()                  
         else:
-            item = db.session.query(APcount).filter(Apcount.end==upbound, \
-                                                    Apound.range==unit, \
-                                                    Apound.topic==topic, \
-                                                    Apound.mtype==mtype, \
-                                                    Apound.domain==domain).first()  
+            item = db.session.query(AttentionCount).filter(AttentionCount.end==upbound, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.mtype==mtype, \
+                                                    AttentionCount.domain==domain).first()  
         if item:
+            if not isinstance(item, list):
+                item = [item]
             results = Merge_Acount(item) # 合并指标计算，分子和分母
         else:
             results = None
@@ -73,40 +76,44 @@ def ReadAttention(topic, domain, mtype, ts, durng):
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         lowbound = (start_ts / unit) * unit
         if stylenum == 4:
-            item = db.session.query(Apcount).filter(Apcount.end>lowbound, \
-                                                    Apcount.end<=upbound, \
-                                                    Apcount.range==unit, \
-                                                    Apcount.topic==topic, \
-                                                    Apound.domain==domain).all()
+            item = db.session.query(AttentionCount).filter(AttentionCount.end>lowbound, \
+                                                    AttentionCount.end<=upbound, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()
         else:
-            item = db.session.query(Apcount).filter(Apcount.end>lowbound, \
-                                                    Apcount.end<=upbound, \
-                                                    Apcount.mtype==stylenum, \
-                                                    Apcount.range==unit, \
-                                                    Apcount.topic==topic, \
-                                                    Apound.domain==domain).all()
+            item = db.session.query(AttentionCount).filter(AttentionCount.end>lowbound, \
+                                                    AttentionCount.end<=upbound, \
+                                                    AttentionCount.mtype==stylenum, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()
         if item:
+            if not isinstance(item, list):
+                item = [item]
             results = Merge_Acount(item)
         else:
             results = None
                     
-    return resluts
+    return results
 
-def ReadPenetration(topic, domain, mtype, ts, durng):
+def ReadPenetration(topic, domain, mtype, end_ts, during, unit=MinInterval):
     if during <= unit:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
-            item = db.session.query(APCount).filter(Apcount.end==upbound, \
-                                                    Apcount.range==unit,  \
-                                                    Apcount.topic==topic, \
-                                                    Apount.domain==domain).all()                  
+            item = db.session.query(AttentionCount).filter(AttentionCount.end==upbound, \
+                                                    AttentionCount.range==unit,  \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()                  
         else:
-            item = db.session.query(APcount).filter(Apcount.end==upbound, \
-                                                    Apound.range==unit, \
-                                                    Apound.topic==topic, \
-                                                    Apound.mtype==mtype, \
-                                                    Apound.domain==domain).first()  
+            item = db.session.query(AttentionCount).filter(AttentionCount.end==upbound, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.mtype==mtype, \
+                                                    AttentionCount.domain==domain).all()  
         if item:
+            if not isinstance(item, list):
+                item = [item]
             results = Merge_Pcount(item) # 合并指标计算，分子和分母
         else:
             results = None
@@ -116,26 +123,28 @@ def ReadPenetration(topic, domain, mtype, ts, durng):
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         lowbound = (start_ts / unit) * unit
         if stylenum == 4:
-            item = db.session.query(Apcount).filter(Apcount.end>lowbound, \
-                                                    Apcount.end<=upbound, \
-                                                    Apcount.range==unit, \
-                                                    Apcount.topic==topic, \
-                                                    Apound.domain==domain).all()
+            item = db.session.query(AttentionCount).filter(AttentionCount.end>lowbound, \
+                                                    AttentionCount.end<=upbound, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()
         else:
-            item = db.session.query(Apcount).filter(Apcount.end>lowbound, \
-                                                    Apcount.end<=upbound, \
-                                                    Apcount.mtype==stylenum, \
-                                                    Apcount.range==unit, \
-                                                    Apcount.topic==topic, \
-                                                    Apound.domain==domain).all()
+            item = db.session.query(AttentionCount).filter(AttentionCount.end>lowbound, \
+                                                    AttentionCount.end<=upbound, \
+                                                    AttentionCount.mtype==stylenum, \
+                                                    AttentionCount.range==unit, \
+                                                    AttentionCount.topic==topic, \
+                                                    AttentionCount.domain==domain).all()
         if item:
+            if not isinstance(item, list):
+                 item = [item]
             results = Merge_Pcount(item)
         else:
             results = None    
     
     return results
 
-def ReadQuickness(topic, domain, mtype, ts, durng):
+def ReadQuickness(topic, domain, mtype, end_ts, during, unit=MinInterval):
     if during <= unit:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
@@ -148,9 +157,11 @@ def ReadQuickness(topic, domain, mtype, ts, durng):
                                                     QuicknessCount.range==unit, \
                                                     QuicknessCount.topic==topic, \
                                                     QuicknessCount.mtype==mtype, \
-                                                    QuicknessCount.domain==domain).first()  
+                                                    QuicknessCount.domain==domain).all()  
         if item:
-            results = Merge_Qcount(item) # 合并指标计算，分子和分母
+            if not isinstance(item, list):
+                item = [item]
+            results = Merge_Qcount([item]) # 合并指标计算，分子和分母
         else:
             results = None
             
@@ -158,7 +169,7 @@ def ReadQuickness(topic, domain, mtype, ts, durng):
         start_ts = end_ts - during
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         lowbound = (start_ts / unit) * unit
-        if stylenum == 4:
+        if mtype == 4:
             item = db.session.query(QuicknessCount).filter(QuicknessCount.end>lowbound, \
                                                     QuicknessCount.end<=upbound, \
                                                     QuicknessCount.range==unit, \
@@ -167,12 +178,14 @@ def ReadQuickness(topic, domain, mtype, ts, durng):
         else:
             item = db.session.query(QuicknessCount).filter(QuicknessCount.end>lowbound, \
                                                     QuicknessCount.end<=upbound, \
-                                                    QuicknessCount.mtype==stylenum, \
+                                                    QuicknessCount.mtype==mtype, \
                                                     QuicknessCount.range==unit, \
                                                     QuicknessCount.topic==topic, \
                                                     QuicknessCount.domain==domain).all()
         if item:
-            results = Merge_Acount(item)
+            if not isinstance(item, list):
+                item = [item]
+            results = Merge_Qcount(item)
         else:
             results = None
     
