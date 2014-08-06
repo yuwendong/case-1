@@ -3,7 +3,7 @@ import json
 import math
 from case.extensions import db
 from time_utils import datetime2ts
-from case.model import PropagateCount, APCount, QuicknessCount # 需要查询的表
+from case.model import PropagateCount, AttentionCount, QuicknessCount # 需要查询的表
 
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -51,7 +51,7 @@ def Merge_Qcount(item):
 
 def ReadAttention(topic, domain, mtype, ts, durng):
     if during <= unit:
-        upbound int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
             item = db.session.query(APCount).filter(Apcount.end==upbound, \
                                                     Apcount.range==unit,  \
@@ -94,7 +94,7 @@ def ReadAttention(topic, domain, mtype, ts, durng):
 
 def ReadPenetration(topic, domain, mtype, ts, durng):
     if during <= unit:
-        upbound int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
             item = db.session.query(APCount).filter(Apcount.end==upbound, \
                                                     Apcount.range==unit,  \
@@ -137,7 +137,7 @@ def ReadPenetration(topic, domain, mtype, ts, durng):
 
 def ReadQuickness(topic, domain, mtype, ts, durng):
     if during <= unit:
-        upbound int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if mtype == 4:
             item = db.session.query(QuicknessCount).filter(QuicknessCount.end==upbound, \
                                                     QuicknessCount.range==unit,  \
