@@ -2,42 +2,61 @@
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 import os
 import json
-from utils import *
+from read_quota import ReadAttention, ReadPenetration, ReadQuickness 
+
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
 
-@mod.route('/weibo')
-def weibo():
-    return render_template('propagate/ajax_contents.html')
+# 三个指标分别对应不同的页面url
 
-@mod.route('/ajax_contents')
-def contents():
-    return render_template('propagate/ajax_contents.html')
+@mod.route('/attention/') # 关注度曲线
+def ajax_attention():
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 900)
+    during = int(during)
+    ts = request.args.get('ts', '')
+    ts = long(ts)
+    domain = request.args.get('domain','')
+    begin_ts = ts - during
+    end_ts = ts
 
-@mod.route('/ajax_path')
-def path():
-    return render_template('propagate/ajax_path.html')
+    results = ReadAttention(topic, domain, mtype, ts, during)
+    
+    return json.dumps(results)
+    
+@mod.route('/penetration/')
+def ajax_penetration():
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 900)
+    during = int(during)
+    ts = request.args.get('ts', '')
+    ts = long(ts)
+    domain = request.args.get('domain','')
+    begin_ts = ts - during
+    end_ts = ts
 
-@mod.route('/ajax_track_source')
-def track_source():
-    return render_template('propagate/ajax_track_source.html')
+    results = ReadPenetration(topic, domain, mtype, ts, during)
 
-@mod.route('/ajax_key_person')
-def key_person():
-    return render_template('propagate/ajax_key_person.html')
+    return json.dumps(results)
 
-@mod.route('/ajax_media')
-def media():
-    return render_template('propagate/ajax_media.html')
+@mod.route('/quickness/')
+def ajax_quickness():
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 2*900)
+    during = int(during)
+    ts = request.args.get('ts', '')
+    ts = long(ts)
+    domain = request.args.get('domain','')
+    begin_ts = ts - during
+    end_ts = ts
 
-@mod.route('/test')
-def test():
-    return render_template('propagate/test.html')
+    results = ReadQuickness(topic, domain, mtype, ts, during)
 
-
-   
-
-
-
-
+    return json.dumps(results)
 
