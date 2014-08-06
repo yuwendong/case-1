@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0041)http://v3.unotice.cn/weibo/client/listing -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta http-equiv="x-ua-compatible" content="ie=7">
+<title>微博监控 - 舆情监控系统</title>
+<link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
+<link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
+<script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+
+
+<script type="text/javascript" src="/static/index/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/index/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="/static/index/js/jquery.masonry.min.js"></script>
+<script type="text/javascript" src="/static/index/js/amstock.js"></script>
+<script type="text/javascript" src="/static/index/js/jquery.tagcanvas.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/index/js/sentiment_report.js"></script>
+<script type="text/javascript" src="/static/index/js/bootstrap.min.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/static/css/css/justified-nav-detail.css">
+<script src="/static/css/js/htip.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
+<link rel="stylesheet" type="text/css" href="/static/css/css/miaov_style.css">
+<script type="text/javascript" src="/static/css/js/miaov.js"></script>
+<style type="text/css">
+.headerTitle{font-size:24px;font-family:ºÚÌå;color:#ffffff;position: relative;top: 8px;}
+</style>
+</head>
+
+<body>
+<!--top_nav start-->
+<div class="top_nav_wrap">
+    <div class="top_nav">
+        <div class="fr">
+            <ul id="head_nav">
+                <li class="logined">欢迎您</li>               
+                <li class="revise"><a href="http://v3.unotice.cn/client/profile">修改资料</a></li>                
+                <li class="key"><a href="http://v3.unotice.cn/client/site/word" title="关键词设置">关键词设置</a></li>
+                <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
+            </ul>
+        </div>
+            </div>
+</div>
+<!--top end-->
+
+<!--banner start-->
+<div class="banner_wrap">
+    <div class="banner">
+        <div class="banner_bg">
+            <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
+                <tbody><tr>
+                    <td>
+                        <img src="/static/css/images/bhsocial.gif" border="0"><span class="headerTitle"> - 九一八舆情</span>                 </td>
+                </tr>
+            </tbody></table>
+        </div>
+                <div class="search">
+            <div class="search_box_l"></div>
+            <input type="hidden" value="title" name="search_type">
+            <input type="hidden" value="7days" name="date_type">
+            <input type="hidden" value="-1" name="brand_id">
+            <input type="hidden" value="-1" name="product_id">
+            <input name="search" value="" type="text" id="search_box" class="search_box">
+            <input name="submit" onclick="javascript:if($(&#39;#search_box&#39;).val() == &#39;&#39;){alert (&#39;请填写要查找的内容。&#39;);return false;};" type="submit" class="search_btn" value="">
+            </form>
+        </div>
+            </div>
+</div>
+<!--banner end-->
+
+<!--menu start-->
+<div class="nav_wrap">
+</div>
+<!--menu end-->
+<script type="text/javascript" src="/static/css/js/thickbox.js"></script>
+<link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
+<div id="floatMenu"></div>
+<div class="main2">
+    <div class="leftbox">
+        <ul>
+            <li class="menu_main">
+                <a href="gaishu.html">
+                    舆情概况
+                </a>
+            </li>
+            <li class="menu_main"><a href="zhibiao.html">舆情指数</a></li>
+                        <li class="menu_main_on">
+            <a href="time.html">深度分析</a>
+            </li>
+            <li class="menu_son"><a href="time.html">时间分析</a></li>  
+            <li class="menu_son"><a href="ditu.html">地域分析</a></li>
+            <li class="menu_son"><a href="网络分析.html">网络分析</a></li>
+            <li class="menu_son"><a href="语义分析.html">语义分析</a></li>
+            <li class="menu_son"><a href="情感分析汇总.html">情感分析</a></li>
+        </ul>
+    </div>
+    <div class="rightbox">
+            <h3 style="text-align:left;height:30px;width:900px">九一八事变是日本帝国主义长期以来推行对华侵略扩张政策的必然的结果，也是企图把中国变为其独占的殖民地而采取的重要步骤。
+        </h3>
+            <div class="row">
+      <div class="col-lg-12 well-big">
+        <div class="well well-con">
+          <div id="origin-tag">
+            <strong><h2 style="font-size:13px">标签：</h2></strong><p style="text-align:left;height:30px;font-size:13px">国耻、日货、钓鱼岛、历史</p>
+      </div>
+    </div>
+    <div id="main" style="height:192px;width:400px;float:left;border:1px solid #F0F0F0;background:#F0F0F0"></div>
+    <div id="main1" style="height:192px;width:400px;float:left;margin-left:70px;border:1px solid #F0F0F0;background:#F0F0F0">
+         <h3 style="text-align:center" onClick="keyword_data()">关键词云图</h3>
+       <div id="div1">
+
+       </div>
+
+    </div>
+
+    <!-- ECharts单文件引入 -->
+    <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts图表
+option = {
+    backgroundColor: '#F0F0F0',
+    title : {
+        text: '比例',
+        x:'center',
+        textStyle:{
+        fontSize: 13,
+    }
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient : 'vertical',
+        x : "left",
+        data:['新闻','博客','论坛','微博']
+    },
+
+    calculable : true,
+    series : [
+        {
+            name:'访问来源',
+            type:'pie',
+            radius : '40%',
+            center: ['50%', '60%'],
+            data:[
+                {value:335, name:'新闻'},
+                {value:310, name:'博客'},
+                {value:310, name:'论坛'},
+                {value:234, name:'微博'}
+            ]
+        }
+    ]
+};
+var myChart = echarts.init(document.getElementById('main'));
+myChart.setOption(option);
+
+</script>
+<script>
+    var  query="九一八";
+    var  ts=1379433600;
+    var  emotion="happy";
+    
+    function isEmptyObject(obj){
+        for ( var name in obj ) { 
+            return false;
+        } 
+        return true; 
+    } 
+
+    function keyword_data()
+    {
+        $.ajax({
+                url:"/moodlens/keywords_data/?ts=" + ts + "&query=" + query +"&emotion="+ emotion,
+                data: "GET",
+                dataType:"json",
+                success: function(data)
+                {
+                            if(data=='search function undefined'){
+                                $("#div1").empty();
+                                $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
+                                
+                            }
+                            else{
+                                if(isEmptyObject(data)){
+                                    $("#div1").empty();
+                                    $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
+                                    
+                                }
+                                else{
+                                        
+                                         
+                                            for (var i=0;i<data.length;i++){
+                                                var name = data[i]['word'];
+                                               $('#div1').append('<a href="http://www.baidu.com"><font color="red">'+ name +'</font></a>');
+                                               
+                                            }
+                                       
+                                       on_load();
+                                    
+                                }
+                            }
+                        }
+
+                })
+
+
+
+    }   
+
+
+</script>
+
+<div id="main2" style="height:900px;width:800px;float:left;margin-left:0px">
+<div class="panel-outer-d">
+      <div class="panel-nav-d">鱼骨图分析</div>
+      <div id="panel-d" style="border:1px solid gray;">
+        <div class="panel-outer">
+          <div id="container" >
+            <!-- timeline导航 -->
+            <div class="timeline_container" >
+              <div class="timeline" >
+                <div class="plus" ></div>
+              </div>
+            </div>
+            <div class="tab-content">
+              <div class="tab-pane active" id="wb">
+                <div class="item" >
+                  <div class="inner">
+                    <span class="title">2012.9.19 腾讯新闻：韩德强微博说明为何打人 称不让“汉奸”放肆</span>
+                    <hr />
+                    <span>昨日在北京的中，有网友在微博上说：“在游行的队伍集合时，一个老人对几个人打出的“毛主席我们想念您”这个口号提出了反对，他说：将这种维护国家尊严和民族大义的愿望寄托在毛泽东身上是错误的，也是不可能实现的等等。年轻人听后上去就给这个老人两个耳光，说：这是在侮辱毛主席。两人互骂对方是汉奸，警察拉开了事。”</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.9.21 21CN新闻：韩德强打人不认错，那就让法律来制裁</span>
+                    <hr />
+                    <span>韩德强教授打人并发表声明，声称对自己的行为负责且没有必要认错。作为“乌有之乡”的作者之一，秉持着“毛左”的思想遗风。在示威游行的过程中，老者开始咒骂毛泽东主席。原本这应该属于言论自由的领域内，没有任何政治纠葛。但却被韩德强斥之为玷污领袖的光荣，被斥之为汉奸。那么，韩德强作为北航的教授并没有权力和资格将人分为三六九等，更不能将人评价为汉奸还是爱国者。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.9.21 新浪财经 大词崇拜的危害 打人的韩德强为何理直气壮？</span>
+                    <hr />
+                    <span>近日，北京航天航空大学教授韩德强扮演路上法官，判定某位同行的老人卖国，遂替想象中的正义行道，打了老人两记耳光。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner">
+                    <span class="title">2012.9.26 网易新闻：北航教授韩德强掌掴老人 学生“罢”课是否妥当</span>
+                    <hr />
+                    <span>2012年9月24日，辽宁师范大学政治与行政学院博士生导师木然在其认证的腾讯微博上称，在“保钓”游行中因观点不合而殴打八旬老人的韩德强已连续四堂课没有一个学生。此微博内容一发就引起了众多网友的热议。不少网友力挺北航学子的做法，支持封杀韩德强。但也有一些网友对韩德强表示了同情，觉得教学和个人品德是两码事，认为有些学生是在跟风罢课。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.9.27 搜狐新闻 洪振快：再评韩德强打人 领袖可以批评</span>
+                    <hr />
+                    <span>韩德强的支持者们认为，批评毛泽东违反宪法。这与事实不符。现行1982年宪法的序言中有一处提到毛泽东，但属于事实陈述，两处提到毛泽东思想，属于观念表达，都没有明确规定不能批评毛泽东。而且，宪法序言不同于正文，正文具有法律效力，而序言是否具有法律效力存在很大争议，全国人大法工委原主任高锴先生算是权威人物，他就认为宪法序言是不具有法律效力的。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.9.28 搜狐新闻 白岩松:韩德强打八旬老人 实是另一种“汉奸”</span>
+                    <hr />
+                    <span>据央视报道，在北京的保钓游行活动中，北京航空航天大学教授韩德强证实因观点不一致，自己曾两次打一名80多岁老人耳光，并称这个老人是“汉奸”。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.10.13 网易财经 韩德强 毛是Teacher</span>
+                    <hr />
+                    <span>“毛主席在我心目当中的地位跟穆罕默德（在阿拉伯世界的地位）是一样的。”温文尔雅、说话慢声细语的韩德强这样解释他愤怒的由来。“忍无可忍，不能再忍！”随着音调拔高，他颤抖得更加显著。</span>
+                  </div>
+                </div>
+                <div class="item" >
+                  <div class="inner" >
+                    <span class="title">2012.10.13 凤凰网 韩德强谈砸烧日系车:普通人就一蚂蚁 被踩死没办法</span>
+                    <hr />
+                    <span>在游行队伍当中，我就是一名爱国的、反日的公民；我回到大学讲堂上，我是大学老师。</span></div>
+                  </div>
+                  <div class="item" >
+                    <div class="inner" >
+                      <span class="title">2012.10.16 新浪新闻 韩德强谈砸车:大象走路怎能顾得蚂蚁螳螂?</span>
+                      <hr />
+                      <span>人物周刊：那日系车和日系车主就变成了殉道者？韩德强：那没办法，那没办法。大象走路，它能顾得了蚂蚁螳螂？一个国家一个社会的行动，它就是这样的呀，它不可能是一点损失都没有的呀。</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

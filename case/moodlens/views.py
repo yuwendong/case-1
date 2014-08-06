@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
+from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 import os
 import json
 from get_result import *
@@ -12,6 +12,10 @@ mod = Blueprint('moodlens', __name__, url_prefix='/moodlens')
 @mod.route('/index')
 def index():
     return render_template('root/index.html')
+
+@mod.route('/topic')
+def index():
+    return render_template('moodlens/topic.html')
 
 @mod.route('/weibo')
 def weibo():
@@ -62,8 +66,10 @@ def keywords_data():
     ts = request.args.get('ts','')
     ts = long(ts)
     module = request.args.get('emotion','whole')
-    print topic,ts,module
-    results = getKeywords(topic, ts, module)
+
+
+    with open("abc.txt","r") as fh:
+        results=json.loads(fh.read())
 
     return json.dumps(results)
 
