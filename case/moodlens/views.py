@@ -62,7 +62,7 @@ def get_default_field_name():
 
 
 @mod.route('/', methods=['GET','POST'])
-def index():   #获取情绪拐点时要用到这个方法
+def index_():   #获取情绪拐点时要用到这个方法
     default_timerange = get_default_timerange()
     default_field_dict = get_default_field_dict()
     default_field_enname, default_field_zhname = get_default_field_name()

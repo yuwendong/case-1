@@ -3,6 +3,7 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, se
 import json
 from case.model import *
 from case.extensions import db
+
 mod = Blueprint('case', __name__, url_prefix='/index')
 
 #tag = ['九一八','钓鱼岛','历史',]
@@ -19,6 +20,7 @@ content = ['1905年，日本在日俄战争中获胜，通过日俄讲和条约�
     '1931年6月，日本关东军中村震太郎大尉和曹井杉延太郎在兴安岭索伦一带作军事调查，被中国东北军兴安屯垦公署第三团团副董昆吾发现并扣留，在证据确凿情况下，团长关玉衡下令秘密处决中村震太郎。','1931年9月18日傍晚，日本关东军虎石台独立守备队第2营第3连离开原驻地虎石台兵营，沿南满铁路向南行进。夜22时20分左右中国人尸体放在现场，作为东北军破坏铁路的证据，诬称中国军队破坏铁路并袭击日守备队。',
     '1931年9月18日事变发生当夜，东北边防军司令长官公署中将参谋长荣臻根据张学良之命，命令东北军“不准抵抗，不准动，把枪放到库房里，挺着死，大家成仁，为国牺牲”。','1931年9月20日，中国共产党中央委员会发表《中国共产党为日本帝国主义强暴占领东三省事件宣言》[27]，谴责日军侵略，并提出“武装拥护苏联”的口号。',]
 '''
+
 @mod.route('/')
 def loading():
     return render_template('index/gl.html')
@@ -83,6 +85,7 @@ def area_network():
 
     else:
         abort(404)
+
 @mod.route('/show_tag_data/')
 def show_tag():
     return json.dumps({'tag': tag})
@@ -102,7 +105,7 @@ def show_comment():
 
 
 @mod.route('/alter_comment/',methods=['GET','POST'])
-def alter_tag():
+def alter_comment():
     commentname = request.form['comment']
     if commentname:
         commentname = commentname.strip()
