@@ -1,276 +1,286 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- saved from url=(0041)http://v3.unotice.cn/weibo/client/listing -->
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>原型系统</title>
 
-<meta http-equiv="x-ua-compatible" content="ie=7">
-<title>微博监控 - 舆情监控系统</title>
-<link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/miaov_style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
 
-<link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
+    <script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="/static/css/js/tab.js" type="text/javascript"></script>
+    <script src="/static/css/js/htip.js" type="text/javascript"></script>
+    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
+    <script src="/static/css/js/thickbox.js" type="text/javascript"></script>
+    <script src="/static/css/echarts-2.0.0/build/echarts-plain.js" type="text/javascript"></script>
 
-<link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-<script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
-<script src="/static/css/js/tab.js" type="text/javascript"></script>
-<!--<script src="/static/css/js/common.js" type="text/javascript"></script>-->
-<script src="/static/css/js/htip.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
-<link rel="stylesheet" type="text/css" href="/static/css/css/miaov_style.css" >
-<script type="text/javascript" src="/static/css/js/miaov.js"></script>
+    <style type="text/css">
+        .headerTitle {
+            font-size: 24px;
+            font-family: ºÚÌå;
+            color: #ffffff;
+            position: relative;
+            top: 8px;
+        }
+    </style>
 
+    <script type="text/javascript">
+        function check_submit_onclick(){
+            if($("#search_box").val() == "") {
+                alert ("请填写要查找的内容。");
+                return false;
+            };
+        }
+    </script>
 
-<style type="text/css">
-.headerTitle{font-size:24px;font-family:ºÚÌå;color:#ffffff;position: relative;top: 8px;}
-</style>
 </head>
 
 <body onload="getpie_data()">
-<!--top_nav start-->
-<div class="top_nav_wrap">
-    <div class="top_nav">
-        <div class="fr">
-            <ul id="head_nav">
-                <li class="logined">欢迎您</li>               
-                <li class="revise"><a href="http://v3.unotice.cn/client/profile">修改资料</a></li>                
-                <li class="key"><a href="http://v3.unotice.cn/client/site/word" title="关键词设置">关键词设置</a></li>
-                <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
+
+    <!--top_nav start-->
+    <div class="top_nav_wrap">
+        <div class="top_nav">
+            <div class="fr">
+                <ul id="head_nav">
+                    <li class="logined">欢迎您</li>
+                    <li class="revise"><a href="http://v3.unotice.cn/client/profile">修改资料</a></li>
+                    <li class="key"><a href="http://v3.unotice.cn/client/site/word" title="关键词设置">关键词设置</a></li>
+                    <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--top end-->
+
+    <!--banner start-->
+    <div class="banner_wrap">
+        <div class="banner">
+            <div class="banner_bg">
+                <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="/static/css/images/bhsocial.gif" border="0">
+                                <span class="headerTitle"> - 九一八舆情</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="search">
+                <div class="search_box_l"></div>
+                <input type="hidden" value="title" name="search_type">
+                <input type="hidden" value="7days" name="date_type">
+                <input type="hidden" value="-1" name="brand_id">
+                <input type="hidden" value="-1" name="product_id">
+                <input name="search" value="" type="text" id="search_box" class="search_box">
+                <input name="submit" onclick="check_submit_onclick();" type="submit" class="search_btn" value="">
+            </div>
+        </div>
+    </div>
+    <!--banner end-->
+
+    <!--menu start-->
+    <div class="nav_wrap">
+        <li style="display:inline;padding-left:250px;font-size:15px;line-height:35px"><a href=""><b>新闻</b></label></li>
+        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>博客</b></label></li>
+        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>微博</b></label></li>
+        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>论坛</b></label></li>
+    </div>
+    <!--menu end-->
+
+    <div id="floatMenu"></div>
+
+    <div class="main2">
+        <div class="leftbox">
+            <ul>
+                <li class="menu_main">
+                    <a href="/index/gaishu/">舆情概况</a>
+                </li>
+                <li class="menu_main">
+                    <a href="/index/zhibiao/">舆情指数</a>
+                </li>
+                <li class="menu_main_on">
+                    <a href="#">深度分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="/index/time/">时间分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="/index/ditu/">地域分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="/index/network/">网络分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="/index/semantic/">语义分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="/index/moodlens/">情感分析</a>
+                </li>
+                <li class="menu_son">
+                    <a href="#">监控预警</a>
+                </li>
             </ul>
         </div>
-            </div>
-</div>
-<!--top end-->
 
-<!--banner start-->
-<div class="banner_wrap">
-    <div class="banner">
-        <div class="banner_bg">
-            <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
-                <tbody><tr>
-                    <td>
-                        <img src="/static/css/images/bhsocial.gif" border="0"><span class="headerTitle"> - 九一八舆情</span>                 </td>
-                </tr>
-            </tbody></table>
+        <div class="rightbox">
+            <label for="relative" onclick="load_relative();">相对比例</label>
+            <label for="absolute" onclick="load_absolute();">绝对数量</label>
+            <div id="main" style="height:250px;width:900px;float:left;border:1px solid #F0F0F0;background:#F0F0F0;"></div>
+            <div id="main1" style="height:200px;margin:20px;width:400px;float:right;background:#F0F0F0;border:1px solid #F0F0F0"></div>
+            <div id="main2" style="height:200px;width:450px;float:left;border:1px solid #F0F0F0;margin-top:20px;background:#F0F0F0">
+            <h4 style="text-align:center;font-weight:lighter" onClick="keyword_data()">关键词云图</h4>
+            <div id="div1"></div>
         </div>
-                <div class="search">
-            <div class="search_box_l"></div>
-            <input type="hidden" value="title" name="search_type">
-            <input type="hidden" value="7days" name="date_type">
-            <input type="hidden" value="-1" name="brand_id">
-            <input type="hidden" value="-1" name="product_id">
-            <input name="search" value="" type="text" id="search_box" class="search_box">
-            <input name="submit" onclick="javascript:if($(&#39;#search_box&#39;).val() == &#39;&#39;){alert (&#39;请填写要查找的内容。&#39;);return false;};" type="submit" class="search_btn" value="">
-            </form>
-        </div>
-            </div>
-</div>
-<!--banner end-->
 
-<!--menu start-->
-<div class="nav_wrap">
-   <li style="display:inline;padding-left:250px;font-size:15px;line-height:35px"><a href=""><b>新闻</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>博客</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>微博</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>论坛</b></label></li>
-</div>
-<!--menu end-->
-<script type="text/javascript" src="/static/css/js/thickbox.js"></script>
-<link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
-<div id="floatMenu"></div>
-<div class="main2">
-    <div class="leftbox">
-        <ul>
-            <li class="menu_main">
-                <a href="gaishu.html">
-                    舆情概况
-                </a>
-            </li>
-            <li class="menu_main"><a href="zhibiao.html">舆情指数</a></li>
-                        <li class="menu_main_on">
-            <a href="time.html">深度分析</a>
-            </li>
-            <li class="menu_son"><a href="time.html">时间分析</a></li>  
-            <li class="menu_son"><a href="ditu.html">地域分析</a></li>
-            <li class="menu_son"><a>网络分析</a></li>
-            <li class="menu_son"><a href="语义分析.html">语义分析</a></li>
-            <li class="menu_son"><a href="情感分析汇总.html">情感分析</a></li>
-            <li class="menu_son"><a href="监控预警.html">监控预警</a></li>
-        </ul>
-    </div>
-    <div class="rightbox">
-         <label for="relative" onclick="load_relative();">相对比例</label>  
-         <label for="absolute" onclick="load_absolute();">绝对数量</label>
-    <div id="main" style="height:250px;width:900px;float:left;border:1px solid #F0F0F0;background:#F0F0F0;"> </div>
-
-    <div id="main1" style="height:200px;margin:20px;width:400px;float:right;background:#F0F0F0;border:1px solid #F0F0F0"></div>
-
-    <div id="main2" style="height:200px;width:450px;float:left;border:1px solid #F0F0F0;margin-top:20px;background:#F0F0F0">
-           <h4 style="text-align:center;font-weight:lighter" onClick="keyword_data()">关键词云图</h4>
-           <div id="div1">
-      
- 
-          
-           </div>
-   </div>
-    <!-- ECharts单文件引入 -->
-   
-    <div id="main3"style="height:400px;float:left;width:900px;border:1px solid #ADADAD;background:#E0E0E0">
-                <div id="tab">
-                    <div class="tabList">
-                <ul>
+        <div id="main3"style="height:400px;float:left;width:900px;border:1px solid #ADADAD;background:#E0E0E0">
+            <div id="tab">
+                <div class="tabList">
+                    <ul>
                         <li class="cur">积极</li>
                         <li>中性</li>
                         <li>消极</li>
-                </ul>
-                    </div>
-            <div class="tabCon">
-                <div class="cur" id="vertical-ticker">
-                   
+                    </ul>
                 </div>
-                   
+
+                <div class="tabCon">
+                    <div class="cur" id="vertical-ticker"></div>
                 </div>
             </div>
-         
-            
-
         </div>
     </div>
-</div>
-   
 
-   <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
-   <script type="text/javascript">
+    <script type="text/javascript">
         // 基于准备好的dom，初始化echarts图表 
-   
-    var result1=[];
-    var query = "九一八";
-    var end_ts = 1379520000;
-    function getpie_data() {
-        var result=[];
-        var data1=[];
-       
-        $.ajax({
-            url: "/evolution/count_data/?ts=" + end_ts + "&query=" + query,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                console.log(data);
-                var original_evolution_count = data['original'];
-                var comment_evolution_count = data['comment'];
-                var forward_evolution_count = data['forward'];
-                
-                result[0]=original_evolution_count;
-                result[1]=comment_evolution_count;
-                result[2]=forward_evolution_count;
 
-                on_update(result);
-            }
-        });
-       
-    }
+        var result1=[];
+        var query = "九一八";
+        var end_ts = 1379520000;
+        function getpie_data() {
+            var result=[];
+            var data1=[];
+
+            $.ajax({
+                url: "/evolution/count_data/?ts=" + end_ts + "&query=" + query,
+                type: "GET",
+                dataType:"json",
+                success: function(data){
+                    console.log(data);
+                    var original_evolution_count = data['original'];
+                    var comment_evolution_count = data['comment'];
+                    var forward_evolution_count = data['forward'];
+
+                    result[0]=original_evolution_count;
+                    result[1]=comment_evolution_count;
+                    result[2]=forward_evolution_count;
+
+                    on_update(result);
+                }
+            });
+        }
 
     function on_update(result) {
-	//alert('on_update' + result[0]);
-    //alert('on_update' + result[1]);
-    //alert('on_update' + result[2]);
-        //result1=getpie_data();
-
-        var pie_data=[];
-        pie_data = [{value:  result[0], name:'愤怒'}, {value: result[1], name:'悲伤'}, {value:  result[2], name:'高兴'}];
-		
-		
-
-    option = {
-        backgroundColor:'#F0F0F0',
-        title : {
-            text: '情绪饼图',
-            x:'center',
-            textStyle:{
-            fontWeight:'lighter',
-            fontSize: 13,
-            }        
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['悲伤','高兴','愤怒']
-        },
-
-        calculable : true,
-        series : [
+        var pie_data = [];
+        pie_data = [{
+                value: result[0],
+                name:'愤怒'
+            },
             {
-                name:'访问来源',
-                type:'pie',
-                radius : '50%',
-                center: ['50%', '60%'],
-                data: pie_data
-            }
-        ]
-    };
-    var myChart = echarts.init(document.getElementById('main1'));
-    myChart.setOption(option);
-		
-	}
+                value: result[1],
+                name:'悲伤'
+            },
+            {
+                value:  result[2],
+                name:'高兴'
+        }];
 
-</script>
-    
-<script>
-    var  query="九一八";
-    var  ts=1379433600;
-    var  emotion="happy";
-    
-    function isEmptyObject(obj){
-        for ( var name in obj ) { 
-            return false;
-        } 
-        return true; 
-    } 
+        option = {
+            backgroundColor:'#F0F0F0',
 
+            title : {
+                text: '情绪饼图',
+                x:'center',
+                textStyle:{
+                    fontWeight:'lighter',
+                    fontSize: 13,
+                }
+            },
 
-    function keyword_data()
-    {
-        $.ajax({
-                url:"/moodlens/keywords_data/?ts=" + ts + "&query=" + query +"&emotion="+ emotion,
-                data: "GET",
-                dataType:"json",
-                success: function(data)
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+
+            legend: {
+                orient:'vertical',
+                x : 'left',
+                data:['悲伤','高兴','愤怒']
+            },
+
+            calculable : true,
+
+            series : [
                 {
-                            if(data=='search function undefined'){
-                                $("#div1").empty();
-                                $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
-                                
-                            }
-                            else{
-                                if(isEmptyObject(data)){
-                                    $("#div1").empty();
-                                    $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
-                                    
-                                }
-                                else{
-                                        
-                                         
-                                            for (var i=0;i<data.length;i++){
-                                                var name = data[i]['word'];
-                                               $('#div1').append('<a href="http://www.baidu.com"><font color="orange" font-weight:"lighter">'+ name +'</font></a>');
-                                               
-                                            }
-                                       
-                                       on_load();
-                                    
-                                }
-                            }
-                        }
+                    name:'访问来源',
+                    type:'pie',
+                    radius : '50%',
+                    center: ['50%', '60%'],
+                    data: pie_data
+                }
+            ]
+        };
 
-                })
-
-
-
-    }   
-
-
+        var myChart = echarts.init(document.getElementById('main1'));
+        myChart.setOption(option);
+    }
 </script>
+
+<script>
+    var query = "九一八";
+    var ts = 1379433600;
+    var emotion = "happy";
+
+    function isEmptyObject(obj){
+        for ( var name in obj ) {
+            return false;
+        }
+        return true;
+    }
+
+    function keyword_data(){
+        $.ajax({
+            url: "/moodlens/keywords_data/?ts=" + ts + "&query=" + query +"&emotion="+ emotion,
+            data: "GET",
+            dataType: "json",
+            success: function(data){
+                if(data=='search function undefined'){
+                    $("#div1").empty();
+                    $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
+                }
+                else{
+                    if(isEmptyObject(data)){
+                        $("#div1").empty();
+                        $("#div1").append("<a style='font-size:1ex'>关键词云数据为空</a>");
+                    }
+                    else{
+                        for (var i=0;i<data.length;i++){
+                            var name = data[i]['word'];
+                            $('#div1').append('<a href="http://www.baidu.com"><font color="orange" font-weight:"lighter">'+ name +'</font></a>');
+                        }
+                        on_load();
+                    }
+                }
+            }
+        })
+    }
+</script>
+
 <script>
     var query = "九一八";
     var START_TS = 1379433600;
@@ -284,7 +294,6 @@
 
     var evolution_ratio = {};
     var evolution_absolute={};
-    
 
     var axis_time=[];
     var original_absolute = [];
@@ -306,12 +315,12 @@
     var ts_alist = [];
 
 
-    $(document).ready(function(){   //网页加载时执行下面函数
+    $(document).ready(function(){
+        //网页加载时执行下面函数
         display_realtime_evolution();
     })
 
-
-function pull_evolution_count(total_days, times, begin_ts, during){   //请求数据
+    function pull_evolution_count(total_days, times, begin_ts, during){   //请求数据
         if(times > total_days){
             return;
         }
@@ -332,7 +341,7 @@ function pull_evolution_count(total_days, times, begin_ts, during){   //请求�
                     var original_evolution_ratio = parseInt(original_evolution_count * 10000 / total_evolution_count) / 10000.0;
                     var comment_evolution_ratio = parseInt(comment_evolution_count * 10000 / total_evolution_count) / 10000.0;
                     var forward_evolution_ratio = parseInt(forward_evolution_count * 10000 / total_evolution_count) / 10000.0;
-                
+
                     evolution_ratio[ts * 1000] = [original_evolution_ratio, comment_evolution_ratio, forward_evolution_ratio, total_evolution_count];
                     evolution_absolute[ts*1000]=[original_evolution_count, comment_evolution_count, forward_evolution_count, total_evolution_count];
 
@@ -361,124 +370,114 @@ function pull_evolution_count(total_days, times, begin_ts, during){   //请求�
                     evolution_ratio[ts * 1000] = [0, 0, 0, 0];
                     evolution_absolute[ts*1000]= [0, 0, 0, 0];
                 }
-                
+
                 times++;
-                //alert("vsdk"+original_evolution_count);
-                    
                 pull_evolution_count(total_days, times, begin_ts, during);
             }
         });
-
     }
-    
-   
+
     function display_realtime_evolution(){
+        var during = DURING_INTERGER;
+        var begin_ts = START_TS;
+        var end_ts = END_TS;
+        var total_nodes = (end_ts - begin_ts) / during;
+        var times_init = 0;
 
-                var during = DURING_INTERGER;
-                var begin_ts = START_TS;
-                var end_ts = END_TS;
-                var total_nodes = (end_ts - begin_ts) / during;
-                var times_init = 0;
-pull_evolution_count(total_nodes, times_init, begin_ts, during);
-   //alert("vsdk"+original_ratio); 
-   //alert("vsdk"+axis_time);    
-            
-option = {  //开始画图
-    backgroundColor:'#F0F0F0',
-    title : {
-        text: '微博情绪走势图',
-        x:'center',
-        textStyle:{
-        fontSize: 13,
-        }
-    },
-    tooltip : {
-        trigger: 'axis'
-    },
-    legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['高兴','愤怒','悲伤']
-    },
-    toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            magicType : {show: true, type: ['line', 'bar']},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
-    calculable : true,
-    xAxis : [
-        {
-            type : 'category',
-            boundaryGap : false,
-            data : axis_time
-        }
-    ],
-    yAxis : [
-        {
-            type : 'value',
-            splitNumber:0.7,
-            axisLabel : {
-                formatter: '{value}'
-            }
-        }
-    ],
-    series : [
-        {
-            name:'高兴',
-            type:'line',
-            data:original_ratio,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
+        pull_evolution_count(total_nodes, times_init, begin_ts, during);
+
+        option = {
+            //开始画图
+            backgroundColor:'#F0F0F0',
+            title : {
+                text: '微博情绪走势图',
+                x:'center',
+                textStyle:{
+                fontSize: 13,
+                }
             },
-        },
-        {
-            name:'愤怒',
-            type:'line',
-            data:comment_ratio,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
+            tooltip : {
+                trigger: 'axis'
             },
-        },
-        {
-            name:'悲伤',
-            type:'line',
-            data:forward_ratio,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
+            legend: {
+                    orient:'vertical',
+                    x : 'left',
+                    data:['高兴','愤怒','悲伤']
             },
-        }
-    ]
-};
-var myChart = echarts.init(document.getElementById('main'));
-myChart.setOption(option);
-                
- getweibos_data() ;   //调用函数
-                
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : axis_time
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    splitNumber:0.7,
+                    axisLabel : {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series : [
+                {
+                    name:'高兴',
+                    type:'line',
+                    data:original_ratio,
+                    markPoint : {
+                        data : [
+                            {type : 'max', name: '最大值'},
+                            {type : 'min', name: '最小值'}
+                        ]
+                    },
+                },
+                {
+                    name:'愤怒',
+                    type:'line',
+                    data:comment_ratio,
+                    markPoint : {
+                        data : [
+                            {type : 'max', name: '最大值'},
+                            {type : 'min', name: '最小值'}
+                        ]
+                    },
+                },
+                {
+                    name:'悲伤',
+                    type:'line',
+                    data:forward_ratio,
+                    markPoint : {
+                        data : [
+                            {type : 'max', name: '最大值'},
+                            {type : 'min', name: '最小值'}
+                        ]
+                    },
+                }
+            ]
+        };
 
-//pull_evolution_count(total_nodes, times_init, begin_ts, during);
-     
+        var myChart = echarts.init(document.getElementById('main'));
+        myChart.setOption(option);
 
-
- }
-    
+        getweibos_data();
+        //pull_evolution_count(total_nodes, times_init, begin_ts, during);
+    }
 
     function getweibos_data(){ //请求文本数据
-            var end_ts=END_TS;
-            $.ajax({
+        var end_ts=END_TS;
+        $.ajax({
             url: "/evolution/weibos_data/?evolution=forward&query="+query+"&ts=" + end_ts ,
             type: "GET",
             dataType:"json",
@@ -498,8 +497,6 @@ myChart.setOption(option);
                 }
             }
         });
-
-
     }
 
     function chg_weibos(data){   //文本写入
@@ -516,7 +513,7 @@ myChart.setOption(option);
             var user_link = 'http://weibo.com/u/'+data[i]['user'];
             var text = data[i]['text'];
             var weibo_link = data[i]['weibo_link'];
-            
+
             var repost_count = data[i]['reposts_count'];
             var retweeted_text = 'None';
             html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"; 
@@ -528,15 +525,7 @@ myChart.setOption(option);
             html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 转发数：" +  repost_count + "</span></div>";
         }
         $("#vertical-ticker").append("123");
-        alert(document.getElementById("vertical-ticker").innerHTML);
-
-        
     }
-   
-
-
-    
-
 </script>
 </body>
 </html>

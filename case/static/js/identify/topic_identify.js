@@ -169,7 +169,7 @@ function show_network() {
             networkShowed = 0;
             if (!networkUpdated){
           $.ajax({
-                    url: "/index/topic/network/",
+                    url: "/index/network_data/",
                     
                     dataType: 'xml',
                     type: "POST",

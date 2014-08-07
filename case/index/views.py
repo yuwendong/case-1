@@ -45,7 +45,7 @@ def moodlens():
 def area():
     return render_template('index/diyu.html')
 
-@mod.route('/meaning/')
+@mod.route('/semantic/')
 def meaning():
     return render_template('index/yuyi.html')
 
@@ -61,11 +61,11 @@ def gaishu():
 def zhibiao():
     return render_template('index/zhibiao.html')
 
-@mod.route('/topic/')
+@mod.route('/network/')
 def topic():
     return render_template('index/topic.html')
 
-@mod.route("/topic/network/", methods=["POST"])
+@mod.route("/network_data/", methods=["POST"])
 def area_network():
     request_method = request.method
     if request_method == 'POST':
