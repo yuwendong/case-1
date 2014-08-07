@@ -3,11 +3,14 @@
 import os
 import time
 import random
-from SSDB import SSDB 
-from config import db 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+from SSDB import SSDB
+from config import db, SSDB_HOST, SSDB_PORT
 from model import TopicStatus, TopicIdentification
 from time_utils import ts2datetime, datetime2ts, window2time
-from config import xapian_search_user as user_search 
+from config import xapian_search_user as user_search
 
 
 
@@ -109,16 +112,22 @@ def _utf8_unicode(s):
 def save_gexf_results(topic, identifyDate, identifyWindow, identifyGexf):
     '''保存gexf图数据到SSDB
     '''
-    try:
-        ssdb = SSDB(SSDB_HOST, SSDB_PORT)
-        key = _utf8_unicode(topic) + '_' + str(identifyDate) + '_' + str(identifyWindow)
-        value = str(identifyGexf)
-        result = ssdb.request('set',[key,value])
-        if result.code == 'ok':
-            print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),'Gexf of Topic:%s ,IdentifyDate:%s ,IdentifyWindow:%s save into SSDB' % _utf8_unicode(topic), str(identifyDate), identifyWindow, result.code
-        else:
-            print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),'Gexf save into SSDB failed'
+    #try:
+    ssdb = SSDB(SSDB_HOST, SSDB_PORT)
+    if ssdb:
+        print 'ssdb yes'
+    else:
+        print 'ssdb no'
+    key = _utf8_unicode(topic) + '_' + str(identifyDate) + '_' + str(identifyWindow)
+    print 'key', key
+    key = str(key)
+    value = identifyGexf
+    result = ssdb.request('set',[key,value])
+    if result.code == 'ok':
+        print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),'save success',  _utf8_unicode(topic), str(identifyDate), str(identifyWindow)
+    else:
+        print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),'Gexf save into SSDB failed'
 
-    except Exception, e:
-        print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),'SSDB ERROR'
+    #except Exception, e:
+    #    print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),'SSDB ERROR'
         
