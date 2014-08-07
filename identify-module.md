@@ -1,9 +1,10 @@
 #Identify-module 安装配置
+
 ##1.功能说明
 
-###该模块即网络分析模块，主要有两部分组成：case/cron/identify,case/identify。
-###前者完成了计算pagerank，degreerank方法以及生成网络图gexf。
-###后者完成对SSDB中图数据的查询及返回前端的功能。
+该模块即网络分析模块，主要有两部分组成：case/cron/identify,case/identify。
+前者完成了计算pagerank，degreerank方法以及生成网络图gexf。
+后者完成对SSDB中图数据的查询及返回前端的功能。
 
 ##2.安装配置
 
@@ -24,6 +25,7 @@
 ```
 
 ###2.3 安装SSDB
+
 安装
 ```
     wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip
