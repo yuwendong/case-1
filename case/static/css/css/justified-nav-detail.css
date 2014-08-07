@@ -1,0 +1,535 @@
+.footer {
+  border-top: 1px solid #eee;
+  margin-top: 40px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+  text-align: center;
+  background-color: transparent;
+}
+.jumbotron .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+/* Customize the nav-justified links to be fill the entire space of the .navbar */
+
+.nav-justified {
+  background-color: #eee;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.nav-justified > li > a {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  color: #777;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #d5d5d5;
+  background-color: #e5e5e5; /* Old browsers */
+  background-repeat: repeat-x; /* Repeat the gradient */
+  background-image: -moz-linear-gradient(top, #f5f5f5 0%, #e5e5e5 100%); /* FF3.6+ */
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#e5e5e5)); /* Chrome,Safari4+ */
+  background-image: -webkit-linear-gradient(top, #f5f5f5 0%,#e5e5e5 100%); /* Chrome 10+,Safari 5.1+ */
+  background-image: -ms-linear-gradient(top, #f5f5f5 0%,#e5e5e5 100%); /* IE10+ */
+  background-image: -o-linear-gradient(top, #f5f5f5 0%,#e5e5e5 100%); /* Opera 11.10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+  background-image: linear-gradient(top, #f5f5f5 0%,#e5e5e5 100%); /* W3C */
+}
+.nav-justified > .active > a,
+.nav-justified > .active > a:hover,
+.nav-justified > .active > a:focus {
+  background-color: #ddd;
+  background-image: none;
+  box-shadow: inset 0 3px 7px rgba(0,0,0,.15);
+}
+.nav-justified > li:first-child > a {
+  border-radius: 5px 5px 0 0;
+}
+.nav-justified > li:last-child > a {
+  border-bottom: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+@media (min-width: 768px) {
+  .nav-justified {
+    max-height: 52px;
+  }
+  .nav-justified > li > a {
+    border-left: 1px solid #fff;
+    border-right: 1px solid #d5d5d5;
+  }
+  .nav-justified > li:first-child > a {
+    border-left: 0;
+    border-radius: 5px 0 0 5px;
+  }
+  .nav-justified > li:last-child > a {
+    border-radius: 0 5px 5px 0;
+    border-right: 0;
+  }
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+  .masthead,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.titile-left-ul li{
+  line-height:50px;
+  font-size:20px;
+}
+.titile-left-ul li a:hover{
+  color:#808080;
+}
+.con-title-ul{
+  position: absolute;
+  top:10px;
+  left:0px;
+}
+.con-title-ul li{
+  font-size:14px;
+  line-height: 30px;
+}
+.con-title-ul li:hover{
+  color:#808080;
+}
+.panel .panel-color{
+  color: #fff;
+  background-color: #47A447;
+  height: 45px;
+}
+.panel .panel-color span{
+  font-size: 20px;
+}
+.panel-outer-d{
+  padding-top:10px;
+  position:relative;
+  margin-top:20px;
+}
+.panel-nav-d{
+  position: absolute;
+  left: 13px;
+  color: #fff;
+  background-color: #0066FF;
+  display: block;
+  padding-top: 5px;
+  height: 30px;
+  width: 200px;
+  box-shadow: 0px 2px 2px #DDD;
+  -webkit-box-shadow: 0px 2px 2px #DDD;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  z-index:100;
+}
+
+.well-big{
+  width:1170px;
+  height: 100%;
+  margin-left: 15px;
+  margin-top:25px;
+}
+.well-con{
+  background-color: #fff;
+}
+.well-con button{
+  margin-top: -25px;
+  color:#fff;
+  background-color: #707070;
+}
+.well-con button:hover{
+  color:#fff;
+}
+.panel-top{
+  margin-top: 30px;
+}
+.nav-btn{
+  margin-bottom: 15px;
+}
+.navbar-color{
+  background-color: #1370DA;
+}
+.navbar .navbar-brand strong{
+  color:#fff;
+}
+.navbar .navbar-inner .container a.brand-title{
+  line-height: 50px;
+  font-size:25px;
+  text-align: center;
+  margin-top:40px;
+}
+.list-xg{
+  margin-top: 25px;
+}
+
+.timeline:hover{
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.tab-content-d{
+  border:1px solid blue;
+  margin-left:100px;
+}
+.title{
+  color:#669;
+  border:1px #000 dotted solid;
+}
+.list-content{
+  text-align:center;
+  margin-top: -15px;
+  margin-right:-20px;
+  height: 440px;
+  width: 170px;
+  float:right;
+}
+.link-con{
+  margin-top:35px;
+}
+.link-con button{
+  height:50px;
+
+}
+.lg-title a{
+  line-height: 28px;
+  margin:35px auto 0px;
+}
+.anli-download p a{
+  width:1140px;
+  margin-top: 20px;
+}
+
+#event .timeline_container {
+  width: 16px;
+  text-align: center;
+  margin: 0 auto;
+  cursor: default;
+  display: block;
+}
+
+#event .timeline{
+  margin: 0 auto;
+  background-color: #CCC;/*#3B5998;*/
+  display: block;
+  float: left;
+  height: 100%;
+  left: 508px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position: absolute;
+  width: 4px;
+}
+#event .inner .title{
+  border-bottom: 1px solid #E5E5E5;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  color:#3B5998;
+}
+
+#event .item {
+  width: 488px;
+  margin: 15px 10px 5px 10px;
+  float: left;
+  background-color: #fff;
+  border: 1px solid #CCC;
+  min-height: 50px;
+  text-align: justify;
+  word-wrap: break-word;
+}
+#event .item:hover{
+  width: 488px;
+  margin: 15px 10px 5px 10px;
+  float: left;
+  background-color: #fff;
+  border: 1px solid steelBlue;
+  min-height: 50px;
+  text-align: justify;
+  word-wrap: break-word;
+}
+#event .inner {
+  padding: 10px;
+}
+
+#event .inner .content{
+
+}
+/*timeline navigatior css*/
+#event .timeline_container {
+  width: 16px;
+  text-align: center;
+  margin: 0 auto;
+  cursor: default;
+  display: block;
+}
+#event .timeline{
+  margin: 0 auto;
+  background-color: #CCC;/*#3B5998;*/
+  display: block;
+  float: left;
+  height: 100%;
+  left: 508px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position: absolute;
+  width: 4px;
+}
+/*
+  #event .timeline:hover{
+  cursor: default;
+  margin: 0 auto;
+  }
+  */
+
+  #event .timeline div.plus{
+  width: 14px;
+  height: 14px;
+  position:relative;
+  left: -6px;
+  }
+  /*arrow css style*/
+  #event .rightCorner {
+    background-image: url("pic/right.png");
+    display: block;
+    height: 15px;
+    margin-left: 488px;
+    margin-top: 8px;
+    padding: 0;
+    vertical-align:top;
+    width: 13px;
+    z-index: 2;
+    position: absolute;
+  }
+  #event .leftCorner {
+    background-image:url("pic/left.png");
+    display: block;
+    height: 15px;
+    width: 13px;
+    margin-left: -13px;
+    margin-top: 8px;
+    position: absolute;
+    z-index: 2;
+  }
+
+
+  h3.uiHeaderTitle {
+    background: #A9B5D3;
+    width:200px;
+    margin:0px auto 0px auto;
+    -webkit-border-radius: 3px;
+    color: white;
+    text-align:center;
+    font-weight: normal;
+    font-size: 15px;
+    padding: 3px 5px;
+    word-wrap: normal;
+    outline: none;
+  }
+
+  #timedist{
+    margin:15px auto 5px 5px;
+    width:1010px;
+    height:400px;
+    background-color:white;
+  }
+
+
+  #event .item:hover{
+    width: 488px;
+    margin: 15px 10px 5px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid steelBlue;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+  }
+  #event .inner {
+    padding: 10px;
+  }
+
+  /*timeline navigatior css*/
+  #event .timeline_container {
+    width: 16px;
+    text-align: center;
+    margin: 0 auto;
+    cursor: default;
+    display: block;
+  }
+  #event .timeline{
+    margin: 0 auto;
+    background-color: #CCC;/*#3B5998;*/
+    display: block;
+    float: left;
+    height: 100%;
+    left: 508px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    position: absolute;
+    width: 4px;
+  }
+/*
+  #event .timeline:hover{
+  cursor: default;
+  margin: 0 auto;
+  }
+  */
+/*
+  #event .timeline div.plus{
+  width: 14px;
+  height: 14px;
+  position:relative;
+  left: -6px;
+  }*/
+  /*arrow css style*/
+
+  .tab-big{
+    height: 440px;
+    width: 1100px;
+    float: left;
+    border:1px solid red;
+  }
+  #panel-d{
+    display: block;
+    width: 900px;
+    margin: 20px auto 0 auto;
+    background-color:white;/*#E2E2E2;*/
+    position:relative;
+  }
+  #tag_cloud_div {
+    margin-top:65px;
+    height:200px;
+    width:400px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .container-d li{
+    width:170px;
+    height: 100px;
+    margin-top:30px;
+  }
+  .container-d li a img{
+    width:170px;
+    height: 100px;
+    margin-top:-15px;
+  }
+  #tag_cloud_div canvas{
+    margin-left:200px;
+    margin-top: -63px;
+    width:350px;
+    height:400px;
+  }
+  #tags_div ul{
+    background:#F2F2F2;
+    margin-left:200px;
+    margin-top: -63px;
+    border: 1px solid red;
+  }
+  .fluid-big{
+    width: 1000px;
+    height: 250px;
+    border:1px solid red;
+  }
+  .pic-left{
+    margin-left:-100px;
+    margin-top:25px;
+  }
+  .pic-right{
+    margin-right:50px;
+    margin-top:25px;
+  }
+
+  /*鱼骨图部分开始*/
+  .ygt-title{
+    position: relative;
+    width:700px;
+    height:50px;
+    top:25px;
+    left:235px;
+  }
+  .ygt-title button{
+    text-align:center;
+    margin-left:50px;
+    margin-bottom: 30px;
+    font-size:15px;
+    height:35px;
+    width:100px;
+  }
+  #container {
+    width: 860px;
+    margin: 20px auto;
+  }
+  .container-d{
+    width: 1145px;
+    margin: 20px auto;
+    height: 160px;
+  }
+  #container .item {
+    width: 408px;
+    margin: 20px 10px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #b4bbcd;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+  }
+  #container .inner {
+    padding: 10px;
+    background-color: #F2F2F2;
+  }
+  /*timeline navigatior css*/
+  .timeline_container {
+    width: 16px;
+    text-align: center;
+    margin: 0 auto;
+    cursor: pointer;
+    display: block;
+  }
+  .timeline{
+    margin: 0 auto;
+    background-color: #e08989;
+    display: block;
+    float: left;
+    height: 100%;
+    left: 428px;
+    margin-top: 10px;
+    position: absolute;
+    width: 4px;
+  }
+  .timeline:hover{
+    cursor: pointer;
+    margin: 0 auto;
+  }
+  /*arrow css style*/
+  .rightCorner {
+    background-image: url("pic/right.png");
+    display: block;
+    height: 15px;
+    margin-left: 408px;
+    margin-top: 8px;
+    padding: 0;
+    vertical-align: top;
+    width: 13px;
+    z-index: 2;
+    position: absolute;
+  }
+  .leftCorner {
+    background-image:url("pic/left.png");
+    display: block;
+    height: 15px;
+    width: 13px;
+    margin-left: -13px;
+    margin-top: 8px;
+    position: absolute;
+    z-index: 2;
+  }
+  /*鱼骨图部分结束*/

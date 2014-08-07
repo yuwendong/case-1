@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+#-*- coding:utf-8 -*-
 import os
 import re
 import time
@@ -16,10 +15,14 @@ from peak_detection import detect_peaks
 from datetime import date, datetime
 from xapian_weibo.utils import top_keywords
 from case.global_config import DOMAIN_LIST, DOMAIN_ZH_LIST, emotions_kv
-from flask import Blueprint, render_template, request, session, redirect
+from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
 mod = Blueprint('moodlens', __name__, url_prefix='/moodlens')
 
+
+@mod.route('/topic')
+def index():
+    return render_template('moodlens/topic.html')
 
 @mod.route('/weibo')
 def weibo():
@@ -59,7 +62,7 @@ def get_default_field_name():
 
 
 @mod.route('/', methods=['GET','POST'])
-def index():   #获取情绪拐点时要用到这个方法
+def index_():   #获取情绪拐点时要用到这个方法
     default_timerange = get_default_timerange()
     default_field_dict = get_default_field_dict()
     default_field_enname, default_field_zhname = get_default_field_name()
@@ -161,6 +164,7 @@ def keywords_data(area='topic'):
 
     ts = request.args.get('ts', '')
     ts = long(ts)
+
     begin_ts = ts - during
     end_ts = ts
     limit = request.args.get('limit', 50)
