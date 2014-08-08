@@ -49,4 +49,10 @@
     vim ssdb.conf
     将该文件中的ip改为0.0.0.0
 ```
-###2.4 安装Hadoop
+###2.4 安装networkx
+```
+    sudo pip install networkx
+```
+注意：若该步骤出现问题，先确定是否安装了setuptools
+
+###2.5 安装Hadoop
