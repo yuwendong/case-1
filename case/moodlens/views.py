@@ -211,8 +211,8 @@ def keywords_data(area='topic'):
     print json.dumps(results)
     return json.dumps(results)
 
-@mod.route('/weibos_data/<emotion>/<area>/')
-def weibos_data(emotion='happy', area='topic'):
+@mod.route('/weibos_data/')
+def weibos_data():
     """关键微博
     """
     
@@ -222,7 +222,7 @@ def weibos_data(emotion='happy', area='topic'):
         query = query.strip()
     during = request.args.get('during', 24*3600)
     during = int(during)
-
+    emotion = request.args.get('emotion','happy')
     ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
