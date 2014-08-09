@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import json
 import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -10,7 +11,7 @@ from SSDB import SSDB
 from config import SSDB_PORT, SSDB_HOST, db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
-from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
+from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
 
 TOPK = 1000
 Minute = 60
@@ -75,7 +76,12 @@ def network():
             print 'r-code', results.code
             if results.code == 'ok' and results.data:
                 print 'code yes'
-                return results.data
+                print '--'*10
+                print results.data
+                response = make_response(results.data)
+                response.headers['Content-Type'] = 'text/xml'
+                #return results.data
+                return response
             return None
         except Exception, e:
             print e
