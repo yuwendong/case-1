@@ -3,7 +3,7 @@
 from extensions import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount']
+          'IndexTopic', 'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount']
 
 
 class Topics(db.Model):
@@ -95,6 +95,29 @@ class SentimentCountRatio(db.Model):#情绪相对比例曲线--已改
         self.count = count
         self.allcount = allcount
         self.sentiment = sentiment
+
+# Index 模块
+
+class IndexTopic(db.Model):
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    topic = db.Column(db.Text)
+    count = db.Column(db.Integer) # 微博数
+    user_count = db.Column(db.Integer) # 用户数
+    begin = db.Column(db.BigInteger(10,unsigned = True)) # 起始时间
+    end = db.Column(db.BigInteger(10,unsigned = True)) # 终止时间
+    area = db.Column(db.Text) # 地理区域
+    key_words = db.Column(db.Text) # 关键词
+    opinion = db.Column(db.Text) # 代表文本
+
+    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion):
+        self.topic = topic
+        self.count = count
+        self.user_count = user_count
+        self.begin = begin
+        self.end = end
+        self.area = area
+        self.key_words = key_words
+        self.opinion = opinion
 
 #city模块
 class CityTopicCount(db.Model):
