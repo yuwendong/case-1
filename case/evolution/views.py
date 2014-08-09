@@ -75,7 +75,7 @@ def ajax_spatial():
     codenum = int(codenum)
     spatial_dict = {}
     for i in range(codenum):
-        end_ts = end_ts + i * during
+        end_ts = end_ts +  during
         topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  #查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
         print 'topic_spatial_info:'
         print topic_spatial_info

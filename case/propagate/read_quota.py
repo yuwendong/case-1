@@ -40,6 +40,7 @@ def Merge_Qcount(item):
     results = {}
     top = 0
     total = 0
+    # print 'item:',item
     for r in item:
         top += r.topnum
         total += r.allnum
@@ -64,6 +65,8 @@ def ReadAttention(topic, domain, mtype, end_ts, during, unit=MinInterval):
                                                     AttentionCount.topic==topic, \
                                                     AttentionCount.mtype==mtype, \
                                                     AttentionCount.domain==domain).first()  
+        #print '*'*10
+        #print item
         if item:
             if not isinstance(item, list):
                 item = [item]
@@ -157,11 +160,13 @@ def ReadQuickness(topic, domain, mtype, end_ts, during, unit=MinInterval):
                                                     QuicknessCount.range==unit, \
                                                     QuicknessCount.topic==topic, \
                                                     QuicknessCount.mtype==mtype, \
-                                                    QuicknessCount.domain==domain).all()  
+                                                    QuicknessCount.domain==domain).first()  
+        print '*'*10
+        print item
         if item:
             if not isinstance(item, list):
                 item = [item]
-            results = Merge_Qcount([item]) # 合并指标计算，分子和分母
+            results = Merge_Qcount(item) # 合并指标计算，分子和分母
         else:
             results = None
             
@@ -182,6 +187,8 @@ def ReadQuickness(topic, domain, mtype, end_ts, during, unit=MinInterval):
                                                     QuicknessCount.range==unit, \
                                                     QuicknessCount.topic==topic, \
                                                     QuicknessCount.domain==domain).all()
+        print '*'*10
+        print item
         if item:
             if not isinstance(item, list):
                 item = [item]
