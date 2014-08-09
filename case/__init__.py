@@ -10,6 +10,7 @@ from case.opinion.views import mod as opinionModule
 from case.propagate.views import mod as propagateModule
 from case.index.views import mod as indexModule
 from case.evolution.views import mod as evolutionModule
+from case.identify.views import mod as identifyModule
 
 def create_app():
     app = Flask(__name__)
@@ -22,7 +23,8 @@ def create_app():
     app.register_blueprint(propagateModule)
     app.register_blueprint(indexModule)
     app.register_blueprint(evolutionModule)
-    
+    app.register_blueprint(identifyModule)
+
     # Enable the toolbar?
     app.config['DEBUG_TB_ENABLED'] = app.debug
     # Should intercept redirects?

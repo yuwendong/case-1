@@ -7,7 +7,9 @@ import simplejson as json
 import counts as countsModule
 import weibos as weibosModule
 import keywords as keywordsModule
-import ratio as ratioModule 
+import ratio as ratioModule
+import pie as pieModule
+
 from case.model import *
 from case.extensions import db
 from utils import weiboinfo2url
@@ -102,7 +104,7 @@ def data(area='topic'):
     query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 24*3600)
+    during = request.args.get('during', 1800)
     during = int(during)
     ts = request.args.get('ts', '')
     ts = long(ts)
@@ -130,7 +132,7 @@ def ratio(area='topic'):
     query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 24*3600)
+    during = request.args.get('during', 1800)
     during = int(during)
     ts = request.args.get('ts', '')
     ts = long(ts)
@@ -144,6 +146,31 @@ def ratio(area='topic'):
     search_func = getattr(ratioModule, 'search_%s_ratio' % search_method, None)
     if search_func:
         results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area)
+    else:
+        return json.dumps('search function undefined')
+
+    return json.dumps(results)
+
+@mod.route('/pie/<area>/', methods=['GET', 'POST'])
+def pie(area = 'topic'):
+    '''饼图数据
+    '''
+    query = request.args.get('query', None)
+    if query:
+        query = query.strip()
+    during = request.args.get('during', 1800)
+    during = int(during)
+    ts = request.args.get('ts', '')
+    ts = long(ts)
+    begin_ts = ts - during
+    end_ts = ts
+    
+    results = {}
+    search_method = 'topic'
+    area = None   
+    search_func = getattr(pieModule, 'search_%s_pie' % search_method, None)
+    if search_func:
+        results= search_func(end_ts, during, query=query)
     else:
         return json.dumps('search function undefined')
 
@@ -184,8 +211,8 @@ def keywords_data(area='topic'):
     print json.dumps(results)
     return json.dumps(results)
 
-@mod.route('/weibos_data/<emotion>/<area>/')
-def weibos_data(emotion='happy', area='topic'):
+@mod.route('/weibos_data/')
+def weibos_data():
     """关键微博
     """
     
@@ -195,7 +222,7 @@ def weibos_data(emotion='happy', area='topic'):
         query = query.strip()
     during = request.args.get('during', 24*3600)
     during = int(during)
-
+    emotion = request.args.get('emotion','happy')
     ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during

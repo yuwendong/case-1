@@ -3,7 +3,8 @@
 from config import db # 在config文件中配置mysqldb
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'TopicStatus']
+           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount','AttentionCount','QuicknessCount', \
+           'TopicStatus', 'TopicIdentification']
 
 
 class Topics(db.Model):
@@ -155,7 +156,7 @@ class QuicknessCount(db.Model):
 
 
 #统一对topic管理
-class TopicStatus(db.Model):  
+class TopicStatus(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     module = db.Column(db.String(10))# 显示是哪个模块---moodlens/evolution/propagate/identify
     status = db.Column(db.Integer)# 1: completed 0: computing, -1: not_start -2:清空计算数据

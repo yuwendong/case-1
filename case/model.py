@@ -3,7 +3,8 @@
 from extensions import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-          'IndexTopic', 'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount']
+           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount', \
+           'TopicStatus', 'TopicIdentification', 'IndexTopic']
 
 
 class Topics(db.Model):
