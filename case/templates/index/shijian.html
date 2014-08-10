@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
 <link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
 <script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
-<script src="/static/css/js/common.js" type="text/javascript"></script>
+
 <script src="/static/css/js/htip.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
 <style type="text/css">
@@ -88,9 +88,9 @@
         </ul>
     </div>
     <div class="rightbox">
-            <li class="menu_son" style="width:100px;height:25px"><label onclick="load_relative();"><span>关注度曲线</span></label>
-            <li class="menu_son" style="width:100px;height:25px"><label onclick="load_absolute();"><span>爆发度曲线</span></label>   
-            <li class="menu_son" style="width:100px;height:25px"><label onclick="load_absolute();"><span>渗透度曲线</span></label>
+            <li class="menu_son" style="width:100px;height:25px"><span><label onclick="attention();">关注度曲线</label><span><li>
+            <li class="menu_son" style="width:100px;height:25px"><span><label onclick="quickness();">爆发度曲线</label><span><li>   
+            <li class="menu_son" style="width:100px;height:25px"><span><label onclick="penetration();">渗透度曲线</label><span><li>
         
 
     <div id="main1" style="height:240px;width:800px"></div>
@@ -98,26 +98,40 @@
     <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts图表
-        var axisData = [
-        "2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30",
-        "2013/1/31", "2013/2/1", "2013/2/4", "2013/2/5", "2013/2/6", 
-        "2013/2/7", "2013/2/8", "2013/2/18", "2013/2/19", "2013/2/20", 
-        "2013/2/21", "2013/2/22", "2013/2/25", "2013/2/26", "2013/2/27", 
-        "2013/2/28", "2013/3/1", "2013/3/4", "2013/3/5", "2013/3/6", 
-        "2013/3/7", "2013/3/8", "2013/3/11", "2013/3/12", "2013/3/13", 
-        "2013/3/14", "2013/3/15", "2013/3/18", "2013/3/19", "2013/3/20", 
-        "2013/3/21", "2013/3/22", "2013/3/25", "2013/3/26", "2013/3/27", 
-        "2013/3/28", "2013/3/29", "2013/4/1", "2013/4/2", "2013/4/3", 
-        "2013/4/8", "2013/4/9", "2013/4/10", "2013/4/11", "2013/4/12", 
-        "2013/4/15", "2013/4/16", "2013/4/17", "2013/4/18", "2013/4/19", 
-        "2013/4/22", "2013/4/23", "2013/4/24", "2013/4/25", "2013/4/26", 
-        "2013/5/2", "2013/5/3", "2013/5/6", "2013/5/7", "2013/5/8", 
-        "2013/5/9", "2013/5/10", "2013/5/13", "2013/5/14", "2013/5/15", 
-        "2013/5/16", "2013/5/17", "2013/5/20", "2013/5/21", "2013/5/22", 
-        "2013/5/23", "2013/5/24", "2013/5/27", "2013/5/28", "2013/5/29", 
-        "2013/5/30", "2013/5/31", "2013/6/3", "2013/6/4", "2013/6/5", 
-        "2013/6/6", "2013/6/7", "2013/6/13"
-        ];
+       
+        var attention_list=[];
+        var quickness_list=[];
+        var penetration_list=[];
+        var ts_list=[];
+        var ts_list1=[];
+        var ts_list2=[];
+
+       $(document).ready(function(){   //网页加载时执行下面函数
+           attention();
+        })
+
+    function attention () {
+        var time;
+        for (time = 0 ; time < 60 ;time++)
+        {
+            getattention_data(time);
+        }
+      
+
+        drawattention(attention_list,ts_list);
+    }
+
+    function drawattention(attentiondata,ts_data){
+
+        var time_af=[];
+        for (var i = 0; i < ts_data.length; i++){
+
+            ns= new Date(parseInt(ts_data[i]) * 1000).toLocaleString();
+
+            time_af.push(ns);
+        }
+        
+        var axisData = time_af;
         var option = {
             title : {
                 text: '关注度曲线',
@@ -155,10 +169,17 @@
             xAxis : [
                 {
                     type : 'category',
+                    splitNumber:10,
                     position:'botttom',
-                    boundaryGap : true,
-                    axisLabel:{show:true},
-                    axisTick: {onGap:false},
+                    boundaryGap : false,
+                    axisLabel:{
+                        show:true,
+                        formatter : function(s) {
+                            return s.slice(5, 20);
+                        }
+
+                    },
+                    //axisTick: {onGap:false},
                     splitLine: {show:false},
                     data : axisData
                 }
@@ -167,11 +188,11 @@
                 {
                     type : 'value',
                     scale:true,
-                    splitNumber: 3,
+                    splitNumber: 1,
                     boundaryGap: [0.05, 0.05],
                     axisLabel: {
                         formatter: function (v) {
-                            return Math.round(v/10000) + ' 万'
+                            return Math.round(v) 
                         }
                     },
                     splitArea : {show : true}
@@ -180,7 +201,7 @@
             dataZoom : {
                 show : true,
                 realtime: true,
-                start : 50,
+                start : 0,
                 end : 100
             },
             series : [
@@ -188,31 +209,325 @@
                     name:'渗透度',
                     type:'line',
                     symbol: 'none',
-                    data:[
-                        13560434, 8026738.5, 11691637, 12491697, 12485603, 
-                        11620504, 12555496, 15253370, 12709611, 10458354, 
-                        10933507, 9896523, 10365702, 10633095, 9722230, 
-                        12662783, 8757982, 7764234, 10591719, 8826293, 
-                        11591827, 11153111, 14304651, 11672120, 12536480, 
-                        12608589, 8843860, 7391994.5, 10063709, 7768895.5, 
-                        6921859, 10157810, 8148617.5, 7551207, 11397426, 
-                        10478607, 8595132, 8541862, 9181132, 8570842, 
-                        10759351, 7335819, 6699753.5, 7759666.5, 6880135.5, 
-                        7366616.5, 7313504, 7109021.5, 6213270, 5619688, 
-                        5816217.5, 6695584.5, 5998655.5, 6188812.5, 9538301,
-                        8224500, 8221751.5, 7897721, 8448324, 6525151, 
-                        5987761, 7831570, 8162560.5, 7904092, 8139084.5, 
-                        9116529, 8128014, 7919148, 7566047, 6665826.5, 
-                        10225527, 11124881, 12884353, 11302521, 11529046, 
-                        11105205, 9202153, 9992016, 12035250, 11431155, 
-                        10354677, 10070399, 9164861, 9237718, 7114268, 
-                        7526158.5, 8105835, 7971452.5
-                    ],
+                    data:attentiondata,
                 }
             ]
         };
         var myChart3 = echarts.init(document.getElementById('main1'));
         myChart3.setOption(option);
+    }
+
+    function getattention_data(time) {
+        var result=[];
+        var domain = "other";
+        var style = 3;
+        var during = 900;
+        var atime = time;
+        var ts = 1377998100+900 * atime;
+        var topic = "中国";
+        
+        $.ajax({
+            url: "/propagate/attention/?ts=" + ts + "&domain=" + domain +"&style=" + style + "&during=" + during + "&topic=" + topic,
+            type: "GET",
+            dataType:"json",
+            async:false,
+            success: function(data){
+                
+               attention_list.push(data);
+
+               ts_list.push(ts);
+            }
+        });
+
+
+       
+    }
+
+
+
+
+
+
+    function quickness () {
+        var time;
+        for (time = 0 ; time < 60 ;time++)
+        {
+            getquickness_data(time);
+        }
+        //alert(quickness_list);
+        //alert(ts_list);
+        //console.log(ts_list);
+
+        drawquickness(quickness_list,ts_list1);
+    }
+
+   
+
+    function getquickness_data(time) {
+        var result=[];
+        var domain = "other";
+        var style = 3;
+        var during =900;
+        var atime = time;
+        var ts = 1377998100+900 * atime;
+        var topic = "中国";
+        
+        $.ajax({
+            url: "/propagate/quickness/?ts=" + ts + "&domain=" + domain +"&style=" + style  + "&topic=" + topic,
+            type: "GET",
+            dataType:"json",
+            async:false,
+            success: function(data){
+                console.log(data);
+                
+               quickness_list.push(data);
+
+               ts_list1.push(ts);
+            }
+        });
+
+
+       
+    }
+
+     function drawquickness(quicknessdata,ts_data){
+
+        var time_af=[];
+            for (var i = 0; i < ts_data.length; i++){
+
+                ns= new Date(parseInt(ts_data[i]) * 1000).toLocaleString();
+
+                time_af.push(ns);
+            }
+        
+
+        var axisData = time_af;
+        var option = {
+            title : {
+                text: '爆发度曲线',
+                x: 'center',
+                y: 10,
+                textStyle:{
+                    fontSize: 12,
+                    fontWeight: 'bolder',
+                    color: '#333',
+                    } 
+            },
+            tooltip : {
+                trigger: 'axis',
+                showDelay: 0             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            },
+            legend: {
+                y : -30,
+                data:['关注度','爆发度','渗透度']
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataZoom : {show: true},
+                    saveAsImage : {show: true},
+                    dataView: {show: true}
+                }
+            },
+            grid: {
+                x: 80,
+                y:30,
+                x2:20,
+                y2:40
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    position:'botttom',
+                    boundaryGap : false,
+                    axisLabel:{
+                        show:true,
+                        formatter : function(s) {
+                            return s.slice(5, 20);
+                        }
+
+                    },
+                    //axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    splitNumber:1,
+                    boundaryGap: [0.05, 0.05],
+                    axisLabel: {
+                        formatter: function (v) {
+                            return Math.round(v)+ '%'
+                        }
+                    },
+                    splitArea : {show : true}
+                }
+            ],
+            dataZoom : {
+                show : true,
+                realtime: true,
+                start : 0,
+                end : 100
+            },
+            series : [
+                {
+                    name:'渗透度',
+                    type:'line',
+                    symbol: 'none',
+                    data:quicknessdata,
+                }
+            ]
+        };
+        var myChart3 = echarts.init(document.getElementById('main1'));
+        myChart3.setOption(option);
+    }
+
+
+
+
+     function penetration () {
+        var time;
+        for (time = 0 ; time < 60 ;time++)
+        {
+            getpenetration_data(time);
+        }
+        //alert(penetration_list);
+        //alert(ts_list);
+
+        drawpenetration(penetration_list,ts_list2);
+    }
+
+   
+
+    function getpenetration_data(time) {
+        var result=[];
+        var domain = "folk";
+        var style = 3;
+        var during =900;
+        var atime = time;
+        var ts = 1377998100+900 * atime;
+        var topic = "中国";
+        
+        $.ajax({
+            url: "/propagate/penetration/?ts=" + ts + "&domain=" + domain +"&style=" + style  + "&topic=" + topic,
+            type: "GET",
+            dataType:"json",
+            async:false,
+            success: function(data){
+                console.log(data);
+                
+               penetration_list.push(data);
+
+               ts_list2.push(ts);
+            }
+        });
+
+
+       
+    }
+
+     function drawpenetration(penetrationdata,ts_data){
+
+        var time_af=[];
+            for (var i = 0; i < ts_data.length; i++){
+
+                ns= new Date(parseInt(ts_data[i]) * 1000).toLocaleString();
+
+                time_af.push(ns);
+            }
+            
+
+        var axisData = time_af;
+        var option = {
+            title : {
+                text: '渗透度曲线',
+                x: 'center',
+                y: 10,
+                textStyle:{
+                    fontSize: 12,
+                    fontWeight: 'bolder',
+                    color: '#333',
+                    } 
+            },
+            tooltip : {
+                trigger: 'axis',
+                showDelay: 0             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            },
+            legend: {
+                y : -30,
+                data:['关注度','爆发度','渗透度']
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataZoom : {show: true},
+                    saveAsImage : {show: true},
+                    dataView: {show: true}
+                }
+            },
+            grid: {
+                x: 80,
+                y:30,
+                x2:20,
+                y2:40
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    position:'botttom',
+                    boundaryGap : false,
+                    axisLabel:{
+                        show:true,
+                        formatter : function(s) {
+                            return s.slice(5, 20);
+                        }
+
+                    },
+                    //splitNumber:60,
+
+                    //axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    splitNumber:1,
+                    boundaryGap: [0.05, 0.05],
+                    axisLabel: {
+                        formatter: function (v) {
+                            return Math.round(v)+ '%'
+                        }
+                    },
+                    splitArea : {show : true}
+                }
+            ],
+            dataZoom : {
+                show : true,
+                realtime: true,
+               start : 0,
+                end : 100
+             },
+            series : [
+                {
+                    name:'渗透度',
+                    type:'line',
+                    symbol: 'none',
+                    data:penetrationdata,
+                }
+            ]
+        };
+        var myChart3 = echarts.init(document.getElementById('main1'));
+        myChart3.setOption(option);
+    }
+      
     </script>
     </div>
 <div>

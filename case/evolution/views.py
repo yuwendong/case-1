@@ -19,6 +19,40 @@ SixHour = Hour * 6
 Day = Hour * 24
 MinInterval = Fifteenminutes
 
+province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东', u'广西', u'贵州', u'海南', \
+                 u'河北', u'黑龙江', u'河南', u'湖北', u'湖南', u'内蒙古', u'江苏', u'江西', u'吉林', \
+                 u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
+                 u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门']
+
+
+def info2map(infos):
+    count = {}
+    rank = {}
+    ratio = {}
+    top10 = {}
+    for info in infos:
+        map_dict = infos[info]
+        count[info] = [0] * 34
+        rank[info] = [0] * 34
+        ratio[info] = [0] *34
+        for p in range(34):
+            try:
+                pcount = map_dict['count'][province_list[p]][0]
+                prank = map_dict['count'][province_list[p]][1]
+                pratio = map_dict['count'][province_list[p]][2]
+            except:
+                continue
+            count[info][p] = pcount
+            rank[info][p] = prank
+            ratio[info][p] = pratio
+
+        top10[info] = map_dict['summary']
+    
+    
+    data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10}
+
+    return data
+
 
 def readPropagateSpatial(stylenum, topic, end_ts , during):   #将从数据库中读取的数据转化为map_data
     city_count = {}
@@ -36,9 +70,17 @@ def ajax_spatial():
     during = int(during)
     ts = request.args.get('ts','')
     ts = long(ts)
-    begin_ts = ts - during
-    end_ts = ts 
-    
-    topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  #查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
-    
-    return json.dumps({'map_data': topic_spatial_info})
+    end_ts = ts
+    codenum = request.args.get('codenum', '')
+    codenum = int(codenum)
+    spatial_dict = {}
+    for i in range(codenum):
+        end_ts = end_ts +  during
+        topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  #查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
+        print 'topic_spatial_info:'
+        print topic_spatial_info
+        spatial_dict[str(end_ts)] = topic_spatial_info
+    map_data = info2map(spatial_dict)
+    print 'map_data:'
+    print map_data
+    return json.dumps(map_data)
