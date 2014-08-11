@@ -93,3 +93,20 @@ def network():
         print 'Topic is not in the topic_list'
         return None
 
+@mod.route("/quota/")
+def network_quota():
+    key = request.args.get('quota_key','')
+    try:
+        ssdb = SSDB(SSDB_HOST, SSDB_PORT)
+        print 'ssdb yes'
+        value = ssdb.request('get',[key])
+        print 'value yes'
+        if value.code == 'ok' and value.data:
+            print 'code yes'
+            print value.data
+            response = make_response(value.data)
+            return response
+        return None
+    except Exception, e:
+        print e
+        return None

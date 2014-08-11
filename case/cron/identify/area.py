@@ -18,6 +18,8 @@ from pagerank import pagerank
 from gexf import Gexf
 from lxml import etree
 
+from gquota import compute_quota
+
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -142,6 +144,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
 
     G = cut_network(G, node_degree) # 筛选出节点数>=2的节点数
     
+    print 'start computing quota'
+    compute_quota(G) # compute quota
+    print 'quota computed complicated'
+
     gexf = Gexf("Yang Han", "Topic Network")
 
     node_id = {}
