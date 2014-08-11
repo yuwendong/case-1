@@ -35,7 +35,7 @@ def search_topic_pie(end_ts, during, unit=MinInterval, query=None):
             if item1 and item2:
                 print 'count',item1.count
                 print 'allcount',item2.allcount
-                ratio[sentiment] = float(item1.count) / item2.allcount
+                ratio[sentiment] = '%.4f' % (float(item1.count) / float(item2.allcount))
             else:
                 ratio[sentiment] =0
 
@@ -58,7 +58,7 @@ def search_topic_pie(end_ts, during, unit=MinInterval, query=None):
             if count and allcount and count[0] and count[0][0] and allcount[0] and allcount[0][0]:
                 print 'count',count[0][0]
                 print 'allcount',allcount[0][0]
-                ratio[sentiment] = count[0][0] / allcount[0][0]
+                ratio[sentiment] ='%.4f' % (float(count[0][0]) / float(allcount[0][0]))
             else:
                 ratio[sentiment] = 0
 
