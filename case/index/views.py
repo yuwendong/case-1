@@ -96,7 +96,8 @@ def gaishu_topic(topic = u'中国'):
     content += '，共' + user_count + '人参与讨论，' + '累计讨论' + count + '次。'
     content += '讨论人群集中于' + area + '。'
     content += '\n      话题讨论关键词有：' + key_words + '\n      话题相关的观点列举如下：' + opinion
-    content += '\n' + '情绪分布情况为：' + moodlens_pie + '。'
+    content += '\n' + '网民情绪分布情况为：' + moodlens_pie + '。'
+    content += '相关子话题如鱼骨图所示。'
     return content
 
 def get_moodlens_pie(topic = u'中国'):
