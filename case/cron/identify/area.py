@@ -145,7 +145,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     G = cut_network(G, node_degree) # 筛选出节点数>=2的节点数
     
     print 'start computing quota'
-    compute_quota(G) # compute quota
+    compute_quota(G, date, window_size, topic) # compute quota
     print 'quota computed complicated'
 
     gexf = Gexf("Yang Han", "Topic Network")

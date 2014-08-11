@@ -12,6 +12,7 @@ from config import SSDB_PORT, SSDB_HOST, db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
+from get_rank import rank_results
 
 TOPK = 1000
 Minute = 60
@@ -64,7 +65,7 @@ def network():
     print 'end_ts', end
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
     print 'status:', topic_status
-    if topic_status == COMPLETED_STATUS:  
+    if topic_status == COMPLETED_STATUS:
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize)
         key = str(query_key)
         print 'key', key
@@ -93,9 +94,38 @@ def network():
         print 'Topic is not in the topic_list'
         return None
 
+
+
+@mod.route('rank')
+def rank():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ta = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ta = int(end_ts)
+    windowsize = (end_ts - start_ts+900) / Day
+    date = ts2datetime(end_ts)
+    results = rank_results(topic, windowsize, date)
+    return results
+
+
+def _utf8_unicode(s):
+    if isinstance(s, unicode):
+        return s
+    else:
+        return unicode(s, 'utf-8')
+
 @mod.route("/quota/")
 def network_quota():
-    key = request.args.get('quota_key','')
+    quota = request.args.get('quota','')
+    topic = request.args.get('topic','')
+    start_ts = request.args.get('start_ts','')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts','')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts+900) / Day
+    key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)
         print 'ssdb yes'
