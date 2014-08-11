@@ -3,6 +3,7 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, se
 import json
 from case.model import *
 from case.extensions import db
+import search as searchModule
 
 mod = Blueprint('case', __name__, url_prefix='/index')
 
@@ -64,6 +65,26 @@ def zhibiao():
 @mod.route('/network/')
 def topic():
     return render_template('index/topic.html')
+
+# 以下为新增内容
+
+@mod.route('/<item>/<topic>/', methods = ['GET','POST'])
+def topic_search(item = 'count', topic = u'中国'):
+    if topic:
+        topic = topic.strip()
+
+    results = {}
+
+    search_func = getattr(searchModule, 'search_%s' % item, None)
+
+    if search_func:
+        results[topic] = search_func(topic)
+    else:
+        return json.dumps('Search function undefined')
+
+    return json.dumps(results)
+
+# 以下为原有内容
 
 @mod.route("/network_data/", methods=["POST"])
 def area_network():
