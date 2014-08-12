@@ -21,7 +21,7 @@ def ajax_propagate():
     return json.dumps(results)
 
 @mod.route('/increment/')
-def imcrement():
+def increment():
     topic = request.args.get('topic', '')
     mtype = request.args.get('style', '')
     mtype = int(mtype)
