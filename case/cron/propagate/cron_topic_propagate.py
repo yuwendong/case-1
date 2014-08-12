@@ -6,7 +6,7 @@ import datetime
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration # 获取一定时间段内的微博
 from config import mtype_kv, db  
-from model import PropagateCount, AttentionCount, QuicknessCount # 一定时间、话题、信息类型对应的{domain:count}
+from model import PropagateCount #, AttentionCount, QuicknessCount # 一定时间、话题、信息类型对应的{domain:count}
 
 
 Minute = 60
@@ -46,7 +46,7 @@ def uid2domain(user):
 
     return domain
 
-
+'''
 def TopNum(ts_list): # ts_list=[ts1,ts1,ts2...] >> ts_dict{ts1:count1, ts2:count2...}  >> sort_ts=[(ts1,count1),(ts2,count2)...]倒序排列
     ts_dict = {}
     topnum = 0
@@ -144,7 +144,7 @@ def quicknessCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fif
                     topnum = TopNum(ts_list) # TopNum 计算top n点的和 
                     save_qc_results(topic, topnum, allnum, during, end_ts, v, r) # 存入Quickness表
                         
-                
+'''                
 def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenminutes):
     if topic and topic != '':
         start_ts = int(start_ts)
@@ -182,7 +182,7 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fif
                 #print mtype_dcount[v]
                 #print '%s %s saved message_type domain_count' % (begin_ts, end_ts)
                 save_pc_results(topic, mtype_dcount, during) # PropagateCount表
-                save_apc_results(topic, mtype_dcount, during) # APCount表
+                #save_apc_results(topic, mtype_dcount, during) # APCount表
                     
             
 def cal_topic_propagate_count_by_date(topic, datestr, duration):
@@ -191,8 +191,8 @@ def cal_topic_propagate_count_by_date(topic, datestr, duration):
     datestr = datestr.replace('-', '')
     xapian_search_weibo = getXapianWeiboByDate(datestr)
     if xapian_search_weibo:
-        #propagateCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # 原始表、Attention&Penetration表
-        quicknessCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # Quickness表
+        propagateCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # 原始表、Attention&Penetration表
+        #quicknessCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # Quickness表
    
 
 def worker(topic, datestr):
