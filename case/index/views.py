@@ -86,18 +86,20 @@ def gaishu_topic(topic = u'中国'):
     user_count = topic_search('user_count', topic)
     count = topic_search('count', topic)
     area = topic_search('area',topic)
+    k_limit = 3
     key_words = topic_search('key_words',topic)
     opinion = topic_search('opinion',topic)
     moodlens_pie = get_moodlens_pie(topic)
 
     content = '     标签：' + tag
     content += '\n      ' + topic + '发生于' + event_time + '，事件发生地点为' + event_spot + '。' + event_summary
-    content += '\n      该话题的网络讨论起始于' + begin + '，终止于' + end
-    content += '，共' + user_count + '人参与讨论，' + '累计讨论' + count + '次。'
-    content += '讨论人群集中于' + area + '。'
-    content += '\n      话题讨论关键词有：' + key_words + '\n      话题相关的观点列举如下：' + opinion
+    content += '\n      该事件的舆情信息起始于' + begin + '，终止于' + end
+    content += '，共' + user_count + '人参与信息发布与传播，' + '舆情信息累计' + count + '条。'
+    content += '参与人群集中于' + area + '。'
+    content += '\n      前' + str(k_limit) + '个关键词是：' + key_words + '。'
     content += '\n' + '网民情绪分布情况为：' + moodlens_pie + '。'
-    content += '相关子话题如鱼骨图所示。'
+    content += '代表性媒体报道如鱼骨图所示。'
+    content += '\n      网民代表性观点列举如下：' + opinion
     return content
 
 def get_moodlens_pie(topic = u'中国'):
