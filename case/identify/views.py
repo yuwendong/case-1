@@ -97,7 +97,7 @@ def network():
 
 
 
-@mod.route('rank')
+@mod.route('/rank/')
 def rank():
     topic = request.args.get('topic', '')
     start_ts = request.args.get('start_ts', '')
@@ -107,7 +107,7 @@ def rank():
     windowsize = (end_ts - start_ts+900) / Day
     date = ts2datetime(end_ts)
     results = rank_results(topic, windowsize, date)
-    return results
+    return json.dumps(results)
 
 
 def _utf8_unicode(s):
