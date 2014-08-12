@@ -64,7 +64,7 @@ def get_default_field_name():
 
 
 @mod.route('/', methods=['GET','POST'])
-def index_():   
+def index_():   #获取情绪拐点时要用到这个方法
     default_timerange = get_default_timerange()
     default_field_dict = get_default_field_dict()
     default_field_enname, default_field_zhname = get_default_field_name()
@@ -96,22 +96,22 @@ def _default_time_zone():
     return start_ts, end_ts
 
 
-@mod.route('/data/', methods=['GET','POST'])
-def data():
-    """分类情感数据--绝对值
+@mod.route('/data/<area>/', methods=['GET','POST'])
+def data(area='topic'):
+    """分类情感数据
     """
-    customized = request.args.get('customized', '1') # 该字段已舍弃
-    query = request.args.get('query', None) # 输入topic
+    customized = request.args.get('customized', '1')
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 900) # 计算力度，默认为15分钟
+    during = request.args.get('during', 1800)
     during = int(during)
-    ts = request.args.get('ts', '') # 结束时间点
+    ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
 
-    emotion = request.args.get('emotion', 'happy') # 情绪
+    emotion = request.args.get('emotion', 'happy')
 
     results = {}
 
@@ -125,21 +125,21 @@ def data():
 
     return json.dumps(results)
 
-@mod.route('/ratio/', methods=['GET','POST'])
-def ratio():
+@mod.route('/ratio/<area>/', methods=['GET','POST'])
+def ratio(area='topic'):
     """分类情感数据--相对值
     """
-    query = request.args.get('query', None) # 查询话题topic
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 900) # 计算力度
+    during = request.args.get('during', 1800)
     during = int(during)
-    ts = request.args.get('ts', '') # 结束时间点
+    ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
 
-    emotion = request.args.get('emotion', 'happy') # 情绪
+    emotion = request.args.get('emotion', 'happy')
     results = {}
     search_method = 'topic'
     area = None   
@@ -151,22 +151,23 @@ def ratio():
 
     return json.dumps(results)
 
-@mod.route('/pie/', methods=['GET', 'POST'])
-def pie():
+@mod.route('/pie/<area>/', methods=['GET', 'POST'])
+def pie(area = 'topic'):
     '''饼图数据
     '''
-    query = request.args.get('query', None) # 查询话题
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 900) # 计算的时间范围
+    during = request.args.get('during', 1800)
     during = int(during)
-    ts = request.args.get('ts', '') # 结束时间点
+    ts = request.args.get('ts', '')
     ts = long(ts)
+    begin_ts = ts - during
     end_ts = ts
-
+    
     results = {}
     search_method = 'topic'
-    area = None
+    area = None   
     search_func = getattr(pieModule, 'search_%s_pie' % search_method, None)
     if search_func:
         results= search_func(end_ts, during, query=query)
@@ -176,26 +177,26 @@ def pie():
     return json.dumps(results)
 
 
-@mod.route('/keywords_data/')
-def keywords_data():
+@mod.route('/keywords_data/<area>/')
+def keywords_data(area='topic'):
     """情绪关键词数据
     """
     
-    customized = request.args.get('customized', '1') # 该字段已舍弃
-    query = request.args.get('query', None) # 查询话题topic
+    customized = request.args.get('customized', '1')
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 900) # 计算力度
+    during = request.args.get('during', 24*3600)
     during = int(during)
 
-    ts = request.args.get('ts', '') # 结束时间点
+    ts = request.args.get('ts', '')
     ts = long(ts)
 
     begin_ts = ts - during
     end_ts = ts
-    limit = request.args.get('limit', 50) # 返回关键词数量限制
+    limit = request.args.get('limit', 50)
     limit = int(limit)
-    emotion = request.args.get('emotion', 'happy') # 情绪
+    emotion = request.args.get('emotion', 'happy')
 
     results = {}
     search_method = 'topic'
@@ -215,18 +216,18 @@ def weibos_data():
     """关键微博
     """
     
-    customized = request.args.get('customized', '1') # 该字段已舍弃
-    query = request.args.get('query', None) # 查询话题topic
+    customized = request.args.get('customized', '1')
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 900) # 计算力度
+    during = request.args.get('during', 24*3600)
     during = int(during)
-    emotion = request.args.get('emotion','happy') # 情绪
-    ts = request.args.get('ts', '') # 结束时间点
+    emotion = request.args.get('emotion','happy')
+    ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
-    limit = request.args.get('limit', 50) # 返回微波数量限制
+    limit = request.args.get('limit', 50)
     limit = int(limit)
 
     results = {}
@@ -248,16 +249,16 @@ def getPeaks():
     '''获取情绪拐点数据
     '''
 
-    customized = request.args.get('customized', '1') # 该字段已舍弃
-    limit = request.args.get('limit', 10) # 拐点数限制
-    query = request.args.get('query', None) # 查询话题topic
+    customized = request.args.get('customized', '1')
+    limit = request.args.get('limit', 10)
+    query = request.args.get('query', None)
     if query:
         query = query.strip()
-    during = request.args.get('during', 24 * 3600) # 查询时间范围
+    during = request.args.get('during', 24 * 3600)
     during = int(during)
-    #area = request.args.get('area', 'topic') 暂未用到
+    area = request.args.get('area', 'topic')
     emotion = request.args.get('emotion', 'happy')
-    lis = request.args.get('lis', '') # 需要计算拐点的序列lis=[code1,code2,code3...]
+    lis = request.args.get('lis', '')
 
     try:
         lis = [float(da) for da in lis.split(',')]
@@ -269,7 +270,7 @@ def getPeaks():
     ts_lis = request.args.get('ts', '')
     ts_lis = [float(da) for da in ts_lis.split(',')]
 
-    new_zeros = detect_peaks(lis) # 获取拐点
+    new_zeros = detect_peaks(lis)
 
     search_method = 'topic'
     area = None
