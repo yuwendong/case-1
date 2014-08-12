@@ -25,7 +25,7 @@ def parseKcount(kcount):
     kcount = json.loads(kcount)
 
     for k, v in kcount:
-    	kcount_dict[k] = v
+        kcount_dict[k] = v
 
     return kcount_dict
 
@@ -77,16 +77,3 @@ def search_topic_keywords(end_ts, during, sentiment, unit=MinInterval, top=TOP_R
 
     return kcounts_dict
 
-
-if __name__ == '__main__':
-    emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3}
-    end_ts = datetime2ts('2013-09-01')
-    during = 5 * Day
-
-            
-    print 'topic'
-    for k, v in emotions_kv.iteritems():
-        print v
-        keywords_with_count = search_topic_keywords(end_ts, during, v, query='钓鱼岛')
-        for key, value in keywords_with_count.iteritems():
-            print key, value
