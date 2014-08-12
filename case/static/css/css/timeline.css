@@ -71,7 +71,7 @@ div.timeline-event-cluster div.timeline-event-dot {
     border-color: #d5ddf6;
 }
 
-div.timeline-event-box {
+div.timeline- event-box {
     -moz-border-radius: 5px; /* For Firefox 3.6 and older */
     border-radius: 5px;
     border-style: solid;
@@ -175,7 +175,7 @@ div.timeline-navigation-move-right {
     box-sizing: border-box;
     cursor: pointer;
     float: left;
-    height: 16px;
+    height: 36px;
     padding: 10px;
     text-decoration: none;
     width: 36px;
