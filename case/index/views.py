@@ -1,9 +1,15 @@
 #-*- coding:utf-8 -*-
-from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
+
+
 import json
+import time
+import datetime
 from case.model import *
 from case.extensions import db
+from case.moodlens import pie as pieModule
 import search as searchModule
+from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
+
 
 mod = Blueprint('case', __name__, url_prefix='/index')
 
@@ -51,7 +57,7 @@ def meaning():
     return render_template('index/yuyi.html')
 
 @mod.route('/time/')
-def time():
+def shijian():
     return render_template('index/shijian.html')
 
 @mod.route('/gaishu/')
@@ -67,11 +73,45 @@ def topic():
     return render_template('index/topic.html')
 
 # 以下为新增内容
-
-@mod.route('/<item>/<topic>/', methods = ['GET','POST'])
-def topic_search(item = 'count', topic = u'中国'):
+@mod.route('/gaishu/<topic>/')
+def gaishu_topic(topic = u'中国'):
     if topic:
         topic = topic.strip()
+    tag = '九一八、政府'
+    event_time = '2013-09-01'
+    event_spot = '北京'
+    event_summary = '近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。'
+    begin = topic_search('begin', topic)
+    end = topic_search('end', topic)
+    user_count = topic_search('user_count', topic)
+    count = topic_search('count', topic)
+    area = topic_search('area',topic)
+    key_words = topic_search('key_words',topic)
+    opinion = topic_search('opinion',topic)
+    moodlens_pie = get_moodlens_pie(topic)
+
+    content = '     标签：' + tag
+    content += '\n      ' + topic + '发生于' + event_time + '，事件发生地点为' + event_spot + '。' + event_summary
+    content += '\n      该话题的网络讨论起始于' + begin + '，终止于' + end
+    content += '，共' + user_count + '人参与讨论，' + '累计讨论' + count + '次。'
+    content += '讨论人群集中于' + area + '。'
+    content += '\n      话题讨论关键词有：' + key_words + '\n      话题相关的观点列举如下：' + opinion
+    content += '\n' + '情绪分布情况为：' + moodlens_pie + '。'
+    return content
+
+def get_moodlens_pie(topic = u'中国'):
+    end_ts = time.mktime(datetime.datetime(2013,9,1,0,1,0).timetuple())
+    during = 10
+
+    results = {}
+    results = pieModule.search_topic_pie(end_ts, during, query = topic)
+
+    return json.dumps(results)
+
+
+
+
+def topic_search(item = 'count', topic = u'中国'):
 
     results = {}
 
