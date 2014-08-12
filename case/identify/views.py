@@ -12,7 +12,8 @@ from config import SSDB_PORT, SSDB_HOST, db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
-from get_rank import rank_results
+
+from utils import read_topic_rank_results
 
 TOPK = 1000
 Minute = 60
@@ -105,8 +106,15 @@ def network_rank():
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
     windowsize = (end_ts - start_ts+900) / Day
+    topn = request.args.get('topn', 10)
+    topn = int(topn)
     date = ts2datetime(end_ts)
-    results = rank_results(topic, windowsize, date)
+    if windowsize > 7:
+        rank_method = 'degreerank'
+    else:
+        rank_method = 'pagerank'
+
+    results = read_topic_rank_results(topic, topn, rank_method, date, windowsize)
     return json.dumps(results)
 
 def _utf8_unicode(s):
