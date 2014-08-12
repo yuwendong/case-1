@@ -42,7 +42,7 @@ def get_topic_status(topic, start, end, module):
                                                 TopicStatus.start==start, \
                                                 TopicStatus.end==end, \
                                                 TopicStatus.module==module).first()
-    print 'item',item
+  
     if item:
         return item.status
     else:
@@ -52,6 +52,7 @@ def get_topic_status(topic, start, end, module):
 @mod.route("/graph/")
 def network():
     topic = request.args.get('topic', '')
+  
     start_ts = request.args.get('start_ts', '')
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
@@ -62,23 +63,23 @@ def network():
     #end_ts = datetimestr2ts(end_ts)
     #start_ts = ts2datetime(start_ts)
     end = ts2datetime(end_ts)
-    print 'end_ts', end
+  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
-    print 'status:', topic_status
-    if topic_status == COMPLETED_STATUS:
+
+    if topic_status == COMPLETED_STATUS:  
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize)
         key = str(query_key)
-        print 'key', key
+       
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
-            print 'ssdb yes'
+           
             results = ssdb.request('get', [key])
-            print 'results yes'
-            print 'r-code', results.code
+           
+        
             if results.code == 'ok' and results.data:
-                print 'code yes'
-                print '--'*10
-                print results.data
+               
+               
+            
                 response = make_response(results.data)
                 response.headers['Content-Type'] = 'text/xml'
                 #return results.data
