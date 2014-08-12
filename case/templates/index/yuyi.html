@@ -8,10 +8,9 @@
 <link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
 <script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
 
-
 <script src="/static/css/js/htip.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
-
+<link type="text/css" rel="stylesheet" href="/static/css/css/table.css">
 
 <script src="/static/css/js/timeline.js"></script>
 
@@ -83,7 +82,7 @@
                 </a>
             </li>
             <li class="menu_main"><a href="/index/zhibiao/">舆情指数</a></li>
-            <li class="menu_main"><a href="#">监控预警</a></li>
+            <!-- <li class="menu_main"><a href="#">监控预警</a></li> -->
                         <li class="menu_main_on">
             <a href="time.html">深度分析</a>
             </li>
@@ -123,10 +122,6 @@
                     'start': new Date(2014,7,13,23,0,0),
                     'end': new Date(2014,7,20,10,10,0),
                     'content': '正义'
-                },
-                {
-                    'start': new Date(2014,7,29),
-                    'content': '钓鱼岛'
                 },
                 {
                     'start': new Date(2014,7,31),
@@ -180,38 +175,42 @@
 </div> 
   
 
-    <div id="main1" style="width:400px;height:230px;border:1px solid #F0F0F0;float:left;margin-top:0px;background:#F0F0F0"> 
+    <div id="main1" style="width:400px;height:230px;float:left;margin-top:0px;background:#F0F0F0"> 
     </div> 
 
-
-
-        <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
-        <script type="text/javascript">
+    <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
+    <script type="text/javascript">
         // 基于准备好的dom，初始化echarts图表 
       
     var result1=[];
-    var query = "九一八";
-    var end_ts = 1379520000;
+    var query = "中国";
+    var ts = 1378035900;
+    var START_TS = 1377965700
+    var during = ts-START_TS;
+
+
+       $(document).ready(function(){   //网页加载时执行下面函数
+       getpie_data();
+   })
+
     function getpie_data() {
         var result=[];
-        var data1=[];
+
        
         $.ajax({
-            url: "/evolution/count_data/?ts=" + end_ts + "&query=" + query,
+            url: "/moodlens/pie/<area>/?ts=" + ts + "&query=" + query +"&during"+ during,
             type: "GET",
             dataType:"json",
             success: function(data){
-                console.log(data);
-                var original_evolution_count = data['original'];
-                var comment_evolution_count = data['comment'];
-                var forward_evolution_count = data['forward'];
+                //console.log(data);
                 
-                result[0]=original_evolution_count;
-                result[1]=comment_evolution_count;
-                result[2]=forward_evolution_count;
+                result[0]=data["happy"];
+                //console.log(data['happy']);
+                //alert("result[0]");
+                result[1]=data["sad"];
+                result[2]=data["angry"];
 
                 on_update(result);
-                drawVisualization();
             }
         });
        
@@ -224,14 +223,12 @@
         //result1=getpie_data();
 
         var pie_data=[];
-        pie_data = [{value:  result[0], name:'愤怒'}, {value: result[1], name:'悲伤'}, {value:  result[2], name:'高兴'}];
-        
-        
-
+        pie_data = [{value:  result[2], name:'子类1'}, {value: result[1], name:'子类2'}, {value:  result[0], name:'子类3'}];
+    
     option = {
         backgroundColor:'#F0F0F0',
         title : {
-            text: '情绪饼图',
+            text: '子类占比图',
             x:'center',
             textStyle:{
             fontWeight:'lighter',
@@ -245,9 +242,18 @@
         legend: {
             orient:'vertical',
             x : 'left',
-            data:['悲伤','高兴','愤怒']
+            data:['子类1','子类2','子类3']
         },
-
+        toolbox: {
+        show : true,
+        feature : {
+          mark : {show: true},
+           dataView : {show: true, readOnly: false},
+            restore : {show: true},
+            
+            saveAsImage : {show: true}
+        }
+    },
         calculable : true,
         series : [
             {
@@ -265,66 +271,58 @@
     }
 
 </script>
+<script type="text/javascript">
+function altRows(id){
+    if(document.getElementsByTagName){  
+        var table = document.getElementById(id);  
+        var rows = table.getElementsByTagName("tr"); 
+        for(i = 0; i < rows.length; i++){          
+            if(i % 2 == 0){
+                rows[i].className = "evenrowcolor";
+            }else{
+                rows[i].className = "oddrowcolor";
+            }      
+        }
+    }
+}
+window.onload=function(){
+    altRows('alternatecolor');
+}
+</script>
 
-    <div id="main2" style="width:400px;height:230px;border:1px solid #F0F0F0;float:right;margin-top:0px;background:#F0F0F0"> 
-           <table width="400" height="200" border="1" align="center">
-        <caption><h4>关键词列表</h4></caption>
-  <tr>
-    <th width="51" scope="row">&nbsp;</th>
-    <td width="51">&nbsp;</td>
-    <td width="51">&nbsp;</td>
-    <td width="51">&nbsp;</td>
-    <td width="51">&nbsp;</td>
-  </tr>
-  <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-    <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th scope="row">&nbsp;</th>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
+
+
+
+    <div id="main2" style="width:440px;height:230px;border:1px solid #F0F0F0;float:right;margin-top:0px;background:#F0F0F0"> 
+      <div style="float:center">   
+       <table class="altrowstable" id="alternatecolor">
+<tr>
+    <th>Info Header 1</th><th>Info Header 2</th><th>Info Header 3</th><th>Info Header 4</th>
+</tr>
+<tr>
+   <td>Text 1A</td><td>Text 1B</td><td>Text 1C</td><td>Text 1D</td>
+</tr>
+<tr>
+    <td>Text 2A</td><td>Text 2B</td><td>Text 2C</td><td>Text 2D</td>
+</tr>
+
+<tr>
+    <td>Text 3A</td><td>Text 3B</td><td>Text 3C</td><td>Text 3D</td>
+</tr>
+<tr>
+    <td>Text 4A</td><td>Text 4B</td><td>Text 4C</td><td>Text 4D</td>
+</tr>
+<tr>
+    <td>Text 5A</td><td>Text 5B</td><td>Text 5C</td><td>Text 5D</td>
+</tr>
     </table> 
+</div>
     </div>
-    <div id="main3"style="height:200px;float:left;margin-top:20px;width:932px;border:1px solid #ADADAD;background:#F0F0F0">
-          <h3 style="text-align:center">钓鱼岛事件</h3>
+    <div id="main3"style="height:150px;float:left;margin-top:20px;width:900px;border:1px solid #F0F0F0;background:#F0F0F0">
+          <h4 style="text-align:center;font-weight:lighter;">钓鱼岛事件</h4>
           <div> 
         
-          <h4 style="text-align:left;">近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？</h4>
+          <h4 style="text-align:left;font-weight:lighter;">近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？</h4>
           </div>
     </div>   
 </body>
