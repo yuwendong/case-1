@@ -35,7 +35,7 @@ def main():
         _update_topic_status2Computing(topicname, start_ts, end_ts, db_date)
         print 'update_status'
         topic_id = acquire_topic_id(topicname, start_ts, end_ts) # 重新获取id是因为TopicStatus中id是自增加的，进行更新后，id就不是原来的那一个了
-        windowsize = (end_ts - start_ts+900) / Day # 确定时间跨度的大小
+        windowsize = (end_ts - start_ts+900) / Day # 确定时间跨度的大小,daixiuzheng
         date = ts2datetime(end_ts)
         print 'windowsize:',windowsize
         if windowsize > 7:

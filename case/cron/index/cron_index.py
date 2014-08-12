@@ -14,7 +14,8 @@ from consts import INDEX_PATH, db
 PATH = INDEX_PATH
 RESP_ITER_KEYS = ['_id','user','text','timestamp','geo','terms','reposts_count','source']
 SORT_FIELD='-timestamp'
-TOP_CITY = 3
+TOP_CITY = 10
+K_LIMIT = 10
 
 SECOND = 1
 TENSECONDS = 10 * SECOND
@@ -23,17 +24,17 @@ FIFTEENMINUTES = 15 * MINUTE
 HOUR = 3600
 SIXHOURS = 6 * HOUR
 DAY = 24 * HOUR
-
 INTERVAL = TENSECONDS
-K_LIMIT = 10
+
+BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 0, 0, 0).timetuple())
+END_TS = time.mktime(datetime.datetime(2013, 9, 1, 0, 1, 0).timetuple())
+
 
 s = XapianSearch(stub = PATH, schema_version = '5')
 
 
-def cron_index_topic(topic):
+def cron_index_topic(topic, begin_ts = BEGIN_TS, end_ts = END_TS):
     if topic and topic != '':
-        begin_ts=time.mktime(datetime.datetime(2013,9,1,0,0,0).timetuple())
-        end_ts=time.mktime(datetime.datetime(2013,9,1,0,1,0).timetuple())
         topic = topic.strip()
         query_dict = {
                 'timestamp':{'$gt':begin_ts,'$lt':end_ts},
@@ -83,11 +84,11 @@ def cron_index_topic(topic):
         final_list_by_time = select_by_time(sublist_by_time,time_list[0],time_list[-1],INTERVAL)
         print 'final_list_by_time'
         for item in final_list_by_time:
-            print 'timestamp', ts2datetime_full(item[0])
-            print 'reposts_count',item[1]
-            print 'user',item[2]
-            print 'source',item[3]
-            print 'text',item[4]
+            print 'timestamp', ts2datetime_full(item['timestamp'])
+            print 'reposts_count',item['reposts_count']
+            print 'user',item['user']
+            print 'source',item['source']
+            print 'text',item['text']
 
         top_city_list = top_city(city_dict)
         for city in top_city_list:
@@ -104,18 +105,18 @@ def cron_index_topic(topic):
 
 
 def save_rt_results(topic, count, user_count, time_list, top_city_list, top_keywords_list, final_list_by_time):
-    area = ','.join(top_city_list)
+    area = top_city_list
 
+    # 关键词列表转化成字典
     key_words_dict = {}
     for keyword in top_keywords_list:
         key_words_dict[keyword[0]] = keyword[1]
 
-    opinion = {}
-    for f in final_list_by_time:
-        opinion[f[0]] = (f[1],f[2],f[3],f[4])
+    opinion = final_list_by_time
 
     item = IndexTopic(topic, count, user_count, time_list[0], time_list[-1],\
-            area, json.dumps(key_words_dict), json.dumps(opinion))
+            json.dumps(area), json.dumps(key_words_dict), json.dumps(opinion))
+
     item_exist = db.session.query(IndexTopic).filter(IndexTopic.topic == topic).first()
     if item_exist:
         db.session.delete(item_exist)
@@ -139,14 +140,23 @@ def select_by_time(sublist_by_time, begin_ts, end_ts,during): # 挑选各时间�
         ts2 = min(ts1 + during, end_ts)
         list1 = [(timestamp,reposts_count,user,source,text) for timestamp,reposts_count,user,source,text in sublist_by_time if ts1 < timestamp <= ts2]
         list2 = sorted(list1, key = lambda d:d[1], reverse = True) # 按转发量排序
-        final_list_by_time.append(list2[0])
+
+        # 元组转化为字典
+        final_dict = {}
+        final_dict['timestamp'] = list2[0][0]
+        final_dict['reposts_count'] = list2[0][1]
+        final_dict['user'] = list2[0][2]
+        final_dict['source'] = list2[0][3]
+        final_dict['text'] = list2[0][4]
+
+        final_list_by_time.append(final_dict)
 
     return final_list_by_time
 
 
 def top_city(city_dict): # 返回出现次数最多的城市
-    sorted_city_list = sorted(city_dict.iteritems(), key = lambda d:d[1], reverse=True)
-    top_city_list = [city for city, count in sorted_city_list[:TOP_CITY]]
+    sorted_city_list = sorted(city_dict.iteritems(), key = lambda d:d[1])
+    top_city_list = [city for city, count in sorted_city_list[len(sorted_city_list)-TOP_CITY:]]
 
     return top_city_list
 
