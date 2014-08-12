@@ -51,7 +51,7 @@ function dataMix(list) {
             
             success: function(data){
                 
-
+                 console.log(data);
                  mappoint_data=data["count"];
 
                 // console.log(mappoint_data);
