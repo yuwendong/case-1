@@ -915,7 +915,7 @@ links.Timeline.prototype.repaintFrame = function() {
         timelines.style.position = "absolute";
         timelines.style.left = "0px";
         timelines.style.top = "0px";
-        timelines.style.height = "100%";
+        timelines.style.height = "0%";
         timelines.style.width = "0px";
         dom.content.appendChild(timelines);
         dom.contentTimelines = timelines;

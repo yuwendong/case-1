@@ -12,7 +12,8 @@ from config import SSDB_PORT, SSDB_HOST, db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
-from get_rank import rank_results
+
+from utils import read_topic_rank_results
 
 TOPK = 1000
 Minute = 60
@@ -42,7 +43,7 @@ def get_topic_status(topic, start, end, module):
                                                 TopicStatus.start==start, \
                                                 TopicStatus.end==end, \
                                                 TopicStatus.module==module).first()
-    print 'item',item
+  
     if item:
         return item.status
     else:
@@ -52,6 +53,7 @@ def get_topic_status(topic, start, end, module):
 @mod.route("/graph/")
 def network():
     topic = request.args.get('topic', '')
+  
     start_ts = request.args.get('start_ts', '')
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
@@ -62,23 +64,23 @@ def network():
     #end_ts = datetimestr2ts(end_ts)
     #start_ts = ts2datetime(start_ts)
     end = ts2datetime(end_ts)
-    print 'end_ts', end
+  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
-    print 'status:', topic_status
-    if topic_status == COMPLETED_STATUS:
+
+    if topic_status == COMPLETED_STATUS:  
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize)
         key = str(query_key)
-        print 'key', key
+       
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
-            print 'ssdb yes'
+           
             results = ssdb.request('get', [key])
-            print 'results yes'
-            print 'r-code', results.code
+           
+        
             if results.code == 'ok' and results.data:
-                print 'code yes'
-                print '--'*10
-                print results.data
+               
+               
+            
                 response = make_response(results.data)
                 response.headers['Content-Type'] = 'text/xml'
                 #return results.data
@@ -96,18 +98,24 @@ def network():
 
 
 
-@mod.route('rank')
-def rank():
+@mod.route("/rank/")
+def network_rank():
     topic = request.args.get('topic', '')
     start_ts = request.args.get('start_ts', '')
-    start_ta = int(start_ts)
+    start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
-    end_ta = int(end_ts)
+    end_ts = int(end_ts)
     windowsize = (end_ts - start_ts+900) / Day
+    topn = request.args.get('topn', 10)
+    topn = int(topn)
     date = ts2datetime(end_ts)
-    results = rank_results(topic, windowsize, date)
-    return results
+    if windowsize > 7:
+        rank_method = 'degreerank'
+    else:
+        rank_method = 'pagerank'
 
+    results = read_topic_rank_results(topic, topn, rank_method, date, windowsize)
+    return json.dumps(results)
 
 def _utf8_unicode(s):
     if isinstance(s, unicode):

@@ -25,13 +25,13 @@
           margin: 0px auto;
           height: 500px;
       }
-    </style>
+</style>
     
-</head>
+
 
 <body>
 <!--top_nav start-->
-<div class="top_nav_wrap">
+<!-- <div class="top_nav_wrap">
     <div class="top_nav">
         <div class="fr">
             <ul id="head_nav">
@@ -41,8 +41,8 @@
                 <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
             </ul>
         </div>
-            </div>
-</div>
+    </div>
+</div> -->
 <!--top end-->
 
 <!--banner start-->
@@ -56,7 +56,7 @@
                 </tr>
             </tbody></table>
         </div>
-                <div class="search">
+<!--                 <div class="search">
             <div class="search_box_l"></div>
             <input type="hidden" value="title" name="search_type">
             <input type="hidden" value="7days" name="date_type">
@@ -64,19 +64,19 @@
             <input type="hidden" value="-1" name="product_id">
             <input name="search" value="" type="text" id="search_box" class="search_box">
             <input name="submit" onclick="javascript:if($(&#39;#search_box&#39;).val() == &#39;&#39;){alert (&#39;请填写要查找的内容。&#39;);return false;};" type="submit" class="search_btn" value="">
-            </form>
-        </div>
+       
+        </div> -->
             </div>
 </div>
 <!--banner end-->
 
 <!--menu start-->
-<div class="nav_wrap">
-   <li style="display:inline;padding-left:250px;font-size:15px;line-height:35px"><label onclick="load_xinwen();"><b>新闻</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>博客</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>微博</b></label></li>
-   <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>论坛</b></label></li>
-</div>
+<!-- <div class="nav_wrap">
+   <li style="display:inline;padding-left:300px;font-size:15px;line-height:35px"><label onclick="load_xinwen();">微博</label></li>
+   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">博客</label></li>
+   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">新闻</label></li>
+   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">论坛</label></li>
+</div> -->
 <!--menu end-->
 <script type="text/javascript" src="/static/js/js/thickbox.js"></script>
 <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
@@ -85,33 +85,26 @@
     <div class="leftbox">
         <ul>
             <li class="menu_main">
-                <a>
+                <a href="/index/gaishu/">
                     舆情概况
                 </a>
             </li>
-            <li class="menu_main"><a href="zhibiao.html">舆情指数</a></li>
+            <li class="menu_main"><a href="/index/zhibiao/">舆情指数</a></li>
+            <li class="menu_main"><a href="#">监控预警</a></li>
                         <li class="menu_main_on">
             <a href="time.html">深度分析</a>
             </li>
-            <li class="menu_son"><a href="time.html">时间分析</a></li>  
-            <li class="menu_son"><a href="ditu.html">地域分析</a></li>
-            <li class="menu_son"><a href="网络分析.html">网络分析</a></li>
-            <li class="menu_son"><a href="语义分析.html">语义分析</a></li>
-            <li class="menu_son"><a href="情感分析汇总.html">情感分析</a></li>
+            <li class="menu_son"><a href="/index/time/">时间分析</a></li>  
+            <li class="menu_son"><a href="/index/area/">地域分析</a></li>
+            <li class="menu_son"><a href="/index/network/">网络分析</a></li>
+            <li class="menu_son"><a href="/index/semantic/">语义分析</a></li>
+            <li class="menu_son"><a href="/index/moodlens/">情感分析</a></li>
         </ul>
     </div>
     <div class="rightbox">
       <div class="well">
-            <legend><strong>网络呈现</strong></legend>
-            <form class="form-inline">
-              <img src="/static/img/identify/network.png" class="img-polaroid">
-              <!--<label><input type="checkbox" checked="true"> 动画演示 </label> -->
-              <label>
-            <input type="checkbox" checked="true"> 标注关键节点
-              </label>
-              <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture" style="background-position:-456px -48px"></i>生成并查看网络</a1>
-                  <a2 href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><i class="icon-picture" style="background-position:-456px -48px"></i>下载图片</a2>
-            </form>
+              <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture" style="background-position:-456px -48px"><input type="button" style="background-color:#FFFF6F;width:130px;height:35px" value="生成并查看网络"></a1>
+      
             
             <div id="network" class="collapse out">
               <div id="loading_network_data" class="alert alert-info">

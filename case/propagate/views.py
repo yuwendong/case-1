@@ -2,10 +2,40 @@
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 import os
 import json
-from read_quota import ReadAttention, ReadPenetration, ReadQuickness 
+from read_quota import ReadPropagate, ReadIncrement # ,ReadAttention, ReadPenetration, ReadQuickness 
 
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
+
+@mod.route('/total/')
+def ajax_propagate():
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 900)
+    during = int(during)
+    end = request.args.get('end_ts', '')
+    end = int(end)
+    results = ReadPropagate(topic, end, during, mtype)
+
+    return json.dumps(results)
+
+@mod.route('/increment/')
+def increment():
+    topic = request.args.get('topic', '')
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    during = request.args.get('during', 900)
+    during = int(during)
+    end = request.args.get('end_ts', '')
+    end = int(end)
+    results = ReadIncrement(topic, end, during, mtype)
+    return json.dumps(results)
+
+
+
+
+'''
 
 # 三个指标分别对应不同的页面url
 
@@ -59,4 +89,4 @@ def ajax_quickness():
     results = ReadQuickness(topic, domain, mtype, ts, during)
 
     return json.dumps(results)
-
+'''

@@ -3,7 +3,7 @@ import json
 import math
 from case.extensions import db
 from time_utils import datetime2ts
-from case.model import PropagateCount, AttentionCount, QuicknessCount # 需要查询的表
+from case.model import PropagateCount # , AttentionCount, QuicknessCount # 需要查询的表
 
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -13,8 +13,9 @@ Day = Hour * 24
 MinInterval = Fifteenminutes
 
 expr = 100 # 经验值的计算
+domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 
-
+'''
 def Merge_Acount(item): # 计算指标值 
     results = {}
     s = 0
@@ -47,10 +48,76 @@ def Merge_Qcount(item):
         
     results = float(top) / total
     return results
+'''
+# domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
+def Merge_propagate(items):
+    results = {}
+    for item in items:
+        results['topic'] = item.topic
+        results['mtype'] = item.mtype
+        results['end'] = item.end
+        results['dcount'] = {'folk':0, 'media':0, 'opinion_leader':0, 'oversea':0, 'other':0}
+        for k in domain_list:
+            #print '*'*10,json.loads(item.dcount)
+            try:
+                dcount = json.loads(item.dcount)
+                #print '*'*10, dcount[k]
+                #print '-'*10, results['dcount'][k]
+                results['dcount'][k] += dcount[k]
+                #print '-'*10,results['dcount'][k]
+            except KeyError:
+                continue
+
+    return results
 
 
 
 
+
+def ReadPropagate(topic, end, during, mtype, unit=MinInterval):
+    if during <= unit:
+        upbound = int(math.ceil(end / (unit * 1.0)) * unit)
+        item = db.session.query(PropagateCount).filter(PropagateCount.topic==topic, \
+                                                       PropagateCount.end==upbound, \
+                                                       PropagateCount.range==unit, \
+                                                       PropagateCount.mtype==mtype).all()
+    else:
+        start = end - during
+        upbound = int(math.ceil(end / (unit * 1.0)) * unit)
+        lowbound = (start / unit) * unit
+        item = db.session.query(PropagateCount).filter(PropagateCount.topic==topic, \
+                                                       PropagateCount.range==unit, \
+                                                       PropagateCount.end<=upbound, \
+                                                       PropagateCount.end>lowbound, \
+                                                       PropagateCount.mtype==mtype).all()
+    if item:
+        results = Merge_propagate(item)
+    else:
+        results = None
+    #print '====',results
+    return results
+
+def ReadIncrement(topic, end, during, mtype, unit=MinInterval):
+    items1 = ReadPropagate(topic, end, during, mtype)
+    items2 = ReadPropagate(topic, end-during, during, mtype) # attent the exist of the end-during and end-during*2
+    print 'items1:', items1
+    print 'items2:', items2
+    results = {}
+    results['topic'] = topic
+    results['end'] = end
+    results['during'] = during
+    results['mtype'] = mtype
+    results['dincrement'] = {}
+    for k in domain_list:
+        try:
+            results['dincrement'][k] = float(items1['dcount'][k]) / float(items2['dcount'][k]) - 1
+        except:
+            results['dincrement'][k] = None
+
+
+    return results
+
+'''
 def ReadAttention(topic, domain, mtype, end_ts, during, unit=MinInterval):
     if during <= unit:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
@@ -197,3 +264,4 @@ def ReadQuickness(topic, domain, mtype, end_ts, during, unit=MinInterval):
             results = None
     
     return results
+'''
