@@ -6,6 +6,7 @@
 <title>微博监控 - 舆情监控系统</title>
 <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
 <link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
+<link rel="stylesheet" href="/static/css/css/menu.css" type="text/css" media="all">
 <script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
 
 
@@ -90,8 +91,42 @@
     </div>
 
     <div class="rightbox">
-    <div id="main" style="height:500px;width:440px; margin-right:10px;float:left"></div>
-    <div id="main1" style="height:500px;width:450px;float:right"></div>
+    
+        <div id="backgroundHolder" style="width:800px;height:50px">
+          <ul class="nav">
+            <li class="drop right"><a class="main down" href="#url"><b>来源</b></a>
+              <ul>
+                <li><a href="#url"><b>微博</b></a></li>
+                <li><a href="#url"><b>新闻</b></a></li>
+                <li><a href="#url"><b>媒体</b></a></li>
+                <li><a href="#url"><b>博客</b></a></li>
+              </ul>
+            </li>
+          </ul>
+          
+          <ul class="nav">
+            <li class="drop right"><a class="main down" href="#url"><b>粒度</b></a>
+              <ul>
+                <li><a href="#url"><b>one day</b></a></li>
+                <li><a href="#url"><b>one hour</b></a></li>
+                <li><a href="#url"><b>a quarter</b></a></li>
+              </ul>
+            </li>
+          </ul>
+
+            <ul class="nav">
+            <li class="drop right"><a class="main down" href="#url"><b>起终</b></a>
+              <ul>
+                <li><a href="#url"><b>起始时间</b></a></li>
+                <li><a href="#url"><b>终止时间</b></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+            
+
+    <div id="main" style="height:600px;width:800px; margin:40px;float:left"></div>
+    
 
     <!-- ECharts单文件引入 -->
     <script src="/static/css/echarts-2.0.0/build/echarts-plain-map.js"></script>  
@@ -129,7 +164,7 @@
             
 
             //console.log(ts_list);
-            var option = {
+    var option = {
         timeline:{
             data:time_af,
             label : {
@@ -137,10 +172,12 @@
                 interval: 0,
                 //rotate:30,
                 formatter : function(s) {
-                    return s.slice(5, 20);
+                    return s.slice(10, 16);
                 }
             },
             autoPlay : true,
+            x:30,
+            y:20,
             playInterval : 1000,
             type: 'number',
         },
@@ -169,6 +206,7 @@
                     text:['高','低'],           // 文本，默认为数值文本
                     calculable : true,
                     x: 'left',
+                    padding:2,
                     color: ['orangered','yellow','lightskyblue']
                 },
                 series : [
@@ -320,66 +358,7 @@
     var myChart = echarts.init(document.getElementById('main'));
     myChart.setOption(option); 
 
-
-option1 = {
-    title : {
-        text: '世界人口总量',
-        subtext: '数据来自网络'
-    },
-    tooltip : {
-        trigger: 'axis'
-    },
-
-    legend: {
-        data:['2011年']
-    },
-    toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
-
-    calculable : true,
-    xAxis : [
-        {
-            type : 'value',
-            axisLine:{show:false},
-            splitLine:{show:false},
-            axisLabel:{show:false},
-            boundaryGap : [0, 0.01]
-        }
-    ],
-    yAxis : [
-        {
-            type : 'category',
-            splitNumber:10,
-            splitLine:{show:false},
-            axisLine:{show:false},
-            axisTick:{show:false},
-            data : ['巴西','印尼','美国','印度','中国','世界人口(万)','japan']
-        }
-    ],
-    series : [
-        {
-            name:'2011年',
-            type:'bar',
-            barWidth:10,
-            barGap:10,
-            data:[18203, 23489, 29034, 104970, 131744, 630230,131744,]
-            },
-        ]
-    };
-                    
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    myChart1.setOption(option1); 
-
-
-    }
+ }
 
  
  

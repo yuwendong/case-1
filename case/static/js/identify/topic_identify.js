@@ -177,7 +177,7 @@ function show_network() {
 
                     success: function (data) {
 
-                            console.log(data);
+                            //console.log(data);
                             network_request_callback(data);
                     },
                     error: function(result) {
@@ -198,6 +198,7 @@ function show_network() {
 
 (function ($) {
     function request_callback(data) {
+      console.log(data);
       var status = data['status'];
       var data = data['data'];
   if (status == 'current finished') {
@@ -296,7 +297,11 @@ function show_network() {
     }
 
     function identify_request() {
-      $.post("/index/topic/", {'topic': topic, 'rank_method': rank_method, 'start_ts': begin_ts, 'end_ts': over_ts, 'page_num': page_num, 'top_n': top_n}, request_callback, "json");
+
+      var topic = '中国'; 
+      var start_ts = 1377965700;
+      var end_ts = 1378051200;
+      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts}, request_callback, "json");
     }
 
     identify_request();

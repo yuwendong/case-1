@@ -102,7 +102,7 @@
         </ul>
     </div>
     <div class="rightbox">
-      <div class="well">
+<!--       <div class="well">
               <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture" style="background-position:-456px -48px"><input type="button" style="background-color:#FFFF6F;width:130px;height:35px" value="生成并查看网络"></a1>
       
             
@@ -115,7 +115,29 @@
               </label>
               <div class="sigma-expand" id="sigma-graph"></div>
             </div>
+      </div>
+ -->
+      <div class="well">
+          <legend><strong>本期排序结果</strong></legend>
+            <div>
+              <div id="loading_current_data" class="alert alert-info">
+          系统繁忙计算中，请稍后...
+              </div>
+              <label>
+                <div id="current_process" class="progress progress-striped active">
+                  <div id="current_process_bar" class="bar" style="width: 100%;"></div>
+                </div>
+              </label>
+            </div>
+          <div>
+            <p><a class="btn btn-small btn-success" href="#" id="out"><i class="icon-download-alt"></i> 导出</a><a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库"><i class="icon-file"></i> 加入知识库</a><a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库"><i class="icon-file"></i> 移出知识库</a><a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单"><i class="icon-ban-circle"></i> 加入垃圾名单</a></p>
           </div>
+          <div id="rank_table">
+            <table class="table table-bordered">
+            </table>
+          </div>
+          <div id="rank_page_selection" class="pagination-centered"></div>
+      </div>
    </div>
 </div>
 </body>

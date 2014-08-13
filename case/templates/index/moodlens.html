@@ -8,16 +8,10 @@
     <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
     <link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
     <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
+    <!-- 走势图切换按钮css -->
+    <link rel="stylesheet" href="/static/css/toggle_switch.css">
 
     <style type="text/css">
-        .headerTitle {
-            font-size: 24px;
-            font-family: ºÚÌå;
-            color: #ffffff;
-            position: relative;
-            top: 8px;
-        }
-
         /* keywords tag cloud */
         #keywords_cloud_div {
             position: relative;
@@ -51,16 +45,20 @@
             color: yellow;
         }
 
-        /*
-        p { font: 16px Microsoft YaHei; text-align: center; color: #ba0c0c; }
-        p a { font-size: 14px; color: #ba0c0c; }
-        p a:hover { color: red; }
-        */
+        #trend_div {
+            height: 250px;
+            width: 900px;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
 
     </style>
 {% endblock head_css %}
 
 {% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
     <script src="/static/css/js/tab.js" type="text/javascript"></script>
     <script src="/static/css/js/htip.js" type="text/javascript"></script>
     <script src="/static/css/js/miaov.js" type="text/javascript"></script>
@@ -106,9 +104,19 @@
         </div>
 
         <div class="rightbox">
-            <label for="relative" onclick="load_relative();">相对比例</label>
-            <label for="absolute" onclick="load_absolute();">绝对数量</label>
-            <div id="trend_dv" style="height:250px;width:900px;float:left;border:1px solid #F0F0F0;background:#F0F0F0;"></div>
+            <div id="trend_div_container">
+                <div class="control-group" id="togglecount">
+                    <div class="controls btn switch switch-two">
+                        <input id="relative" name="view" type="radio" checked>
+                        <label id="relative_label" for="relative">相对比例</label>
+
+                        <input id="absolute" name="view" type="radio">
+                        <label id="absolute_label" for="absolute">绝对数量</label>
+                        <span class="slide-button btn btn-success"></span>
+                    </div>
+                </div>
+                <div id="trend_div"></div>
+            </div>
             <div id="pie_div" style="height:200px;margin:20px;width:400px;float:right;background:#F0F0F0;border:1px solid #F0F0F0"></div>
             <div id="keyword_cloud_outframe" style="height:200px;width:450px;float:left;border:1px solid #F0F0F0;margin-top:20px;background:#F0F0F0">
                 <h4 style="text-align:center;font-weight:lighter">关键词云图</h4>

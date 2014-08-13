@@ -32,11 +32,9 @@ def search_topic_counts(end_ts, during, sentiment, unit=MinInterval, query=None,
                                               SentimentCount.range==unit, \
                                               SentimentCount.query==query).first()
         if item:
-        	count = [end_ts * 1000, item.count]
-        	print 'item,count'
-        	print item,count
+            count = [end_ts * 1000, item.count]
         else:
-        	count = [end_ts * 1000, 0]
+            count = [end_ts * 1000, 0]
 
     else:
         start_ts = end_ts - during

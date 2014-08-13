@@ -96,16 +96,3 @@ def search_topic_weibos(end_ts, during, sentiment, unit=MinInterval, top=TOP_REA
 
     return weibos_dict
 
-
-
-if __name__ == '__main__':
-    emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3}
-    end_ts = datetime2ts('2013-09-01')
-    during = 5 * Day
-
-    print 'topic'
-    for k, v in emotions_kv.iteritems():
-        print v
-        weibos = search_topic_weibos(end_ts, during, v, query='钓鱼岛')
-        for key, value in weibos.iteritems():
-            print key, value
