@@ -22,7 +22,7 @@ function on_load()
 	var i=0;
 	var oTag=null;
 	
-	oDiv=document.getElementById('div1');
+	oDiv=document.getElementById('keywords_cloud_div');
 	
 	aA=oDiv.getElementsByTagName('a');
 	

@@ -96,45 +96,49 @@ def _default_time_zone():
     return start_ts, end_ts
 
 
-@mod.route('/data/<area>/', methods=['GET','POST'])
-def data(area='topic'):
-    """分类情感数据
+@mod.route('/data/', methods=['GET','POST'])
+def data():
+    """分类情感数据--绝对值
     """
-    customized = request.args.get('customized', '1')
-    query = request.args.get('query', None)
+    customized = request.args.get('customized', '1') # 该字段已舍弃
+    query = request.args.get('query', None) # 输入topic
     if query:
         query = query.strip()
-    during = request.args.get('during', 1800)
+    during = request.args.get('during', 900) # 计算粒度，默认为15分钟
     during = int(during)
     ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
 
-    emotion = request.args.get('emotion', 'happy')
+    emotion = request.args.get('emotion', 'global') # 情绪类型
 
     results = {}
 
     search_method = 'topic'
-    area = None   
+    area = None
     search_func = getattr(countsModule, 'search_%s_counts' % search_method, None)
     if search_func:
-        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, customized=customized)
+        if emotion == 'global':
+            for k, v in emotions_kv.iteritems():
+                results[k] = search_func(end_ts, during, v, query=query, domain=area, customized=customized)
+        else:
+            results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, customized=customized)
     else:
         return json.dumps('search function undefined')
 
     return json.dumps(results)
 
-@mod.route('/ratio/<area>/', methods=['GET','POST'])
-def ratio(area='topic'):
+@mod.route('/ratio/', methods=['GET','POST'])
+def ratio():
     """分类情感数据--相对值
     """
-    query = request.args.get('query', None)
+    query = request.args.get('query', None) # 查询话题topic
     if query:
         query = query.strip()
-    during = request.args.get('during', 1800)
+    during = request.args.get('during', 900) # 粒度
     during = int(during)
-    ts = request.args.get('ts', '')
+    ts = request.args.get('ts', '') # 结束时间点
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
@@ -142,7 +146,7 @@ def ratio(area='topic'):
     emotion = request.args.get('emotion', 'happy')
     results = {}
     search_method = 'topic'
-    area = None   
+    area = None
     search_func = getattr(ratioModule, 'search_%s_ratio' % search_method, None)
     if search_func:
         results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area)
@@ -151,8 +155,8 @@ def ratio(area='topic'):
 
     return json.dumps(results)
 
-@mod.route('/pie/<area>/', methods=['GET', 'POST'])
-def pie(area = 'topic'):
+@mod.route('/pie/', methods=['GET', 'POST'])
+def pie():
     '''饼图数据
     '''
     query = request.args.get('query', None)
@@ -164,10 +168,10 @@ def pie(area = 'topic'):
     ts = long(ts)
     begin_ts = ts - during
     end_ts = ts
-    
+
     results = {}
     search_method = 'topic'
-    area = None   
+    area = None
     search_func = getattr(pieModule, 'search_%s_pie' % search_method, None)
     if search_func:
         results= search_func(end_ts, during, query=query)
@@ -177,11 +181,11 @@ def pie(area = 'topic'):
     return json.dumps(results)
 
 
-@mod.route('/keywords_data/<area>/')
-def keywords_data(area='topic'):
+@mod.route('/keywords_data/')
+def keywords_data():
     """情绪关键词数据
     """
-    
+
     customized = request.args.get('customized', '1')
     query = request.args.get('query', None)
     if query:
@@ -207,15 +211,14 @@ def keywords_data(area='topic'):
         results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, top=limit, customized=customized)    
     else:
         return json.dumps('search function undefined')
-    print 'keywords-results'
-    print json.dumps(results)
+
     return json.dumps(results)
 
 @mod.route('/weibos_data/')
 def weibos_data():
     """关键微博
     """
-    
+
     customized = request.args.get('customized', '1')
     query = request.args.get('query', None)
     if query:
@@ -232,15 +235,14 @@ def weibos_data():
 
     results = {}
     search_method = 'topic'
-    area = None        
+    area = None
     search_func = getattr(weibosModule, 'search_%s_weibos' % search_method, None)
-    
+
     if search_func:
         results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, top=limit, customized=customized)  
     else:
         return json.dumps('search function undefined')
-    print 'weibos-results'
-    print json.dumps(results)
+
     return json.dumps(results)
 
 
@@ -256,7 +258,6 @@ def getPeaks():
         query = query.strip()
     during = request.args.get('during', 24 * 3600)
     during = int(during)
-    area = request.args.get('area', 'topic')
     emotion = request.args.get('emotion', 'happy')
     lis = request.args.get('lis', '')
 
@@ -274,7 +275,7 @@ def getPeaks():
 
     search_method = 'topic'
     area = None
-        
+
     search_func = getattr(keywordsModule, 'search_%s_keywords' % search_method, None)
 
     if not search_func:
@@ -284,20 +285,18 @@ def getPeaks():
     title = {'happy': 'A', 'angry': 'B', 'sad': 'C'}
 
     time_lis = {}
-    for i in range(0, len(ts_lis)):
-        if i in new_zeros:
-            ts = ts_lis[i]
-            begin_ts = ts - during
-            end_ts = ts
+    for idx, point_idx in enumerate(new_zeros):
+        print idx, point_idx
+        ts = ts_lis[point_idx]
+        begin_ts = ts - during
+        end_ts = ts
 
-            v = emotions_kv[emotion]
-            #keywords_with_count = search_func(end_ts, during, v, query=query, domain=area, top=limit, customized=customized)
-            #text = ','.join([k for k, v in keywords_with_count.iteritems()])
+        v = emotions_kv[emotion]
 
-            time_lis[i] = {
-                'ts': end_ts * 1000,
-                'title': title[emotion] + str(new_zeros.index(i)),
-                #'text': text
-            }
-        
-            return json.dumps(time_lis)
+        time_lis[idx] = {
+            'ts': end_ts * 1000,
+            'title': title[emotion] + str(idx+1),
+        }
+
+    return json.dumps(time_lis)
+
