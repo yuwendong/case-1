@@ -12,7 +12,7 @@ def getXapianWeiboByDate(datestr):
     print stub_file
     if os.path.exists(stub_file):
         print 'step--stub exist'
-    	xapian_search_weibo = XapianSearch(stub=stub_file, name='master_timeline_weibo', schema_version='5')
+    	xapian_search_weibo = XapianSearch(stub=stub_file, schema_version='5')
     	return xapian_search_weibo
     else:
         print 'stub not exist'

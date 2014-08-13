@@ -3,7 +3,8 @@
 from extensions import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'AttentionCount', 'QuicknessCount', \
+        'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'PropagateKeywords', \
+        'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
            'TopicStatus', 'TopicIdentification', 'IndexTopic']
 
 
@@ -190,7 +191,41 @@ class QuicknessCount(db.Model):
         self.topnum = topnum
         self.allnum = allnum
     
-    
+class PropagateKeywords(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    kcount = db.Column(db.Text) # kcount=[terms]
+
+    def __init__(self, topic, end, range, mtype, limit, kcount):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.limit = limit
+        self.mtype = mtype
+
+class PropagateWeibos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    weibos = db.Column(db.Text) # weibos=[weibos]
+
+    def __init__(self, topic, end, range, mtype, limit, weibos):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.mtype = mtype
+        self.limit = limit
+        self.weibos = weibos
+
+
+
 class TopicStatus(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     module = db.Column(db.String(10))# 显示是哪个模块---moodlens/evolution/propagate/identify
