@@ -3,10 +3,11 @@
 import json
 import redis
 import datetime
+from xapian_case.utils import top_keywords, gen_mset_iter
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration # 获取一定时间段内的微博
-from config import mtype_kv, db  
-from model import PropagateCount #, AttentionCount, QuicknessCount # 一定时间、话题、信息类型对应的{domain:count}
+from config import mtype_kv, db
+from model import PropagateCount, PropagateKeywords, PropagateWeibos #, AttentionCount, QuicknessCount  一定时间、话题、信息类型对应的{domain:count}
 
 
 Minute = 60
@@ -16,8 +17,12 @@ SixHour = Hour * 6
 Day = Hour * 24
 
 N = 10 # top N设置---确定后放在配置文件中
+TOP_KEYWORDS_LIMIT = 50
+TOP_WEIBOS_LIMIT = 50
 
+RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'bmiddle_pic', 'geo', 'comments_count', 'sentiment', 'terms']
 fields_list=['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', 'comments_count', 'sentiment', 'topics', 'message_type', 'terms']
+SORT_FIELD = 'reposts_count'
 
 REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
@@ -46,6 +51,15 @@ def uid2domain(user):
 
     return domain
 
+def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
+    weibos = []
+    for r  in get_results():
+        weibos.append(r)
+    return weibos
+
+
+
+
 '''
 def TopNum(ts_list): # ts_list=[ts1,ts1,ts2...] >> ts_dict{ts1:count1, ts2:count2...}  >> sort_ts=[(ts1,count1),(ts2,count2)...]倒序排列
     ts_dict = {}
@@ -61,7 +75,7 @@ def TopNum(ts_list): # ts_list=[ts1,ts1,ts2...] >> ts_dict{ts1:count1, ts2:count
     topnum = sum([count for ts,count in results])
     print 'topnum:', topnum
     return topnum
-
+'''
 
 def save_pc_results(topic, results, during):
     for k, v in results.iteritems():
@@ -78,6 +92,40 @@ def save_pc_results(topic, results, during):
     db.session.commit()
 
 
+
+def save_kc_results(topic, results, during, k_limit):
+    for k, v in results.iteritems():
+        mtype = k
+        ts, kcount = v
+        item = PropagateKeywords(topic, ts, during, mtype, k_limit, json.dumps(kcount))
+        item_exist = db.session.query(PropagateKeywords).filter(PropagateKeywords.topic==topic, \
+                                                                PropagateKeywords.range==during, \
+                                                                PropagateKeywords.end==ts, \
+                                                                PropagateKeywords.mtype==mtype, \
+                                                                PropagateKeywords.limit==k_limit).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+    db.session.commit()
+
+def save_ws_results(topic, results, during, w_limit):
+    for k ,v in results.iteritems():
+        mtype = k
+        ts, top_ws = v
+        item = PropagateWeibos(topic , ts, during, mtype, w_limit, json.dumps(top_ws))
+        item_exist = db.session.query(PropagateWeibos).filter(PropagateWeibos.topic==topic, \
+                                                              PropagateWeibos.range==during, \
+                                                              PropagateWeibos.end==ts, \
+                                                              PropagateWeibos.mtype==mtype, \
+                                                              PropagateWeibos.limit==w_limit).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+    db.session.commit()
+
+
+
+'''
 def save_apc_results(topic, results, during): # 保存attention&penetration对应的表
     for k, v in results.iteritems():
         mtype = k
@@ -145,7 +193,7 @@ def quicknessCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fif
                     save_qc_results(topic, topnum, allnum, during, end_ts, v, r) # 存入Quickness表
                         
 '''                
-def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenminutes):
+def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field=SORT_FIELD, save_fields=RESP_ITER_KEYS, during=Fifteenminutes, w_limit=TOP_WEIBOS_LIMIT, k_limit=TOP_KEYWORDS_LIMIT):
     if topic and topic != '':
         start_ts = int(start_ts)
         over_ts = int(over_ts)
@@ -157,17 +205,31 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fif
             begin_ts = over_ts - during * i
             end_ts = begin_ts + during
             mtype_dcount = {} # mtype_dcount={mtype:{domain:count}}
-            # print begin_ts, end_ts, 'topic %s starts calculate' % topic.encode('utf-8')
+            mtype_kcount = {} # mtype_kcount={mtype:[terms]}
+            mtype_weibo = {} # mtype_weibo={mtype:weibo}
+            print begin_ts, end_ts, 'topic %s starts calculate' % topic.encode('utf-8')
             query_dict = {
                 'timestamp': {'$gt': begin_ts, '$lt': end_ts},
                 '$or': [],
             }
             for topic in topics:
-                query_dict['$or'].append({'text': topic}) # 由于topic目前没有数据，所以测试阶段使用text中查询topic
+                query_dict['$or'].append({'topics': topic}) # 由于topic目前没有数据，所以测试阶段使用text中查询topic
             for k, v in mtype_kv.iteritems():
                 query_dict['message_type'] = v
+                #query_dict['message_type'] = 1
                 domaincount ={}
                 counts,weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list) # weibo_results是在指定时间段、topic、message_type的微博匹配集
+                mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
+                                                  max_offset=w_limit, mset_direct=True)
+                
+                
+                #counts,results = xapian_search_weibo.search(query=query_dict, fileds=fields_list, sort_by=[sort_field])  
+                #for i in results():
+                #    if i['reposts_count'] != 0:
+                #        print '----', i
+                
+                kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
+                top_ws = top_weibos(gen_mset_iter(xapian_search_weibo, mset, fields=fields_list), top=w_limit)
                 for weibo_result in weibo_results():
                     uiddomain=uid2domain(weibo_result['user'])
                     if uiddomain:
@@ -177,14 +239,18 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fif
                             domaincount[uiddomain] = 1
                     else:
                         continue
-               
+                
+                mtype_kcount[v] = [end_ts, kcount]
+                mtype_weibo[v] = [end_ts, top_ws]
                 mtype_dcount[v] = [end_ts, domaincount]
                 #print mtype_dcount[v]
                 #print '%s %s saved message_type domain_count' % (begin_ts, end_ts)
-                save_pc_results(topic, mtype_dcount, during) # PropagateCount表
+                #save_pc_results(topic, mtype_dcount, during) # PropagateCount表
                 #save_apc_results(topic, mtype_dcount, during) # APCount表
-                    
-            
+                save_kc_results(topic, mtype_kcount, during, k_limit)
+                save_ws_results(topic, mtype_weibo, during, w_limit)
+
+
 def cal_topic_propagate_count_by_date(topic, datestr, duration):
     start_ts = datetime2ts(datestr)
     end_ts = start_ts + Day
@@ -193,7 +259,7 @@ def cal_topic_propagate_count_by_date(topic, datestr, duration):
     if xapian_search_weibo:
         propagateCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # 原始表、Attention&Penetration表
         #quicknessCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # Quickness表
-   
+        #propagate_keywords(topic, xapian_search_weibo, start_ts= start_ts, over_ts=end_ts, during=duration)
 
 def worker(topic, datestr):
     print 'topic: ', topic.encode('utf8'), 'datestr:', datestr, 'Fifteenminutes: '
