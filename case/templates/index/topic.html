@@ -12,10 +12,17 @@
 <title>微博监控 - 舆情监控系统</title>
 <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
 <link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-<script src="/static/js/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="/static/css/style.css" rel="stylesheet">
+<script src="/static/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+
 <script src="/static/js/identify/sigma.min.js"></script>
 <script src="/static/js/identify/sigma.parseGexf.js"></script>
 <script src="/static/js/identify/topic_identify.js"></script>
+<script src="/static/js/identify/topic_selector.js"></script>
+<script src="/static/js/identify/jquery.bootpag.js"></script>
 
 
 
@@ -24,12 +31,13 @@
           position: relative;
           margin: 0px auto;
           height: 500px;
+          width: 800px;
       }
 </style>
     
 
 
-<body>
+<body onload="switch();">
 <!--top_nav start-->
 <!-- <div class="top_nav_wrap">
     <div class="top_nav">
@@ -78,10 +86,10 @@
    <li style="display:inline;padding-left:120px;font-size:15px"><a href="">论坛</label></li>
 </div> -->
 <!--menu end-->
-<script type="text/javascript" src="/static/js/js/thickbox.js"></script>
+
 <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
 <div id="floatMenu"></div>
-<div class="main2">
+<div class="main2" style="height:1600px">
     <div class="leftbox">
         <ul>
             <li class="menu_main">
@@ -102,22 +110,30 @@
         </ul>
     </div>
     <div class="rightbox">
-<!--       <div class="well">
-              <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture" style="background-position:-456px -48px"><input type="button" style="background-color:#FFFF6F;width:130px;height:35px" value="生成并查看网络"></a1>
-      
-            
-            <div id="network" class="collapse out">
-              <div id="loading_network_data" class="alert alert-info">
-              系统繁忙计算中，请稍后...
-              </div>
-              <label>
+        <div class="well" style="width:800px">
+              <legend><strong>网络呈现</strong></legend>
+              <form class="form-inline">
+                <img src="/static/img/identify/network.png" class="img-polaroid">
+                <!--<label><input type="checkbox" checked="true"> 动画演示 </label> -->
+                <label>
+                <input type="checkbox" checked="true"> 标注关键节点
+                </label>
+                <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture"></i>生成并查看网络</a1>
+                      <a2 href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><i class="icon-picture"></i>下载图片</a2>
+              </form>
+              
+              <div id="network" class="collapse out">
+                <div id="loading_network_data" class="alert alert-info">
+                  系统繁忙计算中，请稍后...
+                </div>
+                <label>
                   <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
-              </label>
-              <div class="sigma-expand" id="sigma-graph"></div>
-            </div>
+                </label>
+                <div class="sigma-expand" id="sigma-graph"></div>
+              </div>
       </div>
- -->
-      <div class="well">
+
+      <div class="well" style="width:800px">
           <legend><strong>本期排序结果</strong></legend>
             <div>
               <div id="loading_current_data" class="alert alert-info">
@@ -137,8 +153,16 @@
             </table>
           </div>
           <div id="rank_page_selection" class="pagination-centered"></div>
-      </div>
+        </div>
    </div>
 </div>
+<script>
+    function switch()
+    {
+        $("#sigma-graph").hide();
+
+    }
+
+</script>
 </body>
 </html>
