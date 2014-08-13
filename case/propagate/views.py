@@ -2,7 +2,7 @@
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 import os
 import json
-from read_quota import ReadPropagate, ReadIncrement # ,ReadAttention, ReadPenetration, ReadQuickness 
+from read_quota import ReadPropagate, ReadIncrement, ReadPropagateKeywords, ReadPropagateWeibos  # ,ReadAttention, ReadPenetration, ReadQuickness 
 
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
@@ -32,7 +32,35 @@ def increment():
     results = ReadIncrement(topic, end, during, mtype)
     return json.dumps(results)
 
+@mod.route('/keywords/') # is not complicated
+def prpagate_keywords():
+    topic = request.args.get('topic', '')
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    during = request.args.get('during', 900)
+    during = int(during)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    limit = request.args.get('limit', 50)
+    limit = int(limit)
+    results = ReadPropagateKeywords(topic, end_ts, during, mtype, limit)
+    
 
+    return json.dumps(results)
+
+@mod.route('/weibos/') # is not complicated
+def propagate_weibos():
+    topic = request.args.get('topic', '')
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    during = request.args.get('during', 900)
+    during = int(during)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    limit = request.args.get('limit', 50)
+    limit = int(limit)
+    results = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
+    return json.dumps(results)
 
 
 '''

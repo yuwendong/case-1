@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 import math
+import operator
 from case.extensions import db
+from utils import weiboinfo2url
 from time_utils import datetime2ts
-from case.model import PropagateCount # , AttentionCount, QuicknessCount # 需要查询的表
+from case.model import PropagateCount, PropagateKeywords, PropagateWeibos# , AttentionCount, QuicknessCount  需要查询的表
 
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -12,8 +14,15 @@ SixHour = Hour * 6
 Day = Hour * 24
 MinInterval = Fifteenminutes
 
+TOP_KEYWORDS_LIMIT = 50
+TOP_READ =10
+TOP_WEIBOS_LIMIT = 50
+
 expr = 100 # 经验值的计算
 domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
+
+
+
 
 '''
 def Merge_Acount(item): # 计算指标值 
@@ -49,6 +58,7 @@ def Merge_Qcount(item):
     results = float(top) / total
     return results
 '''
+
 # domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 def Merge_propagate(items):
     results = {}
@@ -69,9 +79,6 @@ def Merge_propagate(items):
                 continue
 
     return results
-
-
-
 
 
 def ReadPropagate(topic, end, during, mtype, unit=MinInterval):
@@ -108,14 +115,167 @@ def ReadIncrement(topic, end, during, mtype, unit=MinInterval):
     results['during'] = during
     results['mtype'] = mtype
     results['dincrement'] = {}
+    total1=0
+    total2=0
     for k in domain_list:
         try:
             results['dincrement'][k] = float(items1['dcount'][k]) / float(items2['dcount'][k]) - 1
+            total1 += items1['dcount'][k]
+            total2 += items2['dcount'][k]
         except:
             results['dincrement'][k] = None
 
-
+    results['dincrement']['total'] = float(total1) / float(total2) -1
     return results
+
+
+def parseKcount(kcount):
+    kcount_dict = {}
+    kcount = json.loads(kcount)
+
+    for k ,v in kcount:
+        kcount_dict[k] = v
+
+    return kcount_dict
+
+def _top_keywords(kcount_dict, top=TOP_READ):
+    results_dict = {}
+
+    if kcount_dict != {}:
+        results = sorted(kcount_dict.iteritems(), key=operator.itemgetter(1), reverse=False)
+        results = results[len(results) - top:]
+
+        for k, v in results:
+            results_dict[k] = v
+
+    return results_dict
+
+
+def ReadPropagateKeywords(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_LIMIT, unit=MinInterval, top=TOP_READ):
+    kcounts_dict = {}
+    print '*'*5
+    print topic, end_ts, during, mtype
+    print during-unit
+    if during <= unit:
+        print '*'*10
+        print topic, end_ts, during, mtype
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        item = db.session.query(PropagateKeywords).filter(PropagateKeywords.end==upbound, \
+                                                          PropagateKeywords.topic==topic, \
+                                                          PropagateKeywords.range==unit, \
+                                                          PropagateKeywords.mtype==mtype, \
+                                                          PropagateKeywords.limit==limit).first()
+        if item:
+            #print '*'*10, item
+            kcounts_dict = parseKcount(item.kcount)
+
+    else:
+        #print '---'*10
+        start_ts = end_ts - during
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        lowbound = (start_ts / unit) * unit
+        items = db.session.query(PropagateKeywords).filter(PropagateKeywords.end>lowbound, \
+                                                         PropagateKeywords.end<=upbound, \
+                                                         PropagateKeywords.topic==topic, \
+                                                         PropagateKeywords.range==unit, \
+                                                         PropagateKeywords.mtype==mtype, \
+                                                         PropagateKeywords.limit==limit).all()
+        for item in items:
+            kcount_dict = parseKcount(item.kcount)
+            for k, v in kcount_dict.iteritems():
+                try:
+                    kcounts_dict[k] += v
+                except KeyError:
+                    kcounts_dict[k] = v
+
+    kcounts_dict = _top_keywords(kcounts_dict, top)
+
+    return kcounts_dict
+
+
+def _top_weibos(weibos_dict, top=TOP_READ):
+    results_list =[]
+
+    if weibos_dict != {}:
+        results = sorted(weibos_dict.iteritems(), key=lambda(k,v):v[0], reverse=False)
+        results = results[len(results) - top:]
+
+        for k, v in results:
+            results_list.append(v[1])
+
+    return results_list
+
+def _json_loads(weibos):
+    try:
+        return json.loads(weibos)
+    except ValueError:
+        if isinstance(weibos, unicode):
+            return json.loads(json.dumps(weibos))
+        else:
+            return None
+
+def parseWeibos(weibos):
+    weibo_dict = {}
+    weibos = _json_loads(weibos)
+
+    if not weibos:
+        return {}
+
+    for weibo in weibos:
+        try:
+            _id = weibo['_id']
+            print '_id', _id
+            reposts_count = weibo['reposts_count']
+            print 'reposts_count', reposts_count
+            weibo['weibo_link'] = weiboinfo2url(weibo['user'],_id)
+            weibo_dict[_id] = [reposts_count, weibo]
+        except:
+            continue
+ 
+    return weibo_dict
+
+
+def ReadPropagateWeibos(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, unit=MinInterval, top=TOP_READ):
+    weibos_dict = {}
+    #print '*'*5
+    #print topic, end_ts, during, mtype, limit
+    if during <= unit:
+        #print '-'*5
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        item =db.session.query(PropagateWeibos).filter(PropagateWeibos.end==upbound, \
+                                                       PropagateWeibos.topic==topic, \
+                                                       PropagateWeibos.mtype==mtype, \
+                                                       PropagateWeibos.range==unit, \
+                                                       PropagateWeibos.limit==limit).first()
+        if item:
+            #print '$$'*5
+            #print item.weibos
+            weibos_dict = parseWeibos(item.weibos)
+            #print '-------', weibos_dict
+
+    else:
+        start_ts = end_ts - during
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        lowbound = (start_ts / unit) * unit
+        items = db.session.query(PropagateWeibos).filter(PropagateWeibos.end>lowbound, \
+                                                         PropagateWeibos.end<=upbound, \
+                                                         PropagateWeibos.topic==topic, \
+                                                         PropagateWeibos.mtype==mtype, \
+                                                         PropagateWeibos.unit==unit, \
+                                                         PropagateWeibos.limit==limit).all()
+        for item in items:
+            weibo_dict = parseWeibos(item.weibos)
+            for k ,v in weibo_dict.iteritems():
+                try:
+                    weibos_dict[k] += v
+                except KeyError:
+                    weibos_dict[k] = v
+
+    weibo_dict = _top_weibos(weibos_dict, top)
+
+    return weibos_dict
+
+
 
 '''
 def ReadAttention(topic, domain, mtype, end_ts, during, unit=MinInterval):
