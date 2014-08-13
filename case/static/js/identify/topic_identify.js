@@ -52,6 +52,7 @@ function network_request_callback(data) {
     networkUpdated = 1;
     if (data) {
         $("#loading_network_data").text("计算完成!");
+        $("#sigma-graph").show();
         sigInst = sigma.init($('#sigma-graph')[0]).drawingProperties({
             defaultLabelColor: '#fff'
         }).graphProperties({
@@ -199,8 +200,8 @@ function show_network() {
 (function ($) {
     function request_callback(data) {
       console.log(data);
-      var status = data['status'];
-      var data = data['data'];
+      var status = 'current finished';
+      var page_num = 10 ;
   if (status == 'current finished') {
       $("#current_process_bar").css('width', "100%")
       $("#current_process").removeClass("active");
@@ -227,7 +228,7 @@ function show_network() {
       maxVisible: 30
         }).on("page", function(event, num){
       start_row = (num - 1)* page_num;
-      end_row = start_row + 20;
+      end_row = start_row + page_num;
       if (end_row > current_data.length)
           end_row = current_data.length;
       create_current_table(current_data, start_row, end_row);
@@ -243,6 +244,8 @@ function show_network() {
     }
     
     function create_current_table(data, start_row, end_row) {
+
+      console.log(data);
       var cellCount = 8;
       var table = '<table class="table table-bordered">';
       var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>敏感状态</th><th><input id="select_all" type="checkbox" />全选</th></tr></thead>';
@@ -301,7 +304,9 @@ function show_network() {
       var topic = '中国'; 
       var start_ts = 1377965700;
       var end_ts = 1378051200;
-      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts}, request_callback, "json");
+      var topn = 15;
+
+      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
     }
 
     identify_request();
