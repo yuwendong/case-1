@@ -362,7 +362,7 @@ TrendsLine.prototype.initDrawTrend = function(){
                 enabled : false,
             }
         },{
-            name: '相对拐点(高兴)',
+            name: '拐点-高兴',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -371,7 +371,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             width : 2,
             color: '#006600'
         },{
-            name: '相对拐点(愤怒)',
+            name: '拐点-愤怒',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -380,7 +380,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             width : 2,
             color: '#FF0000'
         },{
-            name: '相对拐点(悲伤)',
+            name: '拐点-悲伤',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -389,7 +389,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             width : 2,
             color: '#000099'
         },{
-            name: '绝对拐点(高兴)',
+            name: '拐点-高兴',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -400,7 +400,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             visible:false, // 默认显示相对
             showInLegend: false
         },{
-            name: '绝对拐点(愤怒)',
+            name: '拐点-愤怒',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -411,7 +411,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             visible:false, // 默认显示相对
             showInLegend: false
         },{
-            name: '绝对拐点(悲伤)',
+            name: '拐点-悲伤',
             type : 'flags',
             data : [],
             cursor: 'pointer',

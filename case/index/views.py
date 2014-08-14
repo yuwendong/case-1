@@ -28,6 +28,12 @@ content = ['1905年，日本在日俄战争中获胜，通过日俄讲和条约�
     '1931年9月18日事变发生当夜，东北边防军司令长官公署中将参谋长荣臻根据张学良之命，命令东北军“不准抵抗，不准动，把枪放到库房里，挺着死，大家成仁，为国牺牲”。','1931年9月20日，中国共产党中央委员会发表《中国共产党为日本帝国主义强暴占领东三省事件宣言》[27]，谴责日军侵略，并提出“武装拥护苏联”的口号。',]
 '''
 
+
+def get_default_timerange():
+    return u'9月 1日,2013 - 9月 1日,2013'
+
+default_timerange = get_default_timerange()
+
 @mod.route('/')
 def loading():
     return render_template('index/gl.html')
@@ -46,7 +52,7 @@ def eva():
 
 @mod.route('/moodlens/')
 def moodlens():
-    return render_template('index/moodlens.html')
+    return render_template('index/moodlens.html', time_range=default_timerange)
 
 @mod.route('/area/')
 def area():
