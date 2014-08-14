@@ -1,84 +1,253 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>{% block title %}{% endblock %} - {% block module_title %}{% endblock %} - 舆情案例管理系统</title>
-
     {% block head_meta %}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="linhao">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
     {% endblock head_meta %}
 
+    <!--
+    <link rel="icon" href="../../favicon.ico">-->
+
+    <title>{% block title %}{% endblock %} - {% block module_title %}{% endblock %} - 舆情案例管理系统</title>
+
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css">
+
+    <!-- daterangepicker css -->
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/datarangepiker.css') }}">
+
+    <!-- Custom styles for this template -->
+    <style type="text/css">
+        /*
+         * Base structure
+         */
+
+        /* Move down content because we have a fixed navbar that is 50px tall */
+        body {
+            padding-top: 60px;
+            font-family: Arial,"Microsoft YaHei","微软雅黑","WenQuanYi Micro Hei","文泉驿微米黑",STXihei,"华文细黑",sans-serif;
+            font-size: 12px;
+            background-color: #F3F3F3;
+        }
+
+        a:hover {
+            text-decoration: None;
+        }
+
+        .navbar-inner {
+          background-color: rgb(19, 112, 218);
+          background-image: none;
+          background-repeat: no-repeat;
+          filter: none;
+        }
+
+        .navbar-fixed-top .brand{
+            color: #FFF;
+        }
+
+        .navbar-fixed-top .nav>li>a {
+            color: #54ABDB;
+        }
+
+        .navbar-fixed-top .nav>li .source, .navbar-fixed-top .nav>li .source:hover {
+            color: #FFF;
+            background-color: transparent;
+        }
+
+        .navbar-fixed-top .nav>li>a.iactive:hover{
+            color: #0088cc;
+            background-color: #FFFFFF;
+        }
+
+        .navbar-fixed-top .nav>.active>a {
+            color: #FFF;
+            background-color: #0461A3;
+        }
+
+        .navbar-inverse .navbar-brand {
+            color: #FFF;
+            background: transparent;
+        }
+
+        .filter-block {
+            padding: 10px 20px;
+            background-color: #F9F9F9;
+            border-bottom: 1px solid gainsboro;
+        }
+
+        .override-linehight {
+            line-height: 34px;
+        }
+
+        .filter-block .datepicker {
+            padding: 0 15px;
+            width: 235px;
+            float: left;
+        }
+
+        @media (min-width: 768px)
+        .sidebar {
+            position: fixed;
+            top: 51px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            display: block;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            border-right: 1px solid #eee;
+        }
+        .sidebar {
+            display: none;
+        }
+
+        .nav-sidebar {
+            margin-right: -21px;
+            margin-bottom: 20px;
+            margin-left: -20px;
+        }
+
+    </style>
     {% block head_css %}
     {% endblock head_css %}
 
+    <!-- JQuery core JS -->
+    <script src="/static/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+
+    <!-- Bootstrap core JS -->
     <script src="/static/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/moment.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/datarangepiker.js') }}"></script>
     {% block head_js %}
     {% endblock head_js %}
+
 </head>
 
 <body>
-    {% block navbar %}
-    <!--top_nav start-->
-    <div class="top_nav_wrap">
-        <div class="top_nav">
-            <div class="fr">
-                <ul id="head_nav">
-                    <li class="logined">欢迎您</li>
-                    <li class="revise"><a href="http://v3.unotice.cn/client/profile">修改资料</a></li>
-                    <li class="key"><a href="http://v3.unotice.cn/client/site/word" title="关键词设置">关键词设置</a></li>
-                    <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
+{% block navbar %}
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <a class="brand" href="#"><strong><font size="+2">舆情案例系统</font></strong></a>
+                <a class="brand"><small><font size="+1"> > </font></small></a>
+                <a class="brand" href="#"><strong><font size="+1">舆情要素提取</font></strong></a>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a class="source"><small><font size="+1"> 信息来源渠道:  </font></small></a></li>
+                        <li class="active"><a href="#">微博</a></li>
+                        <li><a class="iactive" href="#">新闻</a></li>
+                        <li><a class="iactive" href="#">论坛</a></li>
+                        <li><a class="iactive" href="#">博客</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a class="source" href="#">关于</a></li>
+                        <li><a class="source" href="#">帮助</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="margin-top: 30px; width: 980px;">
+        <div class="filter-block clearfix inline">
+            <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>选择时间范围:</b></font>
+            <div id="reportrange" class="btn dropdown-toggle">
+                <i class="icon-calendar icon-large"></i>
+                <span id="all_time">{{ time_range }}</span> 
+                <b class="caret"></b>
+            </div>
+            <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>&nbsp&nbsp&nbsp时间粒度: </b></font>
+            <div class="btn dropdown-toggle" style="position:relative;height: 30px;margin-top: 0px;">
+                <span style="position:relative;margin-left:100px;width:18px;overflow:hidden;">
+                    <select name="all_dur" style="width:110px;margin-left:-100px;" onchange="this.parentNode.nextSibling.value=this.value">
+                        <option value="15分钟"> 15分钟 </option>
+                        <option value="1小时"> 1小时 </option>
+                        <option value="1天"> 1天 </option>
+                    </select>
+                </span>
+                <input id="all_durtime" name="all_dur" style="width:75px;position:absolute;left:15px;overflow:hidden;" value="15分钟">
+            </div>
+
+            <span class="btn btn-info override-marginright2" ng-click="search()" ng-disabled="sdate === undefined || edate === undefined || isGettingAlerts">搜索</span>
+            <div style="display: inline-block;" class="pull-right">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid>
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li class="active"><a href="/index/gaishu/">舆情概况</a></li>
+                    <li><a href="/index/zhibiao/">舆情指数</a></li>
+                    <li><a href="#">深度分析</a></li>
+                    <li><a href="/index/time/">时间分析</a></li>
+                    <li><a href="/index/ditu">地狱分析</a></li>
+                    <li><a href="/index/network">网络分析</a></li>
+                    <li><a href="/index/">语义分析</a></li>
+                    <li><a href="#">情感分析</a></li>
                 </ul>
             </div>
-        </div>
-    </div>
-    <!--top end-->
-
-    <!--banner start-->
-    <div class="banner_wrap">
-        <div class="banner">
-            <div class="banner_bg">
-                <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <img src="/static/css/images/bhsocial.gif" border="0">
-                                <span class="headerTitle"> - 九一八舆情</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="search">
-                <div class="search_box_l"></div>
-                <input type="hidden" value="title" name="search_type">
-                <input type="hidden" value="7days" name="date_type">
-                <input type="hidden" value="-1" name="brand_id">
-                <input type="hidden" value="-1" name="product_id">
-                <input name="search" value="" type="text" id="search_box" class="search_box">
-                <input name="submit" onclick="check_submit_onclick();" type="submit" class="search_btn" value="">
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {% block content %}
+                {% endblock content %}
             </div>
         </div>
     </div>
-    <!--banner end-->
 
-    <!--menu start-->
-    <div class="nav_wrap">
-        <li style="display:inline;padding-left:250px;font-size:15px;line-height:35px"><a href=""><b>新闻</b></label></li>
-        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>博客</b></label></li>
-        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>微博</b></label></li>
-        <li style="display:inline;padding-left:200px;font-size:15px"><a href=""><b>论坛</b></label></li>
-    </div>
-    <!--menu end-->
-    {% endblock navbar %}
+{% endblock navbar %}
 
-    {% block content %}
-    {% endblock content %}
+    <script>
+        var all_startDate = new Date('09/01/2013');
+        var all_endDate = new Date('09/21/2013');
+        var all_maxDate = new Date('09/21/2013');
+        var all_minDate = new Date('09/01/2013');
+        var week_ago = subtract(all_endDate,7);
+        //var month_ago = subtract(all_endDate,30);
+        //var 3month_ago = subtract(all_endDate,90);
+
+        function subtract(date,days){
+            var nd = new Date(date);
+            nd = nd.valueOf();
+            nd = nd - days * 24 * 60 * 60 * 1000;
+            nd = new Date(nd);
+            var y = nd.getFullYear();
+            var m = nd.getMonth()+1;
+            var d = nd.getDate();
+            if(m <= 9) m = "0"+m;
+            if(d <= 9) d = "0"+d; 
+            var cdate = y+"-"+m+"-"+d;
+            return cdate;
+        }
+        $('#reportrange').daterangepicker({
+            ranges: {
+                '今天': [all_endDate, all_endDate],
+                '最近7天': [week_ago, all_endDate],
+            },
+            startDate: all_startDate,
+            endDate: all_endDate,
+            minDate: all_minDate,
+            maxDate: all_maxDate
+        },
+        function(start, end) {
+            $('#reportrange span').html(start.format('MMMM D日, YYYY') + ' - ' + end.format('MMMM D日, YYYY'));
+        }
+        );
+    </script>
 </body>
 </html>
-
 
