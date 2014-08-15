@@ -30,7 +30,7 @@ content = ['1905年，日本在日俄战争中获胜，通过日俄讲和条约�
 
 
 def get_default_timerange():
-    return u'9月 1日,2013 - 9月 1日,2013'
+    return u'20130901-20130901'
 
 default_timerange = get_default_timerange()
 

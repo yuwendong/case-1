@@ -33,11 +33,129 @@
             padding-top: 60px;
             font-family: Arial,"Microsoft YaHei","微软雅黑","WenQuanYi Micro Hei","文泉驿微米黑",STXihei,"华文细黑",sans-serif;
             font-size: 12px;
-            background-color: #F3F3F3;
+            background-color: #ebebeb;
+        }
+        body, form, ul, ol, li, h1, h2, h3, h4, h5, h6, p, dl, dd, td, th, input, img {
+            margin: 0;
+            padding: 0;
         }
 
         a:hover {
             text-decoration: None;
+        }
+        ul, ol, li {
+            list-style: none;
+        }
+        #compTab .tabLi.curr {
+            border-bottom: 2px solid #fff;
+            background-color: #fff;
+        }
+        #compTab .tabLi {
+            float: left;
+            width: 110px;
+            height: 68px;
+            margin-left: -2px;
+            border-left: 2px solid #e1e1e1;
+            border-bottom: 2px solid #ebebeb;
+        }
+        #compTab .tabLi.curr span, #compTab .tabLi:hover span {
+            display: block;
+            text-align: center;
+            color: #4284e2;
+        }
+        .tabLi {
+            cursor: pointer;
+        }
+        #compTab {
+            height: 70px;
+            background-color: #f6f6f6;
+            overflow: hidden;
+        }
+        #compTab .tabLi.curr .byWord, #compTab .tabLi:hover .byWord {
+            background-position: -80px -80px;
+        }
+        #compTab .tabLi .byWord, #compTab .tabLi.dsab:hover .byWord {
+            background-position: -120px -80px;
+        }
+        #compTab .tabLi .icons {
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 6px auto 0 auto;
+        }
+        .icons {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            background-image: url(/static/img/icons.png);
+        }
+        .comCtl {
+            width: 202px;
+            height: 38px;
+            margin: 7px auto;
+        }
+        .comBorderL {
+            float: left;
+            width: 194px;
+            height: 34px;
+            border: 1px solid #e5e5e5;
+            border-right: 0;
+            background-color: #f6f6f6;
+        }
+        .hideDel .comBorderL .comWord {
+            width: 180px;
+        }
+        .comBorderL .comWord {
+            font-weight: normal;
+        }
+        .comBorderL .comWord, .comBorderL .holdBox {
+            display: block;
+            width: 150px;
+            height: 32px;
+            margin: 2px 0 0 2px;
+            padding-left: 10px;
+            border: 0;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #f6f6f6;
+            line-height: 30px;
+            _height: 30px;
+            _line-height: 30px;
+        }
+        input, textarea, select {
+            outline: 0;
+            font-size: inherit;
+            font-family: inherit;
+        }
+        img, input, label {
+            vertical-align: middle;
+        }
+        .comBorderL .icontext {
+            display: inline-block;
+            height: 32px;
+            line-height: 32px;
+            padding-left: 4px;
+            margin-right: -3px;
+        }
+        .comBorderL .comWord, .comBorderL .holdBox {
+            display: block;
+            width: 150px;
+            height: 32px;
+            margin: 2px 0 0 2px;
+            padding-left: 10px;
+            border: 0;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #f6f6f6;
+            line-height: 30px;
+            _height: 30px;
+            _line-height: 30px;
+        }
+        .mw1300 {
+            max-width: 1300px;
+            margin: 0 auto;
+            _width: 1000px;
         }
 
         .navbar-inner {
@@ -91,22 +209,21 @@
             float: left;
         }
 
-        @media (min-width: 768px)
-        .sidebar {
-            position: fixed;
-            top: 51px;
-            bottom: 0;
-            left: 0;
+        #mainWrap {
+            border-left: 220px solid #FFF;
+        }
+
+        .lTools {
             z-index: 1000;
+            position: fixed;
+            width: 222px;
+            top: 84px;
             display: block;
-            padding: 20px;
+            padding: 1px;
             overflow-x: hidden;
             overflow-y: auto;
-            background-color: #f5f5f5;
+            background-color: #FFF;
             border-right: 1px solid #eee;
-        }
-        .sidebar {
-            display: none;
         }
 
         .nav-sidebar {
@@ -114,7 +231,38 @@
             margin-bottom: 20px;
             margin-left: -20px;
         }
-
+        .nav-sidebar > li > a {
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+        .nav-sidebar > .active > a, .nav-sidebar > .active > a:hover, .nav-sidebar > .active > a:focus {
+            color: #fff;
+            background-color: #428bca;
+        }
+        .compVsplit {
+            clear: both;
+            margin: 1px 12px 10px 10px;
+            border-top: 1px dashed #e5e5e5;
+        }
+        .compOK {
+            color: #FFF;
+            text-decoration: none;
+            display: block;
+            width: 198px;
+            height: 27px;
+            margin-left: 9px;
+            padding-top: 6px;
+            text-align: center;
+            border: 1px solid #3073d1;
+            background-color: #4284e2;
+        }
+        .mainSplit {
+            top: 64px;
+            position: relative;
+            _overflow: visible;
+            padding: 20px 26px 20px 15px;
+            border-left: 2px solid #e1e1e1;
+        }
     </style>
     {% block head_css %}
     {% endblock head_css %}
@@ -135,7 +283,7 @@
 {% block navbar %}
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container">
+            <div class="mw1300">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -147,7 +295,12 @@
                 <a class="brand" href="#"><strong><font size="+1">舆情要素提取</font></strong></a>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a class="source"><small><font size="+1"> 信息来源渠道:  </font></small></a></li>
+                        <li>
+                            <a class="source">
+                                <span class="glyphicon glyphicon-star"></span>
+                                <small><font> 信息来源渠道:  </font></small>
+                            </a>
+                        </li>
                         <li class="active"><a href="#">微博</a></li>
                         <li><a class="iactive" href="#">新闻</a></li>
                         <li><a class="iactive" href="#">论坛</a></li>
@@ -163,46 +316,76 @@
         </div>
     </div>
 
-    <div class="container-fluid" style="margin-top: 30px; width: 980px;">
-        <div class="filter-block clearfix inline">
-            <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>选择时间范围:</b></font>
-            <div id="reportrange" class="btn dropdown-toggle">
-                <i class="icon-calendar icon-large"></i>
-                <span id="all_time">{{ time_range }}</span> 
-                <b class="caret"></b>
-            </div>
-            <font color="#003366" face="Georgia, Times New Roman, Times, serif"><b>&nbsp&nbsp&nbsp时间粒度: </b></font>
-            <div class="btn dropdown-toggle" style="position:relative;height: 30px;margin-top: 0px;">
-                <span style="position:relative;margin-left:100px;width:18px;overflow:hidden;">
-                    <select name="all_dur" style="width:110px;margin-left:-100px;" onchange="this.parentNode.nextSibling.value=this.value">
-                        <option value="15分钟"> 15分钟 </option>
-                        <option value="1小时"> 1小时 </option>
-                        <option value="1天"> 1天 </option>
-                    </select>
-                </span>
-                <input id="all_durtime" name="all_dur" style="width:75px;position:absolute;left:15px;overflow:hidden;" value="15分钟">
-            </div>
-
-            <span class="btn btn-info override-marginright2" ng-click="search()" ng-disabled="sdate === undefined || edate === undefined || isGettingAlerts">搜索</span>
-            <div style="display: inline-block;" class="pull-right">
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid>
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
-                    <li class="active"><a href="/index/gaishu/">舆情概况</a></li>
-                    <li><a href="/index/zhibiao/">舆情指数</a></li>
-                    <li><a href="#">深度分析</a></li>
-                    <li><a href="/index/time/">时间分析</a></li>
-                    <li><a href="/index/ditu">地狱分析</a></li>
-                    <li><a href="/index/network">网络分析</a></li>
-                    <li><a href="/index/">语义分析</a></li>
-                    <li><a href="#">情感分析</a></li>
+    <div class="mw1300">
+        <div id="lTools" class="lTools">
+            <div class="tabTitle">
+                <ul id="compTab" class="tabUl">
+                    <li class="tabLi curr"><i class="icons byWord"></i><span>选项面板</span></li>
+                    <!--<li class="tabLi"><i class="icons byArea"></i><span>按地域</span></li>-->
                 </ul>
             </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="tabConts">
+                <span class="pull-left" style="margin-left: 8px;">关键词</span>
+                <div>
+                    <ul>
+                        <li class="compLi comCtl" id="">
+                            <div class="comBorderL">
+                                <input disabled name="word" class="comWord" maxlength="50" autocomplete="off" id="auto_gsid_16" value="关键词为空">
+                            </div>
+                            <div class="comBorderR" style="border-color: rgb(110, 135, 215);">
+                                <i class="icons delComp"></i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="compVsplit"></div>
+                <div class="compOth">
+                    <div class="comCtl">
+                            <span class="pull-left">时间范围</span>
+                            <div id="reportrange" class="btn dropdown-toggle">
+                                <i class="icon-calendar icon-large"></i>
+                                <span id="all_time">{{ time_range }}</span> 
+                                <b class="caret"></b>
+                            </div>
+                    </div>
+                </div>
+                <div class="compVsplit"></div>
+                <div class="compOth">
+                    <div class="comCtl">
+                            <span class="pull-left">时间粒度</span>
+                            <div class="btn-group" style="position:relative;height: 30px;margin-top: 0px;">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    15分钟
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">1小时</a></li>
+                                    <li><a href="#">1天</a></li>
+                                </ul>
+                            </div>
+                            <input id="all_durtime" name="all_dur" type="hidden" value="15分钟">
+                    </div>
+                </div>
+                <div class="compVsplit"></div>
+                <span class="pull-left" style="margin-left: 8px;">要素选择</span>
+                <div style="padding: 20px">
+                    <ul class="nav nav-navlist">
+                        <li class="nav-header">舆情概况</li>
+                        <li><a href="/index/gaishu/" target="_blank">概况分析</a></li>
+                        <li><a href="/index/zhibiao/" target="_blank">指数分析</a></li>
+                        <li class="nav-header">深度分析</li>
+                        <li><a href="/index/time/" target="_blank">时间分析</a></li>
+                        <li><a href="/index/ditu" target="_blank">地域分析</a></li>
+                        <li><a href="/index/network" target="_blank">网络分析</a></li>
+                        <li><a href="/index/" target="_blank">语义分析</a></li>
+                        <li class="active"><a href="#" target="_blank">情感分析</a></li>
+                    </ul>
+                </div>
+                <span><a href="javascript:;" class="compOK" onclick="void();"><i class="glyphicon glyphicon-ok icons"></i>搜索</a></span>
+            </div>
+        </div>
+        <div id="mainWrap">
+            <div class="mainSplit" style="min-height:700px;">
                 {% block content %}
                 {% endblock content %}
             </div>
@@ -244,7 +427,7 @@
             maxDate: all_maxDate
         },
         function(start, end) {
-            $('#reportrange span').html(start.format('MMMM D日, YYYY') + ' - ' + end.format('MMMM D日, YYYY'));
+            $('#reportrange span').html(start.format('YYYYMMDD') + '-' + end.format('YYYYMMDD'));
         }
         );
     </script>
