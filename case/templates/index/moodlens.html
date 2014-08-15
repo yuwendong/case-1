@@ -78,6 +78,37 @@
             padding-right: 15px;
             color: #858585;
         }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float: left;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666;
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7;
+        }
 
     </style>
 {% endblock head_css %}
@@ -149,27 +180,31 @@
 
     <div class="blkUnit grpUnit" style="float:left;" id="weiboarea">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键微博列表</h4>
+            <h4>关键微博</h4>
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
 
-        <div class="tabUnit">
+        <div class="stmTabs tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI>
+                    <a class="tabLi gColor0" href="javascript:;" style="display: block;">
+                        <div class="nmTab">高兴</div>
+                        <div class="hvTab">高兴</div>
+                    </a>
+                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">愤怒</div>
+                        <div class="hvTab">愤怒</div>
+                    </a>
+                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">悲伤</div>
+                        <div class="hvTab">悲伤</div>
+                    </a>
+                </div>
             </div>
             <div class="tabConts">
                 <div id="weibos_div" style="height:400px;float:left;">
-                    <div id="tab">
-                        <div class="tabList">
-                            <ul>
-                                <li class="cur">高兴</li>
-                                <li>愤怒</li>
-                                <li>悲伤</li>
-                            </ul>
-                        </div>
-
-                        <div class="tabCon">
-                            <div class="cur" id="vertical-ticker"></div>
-                        </div>
+                    <div class="tabCon">
+                        <div class="cur" id="vertical-ticker"></div>
                     </div>
                 </div>
             </div>
