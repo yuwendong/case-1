@@ -7,17 +7,9 @@
 <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
 <link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
 <link rel="stylesheet" href="/static/css/css/menu.css" type="text/css" media="all">
-<link rel="stylesheet" href="/static/css/css/datarangepiker.css" type="text/css" media="all">
-<link rel="stylesheet" href="/static/css/css/datepicker.css" type="text/css" media="all">
-<link rel="stylesheet" href="/static/css/css/daterangepicker-bs3.css" type="text/css" media="all">
-<link rel="stylesheet" href="/static/css/css/bootstrap.min.css" type="text/css" media="all">
-<link rel="stylesheet" href="/static/css/css/bootstrap.css" type="text/css" media="all">
+
 
 <script src="/static/js/jquery-1.9.1.min.js" type="text/javascript"></script>
-<script src="/static/css/js/htip.js" type="text/javascript"></script>
-<script src="/static/css/js/moment.js" type="text/javascript"></script>
-<script src="/static/css/js/daterangepicker.js" type="text/javascript"></script>
-<script src="/static/css/js/date_parameter.js" type="text/javascript"></script>
 
 <style type="text/css">
 .headerTitle{font-size:24px;font-family:黑体;color:#ffffff;position: relative;top: 8px;}
@@ -99,75 +91,13 @@
 
 
     <div class="rightbox">
-    
-        <div id="backgroundHolder" style="width:800px;height:50px">
-          <ul class="nav">
-            <li class="drop right"><a class="main down" href="#url"><b>来源</b></a>
-              <ul>
-                <li><a href="#url"><b>微博</b></a></li>
-                <li><a href="#url"><b>新闻</b></a></li>
-                <li><a href="#url"><b>媒体</b></a></li>
-                <li><a href="#url"><b>博客</b></a></li>
-              </ul>
-            </li>
-          </ul>
-          
-          <ul class="nav">
-            <li class="drop right"><a class="main down" href="#url"><b>粒度</b></a>
-              <ul>
-                <li><a href="#url"><b>one day</b></a></li>
-                <li><a href="#url"><b>one hour</b></a></li>
-                <li><a href="#url"><b>a quarter</b></a></li>
-              </ul>
-            </li>
-          </ul>
-
-            <ul class="nav">
-            <li class="drop right"><a class="main down" href="#url"><b>起终</b></a>
-              <ul>
-                <li><a href="#url"><b>起始时间</b></a></li>
-                <li><a href="#url"><b>终止时间</b></a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-
-        <font color="#003366" face="Georgia, Times New Roman, Times, serif">
-            <b>时间范围:</b>
-        </font>
-        <div id="reportrange_1" class="btn dropdown-toggle">
-            <i class="icon-calendar icon-large"></i>
-            <span id="all_time">2013-9-1</span> 
-            <b class="caret"></b>
-        </div>
-            
-
-    <div id="main" style="height:600px;width:800px; margin:40px;float:left"></div>
+     <div id="main" style="height:600px;width:800px; margin:40px;float:left"></div>
     
 
     <!-- ECharts单文件引入 -->
     <script src="/static/css/echarts-2.0.0/build/echarts-plain-map.js"></script>  
     <script src="/static/css/js/timelineoption.js" type="text/javascript"></script>
     <script type="text/javascript"> 
-     
-    $('#reportrange_1').daterangepicker({
-        ranges: {
-           '今天': [all_endDate, all_endDate],
-           //'昨天': [moment().subtract('days', 1), moment().subtract('days', 1)],
-           '最近7天': [week_ago, all_endDate],
-           //'最近30天': [moment().subtract('days', 29), moment()],
-           //'本月内': [moment().startOf('month'), moment().endOf('month')],
-           //'上个月': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
-        },
-        startDate: all_startDate,
-        endDate: all_endDate,
-        minDate: all_minDate,
-        maxDate: all_maxDate
-        }, 
-        function(start, end) {
-          $('#reportrange_1 span').html(start.format('MMMM D日, YYYY') + ' - ' + end.format('MMMM D日, YYYY'));
-        }
-    );
 
 
      var map_data = {};
@@ -193,7 +123,8 @@
 
                 time_af.push(ns);
             }
-            console.log(time_af);
+            console.log(dataMap.dataweibo[time_t[0]][1]);
+           //console.log(time_af);
            // var unixTimestamp = new Data(Unix 1377968400*1000);
            //  var commonTime=unixTimestamp.toLocaleString();
            //  console.log(commonTime);
@@ -271,7 +202,9 @@
                             dataMap.dataweibo[time_t[0]][23],//上海的数据
                             dataMap.dataweibo[time_t[0]][5],//广东的数据
                             dataMap.dataweibo[time_t[0]][26],//西藏的数据
-                            dataMap.dataweibo[time_t[0]][27]//新疆的数据
+                            dataMap.dataweibo[time_t[0]][27],//新疆的数据
+                            {name:"海外" ,value: 250}
+
                             ]
                         },
                         geoCoord : {
@@ -279,7 +212,8 @@
                         "上海":[121.48,31.22], 
                         "广东":[113.23,23.16],
                         "西藏":[91.11,29.97],
-                        "新疆":[87.68,43.77] 
+                        "新疆":[87.68,43.77], 
+                        "海外":[126.9,37.51]
                         }
                     }
                 ]
@@ -311,7 +245,8 @@
                             dataMap.dataweibo[time_t[1]][23],//上海的数据
                             dataMap.dataweibo[time_t[1]][5],//广东的数据
                             dataMap.dataweibo[time_t[1]][26],//西藏的数据
-                            dataMap.dataweibo[time_t[1]][27]//新疆的数据
+                            dataMap.dataweibo[time_t[1]][27],//新疆的数据
+                            {name:"海外" ,value: 100}
                             ]
                         },
                         geoCoord : {
@@ -319,7 +254,8 @@
                         "上海":[121.48,31.22], 
                         "广东":[113.23,23.16],
                         "西藏":[91.11,29.97],
-                        "新疆":[87.68,43.77]
+                        "新疆":[87.68,43.77],
+                        "海外":[126.9,37.51]
                         }//若要增加其他的城市，现在data中找到相应的城市数据，再在geoCoord中加入相应的经纬度即可
                     }
                 ]
@@ -351,7 +287,8 @@
                             dataMap.dataweibo[time_t[2]][23],//上海的数据
                             dataMap.dataweibo[time_t[2]][5],//广东的数据
                             dataMap.dataweibo[time_t[2]][26],//西藏的数据
-                            dataMap.dataweibo[time_t[2]][27]//新疆的数据
+                            dataMap.dataweibo[time_t[2]][27],
+                            {name:"海外" ,value: 400}//新疆的数据
                             ]
                         },
                         geoCoord : {
@@ -359,7 +296,8 @@
                         "上海":[121.48,31.22], 
                         "广东":[113.23,23.16],
                         "西藏":[91.11,29.97],
-                        "新疆":[87.68,43.77]
+                        "新疆":[87.68,43.77],
+                        "海外":[126.9,37.51]
                         }
                     }
                 ]
@@ -392,7 +330,8 @@
                             dataMap.dataweibo[time_t[3]][23],//上海的数据
                             dataMap.dataweibo[time_t[3]][5],//广东的数据
                             dataMap.dataweibo[time_t[3]][26],//西藏的数据
-                            dataMap.dataweibo[time_t[3]][27]//新疆的数据
+                            dataMap.dataweibo[time_t[3]][27],
+                            {name:"海外" ,value: 600}//新疆的数据
                             ]
                         },
                         geoCoord : {
@@ -400,7 +339,8 @@
                         "上海":[121.48,31.22], 
                         "广东":[113.23,23.16],
                         "西藏":[91.11,29.97],
-                        "新疆":[87.68,43.77]
+                        "新疆":[87.68,43.77],
+                        "海外":[126.9,37.51]
                         }
                     }
                 ]
