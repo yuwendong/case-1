@@ -4,7 +4,8 @@ import math
 import operator
 from case.extensions import db
 from utils import weiboinfo2url
-from time_utils import datetime2ts
+from time_utils import datetime2ts, ts2date
+from config import xapian_search_user as user_search
 from case.model import PropagateCount, PropagateKeywords, PropagateWeibos# , AttentionCount, QuicknessCount  需要查询的表
 
 Minute = 60
@@ -192,10 +193,30 @@ def ReadPropagateKeywords(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_LIMIT
 
     return kcounts_dict
 
+def getuserinfo(uid):
+    #print 'uid:',uid, type(uid)
+    user = acquire_user_by_id(uid)
+    if not user:
+        username = 'Unkonwn'
+        prfileimage = ''
+    else:
+        username = user['name']
+        profileimage = user['image']
+    return username, profileimage
+
+def acquire_user_by_id(uid):
+    user_result = user_search.search_by_id(uid, fields=['name', 'profile_image_url'])
+    user = {}
+    if user_result:
+        user['name'] = user_result['name']
+        user['image'] = user_result['profile_image_url']
+        #print 'user', user
+    return user
+
 
 def _top_weibos(weibos_dict, top=TOP_READ):
     results_list =[]
-
+    results_list_new = []
     if weibos_dict != {}:
         results = sorted(weibos_dict.iteritems(), key=lambda(k,v): v[0], reverse=False)
         #print '_top_weibos_results_orgin:', len(results)
@@ -205,9 +226,11 @@ def _top_weibos(weibos_dict, top=TOP_READ):
         for k, v in results:
             #print '@@@@@@@@:',v[1]
             results_list.append(v[1])
+        for i in range(len(results_list)):
+            results_list_new.append(results_list[len(results_list)-1-i])
     #print 'list:', results_list
-    print 'list_lens:', len(results_list)
-    return results_list
+    #print 'list_lens:', len(results_list)
+    return results_list_new
 
 def _json_loads(weibos):
     try:
@@ -228,14 +251,19 @@ def parseWeibos(weibos):
     for weibo in weibos:
         try:
             _id = weibo['_id']
-            #print '_id', _id
+            username, profileimage = getuserinfo(weibo['user'])
+            #print 'username', profileimage
             reposts_count = weibo['reposts_count']
             #print 'reposts_count', reposts_count
             weibo['weibo_link'] = weiboinfo2url(weibo['user'],_id)
+            weibo['username'] = username
+            weibo['profile_image_url'] = profileimage
+            weibo['timestamp'] = ts2date(weibo['timestamp'])
+            #print 'weibo:', weibo
             weibo_dict[_id] = [reposts_count, weibo]
         except:
             continue
- 
+    #print 'there :', weibo_dict
     return weibo_dict
 
 
@@ -255,7 +283,7 @@ def ReadPropagateWeibos(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, un
             #print '$$'*5
             #print item.weibos
             weibos_dict = parseWeibos(item.weibos)
-            print '-------', weibos_dict
+            #print '-------', weibos_dict
 
     else:
         start_ts = end_ts - during
