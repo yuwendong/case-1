@@ -197,12 +197,16 @@ def _top_weibos(weibos_dict, top=TOP_READ):
     results_list =[]
 
     if weibos_dict != {}:
-        results = sorted(weibos_dict.iteritems(), key=lambda(k,v):v[0], reverse=False)
+        results = sorted(weibos_dict.iteritems(), key=lambda(k,v): v[0], reverse=False)
+        #print '_top_weibos_results_orgin:', len(results)
+        #print '_top_weibos_results:', len(results)-top
         results = results[len(results) - top:]
-
+        
         for k, v in results:
+            #print '@@@@@@@@:',v[1]
             results_list.append(v[1])
-
+    #print 'list:', results_list
+    print 'list_lens:', len(results_list)
     return results_list
 
 def _json_loads(weibos):
@@ -224,9 +228,9 @@ def parseWeibos(weibos):
     for weibo in weibos:
         try:
             _id = weibo['_id']
-            print '_id', _id
+            #print '_id', _id
             reposts_count = weibo['reposts_count']
-            print 'reposts_count', reposts_count
+            #print 'reposts_count', reposts_count
             weibo['weibo_link'] = weiboinfo2url(weibo['user'],_id)
             weibo_dict[_id] = [reposts_count, weibo]
         except:
@@ -251,7 +255,7 @@ def ReadPropagateWeibos(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, un
             #print '$$'*5
             #print item.weibos
             weibos_dict = parseWeibos(item.weibos)
-            #print '-------', weibos_dict
+            print '-------', weibos_dict
 
     else:
         start_ts = end_ts - during
@@ -261,18 +265,18 @@ def ReadPropagateWeibos(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, un
                                                          PropagateWeibos.end<=upbound, \
                                                          PropagateWeibos.topic==topic, \
                                                          PropagateWeibos.mtype==mtype, \
-                                                         PropagateWeibos.unit==unit, \
+                                                         PropagateWeibos.range==unit, \
                                                          PropagateWeibos.limit==limit).all()
         for item in items:
             weibo_dict = parseWeibos(item.weibos)
+            #print 'weibo_dict:', weibo_dict
             for k ,v in weibo_dict.iteritems():
                 try:
                     weibos_dict[k] += v
                 except KeyError:
                     weibos_dict[k] = v
-
-    weibo_dict = _top_weibos(weibos_dict, top)
-
+                #print 'weibos_dict:', weibos_dict
+    weibos_dict = _top_weibos(weibos_dict, top)
     return weibos_dict
 
 

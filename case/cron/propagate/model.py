@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from extensions import db
+from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'PropagateKeywords', \
