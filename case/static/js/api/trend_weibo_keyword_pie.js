@@ -100,16 +100,26 @@ TrendsLine.prototype.drawPie = function(){
     var pie_div_id = this.pie_div_id;
 
     var option = {
-        backgroundColor: '#F0F0F0',
+        backgroundColor: '#FFF',
         title : {
-            text: pie_title,
+            text: '', // pie_title,
             x: 'center',
             textStyle:{
                 fontWeight: 'lighter',
                 fontSize: 13
             }
         },
-        tooltip : {
+        toolbox: {
+            show: true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
@@ -369,35 +379,8 @@ TrendsLine.prototype.initDrawTrend = function(){
             onSeries : 'happy',
             shape : 'circlepin',
             width : 2,
-            color: '#006600'
-        },{
-            name: '拐点-愤怒',
-            type : 'flags',
-            data : [],
-            cursor: 'pointer',
-            onSeries : 'angry',
-            shape : 'circlepin',
-            width : 2,
-            color: '#FF0000'
-        },{
-            name: '拐点-悲伤',
-            type : 'flags',
-            data : [],
-            cursor: 'pointer',
-            onSeries : 'sad',
-            shape : 'circlepin',
-            width : 2,
-            color: '#000099'
-        },{
-            name: '拐点-高兴',
-            type : 'flags',
-            data : [],
-            cursor: 'pointer',
-            onSeries : 'happy',
-            shape : 'circlepin',
-            width : 2,
             color: '#006600',
-            visible:false, // 默认显示相对
+            visible: false, // 默认显示绝对
             showInLegend: false
         },{
             name: '拐点-愤怒',
@@ -408,7 +391,7 @@ TrendsLine.prototype.initDrawTrend = function(){
             shape : 'circlepin',
             width : 2,
             color: '#FF0000',
-            visible:false, // 默认显示相对
+            visible: false, // 默认显示绝对
             showInLegend: false
         },{
             name: '拐点-悲伤',
@@ -419,18 +402,82 @@ TrendsLine.prototype.initDrawTrend = function(){
             shape : 'circlepin',
             width : 2,
             color: '#000099',
-            visible:false, // 默认显示相对
+            visible: false, // 默认显示绝对
             showInLegend: false
+        },{
+            name: '拐点-高兴',
+            type : 'flags',
+            data : [],
+            cursor: 'pointer',
+            onSeries : 'happy',
+            shape : 'circlepin',
+            width : 2,
+            color: '#006600',
+            visible: true, // 默认显示绝对
+            showInLegend: true
+        },{
+            name: '拐点-愤怒',
+            type : 'flags',
+            data : [],
+            cursor: 'pointer',
+            onSeries : 'angry',
+            shape : 'circlepin',
+            width : 2,
+            color: '#FF0000',
+            visible: true, // 默认显示绝对
+            showInLegend: true
+        },{
+            name: '拐点-悲伤',
+            type : 'flags',
+            data : [],
+            cursor: 'pointer',
+            onSeries : 'sad',
+            shape : 'circlepin',
+            width : 2,
+            color: '#000099',
+            visible:true, // 默认显示绝对
+            showInLegend: true
         }]
 
     var that = this;
     myChart = display_trend(that, trend_div_id, this.query, pointInterval, start_ts, end_ts, trends_title, series_data, xAxisTitleText, yAxisTitleText);
     this.trend_chart = myChart;
 
-    $("#absolute_label").click(function() {
-        var click_flag = true;
-        if(click_flag){
-            var chart = $('#trend_div').highcharts();
+    $("[name='abs_rel_switch']").on('switchChange.bootstrapSwitch', function(event, state) {
+        var chart = $('#trend_div').highcharts();
+        if (state == false){
+            for (var i in chart.series){
+                var series = chart.series[i];
+                if(i == 0 || i == 1 || i == 2){
+                    var name;
+                    if (i == 0){
+                        name = 'happy';
+                    }
+                    else if(i == 1){
+                        name = 'angry';
+                    }
+                    else if(i == 2){
+                        name = 'sad';
+                    }
+                    series.update({
+                        data: that.trend_count_obj['ratio'][name]
+                    });
+                }
+                else if (i == 3 || i == 4 || i == 5){
+                    series.update({
+                        showInLegend: true
+                    });
+                    series.show();
+                }
+                else if (i == 6 || i == 7 || i == 8){
+                    series.update({
+                        showInLegend: false
+                    })
+                    series.hide();
+                }
+            }
+        }
+        else{
             for (var i in chart.series){
                 var series = chart.series[i];
                 if(i == 0 || i == 1 || i == 2){
@@ -462,6 +509,11 @@ TrendsLine.prototype.initDrawTrend = function(){
                 }
             }
         }
+    });
+    $("#absolute_label").click(function() {
+        var click_flag = true;
+        if(click_flag){
+        }
         else{
             alert("请等待相对曲线加载完毕！");
         }
@@ -469,36 +521,6 @@ TrendsLine.prototype.initDrawTrend = function(){
 
     $("#relative_label").click(function() {
         var chart = $('#trend_div').highcharts();
-        for (var i in chart.series){
-            var series = chart.series[i];
-            if(i == 0 || i == 1 || i == 2){
-                var name;
-                if (i == 0){
-                    name = 'happy';
-                }
-                else if(i == 1){
-                    name = 'angry';
-                }
-                else if(i == 2){
-                    name = 'sad';
-                }
-                series.update({
-                    data: that.trend_count_obj['ratio'][name]
-                });
-            }
-            else if (i == 3 || i == 4 || i == 5){
-                series.update({
-                    showInLegend: true
-                });
-                series.show();
-            }
-            else if (i == 6 || i == 7 || i == 8){
-                series.update({
-                    showInLegend: false
-                })
-                series.hide();
-            }
-        }
     });
 }
 
@@ -524,6 +546,7 @@ function pull_emotion_count(that, query, emotion_type, total_days, times, begin_
     if(times > total_days){
         get_peaks(relative_peak_series, that.trend_count_obj['ratio'], that.trend_count_obj['ts'], during);
         get_peaks(absolute_peak_series, that.trend_count_obj['count'], that.trend_count_obj['ts'], during);
+        $("[name='abs_rel_switch']").bootstrapSwitch('readonly', false);
         return;
     }
 
@@ -549,14 +572,14 @@ function pull_emotion_count(that, query, emotion_type, total_days, times, begin_
                 for(var name in count_obj){
                     var count = count_obj[name];
                     var ratio = parseInt(count * 10000 / total_count) / 10000.0;
-                    count_series[name].addPoint([ts * 1000, ratio], true, isShift);
+                    count_series[name].addPoint([ts * 1000, count], true, isShift);
                     that.trend_count_obj['count'][name].push([ts * 1000, count]);
                     that.trend_count_obj['ratio'][name].push([ts * 1000, ratio]);
                 }
             }
             else{
                 for(var name in count_obj){
-                    count_series[name].addPoint([ts * 1000, 0.0], true, isShift);
+                    count_series[name].addPoint([ts * 1000, 0], true, isShift);
                     that.trend_count_obj['count'][name].push([ts * 1000, 0]);
                     that.trend_count_obj['ratio'][name].push([ts * 1000, 0.0]);
                 }
@@ -565,8 +588,6 @@ function pull_emotion_count(that, query, emotion_type, total_days, times, begin_
             pull_emotion_count(that, query, emotion_type, total_days, times, begin_ts, during, count_series, relative_peak_series, absolute_peak_series);
         }
     });
-    //预防用户在series加载完毕前，变换相对绝对。
-    document.getElementById("relative").checked="checked";
 }
 
 function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, trends_title, series_data, xAxisTitleText, yAxisTitleText){
@@ -587,9 +608,10 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
         chart: {
             type: 'spline',// line,
             animation: Highcharts.svg, // don't animate in old IE
-            //marginTop: 20,
+            marginTop: 0,
             marginRight: 10,
-            //marginLeft: 10,
+            //marginLeft: 20,
+            //marginBottom: -20,
             events: {
                 load: function() {
                     var total_nodes = (end_ts - begin_ts) / during;
@@ -633,7 +655,7 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
             }
         },
         title : {
-            text: trends_title
+            text: '' // trends_title
         },
         // 导出按钮汉化
         lang: {
