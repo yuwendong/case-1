@@ -239,7 +239,7 @@ def weibos_data():
     search_func = getattr(weibosModule, 'search_%s_weibos' % search_method, None)
 
     if search_func:
-        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, top=limit, customized=customized)  
+        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, limit=limit, customized=customized)  
     else:
         return json.dumps('search function undefined')
 
