@@ -26,10 +26,10 @@ def _top_weibos(weibos_dict, top=TOP_READ):
     if weibos_dict != {}:
         results = sorted(weibos_dict.iteritems(), key=lambda(k,v): v[0], reverse=False)
         results = results[len(results) - top:]
-
+        #print 'len_results',len(results)-top
         for k, v in results:
             results_list.append(v[1])
-
+    #print 'lens_results_list:', len(results_list)
     return results_list
 
 
