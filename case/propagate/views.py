@@ -62,7 +62,8 @@ def propagate_weibos():
     end_ts = int(end_ts)
     limit = request.args.get('limit', 50)
     limit = int(limit)
-    results = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
+    results = {}
+    results[mtype] = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
     return json.dumps(results)
 
 @mod.route('/propagatepeak/')
