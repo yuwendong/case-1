@@ -1,20 +1,20 @@
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 
-        "M+" : this.getMonth()+1, //month 
-        "d+" : this.getDate(),    //day 
-        "h+" : this.getHours(),   //hour 
-        "m+" : this.getMinutes(), //minute 
-        "s+" : this.getSeconds(), //second 
-        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter 
-        "S" : this.getMilliseconds() //millisecond 
-        } 
-        if(/(y+)/.test(format)) 
-            format=format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-            for(var k in o)
-                if(new RegExp("("+ k +")").test(format)) 
-                    format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
-                    return format; 
+    "M+" : this.getMonth()+1, //month 
+    "d+" : this.getDate(),    //day 
+    "h+" : this.getHours(),   //hour 
+    "m+" : this.getMinutes(), //minute 
+    "s+" : this.getSeconds(), //second 
+    "q+" : Math.floor((this.getMonth()+3)/3),  //quarter 
+    "S" : this.getMilliseconds() //millisecond 
+    } 
+    if(/(y+)/.test(format)) 
+    format=format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    for(var k in o)
+    if(new RegExp("("+ k +")").test(format)) 
+        format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
+    return format; 
 }
 
 // TrendsLine Constructor
@@ -74,10 +74,10 @@ function TrendsLine(start_ts, end_ts, pointInterval){
     this.trend_title = '情绪走势图';
     this.trend_chart;
 
-    var names = {
+    this.names = {
         'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
+        'angry': '愤怒',
+        'sad': '悲伤'
     }
 
     this.trend_count_obj = {
@@ -86,7 +86,7 @@ function TrendsLine(start_ts, end_ts, pointInterval){
         'ratio': {}
     };
 
-    for (var name in names){
+    for (var name in this.names){
         this.trend_count_obj['count'][name] = [];
         this.trend_count_obj['ratio'][name] = [];
     }
@@ -95,16 +95,11 @@ function TrendsLine(start_ts, end_ts, pointInterval){
 // instance method, 初始化时获取整个时间段的饼图数据并绘制
 TrendsLine.prototype.initPullDrawPie = function(){
     that = this;
+    var names = this.names;
     var ajax_url = this.pie_ajax_url(this.query, this.end_ts, this.during);
     this.call_async_ajax_request(ajax_url, this.ajax_method, range_count_callback);
 
     function range_count_callback(data){
-        var names = {
-            'happy': '高兴',
-            'sad': '悲伤',
-            'angry': '愤怒'
-        }
-
         var pie_data = [];
         for (var status in data){
             var count = data[status];
@@ -133,6 +128,7 @@ TrendsLine.prototype.initPullDrawPie = function(){
 function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id) {
     var option = {
         backgroundColor: '#FFF',
+        color: ['#11c897', '#fa7256', '#6e87d7'],
         title : {
             text: '', // pie_title,
             x: 'center',
@@ -180,17 +176,19 @@ function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_
 // instance method, 初始化时获取整个时间范围的关键词云数据并绘制
 TrendsLine.prototype.initPullDrawKeywords = function(){
     that = this;
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
 
-    var ajax_url = this.keywords_ajax_url(this.query, this.end_ts, this.during, 'global');
+    var names = this.names;
+
+    var min_keywords_size = this.min_keywords_size;
+    var max_keywords_size = this.max_keywords_size;
+
+    var emotion = 'global';
+
+    var ajax_url = this.keywords_ajax_url(this.query, this.end_ts, this.during, emotion);
     this.call_async_ajax_request(ajax_url, this.ajax_method, range_keywords_callback);
 
     function range_keywords_callback(data){
-        refreshDrawKeywords(data);
+        refreshDrawKeywords(min_keywords_size, max_keywords_size, data, emotion);
     }
 }
 
@@ -204,7 +202,7 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
 }
 
 // 画关键词云图
-function refreshDrawKeywords(keywords_data){
+function refreshDrawKeywords(min_keywords_size, max_keywords_size, keywords_data, emotion){
     $("#keywords_cloud_div").empty();
     if (keywords_data == {}){
         $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");
@@ -225,10 +223,18 @@ function refreshDrawKeywords(keywords_data){
             words_count_obj[keyword] = count;
         }
 
+        var colors = {
+            'global': '#666',
+            'happy': '#11c897',
+            'angry': '#fa7256',
+            'sad': '#6e87d7'
+        }
+        var color = colors[emotion];
+
         for(var keyword in words_count_obj){
             var count = words_count_obj[keyword];
-            var size = defscale(count, min_count, max_count, this.min_keywords_size, this.max_keywords_size);
-            $('#keywords_cloud_div').append("<a><font style=\"color:blue font-size:" + size + "\">" + keyword + "</font></a>");
+            var size = defscale(count, min_count, max_count, min_keywords_size, max_keywords_size);
+            $('#keywords_cloud_div').append('<a><font style="color:' + color +  '; font-size:' + size + 'px;">' + keyword + '</font></a>');
         }
 
         on_load();
@@ -237,11 +243,8 @@ function refreshDrawKeywords(keywords_data){
 
 // instance method, 初始化时获取关键微博数据
 TrendsLine.prototype.initPullWeibos = function(){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
+    var names = this.names;
+
     var weibos_data = [];
     that = this;
     for (var name in names){
@@ -256,7 +259,7 @@ TrendsLine.prototype.initPullWeibos = function(){
                 that.range_weibos_data[name] = weibos_list;
             }
         }
-    };
+    }
 }
 
 
@@ -296,7 +299,7 @@ function refreshDrawWeibos(select_name, weibos_obj){
         var reposts_count = da['reposts_count'];
         var comments_count = da['comments_count'];
         var timestamp = da['timestamp'];
-        var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 h:m:s");
+        var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
         var weibo_link = da['weibo_link'];
         var user_link = 'http://weibo.com/u/' + uid;
         var user_image_link = da['profile_image_url'];
@@ -349,6 +352,7 @@ TrendsLine.prototype.initDrawWeibos = function(){
 }
 
 function bindSentimentTabClick(weibos_obj){
+    $("#sentimentTabDiv").children("a").unbind();
     $("#sentimentTabDiv").children("a").click(function() {
         var select_a = $(this);
         var unselect_a = $(this).siblings('a');
@@ -364,11 +368,8 @@ function bindSentimentTabClick(weibos_obj){
 // instance method, 获取数据并绘制趋势图
 TrendsLine.prototype.pullDrawTrend = function(){
     var trends_title = this.trend_title;
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
+    var names = this.names;
+
     var trend_div_id = this.trend_div_id;
     var pointInterval = this.pointInterval;
     var start_ts = this.start_ts;
@@ -379,7 +380,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             name: '高兴',
             data: [],
             id: 'happy',
-            color: '#006600',
+            color: '#11c897',
             marker : {
                 enabled : false,
             }
@@ -387,7 +388,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             name: '愤怒',
             data: [],
             id: 'angry',
-            color: '#FF0000',
+            color: '#fa7256',
             marker : {
                 enabled : false,
             }
@@ -395,7 +396,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             name: '悲伤',
             data: [],
             id: 'sad',
-            color: '#000099',
+            color: '#6e87d7',
             marker : {
                 enabled : false,
             }
@@ -407,7 +408,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'happy',
             shape : 'circlepin',
             width : 2,
-            color: '#006600',
+            color: '#11c897',
             visible: false, // 默认显示绝对
             showInLegend: false
         },{
@@ -418,7 +419,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'angry',
             shape : 'circlepin',
             width : 2,
-            color: '#FF0000',
+            color: '#fa7256',
             visible: false, // 默认显示绝对
             showInLegend: false
         },{
@@ -429,7 +430,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'sad',
             shape : 'circlepin',
             width : 2,
-            color: '#000099',
+            color: '#6e87d7',
             visible: false, // 默认显示绝对
             showInLegend: false
         },{
@@ -440,7 +441,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'happy',
             shape : 'circlepin',
             width : 2,
-            color: '#006600',
+            color: '#11c897',
             visible: true, // 默认显示绝对
             showInLegend: true
         },{
@@ -451,7 +452,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'angry',
             shape : 'circlepin',
             width : 2,
-            color: '#FF0000',
+            color: '#fa7256',
             visible: true, // 默认显示绝对
             showInLegend: true
         },{
@@ -462,7 +463,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             onSeries : 'sad',
             shape : 'circlepin',
             width : 2,
-            color: '#000099',
+            color: '#6e87d7',
             visible:true, // 默认显示绝对
             showInLegend: true
         }]
@@ -542,11 +543,8 @@ TrendsLine.prototype.pullDrawTrend = function(){
 
 
 function pull_emotion_count(that, query, emotion_type, total_days, times, begin_ts, during, count_series, relative_peak_series, absolute_peak_series){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
+    var names = that.names;
+
     if(times > total_days){
         get_peaks(that, relative_peak_series, that.trend_count_obj['ratio'], that.trend_count_obj['ts'], during);
         get_peaks(that, absolute_peak_series, that.trend_count_obj['count'], that.trend_count_obj['ts'], during);
@@ -602,11 +600,7 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
     });
 
 
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
+    var names = that.names;
 
     var chart_obj = $('#' + trend_div_id).highcharts({
         chart: {
@@ -729,12 +723,25 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
 
 
 function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
+    var names = that.names;
+
     var data = [];
     for(var i in data_list){
         data.push(data_list[i][1]);
     }
 
+    var min_keywords_size = that.min_keywords_size;
+    var max_keywords_size = that.max_keywords_size;
+
     var ajax_url = that.peak_ajax_url(data, ts_list, during, emotion);
+    var pie_title = that.pie_title;
+    var pie_series_title = that.pie_series_title;
+    var legend_data = [];
+    for (var name in names){
+        legend_data.push(names[name]);
+    }
+    var pie_div_id = that.pie_div_id;
+
     that.call_async_ajax_request(ajax_url, that.ajax_method, peak_callback);
 
     function peak_callback(data){
@@ -748,6 +755,8 @@ function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
                     var click_ts = this.x / 1000;
                     var emotion = this.emotion;
                     var title = this.title;
+
+                    peakDrawTip(click_ts, emotion, title);
                     peakPullDrawKeywords(click_ts, emotion, title);
                     peakPullDrawPie(click_ts, emotion, title);
                     peakPullDrawWeibos(click_ts, emotion, title);
@@ -756,37 +765,65 @@ function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
         }
     }
 
+    function peakDrawTip(click_ts, emotion, title){
+        $("#peak_tooltip").empty();
+        $("#peak_tooltip").append('<span><i class="glyphicon glyphicon-exclamation-sign"></i>当前点击了点' + title + '&nbsp;&nbsp;情绪:' + that.names[emotion] + '&nbsp;&nbsp;日期:' + new Date(click_ts * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</span>');
+    }
+
     function peakPullDrawKeywords(click_ts, emotion, title){
         var ajax_url = that.keywords_ajax_url(that.query, click_ts, that.pointInterval, emotion);
         that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
         function callback(data){
-            refreshDrawKeywords(data[emotion]);
+            refreshDrawKeywords(min_keywords_size, max_keywords_size, data[emotion], emotion);
         }
     }
+
     function peakPullDrawPie(click_ts, emotion, title){
         var ajax_url = that.pie_ajax_url(that.query, click_ts, that.pointInterval);
         that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
         function callback(data){
-            console.log(data);
-            refreshDrawPie(data[emotion]);
+            var pie_data = [];
+            for (var status in data){
+                var count = data[status];
+                pie_data.push({
+                    value: count,
+                    name: names[status]
+                })
+            }
+            refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id);
         }
     }
+
     function peakPullDrawWeibos(click_ts, emotion, title){
-        var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, emotion, that.top_weibos_limit);
+        var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, 'global', that.top_weibos_limit);
         that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
         function callback(data){
+            refreshWeiboTab(emotion);
             refreshDrawWeibos(emotion, data);
-            // bindSentimentTabClick(weibos_obj);
+            bindSentimentTabClick(data);
         }
+    }
+
+    function refreshWeiboTab(emotion){
+        $("#sentimentTabDiv").children("a").each(function() {
+            var select_a = $(this);
+            var select_a_sentiment = select_a.attr('sentiment');
+            if (select_a_sentiment == emotion){
+                if(!select_a.hasClass('curr')) {
+                    select_a.addClass('curr');
+                }
+            }
+            else{
+                if(select_a.hasClass('curr')) {
+                    select_a.removeClass('curr');
+                }
+            }
+        });
     }
 }
 
 function get_peaks(that, series, data_obj, ts_list, during){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
+    var names = that.names;
     for (var name in names){
         var select_series = series[name];
         var data_list = data_obj[name];
@@ -818,46 +855,47 @@ function get_peaks(that, series, data_obj, ts_list, during){
     {
         var i=0;
         var oTag=null;
-        
+        mcList = [];
+
         oDiv=document.getElementById('keywords_cloud_div');
-        
+
         aA=oDiv.getElementsByTagName('a');
-        
+
         for(i=0;i<aA.length;i++)
         {
             oTag={};
-            
+
             oTag.offsetWidth=aA[i].offsetWidth;
             oTag.offsetHeight=aA[i].offsetHeight;
-            
+
             mcList.push(oTag);
         }
-        
+
         sineCosine( 0,0,0 );
-        
+
         positionAll();
-        
+
         oDiv.onmouseover=function ()
         {
             active=true;
         };
-        
+
         oDiv.onmouseout=function ()
         {
             active=false;
         };
-        
+
         oDiv.onmousemove=function (ev)
         {
             var oEvent=window.event || ev;
-            
+
             mouseX=oEvent.clientX-(oDiv.offsetLeft+oDiv.offsetWidth/2);
             mouseY=oEvent.clientY-(oDiv.offsetTop+oDiv.offsetHeight/2);
-            
+
             mouseX/=5;
             mouseY/=5;
         };
-        
+
         setInterval(update, 30);
     };
 
@@ -865,7 +903,7 @@ function get_peaks(that, series, data_obj, ts_list, during){
     {
         var a;
         var b;
-        
+
         if(active)
         {
             a = (-Math.min( Math.max( -mouseY, -size ), size ) / radius ) * tspeed;
@@ -876,15 +914,15 @@ function get_peaks(that, series, data_obj, ts_list, during){
             a = lasta * 0.98;
             b = lastb * 0.98;
         }
-        
+
         lasta=a;
         lastb=b;
-        
+
         if(Math.abs(a)<=0.01 && Math.abs(b)<=0.01)
         {
             return;
         }
-        
+
         var c=0;
         sineCosine(a,b,c);
         for(var j=0;j<mcList.length;j++)
@@ -892,29 +930,29 @@ function get_peaks(that, series, data_obj, ts_list, during){
             var rx1=mcList[j].cx;
             var ry1=mcList[j].cy*ca+mcList[j].cz*(-sa);
             var rz1=mcList[j].cy*sa+mcList[j].cz*ca;
-            
+
             var rx2=rx1*cb+rz1*sb;
             var ry2=ry1;
             var rz2=rx1*(-sb)+rz1*cb;
-            
+
             var rx3=rx2*cc+ry2*(-sc);
             var ry3=rx2*sc+ry2*cc;
             var rz3=rz2;
-            
+
             mcList[j].cx=rx3;
             mcList[j].cy=ry3;
             mcList[j].cz=rz3;
-            
+
             per=d/(d+rz3);
-            
+
             mcList[j].x=(howElliptical*rx3*per)-(howElliptical*2);
             mcList[j].y=ry3*per;
             mcList[j].scale=per;
             mcList[j].alpha=per;
-            
+
             mcList[j].alpha=(mcList[j].alpha-0.6)*(10/6);
         }
-        
+
         doPosition();
         depthSort();
     }
@@ -923,12 +961,12 @@ function get_peaks(that, series, data_obj, ts_list, during){
     {
         var i=0;
         var aTmp=[];
-        
+
         for(i=0;i<aA.length;i++)
         {
             aTmp.push(aA[i]);
         }
-        
+
         aTmp.sort
         (
             function (vItem1, vItem2)
@@ -947,7 +985,7 @@ function get_peaks(that, series, data_obj, ts_list, during){
                 }
             }
         );
-        
+
         for(i=0;i<aTmp.length;i++)
         {
             aTmp[i].style.zIndex=i;
@@ -959,17 +997,17 @@ function get_peaks(that, series, data_obj, ts_list, during){
         var phi=0;
         var theta=0;
         var max=mcList.length;
+
         var i=0;
-        
         var aTmp=[];
         var oFragment=document.createDocumentFragment();
-        
+
         //随机排序
         for(i=0;i<aA.length;i++)
         {
             aTmp.push(aA[i]);
         }
-        
+
         aTmp.sort
         (
             function ()
@@ -977,14 +1015,14 @@ function get_peaks(that, series, data_obj, ts_list, during){
                 return Math.random()<0.5?1:-1;
             }
         );
-        
+
         for(i=0;i<aTmp.length;i++)
         {
             oFragment.appendChild(aTmp[i]);
         }
-        
+
         oDiv.appendChild(oFragment);
-        
+
         for( var i=1; i<max+1; i++){
             if( distr )
             {
@@ -996,11 +1034,12 @@ function get_peaks(that, series, data_obj, ts_list, during){
                 phi = Math.random()*(Math.PI);
                 theta = Math.random()*(2*Math.PI);
             }
+
             //坐标变换
             mcList[i-1].cx = radius * Math.cos(theta)*Math.sin(phi);
             mcList[i-1].cy = radius * Math.sin(theta)*Math.sin(phi);
             mcList[i-1].cz = radius * Math.cos(phi);
-            
+
             aA[i-1].style.left=mcList[i-1].cx+oDiv.offsetWidth/2-mcList[i-1].offsetWidth/2+'px';
             aA[i-1].style.top=mcList[i-1].cy+oDiv.offsetHeight/2-mcList[i-1].offsetHeight/2+'px';
         }
@@ -1014,9 +1053,9 @@ function get_peaks(that, series, data_obj, ts_list, during){
         {
             aA[i].style.left=mcList[i].cx+l-mcList[i].offsetWidth/2+'px';
             aA[i].style.top=mcList[i].cy+t-mcList[i].offsetHeight/2+'px';
-            
-            aA[i].style.fontSize=Math.ceil(12*mcList[i].scale/2)+8+'px';
-            
+
+            aA[i].style.ontSize=Math.ceil(12*mcList[i].scale/2)+8+'px';
+
             aA[i].style.filter="alpha(opacity="+100*mcList[i].alpha+")";
             aA[i].style.opacity=mcList[i].alpha;
         }
@@ -1035,7 +1074,7 @@ function get_peaks(that, series, data_obj, ts_list, during){
 
 var START_TS = 1377964800;
 var END_TS = 1378051200;
-var DURING_INTERGER = 15 * 60;
+var DURING_INTERGER = 60 * 60;
 tl = new TrendsLine(START_TS, END_TS, DURING_INTERGER)
 tl.pullDrawTrend();
 tl.initPullDrawPie();

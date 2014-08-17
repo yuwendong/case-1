@@ -238,7 +238,7 @@ def weibos_data():
         query = query.strip()
     during = request.args.get('during', 24*3600)
     during = int(during)
-    emotion = request.args.get('emotion','happy')
+    emotion = request.args.get('emotion', 'global')
     ts = request.args.get('ts', '')
     ts = long(ts)
     begin_ts = ts - during
@@ -252,7 +252,11 @@ def weibos_data():
     search_func = getattr(weibosModule, 'search_%s_weibos' % search_method, None)
 
     if search_func:
-        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, limit=limit, customized=customized)  
+        if emotion == 'global':
+            for k, v in emotions_kv.iteritems():
+                results[k] = search_func(end_ts, during, v, query=query, domain=area, limit=limit, customized=customized)
+        else:
+            results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, limit=limit, customized=customized)
     else:
         return json.dumps('search function undefined')
 
