@@ -87,7 +87,7 @@ def getuserinfo(uid):
     user = acquire_user_by_id(uid)
     if not user:
         username = 'Unkonwn'
-        prfileimage = ''
+        profileimage = ''
     else:
         username = user['name']
         profileimage = user['image']

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from extensions import db
+from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'PropagateKeywords', \
         'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
-           'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
-          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
+           'TopicStatus', 'TopicIdentification', \
+           'OpinionTestTime','OpinionTestRatio','OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
 
 
 class Topics(db.Model):
@@ -263,6 +263,7 @@ class TopicIdentification(db.Model):
         self.identifyMethod = identifyMethod
 
 # opinion module used in test
+
 class OpinionTestTime(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -276,6 +277,7 @@ class OpinionTestTime(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
 
+
 class OpinionTestRatio(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -284,7 +286,7 @@ class OpinionTestRatio(db.Model):
     ratio = db.Column(db.Float)
 
     def __init__(self, topic, child_topic, ratio):
-        self.topc = topic
+        self.topic = topic
         self.child_topic = child_topic
         self.ratio = ratio
 

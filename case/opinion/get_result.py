@@ -1,66 +1,59 @@
 # -*- coding: utf-8 -*-
 
+import json
 import case.model
-from case.model import OpinionTopic, OpinionWeibos , Opinion, OpinionHot
+from case.model import OpinionTestTime, OpinionTestRatio, OpinionTestKeywords, OpinionTestWeibos
 from case.extensions import db
 
-def getOpinion(topic):#提取话题下的所有观点
-    items = db.session.query(OpinionTopic).filter(OpinionTopic.topic==topic).all()
-    opinion = []
+def get_opinion_time(topic):
+    items = db.session.query(OpinionTestTime).filter(OpinionTestTime.topic==topic).all()
+    if not items:
+        return None
+    results = []
     for item in items:
-        row = dict()
-        row['id'] = item.id
-        row['word'] = item.opinion
-        opinion.append(row)
+        topic_term = json.loads(item.child_topic)
+        child_topic = topic_term.keys()[0]
+        term_list = topic_term[child_topic]
+        start_ts = item.start_ts
+        end_ts = item.end_ts
+        # 缺少子话题名称--name
+        results.append({child_topic:[start_ts, end_ts, term_list[:2]]})
+    
+    return results
 
-    return opinion
-
-def getRelation(topic, opinion):#提取话题-观点的对应关系 
-    items = db.session.query(OpinionTopic).filter((OpinionTopic.topic==topic)&(OpinionTopic.opinion==opinion)).all()
+def get_opinion_ratio(topic):
+    items = db.session.query(OpinionTestRatio).filter(OpinionTestRatio.topic==topic).all()
+    if not items:
+        return None
+    results = []
     for item in items:
-        relation = item.id
+        child_topic = item.child_topic
+        ratio = item.ratio
+        results.append({child_topic:item.ratio})
+    return results
 
-    return relation
-
-def getWeibo(opinionTopic):#提取某个观点的重要微博
-    items = db.session.query(OpinionWeibos).filter(OpinionWeibos.opinionTopic==opinionTopic).all()
-    weibo = []
+def get_opinion_keywords(topic):
+    items = db.session.query(OpinionTestKeywords).filter(OpinionTestKeywords.topic==topic).all()
+    if not items:
+        return None
+    results = []
     for item in items:
-        row = dict()
-        row['mid'] = item.mid
-        row['text'] = item.weibos
-        row['user'] = item.user
-        row['uid'] = item.userid
-        row['posttime'] = item.posttime
-        row['weibourl'] = item.weibourl
-        row['userurl'] = item.userurl
-        row['repost'] = item.repost
-        row['stype'] = item.stype
-        weibo.append(row)    
-    return weibo
+        child_topic = item.child_topic
+        keywords_weight = json.loads(item.keywords)
+        results.append({child_topic:keywords_weight})
+    
+    return results
 
-def getPoint(opinionTopic):#提取某个观点的基本信息
-    items = db.session.query(Opinion).filter(Opinion.opinionTopic==opinionTopic).all()
-    point = dict()
+def get_opinion_weibos(topic):
+    items = db.session.query(OpinionTestWeibos).filter(OpinionTestWeibos.topic==topic).all()
+    if not items:
+        return None
+    results = []
     for item in items:
-        point['start'] = item.start
-        point['end'] = item.end
-        point['count'] = item.count
-        point['opinionWord'] = item.opinionWord
-        point['positive'] = item.positive
-        point['nagetive'] = item.nagetive
+        child_topic = item.child_topic
+        weibos_weight = json.loads(item.weibos)
+        results.append({child_topic:weibos_weight})
+    return results
 
-    return point
-
-def getHot(opinionTopic):#提取某个观点的热度
-    items = db.session.query(OpinionHot).filter(OpinionHot.opinionTopic==opinionTopic).all()
-    hot = []
-    for item in items:        
-        row = dict()
-        row['time'] = item.ts
-        row['count'] = count
-        hot.append(row)
-
-    return hot
 
         
