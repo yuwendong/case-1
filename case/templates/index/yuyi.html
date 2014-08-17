@@ -1,299 +1,157 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- saved from url=(0041)http://v3.unotice.cn/weibo/client/listing -->
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+{% extends "base.html" %}
+{% block title %}语义分析{% endblock %}
+{% block module_title %}深度分析{% endblock %}
 
-<meta http-equiv="x-ua-compatible" content="ie=7">
-<title>微博监控 - 舆情监控系统</title>
-<link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
-<link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-<script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+{% block head_css %}
+    <!--
+    <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
+    -->
+    <link type="text/css" rel="stylesheet" href="/static/css/css/timeline.css">
+    <link type="text/css" rel="stylesheet" href="/static/css/css/table.css">
+    <link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
 
-<script src="/static/css/js/htip.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/static/css/css/htip.css" type="text/css" media="all">
-<link type="text/css" rel="stylesheet" href="/static/css/css/table.css">
-<script src="/static/css/js/timeline.js"></script>
 
 
-<link type="text/css" rel="stylesheet" href="/static/css/css/timeline.css">
-
-<style type="text/css">
-.headerTitle{font-size:24px;font-family:ºÚÌå;color:#ffffff;position: relative;top: 8px;}
-</style>
-</head>
-<body onload="getpie_data();">
-<!--top_nav start-->
-<!-- <div class="top_nav_wrap">
-    <div class="top_nav">
-        <div class="fr">
-            <ul id="head_nav">
-                <li class="logined">欢迎您</li>               
-                <li class="revise"><a href="http://v3.unotice.cn/client/profile">修改资料</a></li>
-                <li class="key"><a href="http://v3.unotice.cn/client/site/word" title="关键词设置">关键词设置</a></li>
-                <li class="quit"><a href="http://v3.unotice.cn/auth/logout" target="_top" title="退出系统">退出系统</a></li>
-            </ul>
-        </div>
-    </div>
-</div> -->
-<!--top end-->
-
-<!--banner start-->
-<div class="banner_wrap">
-    <div class="banner">
-        <div class="banner_bg">
-            <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
-                <tbody><tr>
-                    <td>
-                        <img src="/static/css/images/bhsocial.gif" border="0"><span class="headerTitle"> - 九一八舆情</span>                 </td>
-                </tr>
-            </tbody></table>
-        </div>
-<!--                 <div class="search">
-            <div class="search_box_l"></div>
-            <input type="hidden" value="title" name="search_type">
-            <input type="hidden" value="7days" name="date_type">
-            <input type="hidden" value="-1" name="brand_id">
-            <input type="hidden" value="-1" name="product_id">
-            <input name="search" value="" type="text" id="search_box" class="search_box">
-            <input name="submit" onclick="javascript:if($(&#39;#search_box&#39;).val() == &#39;&#39;){alert (&#39;请填写要查找的内容。&#39;);return false;};" type="submit" class="search_btn" value="">
-            
-        </div> -->
-    </div>
-</div>
-<!--banner end-->
-
-<!--menu start-->
-<!-- <div class="nav_wrap">
-   <li style="display:inline;padding-left:300px;font-size:15px;line-height:35px"><label onclick="load_xinwen();">微博</label></li>
-   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">博客</label></li>
-   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">新闻</label></li>
-   <li style="display:inline;padding-left:120px;font-size:15px"><a href="">论坛</label></li>
-</div> -->
-<!--menu end-->
-<script type="text/javascript" src="/static/css/js/thickbox.js"></script>
-<link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
-<div id="floatMenu"></div>
-<div class="main2">
-    <div class="leftbox">
-        <ul>
-            <li class="menu_main">
-                <a href="/index/gaishu/">
-                    舆情概况
-                </a>
-            </li>
-            <li class="menu_main"><a href="/index/zhibiao/">舆情指数</a></li>
-            <!-- <li class="menu_main"><a href="#">监控预警</a></li> -->
-                        <li class="menu_main_on">
-            <a href="time.html">深度分析</a>
-            </li>
-            <li class="menu_son"><a href="/index/time/">时间分析</a></li>  
-            <li class="menu_son"><a href="/index/area/">地域分析</a></li>
-            <li class="menu_son"><a href="/index/network/">网络分析</a></li>
-            <li class="menu_son"><a href="/index/semantic/">语义分析</a></li>
-            <li class="menu_son"><a href="/index/moodlens/">情感分析</a></li>
-        </ul>
-    </div>
-     <div class="rightbox">
-      <div id="main" style="background:#F0F0F0"> 
-
-    <script type="text/javascript">
-        
-        var timeline;
-        var data;
-
-        // Called when the Visualization API is loaded.
-        $(document).ready(function(){   //网页加载时执行下面函数
-        drawVisualization();
-   })
-        function drawVisualization() {
-            // Create a JSON data table
-            data = [
-                {
-                    'start': new Date(2014,6,26),
-                    'end': new Date(2014,7,2),
-                    'content': '教科书修订'
-                },
-                {
-                    'start': new Date(2014,7,26),
-                    'end': new Date(2014,8,2),
-                    'content': '日本'
-                },
-                {
-                    'start': new Date(2014,7,13,23,0,0),
-                    'end': new Date(2014,7,20,10,10,0),
-                    'content': '正义'
-                },
-                {
-                    'start': new Date(2014,7,31),
-                    'end': new Date(2014,8,3),
-                    'content': '耻辱'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '民族'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '责任'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '面对'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '史实'
-                }
-            ];
-
-            // specify options
-            var options = {
-                'width':  '100%',
-                'height': '300px',
-                'editable': true,   // enable dragging and editing events
-                'style': 'box'
-            };
-
-            // Instantiate our timeline object.
-            timeline = new links.Timeline(document.getElementById('mytimeline'));
-
-            // Draw our timeline with the created data and options
-            timeline.draw(data, options);
+        <style type="text/css">
+        /* keywords tag cloud */
+        #keywords_cloud_div {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0px auto 0
         }
-    </script>
 
+        #keywords_cloud_div a {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-family: Microsoft YaHei;
+            color: #AD12C2;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 3px 6px;
+        }
 
-      <div class="row">
-          <div id="mytimeline"></div>
-          <hr class="soften"></hr>
-      </div>
-       
-</div> 
-  
+        #keywords_cloud_div a:hover {
+            border: 1px solid #eee;
+            background: #000;
+        }
+        #keywords_cloud_div .blue {
+            color: blue;
+        }
+        #keywords_cloud_div .red {
+            color: red;
+        }
+        #keywords_cloud_div .yellow {
+            color: yellow;
+        }
 
-    <div id="main1" style="width:400px;height:230px;float:left;margin-top:0px;background:#F0F0F0"> 
-    </div> 
+        #trend_div {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
 
-    <script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
-    <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts图表 
-      
-    var result1=[];
-    var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700
-    var during = ts-START_TS;
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 25px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float: left;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666;
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7;
+        }
 
+    </style>
+{% endblock head_css %}
 
-       $(document).ready(function(){   //网页加载时执行下面函数
-       getpie_data();
-   })
+{% block head_js %}
+    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
+    <script src="/static/css/js/timeline.js"></script>
+    <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+{% endblock head_js %}
 
-    function getpie_data() {
-        var result=[];
+{% block content %}
+    <div class="blkUnit grpUnit" id="trendProfile">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>时间轴</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
 
-       
-        $.ajax({
-            url: "/moodlens/pie/?ts=" + ts + "&query=" + query +"&during"+ during,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                //console.log(data);
+        </div>
+
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
+            </div>
+            <div class="tabConts">
+                <div id="mytimeline"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>占比分析及关键词列表</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div style="width:1033px;">
+                    <div id="main" style="clear:left;width:50%;float:left;height:280px;position:relative;">
+                    </div>
+                 <div id="list" style="width:50%;height:250px;float:right;margin-top:0px"> 
                 
-                result[0]=data["happy"];
-                //console.log(data['happy']);
-                //alert("result[0]");
-                result[1]=data["sad"];
-                result[2]=data["angry"];
-
-                on_update(result);
-            }
-        });
-       
-    }
-
-    function on_update(result) {
-    //alert('on_update' + result[0]);
-    //alert('on_update' + result[1]);
-    //alert('on_update' + result[2]);
-        //result1=getpie_data();
-
-        var pie_data=[];
-        pie_data = [{value:  result[2], name:'子类1'}, {value: result[1], name:'子类2'}, {value:  result[0], name:'子类3'}];
-    
-    option = {
-        backgroundColor:'#F0F0F0',
-        title : {
-            text: '子类占比图',
-            x:'center',
-            textStyle:{
-            fontWeight:'lighter',
-            fontSize: 13,
-            }        
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['子类1','子类2','子类3']
-        },
-        toolbox: {
-        show : true,
-        feature : {
-          mark : {show: true},
-           dataView : {show: true, readOnly: false},
-            restore : {show: true},
-            
-            saveAsImage : {show: true}
-        }
-    },
-        calculable : true,
-        series : [
-            {
-                name:'访问来源',
-                type:'pie',
-                radius : '50%',
-                center: ['50%', '60%'],
-                data: pie_data
-            }
-        ]
-    };
-    var myChart = echarts.init(document.getElementById('main1'));
-    myChart.setOption(option);
-        
-    }
-
-</script>
-<script type="text/javascript">
-function altRows(id){
-    if(document.getElementsByTagName){  
-        var table = document.getElementById(id);  
-        var rows = table.getElementsByTagName("tr"); 
-        for(i = 0; i < rows.length; i++){          
-            if(i % 2 == 0){
-                rows[i].className = "evenrowcolor";
-            }else{
-                rows[i].className = "oddrowcolor";
-            }      
-        }
-    }
-}
-window.onload=function(){
-    altRows('alternatecolor');
-}
-</script>
-
-
-
-
-    <div id="main2" style="width:440px;height:230px;border:1px solid #F0F0F0;float:right;margin-top:0px;background:#F0F0F0"> 
-      <div style="float:center">   
        <table class="altrowstable" id="alternatecolor">
 <tr>
     <th>Info Header 1</th><th>Info Header 2</th><th>Info Header 3</th><th>Info Header 4</th>
@@ -304,7 +162,6 @@ window.onload=function(){
 <tr>
     <td>Text 2A</td><td>Text 2B</td><td>Text 2C</td><td>Text 2D</td>
 </tr>
-
 <tr>
     <td>Text 3A</td><td>Text 3B</td><td>Text 3C</td><td>Text 3D</td>
 </tr>
@@ -314,15 +171,54 @@ window.onload=function(){
 <tr>
     <td>Text 5A</td><td>Text 5B</td><td>Text 5C</td><td>Text 5D</td>
 </tr>
+<tr>
+    <td>Text 6A</td><td>Text 6B</td><td>Text 6C</td><td>Text 6D</td>
+</tr>
+<tr>
+    <td>Text 6A</td><td>Text 6B</td><td>Text 6C</td><td>Text 6D</td>
+</tr>
     </table> 
 </div>
     </div>
-    <div id="main3"style="height:150px;float:left;margin-top:20px;width:900px;border:1px solid #F0F0F0;background:#F0F0F0">
-          <h4 style="text-align:center;font-weight:lighter;">钓鱼岛事件</h4>
-          <div> 
-        
-          <h4 style="text-align:left;font-weight:lighter;">近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？</h4>
-          </div>
-    </div>   
-</body>
-</html>
+            </div>
+    </div>
+</div>
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>关键微博</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+        </div>
+
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+           <div class="tabConts">
+<div id="semantic_weibos"style="height:2000px;float:left;width:1033px;margin-top:20px">
+        <div id="tabContainer">
+          <ul>
+            <li id="tab1"><a style="color:#000; text-decoration:none" class="on" onclick="switchTab('tab1','con1');this.blur();return false;">
+                代表微博</a></li>
+            <li id="tab2"><a style="color:#000; text-decoration:none" onclick="switchTab('tab2','con2');this.blur();return false;">
+                代表微博</a></li>
+            <li id="tab3"><a style="color:#000; text-decoration:none" onclick="switchTab('tab3','con3');this.blur();return false;">
+                代表微博</a></li>
+          </ul>
+        <div style="clear: both"></div>
+            <div><div id="con1">
+            <ul  id="vertical-ticker">     
+            </ul>
+            </div>
+                <div id="con2" style="display: none">fergtrtgrfrefrewfrfeferffefe</div>
+                <div id="con3" style="display: none">vbfbrbtrtrnrtnynytndytd</div>
+            </div>
+        </div>      
+</div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+{% block tail_js %}
+    <script src="/static/css/js/tab.js" type="text/javascript"></script>
+    <script src="/static/css/js/timeline_pie_text.js" type="text/javascript"></script>
+{% endblock tail_js %}
