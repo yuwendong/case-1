@@ -1,4 +1,21 @@
-/* trends */
+// Date format
+Date.prototype.format = function(format) { 
+    var o = { 
+        "M+" : this.getMonth()+1, //month 
+        "d+" : this.getDate(),    //day 
+        "h+" : this.getHours(),   //hour 
+        "m+" : this.getMinutes(), //minute 
+        "s+" : this.getSeconds(), //second 
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter 
+        "S" : this.getMilliseconds() //millisecond 
+        } 
+        if(/(y+)/.test(format)) 
+            format=format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+            for(var k in o)
+                if(new RegExp("("+ k +")").test(format)) 
+                    format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
+                    return format; 
+}
 
 // TrendsLine Constructor
 function TrendsLine(start_ts, end_ts, pointInterval){
@@ -20,6 +37,10 @@ function TrendsLine(start_ts, end_ts, pointInterval){
     this.count_ajax_url = function(query, end_ts, during, emotion){
         return "/moodlens/data/?query=" + query + "&ts=" + end_ts + "&during=" + during + "&emotion=" + emotion;
     }
+    this.peak_ajax_url = function(data, ts_list, during, emotion){
+        return "/moodlens/emotionpeak/?lis=" + data.join(',') + "&ts=" + ts_list + '&during=' + during + "&emotion=" + emotion;
+    }
+    var ajax_method = "GET";
     this.ajax_method = "GET";
     this.call_sync_ajax_request = function(url, method, callback){
         $.ajax({
@@ -30,11 +51,20 @@ function TrendsLine(start_ts, end_ts, pointInterval){
             success: callback
         })
     }
+    this.call_async_ajax_request = function(url, method, callback){
+        $.ajax({
+            url: url,
+            type: method,
+            dataType: "json",
+            async: true,
+            success: callback
+        })
+    }
     this.range_count_data = {};
     this.range_keywords_data = {};
-    this.range_weibos_data = [];
-    this.top_keywords_limit = 50;
-    this.top_weibos_limit = 5;
+    this.range_weibos_data = {};
+    this.top_keywords_limit = 50; // 和计算相关的50，实际返回10
+    this.top_weibos_limit = 50; // 和计算相关的50，实际返回10
     this.max_keywords_size = 50;
     this.min_keywords_size = 2;
     this.pie_title = '情绪饼图';
@@ -62,43 +92,45 @@ function TrendsLine(start_ts, end_ts, pointInterval){
     }
 }
 
-// instance method, 初始化时获取整个时间段的count数据
-TrendsLine.prototype.pullRangeCount = function(){
-    var ajax_url = this.pie_ajax_url(this.query, this.end_ts, this.during);
-
+// instance method, 初始化时获取整个时间段的饼图数据并绘制
+TrendsLine.prototype.initPullDrawPie = function(){
     that = this;
-    this.call_sync_ajax_request(ajax_url, this.ajax_method, range_count_callback);
+    var ajax_url = this.pie_ajax_url(this.query, this.end_ts, this.during);
+    this.call_async_ajax_request(ajax_url, this.ajax_method, range_count_callback);
 
     function range_count_callback(data){
-        that.range_count_data = data;
+        var names = {
+            'happy': '高兴',
+            'sad': '悲伤',
+            'angry': '愤怒'
+        }
+
+        var pie_data = [];
+        for (var status in data){
+            var count = data[status];
+            pie_data.push({
+                value: count,
+                name: names[status]
+            })
+        }
+
+        var pie_title = that.pie_title;
+
+        var pie_series_title = that.pie_series_title;
+
+        var legend_data = [];
+        for (var name in names){
+            legend_data.push(names[name]);
+        }
+
+        var pie_div_id = that.pie_div_id;
+
+        refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id);
     }
 }
 
-// instance method, 画饼图
-TrendsLine.prototype.drawPie = function(){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
-
-    var pie_data = [];
-    for (var status in this.range_count_data){
-        var count = this.range_count_data[status];
-        pie_data.push({
-            value: count,
-            name: names[status]
-        })
-    }
-
-    var pie_title = this.pie_title;
-    var pie_series_title = this.pie_series_title;
-    var legend_data = [];
-    for (var name in names){
-        legend_data.push(names[name]);
-    }
-    var pie_div_id = this.pie_div_id;
-
+// 绘制饼图方法
+function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id) {
     var option = {
         backgroundColor: '#FFF',
         title : {
@@ -114,7 +146,7 @@ TrendsLine.prototype.drawPie = function(){
             feature : {
                 mark : {show: true},
                 dataView : {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar']},
+                //magicType : {show: true, type: ['line', 'bar']},
                 restore : {show: true},
                 saveAsImage : {show: true}
             }
@@ -132,7 +164,7 @@ TrendsLine.prototype.drawPie = function(){
         calculable : true,
         series : [
             {
-                name: this.pie_series_title,
+                name: pie_series_title,
                 type: 'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
@@ -140,37 +172,25 @@ TrendsLine.prototype.drawPie = function(){
             }
         ]
     };
+
     var myChart = echarts.init(document.getElementById(pie_div_id));
     myChart.setOption(option);
 }
 
-// instance method, 拉取时间范围关键词云数据
-TrendsLine.prototype.pullRangeKeywords = function(){
+// instance method, 初始化时获取整个时间范围的关键词云数据并绘制
+TrendsLine.prototype.initPullDrawKeywords = function(){
+    that = this;
     var names = {
         'happy': '高兴',
         'sad': '悲伤',
         'angry': '愤怒'
     }
-    var keywords_data = [];
-    that = this;
-    for (var name in names){
-        var ajax_url = this.keywords_ajax_url(this.query, this.end_ts, this.during, name);
-        this.call_sync_ajax_request(ajax_url, this.ajax_method, range_keywords_callback);
-    }
+
+    var ajax_url = this.keywords_ajax_url(this.query, this.end_ts, this.during, 'global');
+    this.call_async_ajax_request(ajax_url, this.ajax_method, range_keywords_callback);
+
     function range_keywords_callback(data){
-        for(var name in names){
-            if(name in data){
-                var keywords_count_obj = data[name];
-                for (var keyword in keywords_count_obj){
-                    if (keyword in that.range_keywords_data){
-                        that.range_keywords_data[keyword] += keywords_count_obj[keyword];
-                    }
-                    else{
-                        that.range_keywords_data[keyword] = keywords_count_obj[keyword];
-                    }
-                }
-            }
-        }
+        refreshDrawKeywords(data);
     }
 }
 
@@ -183,19 +203,16 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     }
 }
 
-// instance method, 画关键词云图
-TrendsLine.prototype.drawKeywords = function(){
-    if (this.range_keywords_data == {}){
-        $("#keywords_cloud_div").empty();
+// 画关键词云图
+function refreshDrawKeywords(keywords_data){
+    $("#keywords_cloud_div").empty();
+    if (keywords_data == {}){
         $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");
     }
     else{
-        $("#keywords_cloud_div").empty();
-        var min_count, max_count = 0;
-        var idx = 0;
-        var words_count_obj = {};
-        for (var keyword in this.range_keywords_data){
-            var count = this.range_keywords_data[keyword];
+        var min_count, max_count = 0, words_count_obj = {};
+        for (var keyword in keywords_data){
+            var count = keywords_data[keyword];
             if(count > max_count){
                 max_count = count;
             }
@@ -206,22 +223,20 @@ TrendsLine.prototype.drawKeywords = function(){
                 min_count = count;
             }
             words_count_obj[keyword] = count;
-            if(idx == this.top_keywords_limit){
-                break
-            }
-            idx += 1;
         }
+
         for(var keyword in words_count_obj){
             var count = words_count_obj[keyword];
             var size = defscale(count, min_count, max_count, this.min_keywords_size, this.max_keywords_size);
             $('#keywords_cloud_div').append("<a><font style=\"color:blue font-size:" + size + "\">" + keyword + "</font></a>");
         }
+
         on_load();
     }
 }
 
-// instance method, 初始化时获取关键微薄数据
-TrendsLine.prototype.pullRangeWeibos = function(){
+// instance method, 初始化时获取关键微博数据
+TrendsLine.prototype.initPullWeibos = function(){
     var names = {
         'happy': '高兴',
         'sad': '悲伤',
@@ -235,106 +250,119 @@ TrendsLine.prototype.pullRangeWeibos = function(){
     }
 
     function range_weibos_callback(data){
-        that.range_weibos_data.push(data);
+        for(var name in names){
+            if(name in data){
+                var weibos_list = data[name];
+                that.range_weibos_data[name] = weibos_list;
+            }
+        }
     };
 }
 
-// instance method, 画关键微薄列表
-TrendsLine.prototype.drawWeibos = function(){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
+
+function refreshDrawWeibos(select_name, weibos_obj){
+    // var select_name = 'happy';
+    $("#weibo_list").empty();
+    if (!select_name in weibos_obj){
+        $("#weibo_list").append('<li class="item">关键微博为空！</li>');
+        return;
     }
-    $("#vertical-ticker").empty();
+
+    var data = weibos_obj[select_name];
+    var html = "";
+    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+    html += '<div class="tang-scrollpanel-content">';
+    html += '<ul id="weibo_ul">';
+    for(var i = 0; i < data.length; i += 1){
+        var emotion = select_name;
+        var da = data[i];
+        var uid = da['user'];
+        var name;
+        if ('name' in da){
+            name = da['name'];
+            if(name == 'unknown'){
+                name = '未知';
+            }
+        }
+        else{
+            name = '未知';
+        }
+        var mid = da['_id'];
+        var retweeted_mid = da['retweeted_mid'];
+        var retweeted_uid = da['retweeted_uid'];
+        var ip = da['geo'];
+        var loc = ip;
+        var text = da['text'];
+        var reposts_count = da['reposts_count'];
+        var comments_count = da['comments_count'];
+        var timestamp = da['timestamp'];
+        var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 h:m:s");
+        var weibo_link = da['weibo_link'];
+        var user_link = 'http://weibo.com/u/' + uid;
+        var user_image_link = da['profile_image_url'];
+        if (user_image_link == 'unknown'){
+            user_image_link = '/static/img/unknown_profile_image.gif';
+        }
+        html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
+        html += '<img src="' + user_image_link + '">';
+        html += '</a></div>';
+        html += '<div class="weibo_detail">';
+        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<div class="weibo_info">';
+        html += '<div class="weibo_pz">';
+        html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+        html += '<div class="m">';
+        html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+    html += '<div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">';
+    html += '<div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">';
+    html += '<div class="tang-content">';
+    html += '<div id="TANGRAM_56__inner" class="tang-inner">';
+    html += '<div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;">';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '<a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>';
+    html += '</div>';
+    html += '<div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>';
+    html += '<div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>';
+    html += '</div>';
+    $("#weibo_list").append(html);
+}
+
+// instance method, 初始化绘制关键微博列表
+TrendsLine.prototype.initDrawWeibos = function(){
+    var weibos_obj = this.range_weibos_data;
     var select_name = 'happy';
-    var select_weibo_list = [];
-    for(var idx in this.range_weibos_data){
-        var weibos_list = this.range_weibos_data[idx];
-        for(var name in names){
-            if(name in weibos_list && name == select_name){
-                select_weibo_list = weibos_list[name];
-            }
-        }
-    }
-
-    if(select_weibo_list.length == 0){
-        $("#vertical-ticker").append("关键微博为空！");
-    }
-    else{
-        var html = "";
-        var data = select_weibo_list;
-        for(var i = 0; i < data.length; i += 1){
-            var emotion = select_name;
-            var name = data[i]['user'];
-            var user_link = 'http://weibo.com/u/'+data[i]['user'];
-            var text = data[i]['text'];
-            var weibo_link = data[i]['weibo_link'];
-            var repost_count = data[i]['reposts_count'];
-            var retweeted_text = 'None';
-            html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"; 
-            html += "<div class=\"chartclient-annotation-title\"><a href='" + user_link + "' target='_blank' >" + name + "</a> 发布 </div>";
-            html += "<div class=\"chartclient-annotation-content\"><a href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
-            if(retweeted_text != 'None'){
-                html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
-            }
-            html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 转发数：" +  repost_count + "</span></div>";
-        }
-        $("#vertical-ticker").append(html);
-    }
+    refreshDrawWeibos(select_name, weibos_obj);
+    bindSentimentTabClick(weibos_obj);
 }
 
-// instance method, 获取趋势图数据
-TrendsLine.prototype.pullDrawPointCount = function(){
-    var names = {
-        'happy': '高兴',
-        'sad': '悲伤',
-        'angry': '愤怒'
-    }
-    var points_number = this.during / this.pointInterval + 1;
-    var trends_title = this.trend_title;
-    var legend_data = [];
-    for (var name in names){
-        legend_data.push(names[name]);
-        this.trend_count_obj[name] = [];
-    }
-    this.trend_count_obj['ts'] = [];
-
-    that = this;
-
-    for (var iters = 0; iters < points_number; iters += 1){
-        var end_ts = this.start_ts + (iters + 1) * this.pointInterval;
-        this.trend_count_obj['ts'].push(end_ts);
-        for (var name in names){
-            var ajax_url = this.count_ajax_url(this.query, end_ts, this.pointInterval, name);
-            this.call_sync_ajax_request(ajax_url, this.ajax_method, point_count_callback);
+function bindSentimentTabClick(weibos_obj){
+    $("#sentimentTabDiv").children("a").click(function() {
+        var select_a = $(this);
+        var unselect_a = $(this).siblings('a');
+        if(!select_a.hasClass('curr')) {
+            select_a.addClass('curr');
+            unselect_a.removeClass('curr');
+            var select_sentiment = select_a.attr('sentiment');
+            refreshDrawWeibos(select_sentiment, weibos_obj);
         }
-    }
-
-    function point_count_callback(data){
-            for (var name in names){
-                if(name in data){
-                    that.trend_count_obj[name].push(data[name][1]);
-                }
-            }
-            var xAxis_data = that.trend_count_obj['ts'];
-            var series_data = [];
-            for(var name in that.trend_count_obj){
-                if(that.trend_count_obj[name].length != 0){
-                series_data.push({
-                    name: name,
-                    type: 'line',
-                    data: that.trend_count_obj[name]
-                });
-                }
-            }
-            var option = init_option(xAxis_data, series_data)
-            that.trend_chart.setOption(option);
-    }
+    });
 }
 
-// instance method, 初始化走势图
-TrendsLine.prototype.initDrawTrend = function(){
+// instance method, 获取数据并绘制趋势图
+TrendsLine.prototype.pullDrawTrend = function(){
     var trends_title = this.trend_title;
     var names = {
         'happy': '高兴',
@@ -510,32 +538,8 @@ TrendsLine.prototype.initDrawTrend = function(){
             }
         }
     });
-    $("#absolute_label").click(function() {
-        var click_flag = true;
-        if(click_flag){
-        }
-        else{
-            alert("请等待相对曲线加载完毕！");
-        }
-    });
-
-    $("#relative_label").click(function() {
-        var chart = $('#trend_div').highcharts();
-    });
 }
 
-var START_TS = 1377964800;
-var END_TS = 1378051200;
-var DURING_INTERGER = 15 * 60;
-tl = new TrendsLine(START_TS, END_TS, DURING_INTERGER)
-tl.pullRangeCount()
-tl.drawPie();
-tl.pullRangeKeywords();
-tl.drawKeywords();
-tl.pullRangeWeibos();
-tl.drawWeibos();
-tl.initDrawTrend();
-//tl.pullDrawPointCount();
 
 function pull_emotion_count(that, query, emotion_type, total_days, times, begin_ts, during, count_series, relative_peak_series, absolute_peak_series){
     var names = {
@@ -544,8 +548,8 @@ function pull_emotion_count(that, query, emotion_type, total_days, times, begin_
         'angry': '愤怒'
     }
     if(times > total_days){
-        get_peaks(relative_peak_series, that.trend_count_obj['ratio'], that.trend_count_obj['ts'], during);
-        get_peaks(absolute_peak_series, that.trend_count_obj['count'], that.trend_count_obj['ts'], during);
+        get_peaks(that, relative_peak_series, that.trend_count_obj['ratio'], that.trend_count_obj['ts'], during);
+        get_peaks(that, absolute_peak_series, that.trend_count_obj['count'], that.trend_count_obj['ts'], during);
         $("[name='abs_rel_switch']").bootstrapSwitch('readonly', false);
         return;
     }
@@ -724,77 +728,60 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
 }
 
 
-function call_peak_ajax(series, data_list, ts_list, during, emotion){
+function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
     var data = [];
     for(var i in data_list){
         data.push(data_list[i][1]);
     }
-    var ajax_url = "/moodlens/emotionpeak/?lis=" + data.join(',') + "&ts=" + ts_list + '&during=' + during + "&emotion=" + emotion;
-    var ajax_method = "GET";
-    $.ajax({
-        url: ajax_url,
-        type: ajax_method,
-        dataType: "json",
-        success: function(data){
-            if ( data != 'Null Data'){
-                var isShift = false;
-                for(var i in data){
-                    var x = data[i]['ts'];
-                    var title = data[i]['title'];
-                    series.addPoint({'x': x, 'title': title, 'text': title, 'emotion': emotion, 'events': {'click': flagClick}}, true, isShift);
-                    var flagClick = function(event){
-                        var click_ts = this.x / 1000;
-                        var emotion = this.emotion;
-                        var title = this.title;
-                    }
+
+    var ajax_url = that.peak_ajax_url(data, ts_list, during, emotion);
+    that.call_async_ajax_request(ajax_url, that.ajax_method, peak_callback);
+
+    function peak_callback(data){
+        if ( data != 'Null Data'){
+            var isShift = false;
+            for(var i in data){
+                var x = data[i]['ts'];
+                var title = data[i]['title'];
+                series.addPoint({'x': x, 'title': title, 'text': title, 'emotion': emotion, 'events': {'click': flagClick}}, true, isShift);
+                var flagClick = function(event){
+                    var click_ts = this.x / 1000;
+                    var emotion = this.emotion;
+                    var title = this.title;
+                    peakPullDrawKeywords(click_ts, emotion, title);
+                    peakPullDrawPie(click_ts, emotion, title);
+                    peakPullDrawWeibos(click_ts, emotion, title);
                 }
             }
         }
-    })
+    }
+
+    function peakPullDrawKeywords(click_ts, emotion, title){
+        var ajax_url = that.keywords_ajax_url(that.query, click_ts, that.pointInterval, emotion);
+        that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
+        function callback(data){
+            refreshDrawKeywords(data[emotion]);
+        }
+    }
+    function peakPullDrawPie(click_ts, emotion, title){
+        var ajax_url = that.pie_ajax_url(that.query, click_ts, that.pointInterval);
+        that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
+        function callback(data){
+            console.log(data);
+            refreshDrawPie(data[emotion]);
+        }
+    }
+    function peakPullDrawWeibos(click_ts, emotion, title){
+        var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, emotion, that.top_weibos_limit);
+        that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
+        function callback(data){
+            refreshDrawWeibos(emotion, data);
+            // bindSentimentTabClick(weibos_obj);
+        }
+    }
 }
 
-/*
-$.ajax({
-    url: "/moodlens/weibos_data/" + emotion + "/global/?ts=" + click_ts + '&limit=' + WEIBOS_LIMIT + "&during=" + during,
-    type: "GET",
-    dataType:"json",
-    success: function(data){
-        $("#vertical-ticker").empty();
-        $("#event_title").html(title);
-        if(data[emotion].length>0){
-            chg_weibos(data[emotion]);
-        }
-        else{
-            $("#vertical-ticker").append(" 关键微博为空！");
-        }
-    }
-});
-$.ajax({
-    url: "/moodlens/keywords_data/global/?ts=" + click_ts + "&emotion=" + emotion + "&limit=" + KEYWORDS_LIMIT + "&during=" + during,
-    type: "GET",
-    dataType:"json",
-    success: function(data){
-        if(data=='search function undefined'){
-            $("#tags_ul").empty();
-            $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-            redraw_tagcanvas();
-        }
-        else{
-            if(isEmptyObject(data[emotion])){
-                $("#tags_ul").empty();
-                $("#tags_ul").append("<li><a style='font-size:1ex'>关键词云数据为空</a></li>");
-                redraw_tagcanvas();
-            }
-            else{
-                chg_tagcloud(data[emotion]);
-            }
-        }
-    }
-});
-chg_emotion_pie(emotion_absolute[this.x]);
-*/
-
-function get_peaks(series, data_obj, ts_list, during){
+function get_peaks(that, series, data_obj, ts_list, during){
     var names = {
         'happy': '高兴',
         'sad': '悲伤',
@@ -803,7 +790,256 @@ function get_peaks(series, data_obj, ts_list, during){
     for (var name in names){
         var select_series = series[name];
         var data_list = data_obj[name];
-        call_peak_ajax(select_series, data_list, ts_list, during, name);
+        call_peak_ajax(that, select_series, data_list, ts_list, during, name);
     }
 }
+
+//(function keywords_cloud_load(){
+    var radius = 85;
+    var dtr = Math.PI/180;
+    var d=300;
+
+    var mcList = [];
+    var active = false;
+    var lasta = 1;
+    var lastb = 1;
+    var distr = true;
+    var tspeed=2;
+    var size=250;
+
+    var mouseX=0;
+    var mouseY=0;
+
+    var howElliptical=1;
+
+    var aA=null;
+    var oDiv=null;
+    function on_load()
+    {
+        var i=0;
+        var oTag=null;
+        
+        oDiv=document.getElementById('keywords_cloud_div');
+        
+        aA=oDiv.getElementsByTagName('a');
+        
+        for(i=0;i<aA.length;i++)
+        {
+            oTag={};
+            
+            oTag.offsetWidth=aA[i].offsetWidth;
+            oTag.offsetHeight=aA[i].offsetHeight;
+            
+            mcList.push(oTag);
+        }
+        
+        sineCosine( 0,0,0 );
+        
+        positionAll();
+        
+        oDiv.onmouseover=function ()
+        {
+            active=true;
+        };
+        
+        oDiv.onmouseout=function ()
+        {
+            active=false;
+        };
+        
+        oDiv.onmousemove=function (ev)
+        {
+            var oEvent=window.event || ev;
+            
+            mouseX=oEvent.clientX-(oDiv.offsetLeft+oDiv.offsetWidth/2);
+            mouseY=oEvent.clientY-(oDiv.offsetTop+oDiv.offsetHeight/2);
+            
+            mouseX/=5;
+            mouseY/=5;
+        };
+        
+        setInterval(update, 30);
+    };
+
+    function update()
+    {
+        var a;
+        var b;
+        
+        if(active)
+        {
+            a = (-Math.min( Math.max( -mouseY, -size ), size ) / radius ) * tspeed;
+            b = (Math.min( Math.max( -mouseX, -size ), size ) / radius ) * tspeed;
+        }
+        else
+        {
+            a = lasta * 0.98;
+            b = lastb * 0.98;
+        }
+        
+        lasta=a;
+        lastb=b;
+        
+        if(Math.abs(a)<=0.01 && Math.abs(b)<=0.01)
+        {
+            return;
+        }
+        
+        var c=0;
+        sineCosine(a,b,c);
+        for(var j=0;j<mcList.length;j++)
+        {
+            var rx1=mcList[j].cx;
+            var ry1=mcList[j].cy*ca+mcList[j].cz*(-sa);
+            var rz1=mcList[j].cy*sa+mcList[j].cz*ca;
+            
+            var rx2=rx1*cb+rz1*sb;
+            var ry2=ry1;
+            var rz2=rx1*(-sb)+rz1*cb;
+            
+            var rx3=rx2*cc+ry2*(-sc);
+            var ry3=rx2*sc+ry2*cc;
+            var rz3=rz2;
+            
+            mcList[j].cx=rx3;
+            mcList[j].cy=ry3;
+            mcList[j].cz=rz3;
+            
+            per=d/(d+rz3);
+            
+            mcList[j].x=(howElliptical*rx3*per)-(howElliptical*2);
+            mcList[j].y=ry3*per;
+            mcList[j].scale=per;
+            mcList[j].alpha=per;
+            
+            mcList[j].alpha=(mcList[j].alpha-0.6)*(10/6);
+        }
+        
+        doPosition();
+        depthSort();
+    }
+
+    function depthSort()
+    {
+        var i=0;
+        var aTmp=[];
+        
+        for(i=0;i<aA.length;i++)
+        {
+            aTmp.push(aA[i]);
+        }
+        
+        aTmp.sort
+        (
+            function (vItem1, vItem2)
+            {
+                if(vItem1.cz>vItem2.cz)
+                {
+                    return -1;
+                }
+                else if(vItem1.cz<vItem2.cz)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        );
+        
+        for(i=0;i<aTmp.length;i++)
+        {
+            aTmp[i].style.zIndex=i;
+        }
+    }
+
+    function positionAll()
+    {
+        var phi=0;
+        var theta=0;
+        var max=mcList.length;
+        var i=0;
+        
+        var aTmp=[];
+        var oFragment=document.createDocumentFragment();
+        
+        //随机排序
+        for(i=0;i<aA.length;i++)
+        {
+            aTmp.push(aA[i]);
+        }
+        
+        aTmp.sort
+        (
+            function ()
+            {
+                return Math.random()<0.5?1:-1;
+            }
+        );
+        
+        for(i=0;i<aTmp.length;i++)
+        {
+            oFragment.appendChild(aTmp[i]);
+        }
+        
+        oDiv.appendChild(oFragment);
+        
+        for( var i=1; i<max+1; i++){
+            if( distr )
+            {
+                phi = Math.acos(-1+(2*i-1)/max);
+                theta = Math.sqrt(max*Math.PI)*phi;
+            }
+            else
+            {
+                phi = Math.random()*(Math.PI);
+                theta = Math.random()*(2*Math.PI);
+            }
+            //坐标变换
+            mcList[i-1].cx = radius * Math.cos(theta)*Math.sin(phi);
+            mcList[i-1].cy = radius * Math.sin(theta)*Math.sin(phi);
+            mcList[i-1].cz = radius * Math.cos(phi);
+            
+            aA[i-1].style.left=mcList[i-1].cx+oDiv.offsetWidth/2-mcList[i-1].offsetWidth/2+'px';
+            aA[i-1].style.top=mcList[i-1].cy+oDiv.offsetHeight/2-mcList[i-1].offsetHeight/2+'px';
+        }
+    }
+
+    function doPosition()
+    {
+        var l=oDiv.offsetWidth/2;
+        var t=oDiv.offsetHeight/2;
+        for(var i=0;i<mcList.length;i++)
+        {
+            aA[i].style.left=mcList[i].cx+l-mcList[i].offsetWidth/2+'px';
+            aA[i].style.top=mcList[i].cy+t-mcList[i].offsetHeight/2+'px';
+            
+            aA[i].style.fontSize=Math.ceil(12*mcList[i].scale/2)+8+'px';
+            
+            aA[i].style.filter="alpha(opacity="+100*mcList[i].alpha+")";
+            aA[i].style.opacity=mcList[i].alpha;
+        }
+    }
+
+    function sineCosine( a, b, c)
+    {
+        sa = Math.sin(a * dtr);
+        ca = Math.cos(a * dtr);
+        sb = Math.sin(b * dtr);
+        cb = Math.cos(b * dtr);
+        sc = Math.sin(c * dtr);
+        cc = Math.cos(c * dtr);
+    }
+//})();
+
+var START_TS = 1377964800;
+var END_TS = 1378051200;
+var DURING_INTERGER = 15 * 60;
+tl = new TrendsLine(START_TS, END_TS, DURING_INTERGER)
+tl.pullDrawTrend();
+tl.initPullDrawPie();
+tl.initPullDrawKeywords();
+tl.initPullWeibos();
+tl.initDrawWeibos();
 

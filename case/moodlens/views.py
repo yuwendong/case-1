@@ -200,7 +200,7 @@ def keywords_data():
     end_ts = ts
     limit = request.args.get('limit', 50)
     limit = int(limit)
-    emotion = request.args.get('emotion', 'happy')
+    emotion = request.args.get('emotion', 'global')
 
     results = {}
     search_method = 'topic'
@@ -208,7 +208,20 @@ def keywords_data():
     search_func = getattr(keywordsModule, 'search_%s_keywords' % search_method, None)
 
     if search_func:
-        results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, top=limit, customized=customized)    
+        if emotion == 'global':
+            keywords_data = {}
+            for k, v in emotions_kv.iteritems():
+                emotion_results = search_func(end_ts, during, v, query=query, domain=area, top=limit, customized=customized)    
+                for keyword, count in emotion_results.iteritems():
+                    try:
+                        keywords_data[keyword] += count
+                    except KeyError:
+                        keywords_data[keyword] = count
+            kcount_tuple = sorted(keywords_data.iteritems(), key=lambda (k, v): v, reverse=False)
+            for k, v in kcount_tuple[len(kcount_tuple)-limit:]:
+                results[k] = v
+        else:
+            results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area, top=limit, customized=customized)    
     else:
         return json.dumps('search function undefined')
 
