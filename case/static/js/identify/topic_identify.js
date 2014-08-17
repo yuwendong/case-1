@@ -161,6 +161,12 @@ function network_request_callback(data) {
 
 }
 
+
+    $(document).ready(function(){   //网页加载时执行下面函数
+      show_network();
+    })
+
+
 function show_network() {
     networkShowed = 0;
     var topic = '中国'; 
@@ -241,8 +247,7 @@ function show_network() {
   }
   else
       return
-    }
-    
+    }    
     function create_current_table(data, start_row, end_row) {
 
       console.log(data);

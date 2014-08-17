@@ -55,4 +55,6 @@ docs/_build/
 # swp swo
 *.swp
 *.swo
+*.swm
+*.swn
 
