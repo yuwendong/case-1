@@ -29,7 +29,7 @@ provinces = province_soup.findAll('option')
 
 def sum_pcount(item):
     pcount={}
-    print 'item:',item
+    #print 'item:',item
     for r in item: # 遍历所有匹配集
         if r.ccount:
             rccount = json.loads(r.ccount)
@@ -37,17 +37,24 @@ def sum_pcount(item):
             for i in rccount: # 遍历匹配集中的ccount字典
                 #print '*'*10
                 #print type(i)
-                for province in provinces:
-                    p = province.string
-                    #print '$'*10
-                    #print type(p)
-                    if i.split('\t')[1] == p:
-                        try:
-                            pcount[p] += rccount[i]
-                        except KeyError:
-                            pcount[p] = rccount[i]
-                    else:
-                        continue
+                term_list = i.split('\t')
+                if term_list[0] == u'中国':
+                    for province in provinces:
+                        p = province.string
+                        #print '$'*10
+                        #print type(p)
+                        if i.split('\t')[1] == p:
+                            try:
+                                pcount[p] += rccount[i]
+                            except KeyError:
+                                pcount[p] = rccount[i]
+                        else:
+                            continue
+                else:
+                    try:
+                        pcount[u'海外'] += rccount[i]
+                    except:
+                        pcount[u'海外'] = rccount[i]
 
 
         else:
