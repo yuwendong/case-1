@@ -25,12 +25,17 @@ def get_opinion_ratio(topic):
     items = db.session.query(OpinionTestRatio).filter(OpinionTestRatio.topic==topic).all()
     if not items:
         return None
-    results = []
+    sort_list = []
+    results = {}
     for item in items:
         child_topic = item.child_topic
         ratio = item.ratio
-        results.append({child_topic:item.ratio})
-    return results
+        results[child_topic] = ratio
+    for i in range(len(results)):
+        child_topic = str(i)
+        ratio = results[child_topic]
+        sort_list.append({child_topic:ratio})
+    return sort_list
 
 def get_opinion_keywords(topic):
     items = db.session.query(OpinionTestKeywords).filter(OpinionTestKeywords.topic==topic).all()
