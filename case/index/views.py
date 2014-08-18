@@ -79,34 +79,54 @@ def topic():
     return render_template('index/topic.html')
 
 # 以下为新增内容
-@mod.route('/gaishu/<topic>/')
-def gaishu_topic(topic = u'中国'):
+@mod.route('/gaishu_data/', methods = ['GET', 'POST'])
+def gaishu_topic():
+    topic = request.args.get('query', u'中国')
     if topic:
         topic = topic.strip()
-    tag = '九一八、政府'
-    event_time = '2013-09-01'
-    event_spot = '北京'
-    event_summary = '近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。'
-    begin = topic_search('begin', topic)
-    end = topic_search('end', topic)
-    user_count = topic_search('user_count', topic)
-    count = topic_search('count', topic)
-    area = topic_search('area',topic)
-    k_limit = 3
-    key_words = topic_search('key_words',topic)
-    opinion = topic_search('opinion',topic)
-    moodlens_pie = get_moodlens_pie(topic)
 
-    content = '     标签：' + tag
-    content += '\n      ' + topic + '发生于' + event_time + '，事件发生地点为' + event_spot + '。' + event_summary
-    content += '\n      该事件的舆情信息起始于' + begin + '，终止于' + end
-    content += '，共' + user_count + '人参与信息发布与传播，' + '舆情信息累计' + count + '条。'
-    content += '参与人群集中于' + area + '。'
-    content += '\n      前' + str(k_limit) + '个关键词是：' + key_words + '。'
-    content += '\n' + '网民情绪分布情况为：' + moodlens_pie + '。'
-    content += '代表性媒体报道如鱼骨图所示。'
-    content += '\n      网民代表性观点列举如下：' + opinion
-    return content
+    results = {}
+
+    tag = '九一八、政府'
+    results['tag'] = tag
+
+    event_time = '2013-09-01'
+    results['event_time'] = event_time
+
+    event_spot = '北京'
+    results['event_spot'] = event_spot
+
+    # event_summary = '近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。'
+    # results['event_summary'] = event_summary
+
+    begin = topic_search('begin', topic)
+    results['begin'] = begin
+
+    end = topic_search('end', topic)
+    results['end'] = end
+
+    user_count = topic_search('user_count', topic)
+    results['user_count'] = user_count
+
+    count = topic_search('count', topic)
+    results['count'] = count
+
+    area = topic_search('area',topic)
+    results['area'] = area
+
+    k_limit = 3
+    results['k_limit'] = k_limit
+
+    key_words = topic_search('key_words',topic)
+    results['key_words'] = key_words
+
+    opinion = topic_search('opinion',topic)
+    results['opinion'] = opinion
+
+    moodlens_pie = get_moodlens_pie(topic)
+    results['moodlens_pie'] = moodlens_pie
+
+    return json.dumps(results)
 
 def get_moodlens_pie(topic = u'中国'):
     end_ts = time.mktime(datetime.datetime(2013,9,1,0,1,0).timetuple())
@@ -115,9 +135,7 @@ def get_moodlens_pie(topic = u'中国'):
     results = {}
     results = pieModule.search_topic_pie(end_ts, during, query = topic)
 
-    return json.dumps(results)
-
-
+    return results
 
 
 def topic_search(item = 'count', topic = u'中国'):
@@ -127,11 +145,11 @@ def topic_search(item = 'count', topic = u'中国'):
     search_func = getattr(searchModule, 'search_%s' % item, None)
 
     if search_func:
-        results[topic] = search_func(topic)
+        results = search_func(topic)
     else:
-        return json.dumps('Search function undefined')
+        return 'Search function undefined'
 
-    return json.dumps(results)
+    return results
 
 # 以下为原有内容
 
