@@ -47,40 +47,52 @@ def info2map(infos):
             ratio[info][p] = pratio
 
         top10[info] = map_dict['summary']
-    
-    
+
     data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10}
 
     return data
 
 
-def readPropagateSpatial(stylenum, topic, end_ts , during):   #将从数据库中读取的数据转化为map_data
-    city_count = {}
-    city_count = Pcount(end_ts, during, stylenum, topic)  #PCount从db中计算各个省市地区的总数
-    map_data = province_color_map(city_count)
-    return map_data	
+def readPropagateSpatial(stylenum, topic, end_ts , during):
+    """将从数据库中读取的数据转化为map_data
+    """
 
-@mod.route("/topic_ajax_spatial/")  #地域演化的页面,从database获取数据返回topic_spatial.html
+    city_count = {}
+    city_count = Pcount(end_ts, during, stylenum, topic) # PCount从db中计算各个省市地区的总数
+    max_count = max(city_count.values())
+    map_data = province_color_map(city_count)
+
+    return max_count, map_data
+
+
+@mod.route("/topic_ajax_spatial/")
 def ajax_spatial():
-    tmp = request.args.get('style', '')                   #stylenum表示返回count是origin：1,forward：2,comment：3,sum：4 
-    stylenum = int(tmp)
-   # print stylenum
-    topic = request.args.get('topic','')                  #???这里的topic是怎么传过来的？！
-    during = request.args.get('during',2* 900)              #默认查询时间段为900秒
+    """
+    地域演化的页面,从database获取数据返回topic_spatial.html
+    """
+
+    stylenum = request.args.get('style', '') # stylenum表示返回count是origin：1,forward：2,comment：3,sum：4 
+    stylenum = int(stylenum)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 60 * 60) # 默认查询时间粒度为3600秒
     during = int(during)
-    ts = request.args.get('ts','')
-    ts = long(ts)
-    end_ts = ts
-    codenum = request.args.get('codenum', '')
-    codenum = int(codenum)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = long(end_ts)
+    start_ts = request.args.get('start_ts', '')
+    start_ts = long(start_ts)
+    pointnum = (end_ts - start_ts) / during # 时间点数
+
     spatial_dict = {}
-    for i in range(codenum):
-        end_ts = end_ts +  during
-        topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  #查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
-        print 'topic_spatial_info:'
-        print topic_spatial_info
+    global_max_count = 0
+    for i in range(pointnum):
+        end_ts = start_ts +  during * (i + 1)
+        max_count, topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  # 查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
+        if global_max_count < max_count:
+            global_max_count = max_count
         spatial_dict[str(end_ts)] = topic_spatial_info
+
     map_data = info2map(spatial_dict)
-    print 'map_data:'
-    print map_data
+    map_data['max_count'] = global_max_count
+
     return json.dumps(map_data)
+
