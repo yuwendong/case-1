@@ -75,7 +75,7 @@ def prepare_data_for_degree(topic_id, date, window_size):
     if not topic:
         return None
 
-    g = make_network(topic, date, window_size)
+    g ,gg= make_network(topic, date, window_size)
 
     if not g:
         return None
@@ -95,7 +95,7 @@ def prepare_data_for_pr(topic_id, date, window_size): # ？？？为什么把方
     if not topic:
         return None
 
-    g = make_network(topic, date, window_size)
+    g ,gg= make_network(topic, date, window_size)
 
     if not g:
         return None
@@ -106,7 +106,7 @@ def prepare_data_for_pr(topic_id, date, window_size): # ？？？为什么把方
     if not N:
         return None
 
-    for node in g.nodes(): # 
+    for node in g.nodes():
         outlinks = g.out_edges(nbunch=[node]) # outlinks=[(node,node1),(node,node2)...] 这里不涉及方向，node1是与node联通的店
         outlinks = map(str, [n2 for n1, n2 in outlinks]) # [str(node1),str(node2),str(node3)]
         if not outlinks:
@@ -133,7 +133,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     #if not topic:
     #    return None
               
-    G = make_network(topic, date, window_size)
+    G ,gg= make_network(topic, date, window_size)
 
     N = len(G.nodes())
 
@@ -143,9 +143,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     node_degree = nx.degree(G)
 
     G = cut_network(G, node_degree) # 筛选出节点数>=2的节点数
+    gg = cut_network(gg, node_degree)
     
     print 'start computing quota'
-    compute_quota(G, date, window_size, topic) # compute quota
+    compute_quota(G, gg, date, window_size, topic) # compute quota
     print 'quota computed complicated'
 
     gexf = Gexf("Yang Han", "Topic Network")
@@ -218,6 +219,7 @@ def make_network(topic, date, window_size, max_size=100000):
     statuses_search = getXapianweiboByTs(start_time, end_time) # 获得查询时间段的XapianSearch类
 
     g = nx.DiGraph() # 初始化一个有向图
+    gg = nx.Graph() # 为计算quota初始化一个无向图
 
     #need repost index
     query_dict = {'text': topic, 'timestamp': {'$gt': start_time, '$lt': end_time}}
@@ -233,6 +235,7 @@ def make_network(topic, date, window_size, max_size=100000):
                 if is_in_trash_list(repost_uid) or is_in_trash_list(source_uid):
                     continue
                 g.add_edge(repost_uid, source_uid) # 将所有topic相关的uid作为node，并将它们按照信息传递方向形成有向图
+                gg.add_edge(repost_uid, source_uid)
         except (TypeError, KeyError):
             continue
-    return g
+    return g , gg
