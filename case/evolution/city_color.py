@@ -39,7 +39,7 @@ def province_color_map(city_count):
     data = {'count': city_count,
             'color': city_color,
             'summary': city_summary}
-    
+
     return data
 
 def main():

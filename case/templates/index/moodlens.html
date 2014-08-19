@@ -3,12 +3,6 @@
 {% block module_title %}深度分析{% endblock %}
 
 {% block head_css %}
-    <!--
-    <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
-    -->
-
     <!-- 走势图切换按钮css -->
     <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
 
@@ -26,7 +20,6 @@
             top: 0px;
             left: 0px;
             font-family: Microsoft YaHei;
-            color: #AD12C2;
             font-weight: bold;
             text-decoration: none;
             padding: 3px 6px;
@@ -34,7 +27,7 @@
 
         #keywords_cloud_div a:hover {
             border: 1px solid #eee;
-            background: #000;
+            background-color: #FFF;
         }
         #keywords_cloud_div .blue {
             color: blue;
@@ -58,7 +51,7 @@
             position: relative;
             clear: both;
             margin-top: 25px;
-            margin-bottom: 20px;
+            margin-bottom: 0px;
             background-color: #fff;
         }
         .blkUnit .titlBar {
@@ -225,8 +218,6 @@
 {% block head_js %}
     <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
     <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
-    <!--<script src="/static/css/js/tab.js" type="text/javascript"></script>-->
-    <!--<script src="/static/css/js/miaov.js" type="text/javascript"></script>-->
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
     <script src="/static/bootstrap-switch/_dist/js/bootstrap-switch.min.js" type="text/javascript"></script>
 {% endblock head_js %}
@@ -235,8 +226,9 @@
     <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4>情绪走势分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
-            <span class="pull-right" style="margin: -10px auto -10px auto;">
+            <i id="trend_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="情感分类：可视化信息中蕴含的情感走势"></i>&nbsp;&nbsp;
+            <span id="peak_trend_tooltip"></span>
+            <span class="pull-right" style="margin: -14px -9px -10px auto;" data-animated="false">
                 <input type="checkbox" name="abs_rel_switch" checked>
             </span>
             <!--<span class="compInfo" style="display: none;"> </span>
@@ -253,12 +245,11 @@
         </div>
     </div>
 
-    <div id="peak_tooltip" style="width: 100%;"></div>
-
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键词云分析及占比分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <h4>关键词云/各类信息占比分析</h4>
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:3类信息-高兴、悲伤、愤怒占比"></i>&nbsp;&nbsp;
+            <span id="peak_cloudpie_tooltip"></span>
         </div>
 
         <div class="tabUnit">
@@ -269,7 +260,7 @@
                     <div id="keywords_cloud_frame" style="clear:left;width:50%;float:left;height:250px;position:relative;">
                         <div id="keywords_cloud_div"></div>
                     </div>
-                    <div id="pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;">
+                    <div id="pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;border-left: 1px dotted #666;">
                 </div>
             </div>
             </div>
@@ -278,8 +269,9 @@
 
     <div class="blkUnit grpUnit" style="width:1033px; float:left;" id="weiboarea">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键微博</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <h4>重要微博</h4>
+            <i id="weibo_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="重要微博:3类信息-高兴、悲伤、愤怒的重要微博"></i>&nbsp;&nbsp;
+            <span id="peak_weibo_tooltip"></span>
         </div>
 
         <div class="stmTabs tabUnit">
@@ -368,6 +360,10 @@
             offText: '相对比例',
             readonly: true
         })
+
+        $("#trend_tooltip").tooltip();
+        $("#cloud_pie_tooltip").tooltip();
+        $("#weibo_tooltip").tooltip();
     </script>
     <script src="/static/js/api/trend_weibo_keyword_pie.js" type="text/javascript"></script>
 {% endblock tail_js %}

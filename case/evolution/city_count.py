@@ -29,14 +29,11 @@ provinces = province_soup.findAll('option')
 
 def sum_pcount(item):
     pcount={}
-    #print 'item:',item
     for r in item: # 遍历所有匹配集
         if r.ccount:
             rccount = json.loads(r.ccount)
-            #print rccount
+
             for i in rccount: # 遍历匹配集中的ccount字典
-                #print '*'*10
-                #print type(i)
                 term_list = i.split('\t')
                 if term_list[0] == u'中国':
                     for province in provinces:
@@ -55,17 +52,14 @@ def sum_pcount(item):
                         pcount[u'海外'] += rccount[i]
                     except:
                         pcount[u'海外'] = rccount[i]
-
-
         else:
             continue
-        
+
     return pcount
 
 
 def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
-
-    pcount={} # 省市对应count
+    pcount = {} # 省市对应count
     if during <= unit: # 时间范围选择小于默认最小时间段15分钟，则默认为15分钟
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if stylenum == 4: # 求所有的和
@@ -109,12 +103,3 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
 
     return pcount
 
-'''
-if __name__ == '__main__':
-    end_ts = datetime2ts('2013-09-1')
-    during = 1 * Day
-    topic = u'九一八'
-    stylenum = 1
-    count = Pcount(end_ts, during, stylenum, topic)
-    print count
-'''

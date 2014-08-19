@@ -217,7 +217,7 @@
             z-index: 1000;
             position: fixed;
             width: 222px;
-            top: 84px;
+            top: 54px;
             display: block;
             padding: 1px;
             overflow-x: hidden;
@@ -257,7 +257,7 @@
             background-color: #4284e2;
         }
         .mainSplit {
-            top: 64px;
+            top: 16px;
             position: relative;
             _overflow: visible;
             padding: 20px 26px 20px 15px;
@@ -290,17 +290,19 @@
                     <span class="icon-bar"></span>
                 </button>
 
+                <!--
                 <a class="brand" href="#"><strong><font size="+2">舆情案例系统</font></strong></a>
                 <a class="brand"><small><font size="+1"> > </font></small></a>
                 <a class="brand" href="#"><strong><font size="+1">舆情要素提取</font></strong></a>
+                -->
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li>
-                            <a class="source">
-                                <span class="glyphicon glyphicon-star"></span>
-                                <small><font> 信息来源渠道:  </font></small>
-                            </a>
-                        </li>
+                        <li><a class="brand" href="#"><strong><font size="+2">舆情案例系统</font></strong></a></li>
+                        <li><a class="brand"><small><font size="+1"> > </font></small></a></li>
+                        <li><a class="brand" href="#"><strong><font size="+1">舆情要素提取</font></strong></a></li>
+                    </ul>
+                    &nbsp;&nbsp;
+                    <ul class="nav navbar-nav">
                         <li class="active"><a href="#">微博</a></li>
                         <li><a class="iactive" href="#">新闻</a></li>
                         <li><a class="iactive" href="#">论坛</a></li>
@@ -325,19 +327,22 @@
                 </ul>
             </div>
             <div class="tabConts">
-                <span class="pull-left" style="margin-left: 8px;">关键词</span>
-                <div>
+                <!--<div>
                     <ul>
                         <li class="compLi comCtl" id="">
-                            <div class="comBorderL">
-                                <input disabled name="word" class="comWord" maxlength="50" autocomplete="off" id="auto_gsid_16" value="关键词为空">
-                            </div>
+                        <div class="comBorderL">-->
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">关键词</span>
+                                    <input type="text" class="form-control" placeholder="未指定" disabled>
+                                    <!--<input disabled name="word" class="comWord" maxlength="50" autocomplete="off" id="auto_gsid_16" value="关键词为空">-->
+                                </div>
+                <!--            </div>
                             <div class="comBorderR" style="border-color: rgb(110, 135, 215);">
                                 <i class="icons delComp"></i>
                             </div>
                         </li>
                     </ul>
-                </div>
+                </div>-->
                 <div class="compVsplit"></div>
                 <div class="compOth">
                     <div class="comCtl">
