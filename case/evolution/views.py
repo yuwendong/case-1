@@ -22,7 +22,7 @@ MinInterval = Fifteenminutes
 province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东', u'广西', u'贵州', u'海南', \
                  u'河北', u'黑龙江', u'河南', u'湖北', u'湖南', u'内蒙古', u'江苏', u'江西', u'吉林', \
                  u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
-                 u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门']
+                 u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门', u'海外', u'其他']
 
 
 def info2map(infos):
@@ -32,10 +32,10 @@ def info2map(infos):
     top10 = {}
     for info in infos:
         map_dict = infos[info]
-        count[info] = [0] * 34
-        rank[info] = [0] * 34
-        ratio[info] = [0] *34
-        for p in range(34):
+        count[info] = [0] * 35
+        rank[info] = [0] * 35
+        ratio[info] = [0] *35
+        for p in range(35):
             try:
                 pcount = map_dict['count'][province_list[p]][0]
                 prank = map_dict['count'][province_list[p]][1]

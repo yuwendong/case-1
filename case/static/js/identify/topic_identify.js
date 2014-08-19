@@ -7,7 +7,49 @@ var start_ts = null;
 var end_ts = null;
 var sigInst = null;
 var animation_timer = null;
+var quota={};
 
+
+function get_network_infor(){
+var  name=['number_nodes', 'number_edges','degree_histogram', 'number_strongly_connected_components', 'number_weakly_connected_components'];
+var topic = "中国";
+var start_ts = 1377965700;
+var end_ts = 1378051200;
+var max = 0;
+var i = 0;
+  for ( key in name){
+    $.ajax({
+        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key],
+        dataType : "json",
+        type : 'GET',
+        async: false,
+        success: function(data){
+            quota[name[key]] = data;
+        }
+
+    }) ; 
+  }
+  for (var k in quota['degree_histogram'] ){
+    if(max <= quota['degree_histogram'][k]){
+      max = quota['degree_histogram'][k];
+      i = k;
+    }
+  }
+  var html ='';
+  html += "<tr><th>指标数值</th>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_nodes']+"<span class=\"tsp\">   | </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+max+"<span class=\"tsp\">   | </span>"+i+"</div><div class=\"lrRr\"></div></div></th>";
+  html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_strongly_connected_components']+"<span class=\"tsp\">   | </span>"+quota['number_weakly_connected_components']+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  $("#mstable").append(html);
+  //console.log(html);
+
+  
+}
+
+
+$(document).ready(function(){
+    get_network_infor();
+})
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 
@@ -155,17 +197,11 @@ function network_request_callback(data) {
     }
 
     else {
-        console.log('1');
+        //console.log('1');
         $("#loading_network_data").text("暂无结果!");
     }
 
 }
-
-
-    $(document).ready(function(){   //网页加载时执行下面函数
-      show_network();
-    })
-
 
 function show_network() {
     networkShowed = 0;
@@ -205,7 +241,7 @@ function show_network() {
 
 (function ($) {
     function request_callback(data) {
-      console.log(data);
+      //console.log(data);
       var status = 'current finished';
       var page_num = 10 ;
   if (status == 'current finished') {
@@ -247,10 +283,11 @@ function show_network() {
   }
   else
       return
-    }    
+    }
+    
     function create_current_table(data, start_row, end_row) {
 
-      console.log(data);
+      //console.log(data);
       var cellCount = 8;
       var table = '<table class="table table-bordered">';
       var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>敏感状态</th><th><input id="select_all" type="checkbox" />全选</th></tr></thead>';
@@ -309,7 +346,7 @@ function show_network() {
       var topic = '中国'; 
       var start_ts = 1377965700;
       var end_ts = 1378051200;
-      var topn = 15;
+      var topn = 100;
 
       $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
     }

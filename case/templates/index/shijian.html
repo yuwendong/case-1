@@ -1,689 +1,252 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="x-ua-compatible" content="ie=7">
-<title>微博监控 - 舆情监控系统</title>
-<link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
-<link id="themeCSS" rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-<script src="/static/css/js/jquery-1.4.4.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/static/css/css/menu.css" type="text/css" media="all">
-<script src="/static/css/js/htip.js" type="text/javascript"></script>
-<style type="text/css">
-.headerTitle{font-size:24px;font-family:ºÚÌå;color:#ffffff;position: relative;top: 8px;}
-</style>
-</head>
-<body>
-<div class="banner_wrap">
-    <div class="banner">
-        <div class="banner_bg">
-            <table border="0" cellpadding="0" cellspacing="0" height="97" width="750">
-                <tbody><tr>
-                    <td>
-                     <img src="/static/css/images/bhsocial.gif" border="0"><span class="headerTitle"> - 九一八舆情</span>                 </td>
-                </tr>
-            </tbody></table>
+{% extends "base.html" %}
+{% block title %}时间分析{% endblock %}
+{% block module_title %}深度分析{% endblock %}
+
+{% block head_css %}
+    <!--
+    <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
+    <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
+    -->
+    <!-- 走势图切换按钮css -->
+    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
+
+    <style type="text/css">
+        /* keywords tag cloud */
+        #keywords_cloud_div {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0px auto 0
+        }
+
+        #keywords_cloud_div a {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-family: Microsoft YaHei;
+            color: #AD12C2;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 3px 6px;
+        }
+
+        #keywords_cloud_div a:hover {
+            border: 1px solid #eee;
+            background: #000;
+        }
+        #keywords_cloud_div .blue {
+            color: blue;
+        }
+        #keywords_cloud_div .red {
+            color: red;
+        }
+        #keywords_cloud_div .yellow {
+            color: yellow;
+        }
+
+        #trend_div {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        #trend_div1 {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 25px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float: left;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666;
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7;
+        }
+
+    </style>
+{% endblock head_css %}
+
+{% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
+    <script src="/static/css/js/tab.js" type="text/javascript"></script>
+    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
+    <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+    <script src="/static/bootstrap-switch/_dist/js/bootstrap-switch.min.js" type="text/javascript"></script>
+{% endblock head_js %}
+
+{% block content %}
+    <div class="blkUnit grpUnit" id="trendProfile">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>时间走势分析</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <span class="pull-right" style="margin: -10px auto -10px auto;">
+                <input type="checkbox" name="abs_rel_switch" checked>
+            </span>
+            <!--<span class="compInfo" style="display: none;"> </span>
+            <span class="compInfo">2014-08-07 至 2014-08-13</span>
+            <span class="compInfo">全国</span>-->
         </div>
-<!--                 <div class="search">
-            <div class="search_box_l"></div>
-            <input type="hidden" value="title" name="search_type">
-            <input type="hidden" value="7days" name="date_type">
-            <input type="hidden" value="-1" name="brand_id">
-            <input type="hidden" value="-1" name="product_id">
-            <input name="search" value="" type="text" id="search_box" class="search_box">
-            <input name="submit" onclick="javascript:if($(&#39;#search_box&#39;).val() == &#39;&#39;){alert (&#39;请填写要查找的内容。&#39;);return false;};" type="submit" class="search_btn" value="">
-            
-        </div> -->
+
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
             </div>
-</div>
-<script type="text/javascript" src="/static/css/js/miaov.js"></script>
-<link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
-<link rel="stylesheet" type="text/css" href="/static/css/css/miaov_style.css" >
-<script src="/static/css/js/tab.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
-<script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
-<script src="/static/css/js/highcharts.js"></script>
-<script src="/static/css/js/exporting.js"></script>
-<div id="floatMenu"></div>
-<div class="main2">
-    <div class="leftbox">
-        <ul>
-            <li class="menu_main">
-                <a href="/index/gaishu/">
-                    舆情概况
-                </a>
-            </li>
-            <li class="menu_main"><a href="/index/zhibiao/">舆情指数</a></li>
-            <li class="menu_main_on"><a href="#">深度分析</a></li>
-            <li class="menu_son"><a href="/index/time/">时间分析</a></li>  
-            <li class="menu_son"><a href="/index/area/">地域分析</a></li>
-            <li class="menu_son"><a href="/index/network/">网络分析</a></li>
-            <li class="menu_son"><a href="/index/semantic/">语义分析</a></li>
-            <li class="menu_son"><a href="/index/moodlens/">情感分析</a></li>
-        </ul>
+            <div class="tabConts">
+                <!--<div id="trend_div_container">-->
+                    <!--
+                    <div class="control-group" id="togglecount">
+                        <div class="controls btn switch switch-two">
+                            <input id="relative" name="view" type="radio" checked>
+                            <label id="relative_label" for="relative">相对比例</label>
+
+                            <input id="absolute" name="view" type="radio">
+                            <label id="absolute_label" for="absolute">绝对数量</label>
+                            <span class="slide-button btn btn-success"></span>
+                        </div>
+                    </div>-->
+                    <div id="trend_div1"></div>
+                    <!--</div>-->
+            </div>
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
+            </div>
+            <div class="tabConts">
+                <!--<div id="trend_div_container">-->
+                    <!--
+                    <div class="control-group" id="togglecount">
+                        <div class="controls btn switch switch-two">
+                            <input id="relative" name="view" type="radio" checked>
+                            <label id="relative_label" for="relative">相对比例</label>
+
+                            <input id="absolute" name="view" type="radio">
+                            <label id="absolute_label" for="absolute">绝对数量</label>
+                            <span class="slide-button btn btn-success"></span>
+                        </div>
+                    </div>-->
+                    <div id="trend_div"></div>
+                    <!--</div>-->
+            </div>
+        </div>
     </div>
-        <div class="rightbox">
-             <div id="backgroundHolder" style="width:800px;height:20px">
-          <ul class="nav">
-            <li class="drop right"><a class="main down" href="#url"><b>数量选择</b></a>
-              <ul>
-                <li><a href="javascript:void(0);" onclick="total_count();"><b>当量</b></a></li>
-                <li><a href="javascript:void(0);" onclick="increment_count();"><b>增量</b></a></li>
-              </ul>
-            </li>
-          </ul>          
-          <ul class="nav">
-            <li class="drop right"><a class="main down" href="#url"><b>粒度选择</b></a>
-              <ul>
-                <li><a href="#url"><b>一天</b></a></li>
-                <li><a href="#url"><b>一小时</b></a></li>
-                <li><a href="#url"><b>一刻钟</b></a></li>
-              </ul>
-            </li>
-          </ul>
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>关键词云分析及占比分析</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
-<div id="container" style="min-width: 310px; height: 220px; margin: 0 auto"></div>
-<div id="main1" style="min-width: 310px; height: 220px; margin: 0 auto"></div>
-<div id="main2"style="height:200px;float:left;width:430px;background:#F0F0F0"></div>
-<div id="main3"style="height:200px;float:right;width:430px;background:#F0F0F0">
-        <h4 style="text-align:center;font-weight:lighter">关键词云图</h4>
-        <div id="keywords_cloud_div"> </div>
-</div>          
-<div id="main4"style="height:400px;float:left;width:900px;background:#F0F0F0;margin-top:20px">
-        <div id="tabContainer">
-          <ul>
-            <li id="tab1"><a style="color:#000; text-decoration:none" class="on" onclick="switchTab('tab1','con1');this.blur();return false;">
-                高兴代表微博</a></li>
-            <li id="tab2"><a style="color:#000; text-decoration:none" onclick="switchTab('tab2','con2');this.blur();return false;">
-                悲伤代表微博</a></li>
-            <li id="tab3"><a style="color:#000; text-decoration:none" onclick="switchTab('tab3','con3');this.blur();return false;">
-                愤怒代表微博</a></li>
-          </ul>
-        <div style="clear: both"></div>
-            <div><div id="con1">
-            <ul  id="vertical-ticker">     
-            </ul>
+
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
             </div>
-                <div id="con2" style="display: none">fergtrtgrfrefrewfrfeferffefe</div>
-                <div id="con3" style="display: none">vbfbrbtrtrnrtnynytndytd</div>
+            <div class="tabConts">
+                <div style="width:1033px;">
+                    <div id="keywords_cloud_frame" style="clear:left;width:50%;float:left;height:250px;position:relative;">
+                        <div id="keywords_cloud_div"></div>
+                    </div>
+                    <div id="pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;">
+                </div>
             </div>
-        </div>      
-</div>
-<script src="/static/css/echarts-2.0.0/build/echarts-plain.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){   //网页加载时执行下面函数
-           getpie_data();
-        })
-    var result1=[];
-    var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700;
-    var during = ts-START_TS;
-    function getpie_data() {
-    var result=[];
-        $.ajax({
-            url: "/moodlens/pie/?ts=" + ts + "&query=" + query +"&during="+ during,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                // console.log(data);
-                result[0]=data["happy"];
-                //console.log(data['happy']);
-                //alert("result[0]");
-                result[1]=data["sad"];
-                result[2]=data["angry"];
-                on_update(result);
-            }
-        });       
-    }
-    function on_update(result) {
-    //alert('on_update' + result[0]);
-    //alert('on_update' + result[1]);
-    //alert('on_update' + result[2]);
-        //result1=getpie_data();
-        keyword_data();  
-        var pie_data=[];
-        pie_data = [{value:  result[2], name:''}, {value: result[1], name:'2'}, {value:  result[0], name:'3'}];
-    option = {
-        backgroundColor:'#F0F0F0',
-        title : {
-            text: '情绪饼图',
-            x:'center',
-            textStyle:{
-            fontWeight:'lighter',
-            fontSize: 13,
-            }        
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['高兴','悲伤','愤怒']
-        },
-            toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
-        calculable : true,
-        series : [
-            {
-                name:'访问来源',
-                type:'pie',
-                radius : '50%',
-                center: ['50%', '60%'],
-                data: pie_data
-            }
-        ]
-    };
-    var myChart = echarts.init(document.getElementById('main2'));
-    myChart.setOption(option);        
-    }
-    function isEmptyObject(obj){
-        for ( var name in obj ) { 
-            return false;
-        } 
-        return true; 
-    } 
-           $(document).ready(function(){   //网页加载时执行下面函数
-           keyword_data();
-        })
-    function keyword_data()
-    {       
-        var  topic = "中国";
-        var  end_ts = 1377965700;
-        var  during = 900;
-        var  limit = 50;
-        var  style = 3; 
-        $.ajax({
-                url:"/propagate/keywords/?end_ts=" + end_ts + "&topic=" + topic + "&during="+ during + "&limit="+ limit + "&style="+ style,
-                data: "GET",
-                dataType:"json",
-                success: function(data)
-                {   
-                            if(data=='search function undefined'){
-                                $("#keywords_cloud_div").empty();
-                                $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");  
-                            }
-                            else{
-                                if(isEmptyObject(data)){
-                                    $("#keywords_cloud_div").empty();
-                                    $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");   
-                                }
-                                else{ 
-                                        for(var keyword in data){
-                                           alert(keyword);
-                                            $('#keywords_cloud_div').append('<a><font color="orange" font-weight:"lighter">'+ keyword +'</font></a>'); 
-                                            }
-                                }
-                                on_load();
-                              }
-                           } 
-                    })
-    }   
-   $(document).ready(function(){   //网页加载时执行下面函数
-           getweibos_data();
-        })
-   function getweibos_data(){      //请求文本数据
-                var end_ts = 1378051200;
-                var topic = "中国";
-                var style = 2;
-                var during = 900;
-                var limit = 50;
-                $.ajax({
-                    url: "/propagate/weibos/?&topic=" + topic + "&end_ts=" + end_ts +"&limit="+limit + "&during=" + during + "&style=" + style,
-                    type: "GET",
-                    dataType:"json",
-                    success: function(data){
-                       console.log(data);
-                       $("#vertical-ticker").empty();       
-                        var weibo=[];
-                        for (var keyword in data){
-                            weibo.push(data[keyword][1]);
-                            console.log(data[keyword][1]);
-                        }
-                        if(weibo.length > 0){
-                             chg_weibos(weibo);
-                        }
-                        else{
-                            $("#vertical-ticker").empty();
-                            $("#vertical-ticker").append("关键微博为空！");
-                        }
-                    }
-                });
-            }
-
-            function chg_weibos(data){     //文本写入
-                var html = "";
-                var emotion_content = ['happy', 'angry', 'sad'];
-                for(var i=0;i<data.length;i+=1){
-                    if (data[i]['sentiment'] == 0){
-                        var emotion = 'nomood'
-                    }
-                    else{
-                        var emotion = emotion_content[data[i]['sentiment']-1];
-                    }
-                    var id = data[i]['_id'];
-                    var user = data[i]['user'];
-                    var user_link = 'http://weibo.com/u/'+data[i]['user'];
-                    var text = data[i]['text'];
-                    var weibo_link = data[i]['weibo_link'];
-                    var comments_count = data[i]['comments_count'];
-                    var geo = data[i]['geo'];
-                    var retweeted_text = 'None';
-                    html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"
-                    html +="<div class=\"chartclient-annotation-title\"><a style=\"color:#000; text-decoration:none;display:inline;\" href='" + user_link + "' target='_blank' >" + user + "</a> " +  '(' + id + ')' +"发布: ";
-                    html +="<a style=\"color:#000; text-decoration:none;display:inline;\" href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
-                    if(retweeted_text != 'None'){
-                        html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
-                                                }
-                    html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 评论数：" +  comments_count + "</span></div>";
-                } 
-                $("#vertical-ticker").append(html);
-            }
-        var list = [];
-        var list_af = [];
-        var increment_af = [];
-
-        var folk_value = [];
-        var folk_count = [];
-        var folk = [];
-       
-        var media_value = [];
-        var media_count = [];
-        var media = [];
-
-        var opinion_leader_value = [];
-        var opinion_leader_count = [];
-        var opinion_leader = [];
-
-        var other_value = [];
-        var other_count = [];
-        var other = [];
-
-        var oversea_value = [];
-        var oversea_count = [];
-        var oversea = [];
-
-        var all = [];
-
-        var increment_list = [];
-        var increment_folk_value = [];
-        var increment_folk_count = [];
-        var increment_folk = [];
-
-        var increment_media_value = [];
-        var increment_media_count = [];
-        var increment_media = [];
-
-        var increment_opinion_leader_value = [];
-        var increment_opinion_leader_count = [];
-        var increment_opinion_leader = [];
-
-        var increment_other_value = [];
-        var increment_other_count = [];
-        var increment_other = [];
-
-        var increment_oversea_value = [];
-        var increment_oversea_count = [];
-        var increment_oversea = [];
-
-        var increment_total_value = [];
-        var increment_total = [];
-        var increment_total_count = [];
-$(document).ready(function(){   //网页加载时执行下面函数
-           total_count();
-        })
-function total_count () {
-        for (time = 0 ; time < 7 ;time++)
-        {
-         get_count(time);
-        }
-        drawpicture_total();
-        folk_count = [];
-        media_count = [];
-        opinion_leader_count = [];
-        other_count = [];
-        oversea_count = [];
-
-        drawpicture_total_all();
-    }
-   function get_count(time){
-    var during = 900;
-    var atime = time;
-    var end_ts = 1377998100+900 * atime;
-    var topic = "中国";
-    var style = 3; 
-        $.ajax({
-            url: "/propagate/total/?end_ts=" + end_ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
-            type: "GET",
-            dataType:"json",
-            async:false,
-            success: function(data){
-                // console.log(data);
-                folk_value = data["dcount"];
-                folk = folk_value["folk"] 
-                folk_count.push(folk);
-                             
-                list.push(end_ts);
-
-                media_value = data["dcount"];
-                media = media_value["media"] 
-                media_count.push(media);
-
-                opinion_leader_value = data["dcount"];
-                opinion_leader = opinion_leader_value["opinion_leader"] 
-                opinion_leader_count.push(media);
-                
-                other_value = data["dcount"];
-                other = other_value["other"] 
-                other_count.push(other);
-
-                oversea_value = data["dcount"];
-                oversea = oversea_value["oversea"] 
-                oversea_count.push(oversea);
-                      }
-        });
-}
-function drawpicture_total() {
-        list_af = [];
-        for (var i = 0; i < list.length; i++){
-            ns= new Date(parseInt(list[i]) * 1000).toLocaleString();
-            list_af.push(ns);
-        }
-        for (var i = 0; i < list.length; i++){
-          all[i] = folk_count[i]+media_count[i]+opinion_leader_count[i]+other_count[i]+oversea_count[i];   
-}
-        list = [];
-        $('#container').highcharts({
-            title: {
-        style: { 
-                fontWeight: 'lighter',
-                fontSize: '13px',
-                x: -20 //center
-            },
-                text: '各领域微博总量',
-                fontSize: '13px',
-                x: -20 //center
-            },
-            subtitle: {
-              
-                x: -20
-            },
-            xAxis: {
-                categories:list_af
-            },
-            yAxis: {
-                title: {
-                    text: '微博条数'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            tooltip: {
-                valueSuffix: ''
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                borderWidth: 0,
-                borderColor: '#F0F0F0'
-            },
-            series: [{
-                name: 'folk',
-                data: folk_count,
-            }, {
-                name: 'media',
-                data: media_count,
-            }, {
-                name: 'opinion_leader',
-                data: opinion_leader_count,
-            }, {
-                name: 'other',
-                data: other_count,
-            },
-               {
-                name: 'oversea',
-                data: oversea_count,
-            }]
-        });
-    }
-function drawpicture_total_all() {
-        $('#main1').highcharts({
-            title: {
-        style: {
-                
-                fontWeight: 'lighter',
-                fontSize: '13px',
-                x: -20 //center
-            },
-                text: '全领域微博总量',
-                fontSize: '13px',
-                x: -20 //center
-            },
-            subtitle: {
-              
-                x: -20
-            },
-            xAxis: {
-                categories: list_af
-            },
-            yAxis: {
-                title: {
-                    text: '微博条数'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            tooltip: {
-                valueSuffix: ''
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                fontWeight: 'lighter',
-                borderWidth: 0
-            },
-            series: [{
-                name: '全领域',
-                data:all 
-            }]
-        });
-    }
-function increment_count () {
-       
-        for (time = 0 ; time < 7 ;time++)
-        {
-            increment_get_count(time);
-        }
-    drawpicture_increment();
-
-     increment_folk_count = [];
-     increment_media_count = [];
-     increment_opinion_leader_count = [];         
-     increment_other_count = [];
-     increment_oversea_count = [];
-     
-
-     drawpicture_increment_all();
-     increment_total_count = [];
-
-     folk_count = [];
-     media_count = [];
-     opinion_leader_count = [];         
-     other_count = [];
-     oversea_count = [];
-    }
-   function increment_get_count(time){
-    var during = 900;
-    var atime = time;
-    var end_ts = 1377998100+900 * atime;
-    var topic = "中国";
-    var style = 3;     
-        $.ajax({
-            url: "/propagate/increment/?end_ts=" + end_ts + "&style=" + style +"&during="+     during + "&topic=" + topic,
-            type: "GET",
-            dataType:"json",
-            async:false,
-            success: function(data){
-           // console.log(data);
-                increment_folk_value = data["dincrement"];
-                increment_folk = increment_folk_value["folk"] 
-                increment_folk_count.push(increment_folk);
-               
-              
-                increment_list.push(end_ts);
-
-                increment_media_value = data["dincrement"];
-                increment_media = increment_media_value["media"] 
-                increment_media_count.push(increment_media);
-
-                opinion_leader_value = data["dincrement"];
-                opinion_leader = opinion_leader_value["opinion_leader"] 
-                opinion_leader_count.push(media);
-                
-                increment_other_value = data["dincrement"];
-                increment_other = increment_other_value["other"] 
-                increment_other_count.push(increment_other);
-
-                increment_oversea_value = data["dincrement"];
-                increment_oversea = increment_oversea_value["oversea"] 
-                increment_oversea_count.push(increment_oversea);
-
-                increment_total_value = data["dincrement"];
-                increment_total = increment_total_value["total"] 
-                increment_total_count.push(increment_total);
-            }
-    });
-}
-
-function drawpicture_increment() {
-        increment_af = [];
-        for (var i = 0; i < increment_list.length; i++){
-
-            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString();
-
-            increment_af.push(ns);
-        }
-        increment_list = [];
-
-        $('#container').highcharts({
-            title: {
-        style: {
-                
-                fontWeight: 'lighter',
-                fontSize: '13px',
-                x: -20 //center
-            },
-                text: '各领域微博增量',
-                fontSize: '13px',
-                x: -20 //center
-            },
-            subtitle: {
-              
-                x: -20
-            },
-            xAxis: {
-                categories:increment_af
-            },
-            yAxis: {
-                title: {
-                    text: '增长率'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            tooltip: {
-                valueSuffix: ''
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                borderWidth: 0
-            },
-            series: [{
-                name: 'folk',
-                data: increment_folk_count,
-            }, {
-                name: 'media',
-                data: increment_media_count,
-            }, {
-                name: 'opinion_leader',
-                data: increment_opinion_leader_count,
-            }, {
-                name: 'other',
-                data: increment_other_count,
-            },
-               {
-                name: 'oversea',
-                data: increment_oversea_count,
-            }]
-        });
-    }
-function drawpicture_increment_all(){
-
-        $('#main1').highcharts({
-            title: {
-        style: {
-                fontWeight: 'lighter',
-                fontSize: '13px',
-                x: -20 //center
-            },
-                text: '各领域微博增量',
-                fontSize: '13px',
-                x: -20 //center
-            },
-            subtitle: {
-              
-                x: -20
-            },
-            xAxis: {
-                categories: increment_af
-            },
-            yAxis: {
-                title: {
-                    text: '增长率'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            tooltip: {
-                valueSuffix: ''
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                fontWeight: 'lighter',
-                borderWidth: 0
-            },
-            series: [{
-                name: '全领域',
-                data:increment_total_count
-            }]
-        });
-    }
-</script>
-             </div>
+            </div>
         </div>
-    </body>
-</html>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;" id="weiboarea">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>关键微博</h4>
+            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+        </div>
+
+        <div class="stmTabs tabUnit" style="width:1033px;">
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI">
+                    <a class="tabLi gColor0" href="javascript:;" style="display: block;">
+                        <div class="nmTab">高兴</div>
+                        <div class="hvTab">高兴</div>
+                    </a>
+                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">愤怒</div>
+                        <div class="hvTab">愤怒</div>
+                    </a>
+                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">悲伤</div>
+                        <div class="hvTab">悲伤</div>
+                    </a>
+                </div>
+            </div>
+            <div class="tabConts">
+                <div id="weibos_div" style="height:400px;float:left;">
+                    <div class="tabCon">
+                        <div class="cur" id="vertical-ticker" style="height:380px; width:950px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var abs_rel_switch = $("[name='abs_rel_switch']").bootstrapSwitch({
+            size: 'small',
+            onText: '当量',
+            offText: '增量',
+            readonly: true,
+            disabled: false
+        });
+
+    </script>
+    <script src="/static/css/js/time_line_pie_keyword.js" type="text/javascript"></script>
+{% endblock content %}
