@@ -20,6 +20,7 @@
         var data;
         // Called when the Visualization API is loaded.
         $(document).ready(function(){   //网页加载时执行下面函数
+
         var style = '0';
         gettimeline_data();
         getweibos_data(style);
@@ -38,6 +39,7 @@
             async: false,
             success: function(data){
                
+
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][i][0];
                 };
@@ -45,6 +47,7 @@
                     result1[i] = data[i][i][1]; 
                 };
                 for (var i = 0;i < data.length;i++) {
+<<<<<<< HEAD
                     result2[i] = data[i][i][2][0]+'-'+data[i][i][2][1]; 
 
                     var s = i.toString();
@@ -159,6 +162,46 @@
                     'end': data1[10],
                     'content': result2[10]
                 }
+                // {
+                //     'start': ns_start[3],
+                //     'end': ns_end[3],
+                //     'content': result2[3]
+                // },
+                // {
+                //     'start': ns_start[4],
+                //     'end': ns_end[4],
+                //     'content': result2[4]
+                // },
+                // {
+                //     'start': ns_start[5],
+                //     'end': ns_end[5],
+                //     'content': result2[5]
+                // },
+                // {
+                //     'start': ns_start[6],
+                //     'end': ns_end[6],
+                //     'content': result2[6]
+                // },
+                // {
+                //     'start': ns_start[7],
+                //     'end': ns_end[7],
+                //     'content': result2[7]
+                // },
+                // {
+                //     'start': ns_start[8],
+                //     'end': ns_end[8],
+                //     'content': result2[8]
+                // },
+                // {
+                //     'start': ns_start[9],
+                //     'end': ns_end[9],
+                //     'content': result2[9]
+                // },
+                // {
+                //     'start': ns_start[10],
+                //     'end': ns_end[10],
+                //     'content': result2[10]
+                // }
             ];
 
             // specify options
@@ -207,8 +250,7 @@
                 result[6]=data['7'][6];
                 result[9]=data['8'][9];
                 result[8]=data['9'][8];
-
-                on_update(result);
+                 on_update(result);
             }
         });
        
@@ -249,22 +291,22 @@
            dataView : {show: true, readOnly: false},
             restore : {show: true},
             
-            saveAsImage : {show: true}
-        }
-    },
-        calculable : true,
-        series : [
-            {
-                name:'访问来源',
+             saveAsImage : {show: true}
+         }
+     },
+         calculable : true,
+         series : [
+             {
+                 name:'访问来源',
                 type:'pie',
-                radius : '50%',
-                center: ['50%', '60%'],
-                data: pie_data
-            }
-        ]
-    };
-    var myChart = echarts.init(document.getElementById('main'));
-    myChart.setOption(option);
+                 radius : '50%',
+                 center: ['50%', '60%'],
+                 data: pie_data
+             }
+         ]
+     };
+     var myChart = echarts.init(document.getElementById('main'));
+     myChart.setOption(option);
         
     }
     
@@ -313,6 +355,18 @@
                         }
                       
                         chg_weibos(dataselect);
+                       // $("#vertical-ticker").empty();       
+                       //  var weibo=[];
+                       //  for (var keyword in data){
+                       //      weibo.push(data[keyword][1]);
+                       //      console.log(data[keyword][1]);
+                       //  }
+                       //  if(weibo.length > 0){
+                       //       chg_weibos(weibo);
+                       //  }
+                       //  else{
+                       //      $("#vertical-ticker").empty();
+                       //      $("#vertical-ticker").append("关键微博为空！");
                     }
         });
     }
@@ -421,3 +475,31 @@
            
            
         }
+            // function chg_weibos(data){  
+            //     var html = "";
+            //     var emotion_content = ['happy', 'angry', 'sad'];
+            //     for(var i=0;i<data.length;i+=1){
+            //         if (data[i]['sentiment'] == 0){
+            //             var emotion = 'nomood'
+            //         }
+            //         else{
+            //             var emotion = emotion_content[data[i]['sentiment']-1];
+            //         }
+            //         var id = data[i]['_id'];
+            //         var user = data[i]['user'];
+            //         var user_link = 'http://weibo.com/u/'+data[i]['user'];
+            //         var text = data[i]['text'];
+            //         var weibo_link = data[i]['weibo_link'];
+            //         var comments_count = data[i]['comments_count'];
+            //         var geo = data[i]['geo'];
+            //         var retweeted_text = 'None';
+            //         html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"
+            //         html +="<div class=\"chartclient-annotation-title\"><a style=\"color:#000; text-decoration:none;display:inline;\" href='" + user_link + "' target='_blank' >" + user + "</a> " +  '(' + id + ')' +"发布: ";
+            //         html +="<a style=\"color:#000; text-decoration:none;display:inline;\" href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
+            //         if(retweeted_text != 'None'){
+            //             html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
+            //                                     }
+            //         html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 评论数：" +  comments_count + "</span></div>";
+            //     } 
+            //     $("#vertical-ticker").append(html);
+            // }
