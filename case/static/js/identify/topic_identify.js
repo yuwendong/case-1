@@ -36,7 +36,7 @@ var i = 0;
     }
   }
   var html ='';
-  html += "<tr><th>指标数值</th>"
+  // html += "<tr><th>指标数值</th>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_nodes']+"<span class=\"tsp\">   | </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+max+"<span class=\"tsp\">   | </span>"+i+"</div><div class=\"lrRr\"></div></div></th>";
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_strongly_connected_components']+"<span class=\"tsp\">   | </span>"+quota['number_weakly_connected_components']+"</div><div class=\"lrRr\"></div></div></th></tr>";
