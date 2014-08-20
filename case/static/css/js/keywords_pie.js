@@ -1,117 +1,79 @@
 $(document).ready(function(){   //网页加载时执行下面函数
-           getpie_data();
-           keyword_data();
+           gettext_data();
         })
     var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700;
-    var during = ts-START_TS;
-    function getpie_data() {
+    function gettext_data() {
         var result=[];
         $.ajax({
-            url: "/moodlens/pie/?ts=" + ts + "&query=" + query +"&during="+ during,
+            url: "/index/gaishu_data/?query=" + query,
             type: "GET",
             dataType:"json",
             success: function(data){
-                // console.log(data);
-                result[0]=data["happy"];
-                //console.log(data['happy']);
-                //alert("result[0]");
-                result[1]=data["sad"];
-                result[2]=data["angry"];
-                on_update(result);
+                console.log(data);
+                writ_text(data);
+                writ_opinion(data);
             }
         });       
     }
-    function on_update(result) {
-    //alert('on_update' + result[0]);
-    //alert('on_update' + result[1]);
-    //alert('on_update' + result[2]);
-        //result1=getpie_data(); 
-        var pie_data=[];
-        pie_data = [{value:  result[2], name:'1'}, {value: result[1], name:'2'}, {value:  result[0], name:'3'}];
 
-    option = {
-        title : {
-            x:'center',
-            textStyle:{
-            fontWeight:'lighter',
-            fontSize: 13,
-            }        
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['1','2','3']
-        },
-            toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            restore : {show: true},
-            saveAsImage : {show: true}
+    function writ_text(data){
+        var text = data;
+        var html = '';
+        html += '<h4><b>标签:'+data['tag']+'</b></h4>';
+        html += '<i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>';      
+        html += '<span class="pull-right" style="margin: -10px auto -10px auto;">';
+        html += '<input type="checkbox" name="abs_rel_switch" checked></span>';
+        $('#title_text').append(html);
+        
+        var content = '';
+        var begin = new Date(parseInt(data['begin']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
+        var end = new Date(parseInt(data['end']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
+        content += ' <p> 九一八发生于' + '<b style="background:#ACD6FF  ">'+data['event_time']+'</b>' + '，事件发生地点为' +'<b style="background:#ACD6FF  ">'+data['event_spot']+'</b>'  + '。' + '<b style="background:#ACD6FF  ">'+data['event_summary']+'</b>';
+        content += '该事件的舆情信息起始于' + '<b style="background:#ACD6FF  ">'+begin+'</b>' + '，终止于' + '<b style="background:#ACD6FF  ">'+end+'</b>';
+        content += '，共' +data['user_count'] + '人参与信息发布与传播，' + '舆情信息累计' + data['count']+ '条。';
+        content += '参与人群集中于' + '<b style="background:#ACD6FF  ">'+data['area'] +'</b>'+ '。';
+        content += ' 前' + '<b style="background:#ACD6FF  ">'+data['k_limit']  +'</b>'+ '个关键词是：';
+        for(var k in data['key_words']){
+            content += k+ ':' + '<b style="background:#ACD6FF  ">'+data['key_words'][k]+'</b>'+',';
         }
-    },
-        calculable : true,
-        series : [
-            {
-                name:'访问来源',
-                type:'pie',
-                radius : '50%',
-                center: ['50%', '60%'],
-                data: pie_data
-            }
-        ]
-    };
-    var myChart = echarts.init(document.getElementById('pie'));
-    myChart.setOption(option);        
-    }
-  
-    function isEmptyObject(obj){
-        for ( var name in obj ) { 
-            return false;
-        } 
-        return true; 
+        content += '。';
+        content += '' + '网民情绪分布情况为：' ;
+        for(var mood in data['moodlens_pie']){
+            console.log(mood);
+            content += mood+':' + '<b style="background:#ACD6FF  ">'+data['moodlens_pie'][mood]+'</b>'+',';
+        }
+        content +=  '。';
+        content += '代表性媒体报道如鱼骨图所示。</p>'
+        console.log(content);
+        $("#keywords_text").append(content);
+        //content += '      网民代表性观点列举如下：' + opinion
     } 
-           $(document).ready(function(){   //网页加载时执行下面函数
-           keyword_data();
-        })
-    function keyword_data()
-    {       
-        var  topic = "中国";
-        var  end_ts = 1377965700;
-        var  during = 900;
-        var  limit = 50;
-        var  style = 3; 
-        $.ajax({
-                url:"/propagate/keywords/?end_ts=" + end_ts + "&topic=" + topic + "&during="+ during + "&limit="+ limit + "&style="+ style,
-                data: "GET",
-                dataType:"json",
-                success: function(data)
-                {   
-                            if(data=='search function undefined'){
-                                $("#keywords_cloud_div").empty();
-                                $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");  
-                            }
-                            else{
-                                if(isEmptyObject(data)){
-                                    $("#keywords_cloud_div").empty();
-                                    $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");   
-                                }
-                                else{ 
-                                        for(var keyword in data){
-                                           // alert(keyword);
-                                            $('#keywords_cloud_div').append('<a><font color="#FF79BC" font-weight:"lighter">'+ keyword +'</font></a>'); 
-                                            }
-                                }
 
-                                 on_load();
-                              }
-                           } 
-                    })
-    }   
+    function writ_opinion(data){
+        var opinion;
+
+        for (var op in data['opinion']){
+            console.log(op);
+            var html1 = '';
+            opinion= data['opinion'][op];
+            console.log(opinion);
+            var user = opinion['user'];
+            var text = opinion['text'];
+            var reposts_count = opinion['reposts_count'];
+            var timestamp = opinion['timestamp'];
+            var date = new Date(parseInt(timestamp) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
+            html1 += '<li class="item">';
+       
+            html1 += '<p5 padding-left:15px;text-decoration: none;>用户id:' + '<b style="background:#ACD6FF  ">'+user +'</b>' + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + " "+ "发布时间"+'<a class="undlin" target="_blank">'+date + '</a>&nbsp;&nbsp;'+'</p5>';
+            html1 += '<div class="weibo_info">';
+            
+           
+
+          
+            html1 += '</div>';
+            html1 += '</li>';
+            $("#opinion_text").append(html1);
+
+        }
+    }
+   
