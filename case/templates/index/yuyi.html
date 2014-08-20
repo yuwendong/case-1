@@ -111,6 +111,137 @@
             height: 21px;
             border-bottom: 2px solid #6e87d7;
         }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }
+        .stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .weibo_list_height {
+            max-height: 670px;
+        }
+        .scrolls {
+            overflow: hidden;
+        }
+        .tang-scrollpanel {
+            overflow: hidden;
+        }
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-scrollpanel-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-slider {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0;
+        }
+        .tang-scrollpanel .tang-slider-vtl {
+            height: 100%;
+        }
+        li.item {
+            line-height: 18px;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 9px 10px 10px 0;
+            min-height: 55px;
+            _height: 55px;
+        }
+        .weibo_face {
+            position: relative;
+            float: left;
+            width: 50px;
+            margin-top: 2px;
+        }
+        .weibo_list a {
+            text-decoration: none;
+        }
+        .weibo_face img {
+            width: 50px;
+            height: 50px;
+        }
+        .weibo_detail {
+            margin-left: 65px;
+        }
+        .weibo_list a.undlin {
+            text-decoration: underline;
+        }
+        .weibo_info {
+            margin-top: 7px;
+            color: #666;
+        }
+        .weibo_info .weibo_pz {
+            float: right;
+            color: #858585;
+            height: 18px;
+            line-height: 18px;
+        }
+        .weibo_info .m a {
+            color: #666;
+        }
+        tr {
+            height:25px;
+        }
+        table.altrowstable td {
+            border-width: 1px;
+            padding: 0px;
+            width: 65px;
+            border-style: solid;
+            border-color: #a9c6c9;
+        }
+        table.altrowstable th {
+            border-width: 1px;
+            padding-left: 5px;
+            border-style: solid;
+            border-color: #a9c6c9;
+        }
 
     </style>
 {% endblock head_css %}
@@ -150,37 +281,13 @@
                 <div style="width:1033px;">
                     <div id="main" style="clear:left;width:50%;float:left;height:280px;position:relative;">
                     </div>
-                 <div id="list" style="width:50%;height:250px;float:right;margin-top:0px"> 
+                 <div id="list" style="width:50%;height:250px;float:right;margin-top:0px;"> 
                 
-       <table class="altrowstable" id="alternatecolor">
-<tr>
-    <th>Info Header 1</th><th>Info Header 2</th><th>Info Header 3</th><th>Info Header 4</th>
-</tr>
-<tr>
-   <td>Text 1A</td><td>Text 1B</td><td>Text 1C</td><td>Text 1D</td>
-</tr>
-<tr>
-    <td>Text 2A</td><td>Text 2B</td><td>Text 2C</td><td>Text 2D</td>
-</tr>
-<tr>
-    <td>Text 3A</td><td>Text 3B</td><td>Text 3C</td><td>Text 3D</td>
-</tr>
-<tr>
-    <td>Text 4A</td><td>Text 4B</td><td>Text 4C</td><td>Text 4D</td>
-</tr>
-<tr>
-    <td>Text 5A</td><td>Text 5B</td><td>Text 5C</td><td>Text 5D</td>
-</tr>
-<tr>
-    <td>Text 6A</td><td>Text 6B</td><td>Text 6C</td><td>Text 6D</td>
-</tr>
-<tr>
-    <td>Text 6A</td><td>Text 6B</td><td>Text 6C</td><td>Text 6D</td>
-</tr>
-    </table> 
-</div>
-    </div>
+                    <table class="altrowstable" id="alternatecolor" style = "margin-left :15px;height : 250px;width:450px;">
+                    </table> 
+                </div>
             </div>
+        </div>
     </div>
 </div>
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
@@ -188,33 +295,20 @@
             <h4>关键微博</h4>
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
-
-        <div class="tabUnit">
+        <div class="stmTabs tabUnit" style="width:1033px;">
             <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="Tableselect">
+                </div>
             </div>
-           <div class="tabConts">
-<div id="semantic_weibos"style="height:2000px;float:left;width:1033px;margin-top:20px">
-        <div id="tabContainer">
-          <ul>
-            <li id="tab1"><a style="color:#000; text-decoration:none" class="on" onclick="switchTab('tab1','con1');this.blur();return false;">
-                代表微博</a></li>
-            <li id="tab2"><a style="color:#000; text-decoration:none" onclick="switchTab('tab2','con2');this.blur();return false;">
-                代表微博</a></li>
-            <li id="tab3"><a style="color:#000; text-decoration:none" onclick="switchTab('tab3','con3');this.blur();return false;">
-                代表微博</a></li>
-          </ul>
-        <div style="clear: both"></div>
-            <div><div id="con1">
-            <ul  id="vertical-ticker">     
-            </ul>
-            </div>
-                <div id="con2" style="display: none">fergtrtgrfrefrewfrfeferffefe</div>
-                <div id="con3" style="display: none">vbfbrbtrtrnrtnynytndytd</div>
-            </div>
-        </div>      
-</div>
+            <div class="tabConts">
+                <div id="weibos_div" style="height:410px;float:left;">
+                    <div class="tabCon">
+                        <div class="cur" id="vertical-ticker" style="height:400px; width:950px;"></div>
+                    </div>
+                </div>
             </div>
         </div>
+      
     </div>
 
 {% endblock content %}
