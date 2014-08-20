@@ -11,6 +11,7 @@ from case.propagate.views import mod as propagateModule
 from case.index.views import mod as indexModule
 from case.evolution.views import mod as evolutionModule
 from case.identify.views import mod as identifyModule
+from case.quota_system.views import mod as quota_systemModule
 
 def create_app():
     app = Flask(__name__)
@@ -24,6 +25,7 @@ def create_app():
     app.register_blueprint(indexModule)
     app.register_blueprint(evolutionModule)
     app.register_blueprint(identifyModule)
+    app.register_blueprint(quota_systemModule)
 
     # Enable the toolbar?
     app.config['DEBUG_TB_ENABLED'] = app.debug
