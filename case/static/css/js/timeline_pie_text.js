@@ -413,20 +413,37 @@ console.log(result3);
             var html = '';
             for (var i =0 ;i<data.length; i++){
                 var html = '';
+                var m = i+1;
                 var keyword = [];
                 var s = i.toString();
                 tagout = data[s];
                  for (var k in tagout){
                     tagin = k;
-                 }
-                 for (var k1 in tagout[tagin]){
-                    keyword.push(tagout[tagin][k1]['0']);
-                    //console.log(tagout[tagin][k1]['0']);
-                }
+                 } 
+                 if(tagout[tagin].length != 5){
+                    for (var k1 in tagout[tagin]){
+                
+                        keyword.push(tagout[tagin][k1]['0']);
+                    }
+                    for (var k = tagout[tagin].length; k < 5; k++){
+                        keyword[k] = " ";
+                    }
+
+                 }  
+                 else{ 
+                    for (var k1 in tagout[tagin]){
+                
+                        keyword.push(tagout[tagin][k1]['0']);
+                        //console.log(tagout[tagin][k1]['0']);
+                    }
+             
+                } 
+
                 var tindex = Number(tagin);
+                console.log(keyword);
                 console.log(tagin);
                 html += '<tr>';
-                html += '<td><b onclick = \"connect('+tagin+')\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
                 html += '</tr>';
                 //console.log(keyword);
                  //console.log(tagin);

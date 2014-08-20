@@ -13,18 +13,18 @@ $(document).ready(function(){   //网页加载时执行下面函数
         $("#Tablebselect").children("a").unbind();
 
         $("#Tableselect").children("a").click(function() {
-            console.log("avvv");
+            // console.log("avvv");
             var select_a = $(this);
             var unselect_a = $(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
                 style = select_a.attr('value');
-                console.log(style);
+                // console.log(style);
                 getweibos_data(style);
             }
         });
-         console.log("abd");
+         // console.log("abd");
     }
     
     function switch_curr_add(){
@@ -240,18 +240,18 @@ var option = {
                 var selectstyle = data;
                 var styleweibo = Number(data);
                 var limit = 50;
-                console.log(data);
+                // console.log(data);
                 $.ajax({
                     url: "/propagate/weibos/?&topic=" + topic + "&end_ts=" + end_ts +"&limit="+limit + "&during=" + during + "&style=" + styleweibo,
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                        console.log(data);
+                        // console.log(data);
                        $("#vertical-ticker").empty();       
                         var weibo=[];
                         for (var keyword in data[selectstyle]){
                             weibo.push(data[selectstyle][keyword]);
-                            console.log(data[selectstyle][keyword]);
+                            // console.log(data[selectstyle][keyword]);
                         }
                         if(weibo.length > 0){
                              chg_weibos(weibo);
@@ -411,13 +411,15 @@ function total_count () {
     var atime = time;
     var end_ts = 1377998100+900 * atime;
     var topic = "中国";
-    var style = 3; 
+    var style = 2; 
         $.ajax({
             url: "/propagate/total/?end_ts=" + end_ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
+                console.log(data);
+
                 folk_value = data["dcount"];
                 folk = folk_value["folk"] 
                 folk_count.push(folk);
