@@ -117,6 +117,121 @@
             height: 21px;
             border-bottom: 2px solid #6e87d7;
         }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }
+        .stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .weibo_list_height {
+            max-height: 670px;
+        }
+        .scrolls {
+            overflow: hidden;
+        }
+        .tang-scrollpanel {
+            overflow: hidden;
+        }
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-scrollpanel-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-slider {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0;
+        }
+        .tang-scrollpanel .tang-slider-vtl {
+            height: 100%;
+        }
+        li.item {
+            line-height: 18px;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 9px 10px 10px 0;
+            min-height: 55px;
+            _height: 55px;
+        }
+        .weibo_face {
+            position: relative;
+            float: left;
+            width: 50px;
+            margin-top: 2px;
+        }
+        .weibo_list a {
+            text-decoration: none;
+        }
+        .weibo_face img {
+            width: 50px;
+            height: 50px;
+        }
+        .weibo_detail {
+            margin-left: 65px;
+        }
+        .weibo_list a.undlin {
+            text-decoration: underline;
+        }
+        .weibo_info {
+            margin-top: 7px;
+            color: #666;
+        }
+        .weibo_info .weibo_pz {
+            float: right;
+            color: #858585;
+            height: 18px;
+            line-height: 18px;
+        }
+        .weibo_info .m a {
+            color: #666;
+        }
 
     </style>
 {% endblock head_css %}
@@ -132,7 +247,7 @@
 
 {% block content %}
     <div class="blkUnit grpUnit" id="trendProfile">
-        <div class="titlBar" style="padding-bottom:15px;">
+        <div class="titlBar" style="padding-bottom:15px;width:1033px">
             <h4>时间走势分析</h4>
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
             <span class="pull-right" style="margin: -10px auto -10px auto;">
@@ -144,7 +259,7 @@
         </div>
 
         <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
+            <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3">
             </div>
             <div class="tabConts">
                 <!--<div id="trend_div_container">-->
@@ -159,35 +274,34 @@
                             <span class="slide-button btn btn-success"></span>
                         </div>
                     </div>-->
+                     <div style="width:1033px;">
                     <div id="trend_div1"></div>
+                </div>
                     <!--</div>-->
             </div>
         </div>
+    </div>
+
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px">
+        </div>
+
         <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
+            <div class="tabTitle" style="padding-top:1px;">
             </div>
             <div class="tabConts">
-                <!--<div id="trend_div_container">-->
-                    <!--
-                    <div class="control-group" id="togglecount">
-                        <div class="controls btn switch switch-two">
-                            <input id="relative" name="view" type="radio" checked>
-                            <label id="relative_label" for="relative">相对比例</label>
-
-                            <input id="absolute" name="view" type="radio">
-                            <label id="absolute_label" for="absolute">绝对数量</label>
-                            <span class="slide-button btn btn-success"></span>
-                        </div>
-                    </div>-->
-                    <div id="trend_div"></div>
-                    <!--</div>-->
+                <div style="width:1033px;">
+                    
+                        <div id="trend_div"></div>
+            </div>
             </div>
         </div>
     </div>
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键词云分析及占比分析</h4>
+            <h4>关键词云|各类信息占比分析</h4>
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
 
@@ -214,25 +328,25 @@
 
         <div class="stmTabs tabUnit" style="width:1033px;">
             <div class="tabTitle" style="padding-top:1px;">
-                <div class="tabUI">
-                    <a class="tabLi gColor0" href="javascript:;" style="display: block;">
-                        <div class="nmTab">高兴</div>
-                        <div class="hvTab">高兴</div>
+                <div class="tabUI" id="Tableselect">
+                    <a value='1' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">原创</div>
+                        <div class="hvTab">原创</div>
                     </a>
-                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
-                        <div class="nmTab">愤怒</div>
-                        <div class="hvTab">愤怒</div>
+                    <a value='2' class="tabLi gColor1 " href="javascript:;" style="display: block;">
+                        <div class="nmTab">转发</div>
+                        <div class="hvTab">转发</div>
                     </a>
-                    <a class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
-                        <div class="nmTab">悲伤</div>
-                        <div class="hvTab">悲伤</div>
+                    <a  value='3' class="tabLi gColor1" href="javascript:;" style="display: block;">
+                        <div class="nmTab">评论</div>
+                        <div class="hvTab">评论</div>
                     </a>
                 </div>
             </div>
             <div class="tabConts">
-                <div id="weibos_div" style="height:400px;float:left;">
+                <div id="weibos_div" style="height:700px;float:left;">
                     <div class="tabCon">
-                        <div class="cur" id="vertical-ticker" style="height:380px; width:950px;"></div>
+                        <div class="cur" id="vertical-ticker" style="height:690px; width:950px;"></div>
                     </div>
                 </div>
             </div>

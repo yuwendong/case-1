@@ -1,8 +1,31 @@
-           
-// $(document).ready(function(){   //网页加载时执行下面函数
-//            //getpie_data();
-//            change_abso_rel();
-//         })
+
+$(document).ready(function(){   //网页加载时执行下面函数
+       var style = '1';
+       keyword_data();
+       switch_curr_add();
+       getpie_data();
+       getweibos_data(style);
+       bindSentimentTabClick();
+    })
+
+    function bindSentimentTabClick(){
+        
+        $("#Tablebselect").children("a").unbind();
+
+        $("#Tableselect").children("a").click(function() {
+            console.log("avvv");
+            var select_a = $(this);
+            var unselect_a = $(this).siblings('a');
+            if(!select_a.hasClass('curr')) {
+                select_a.addClass('curr');
+                unselect_a.removeClass('curr');
+                style = select_a.attr('value');
+                console.log(style);
+                getweibos_data(style);
+            }
+        });
+         console.log("abd");
+    }
     
     function switch_curr_add(){
         $("[name='abs_rel_switch']").bootstrapSwitch('readonly', false);
@@ -31,10 +54,7 @@
             type: "GET",
             dataType:"json",
             success: function(data){
-                // console.log(data);
                 result[0]=data["happy"];
-                //console.log(data['happy']);
-                //alert("result[0]");
                 result[1]=data["sad"];
                 result[2]=data["angry"];
                 on_update(result);
@@ -42,17 +62,18 @@
         });       
     }
     function on_update(result) {
-    //alert('on_update' + result[0]);
-    //alert('on_update' + result[1]);
-    //alert('on_update' + result[2]);
-        //result1=getpie_data();
         keyword_data();  
-        var pie_data=[];
-        pie_data = [{value:  result[2], name:''}, {value: result[1], name:'2'}, {value:  result[0], name:'3'}];
+        var pie_data = [];
+        var percentage = []; 
+        console.log(result);
+        percentage[0] = String(parseFloat(result[0])*100)+"%";
+        percentage[1] = String(parseFloat(result[1])*100)+"%";
+        percentage[2] = String(parseFloat(result[2])*100)+"%";
+        console.log(percentage);
+
+        pie_data = [{value:  result[2], name:'转发'+percentage[2]}, {value: result[1], name:'评论'+percentage[1]}, {value:  result[0], name:'原创'+percentage[0]}];
     option = {
-        backgroundColor:'#F0F0F0',
         title : {
-            text: '情绪饼图',
             x:'center',
             textStyle:{
             fontWeight:'lighter',
@@ -62,11 +83,6 @@
         tooltip : {
             trigger: 'item',
             formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:['高兴','悲伤','愤怒']
         },
             toolbox: {
         show : true,
@@ -84,6 +100,7 @@
                 type:'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
+
                 data: pie_data
             }
         ]
@@ -97,11 +114,7 @@
         } 
         return true; 
     } 
-       $(document).ready(function(){   //网页加载时执行下面函数
-       keyword_data();
-       switch_curr_add();
-    })
-    
+
     function keyword_data()
     {       
         var  topic = "中国";
@@ -136,29 +149,30 @@
                            } 
                     })
     }   
-   $(document).ready(function(){   //网页加载时执行下面函数
-           getweibos_data();
-        })
-   function getweibos_data(){      //请求文本数据
+
+   function getweibos_data(data){      //请求文本数据
                 var end_ts = 1378051200;
                 var topic = "中国";
-                var style = 2;
                 var during = 900;
+                var selectstyle = data;
+                var styleweibo = Number(data);
                 var limit = 50;
+                console.log(data);
                 $.ajax({
-                    url: "/propagate/weibos/?&topic=" + topic + "&end_ts=" + end_ts +"&limit="+limit + "&during=" + during + "&style=" + style,
+                    url: "/propagate/weibos/?&topic=" + topic + "&end_ts=" + end_ts +"&limit="+limit + "&during=" + during + "&style=" + styleweibo,
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                      // console.log(data);
+                        console.log(data);
                        $("#vertical-ticker").empty();       
                         var weibo=[];
-                        for (var keyword in data){
-                            weibo.push(data[keyword][1]);
-                           // console.log(data[keyword][1]);
+                        for (var keyword in data[selectstyle]){
+                            weibo.push(data[selectstyle][keyword]);
+                            console.log(data[selectstyle][keyword]);
                         }
                         if(weibo.length > 0){
                              chg_weibos(weibo);
+                             //console.log(weibo);
                         }
                         else{
                             $("#vertical-ticker").empty();
@@ -170,30 +184,77 @@
 
             function chg_weibos(data){     //文本写入
                 var html = "";
-                var emotion_content = ['happy', 'angry', 'sad'];
-                for(var i=0;i<5;i+=1){
-                    if (data[i]['sentiment'] == 0){
-                        var emotion = 'nomood'
+                html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+                html += '<div class="tang-scrollpanel-content">';
+                html += '<ul id="weibo_ul">';
+                for(var i = 0; i < data.length; i += 1){
+                var da = data[i];
+                var uid = da['user'];
+                var name;
+                if ('name' in da){
+                    name = da['name'];
+                    if(name == 'unknown'){
+                        name = '未知';
                     }
-                    else{
-                        var emotion = emotion_content[data[i]['sentiment']-1];
-                    }
-                    var id = data[i]['_id'];
-                    var user = data[i]['user'];
-                    var user_link = 'http://weibo.com/u/'+data[i]['user'];
-                    var text = data[i]['text'];
-                    var weibo_link = data[i]['weibo_link'];
-                    var comments_count = data[i]['comments_count'];
-                    var geo = data[i]['geo'];
-                    var retweeted_text = 'None';
-                    html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"
-                    html +="<div class=\"chartclient-annotation-title\"><a style=\"color:#000; text-decoration:none;display:inline;\" href='" + user_link + "' target='_blank' >" + user + "</a> " +  '(' + id + ')' +"发布: ";
-                    html +="<a style=\"color:#000; text-decoration:none;display:inline;\" href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
-                    if(retweeted_text != 'None'){
-                        html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
-                                                }
-                    html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 评论数：" +  comments_count + "</span></div>";
-                } 
+                }
+                else{
+                    name = '未知';
+                }
+                var mid = da['_id'];
+                var retweeted_mid = da['retweeted_mid'];
+                var retweeted_uid = da['retweeted_uid'];
+                var ip = da['geo'];
+                var loc = ip;
+                var text = da['text'];
+                var reposts_count = da['reposts_count'];
+                var comments_count = da['comments_count'];
+                var timestamp = da['timestamp'];
+                // var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
+                var weibo_link = da['weibo_link'];
+                var user_link = 'http://weibo.com/u/' + uid;
+                var user_image_link = da['profile_image_url'];
+                if (user_image_link == 'unknown'){
+                    user_image_link = '/static/img/unknown_profile_image.gif';
+                }
+                html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
+                html += '<img src="' + user_image_link + '">';
+                html += '</a></div>';
+                html += '<div class="weibo_detail">';
+                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+                html += '<div class="weibo_info">';
+                html += '<div class="weibo_pz">';
+                html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+                html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+                html += '<div class="m">';
+                html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+                html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
+                html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+                html += '</li>';
+            }
+            html += '</ul>';
+            html += '</div>';
+
+                // for(var i=0;i<5;i+=1){
+
+                //     var id = data[i]['_id'];
+                //     var user = data[i]['user'];
+                //     var user_link = 'http://weibo.com/u/'+data[i]['user'];
+                //     var text = data[i]['text'];
+                //     var weibo_link = data[i]['weibo_link'];
+                //     var comments_count = data[i]['comments_count'];
+                //     var geo = data[i]['geo'];
+                //     var retweeted_text = 'None';
+                //     html +="<div class=\"chartclient-annotation-title\"><a style=\"color:#000; text-decoration:none;display:inline;\" href='" + user_link + "' target='_blank' >" + user + "</a> " +  '(' + id + ')' +"发布: ";
+                //     html +="<a style=\"color:#000; text-decoration:none;display:inline;\" href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
+                //     if(retweeted_text != 'None'){
+                //         html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
+                //                                 }
+                //     html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 评论数：" +  comments_count + "</span></div>";
+                // } 
                 $("#vertical-ticker").append(html);
             }
         var list = [];
@@ -250,7 +311,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
            total_count();
         })
 function total_count () {
-        for (time = 0 ; time < 7 ;time++)
+        for (time = 0 ; time < 10 ;time++)
         {
          get_count(time);
         }
@@ -260,7 +321,6 @@ function total_count () {
         opinion_leader_count = [];
         other_count = [];
         oversea_count = [];
-        console.log("total");
         drawpicture_total_all();
     }
    function get_count(time){
@@ -275,7 +335,6 @@ function total_count () {
             dataType:"json",
             async:false,
             success: function(data){
-                // console.log(data);
                 folk_value = data["dcount"];
                 folk = folk_value["folk"] 
                 folk_count.push(folk);
@@ -303,7 +362,7 @@ function total_count () {
 function drawpicture_total() {
         list_af = [];
         for (var i = 0; i < list.length; i++){
-            ns= new Date(parseInt(list[i]) * 1000).toLocaleString();
+            ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substr(10,17);
             list_af.push(ns);
         }
         for (var i = 0; i < list.length; i++){
@@ -317,9 +376,17 @@ function drawpicture_total() {
                 fontSize: '13px',
                 x: -20 //center
             },
-                text: '各领域微博总量',
+                text: '',
                 fontSize: '13px',
                 x: -20 //center
+            },
+            lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
             },
             subtitle: {
               
@@ -342,27 +409,27 @@ function drawpicture_total() {
                 valueSuffix: ''
             },
             legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
                 borderWidth: 0,
                 borderColor: '#F0F0F0'
             },
             series: [{
-                name: 'folk',
+                name: '民众',
                 data: folk_count,
             }, {
-                name: 'media',
+                name: '媒体',
                 data: media_count,
             }, {
-                name: 'opinion_leader',
+                name: '观点领袖',
                 data: opinion_leader_count,
             }, {
-                name: 'other',
+                name: '其他',
                 data: other_count,
             },
                {
-                name: 'oversea',
+                name: '海外',
                 data: oversea_count,
             }]
         });
@@ -376,9 +443,17 @@ function drawpicture_total_all() {
                 fontSize: '13px',
                 x: -20 //center
             },
-                text: '全领域微博总量',
+                text: '',
                 fontSize: '13px',
                 x: -20 //center
+            },
+            lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
             },
             subtitle: {
               
@@ -401,9 +476,9 @@ function drawpicture_total_all() {
                 valueSuffix: ''
             },
             legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
                 fontWeight: 'lighter',
                 borderWidth: 0
             },
@@ -415,7 +490,7 @@ function drawpicture_total_all() {
     }
 function increment_count () {
         alert("dangqian");
-        for (time = 0 ; time < 7 ;time++)
+        for (time = 0 ; time < 10 ;time++)
         {
             increment_get_count(time);
         }
@@ -449,7 +524,6 @@ function increment_count () {
             dataType:"json",
             async:false,
             success: function(data){
-           // console.log(data);
                 increment_folk_value = data["dincrement"];
                 increment_folk = increment_folk_value["folk"] 
                 increment_folk_count.push(increment_folk);
@@ -484,7 +558,7 @@ function drawpicture_increment() {
         increment_af = [];
         for (var i = 0; i < increment_list.length; i++){
 
-            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString();
+            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString().substr(10,17);
 
             increment_af.push(ns);
         }
@@ -498,9 +572,17 @@ function drawpicture_increment() {
                 fontSize: '13px',
                 x: -20 //center
             },
-                text: '各领域微博增量',
+                text: '',
                 fontSize: '13px',
                 x: -20 //center
+            },
+            lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
             },
             subtitle: {
               
@@ -523,26 +605,26 @@ function drawpicture_increment() {
                 valueSuffix: ''
             },
             legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
                 borderWidth: 0
             },
             series: [{
-                name: 'folk',
+                name: '民众',
                 data: increment_folk_count,
             }, {
-                name: 'media',
+                name: '媒体',
                 data: increment_media_count,
             }, {
-                name: 'opinion_leader',
+                name: '观点领袖',
                 data: increment_opinion_leader_count,
             }, {
-                name: 'other',
+                name: '其他',
                 data: increment_other_count,
             },
                {
-                name: 'oversea',
+                name: '海外',
                 data: increment_oversea_count,
             }]
         });
@@ -556,9 +638,17 @@ function drawpicture_increment_all(){
                 fontSize: '13px',
                 x: -20 //center
             },
-                text: '各领域微博增量',
+                text: '',
                 fontSize: '13px',
                 x: -20 //center
+            },
+            lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
             },
             subtitle: {
               
@@ -581,9 +671,9 @@ function drawpicture_increment_all(){
                 valueSuffix: ''
             },
             legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
                 fontWeight: 'lighter',
                 borderWidth: 0
             },
