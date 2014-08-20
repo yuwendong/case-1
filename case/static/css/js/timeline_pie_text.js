@@ -20,7 +20,6 @@
         var data;
         // Called when the Visualization API is loaded.
         $(document).ready(function(){   //网页加载时执行下面函数
-
         var style = '0';
         gettimeline_data();
         getweibos_data(style);
@@ -39,7 +38,6 @@
             async: false,
             success: function(data){
                
-
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][i][0];
                 };
@@ -47,7 +45,6 @@
                     result1[i] = data[i][i][1]; 
                 };
                 for (var i = 0;i < data.length;i++) {
-<<<<<<< HEAD
                     result2[i] = data[i][i][2][0]+'-'+data[i][i][2][1]; 
 
                     var s = i.toString();
@@ -110,7 +107,8 @@
                 {
                     'start': data[0],
                     'end': data1[0],
-                    'content': result2[0]
+                    'content': result2[0],
+                    'link': "www.baidu.com"
                 },
                 {
                     'start': data[1],
@@ -160,48 +158,8 @@
                 {
                     'start': data[10],
                     'end': data1[10],
-                    'content': result2[10]
+                    'content': result2[10],
                 }
-                // {
-                //     'start': ns_start[3],
-                //     'end': ns_end[3],
-                //     'content': result2[3]
-                // },
-                // {
-                //     'start': ns_start[4],
-                //     'end': ns_end[4],
-                //     'content': result2[4]
-                // },
-                // {
-                //     'start': ns_start[5],
-                //     'end': ns_end[5],
-                //     'content': result2[5]
-                // },
-                // {
-                //     'start': ns_start[6],
-                //     'end': ns_end[6],
-                //     'content': result2[6]
-                // },
-                // {
-                //     'start': ns_start[7],
-                //     'end': ns_end[7],
-                //     'content': result2[7]
-                // },
-                // {
-                //     'start': ns_start[8],
-                //     'end': ns_end[8],
-                //     'content': result2[8]
-                // },
-                // {
-                //     'start': ns_start[9],
-                //     'end': ns_end[9],
-                //     'content': result2[9]
-                // },
-                // {
-                //     'start': ns_start[10],
-                //     'end': ns_end[10],
-                //     'content': result2[10]
-                // }
             ];
 
             // specify options
@@ -214,15 +172,20 @@
 
             // Instantiate our timeline object.
             timeline = new links.Timeline(document.getElementById('mytimeline'));
-
             // Draw our timeline with the created data and options
             timeline.draw(data, options);
+            console.log(timeline);
+
+
+            
+
         }
-    var result1=[];
+
     var query = "中国";
     var ts = 1378035900;
     var START_TS = 1377965700
     var during = ts-START_TS;
+    var result3 = [];
 
 
     $(document).ready(function(){   //网页加载时执行下面函数
@@ -238,33 +201,47 @@
             dataType:"json",
             async:false,
             success: function(data){
-                
-                result[0]=data['10'][0];
-                result[1]=data['0'][1];
-                result[10]=data['1'][10];
-                result[3]=data['2'][3];
-                result[2]=data['3'][2];
-                result[5]=data['4'][5];
-                result[4]=data['5'][4];
-                result[7]=data['6'][7];
-                result[6]=data['7'][6];
-                result[9]=data['8'][9];
-                result[8]=data['9'][8];
-                 on_update(result);
+                result3[0]=data['10']['10'];
+                result3[1]=data['0']['0'];
+                result3[10]=data['1']['1'];
+                result3[3]=data['2']['2'];
+                result3[2]=data['3']['3'];
+                result3[5]=data['4']['4'];
+                result3[4]=data['5']['5'];
+                result3[7]=data['6']['6'];
+                result3[6]=data['7']['7'];
+                result3[9]=data['8']['8'];
+                result3[8]=data['9']['9'];
+
+                on_update(result);
             }
         });
        
     }
 
     function on_update(result) {
-        console.log(result2);
+
+console.log(result3);
+        var percentage = []; 
+        percentage[0] = (result3[0]*100).toFixed(2)+"%";
+        percentage[1] = (result3[1]*100).toFixed(2)+"%";
+        percentage[2] = (result3[2]*100).toFixed(2)+"%";
+        percentage[3] = (result3[3]*100).toFixed(2)+"%";
+        percentage[4] = (result3[4]*100).toFixed(2)+"%";
+        percentage[5] = (result3[5]*100).toFixed(2)+"%";
+        percentage[6] = (result3[6]*100).toFixed(2)+"%";
+        percentage[7] = (result3[7]*100).toFixed(2)+"%";
+        percentage[8] = (result3[8]*100).toFixed(2)+"%";
+        percentage[9] = (result3[9]*100).toFixed(2)+"%";
+        percentage[10] = (result3[10]*100).toFixed(2)+"%";
+ 
 
       var pie_data=[];
-        pie_data = [{value:  result[0], name:result2[0]}, {value: result[1], name:result2[1]}, 
-        {value:  result[2], name:result2[2]}, {value: result[3], name:result2[3]},
-         {value:  result[4], name:result2[4]},{value:  result[5], name:result2[5]},{value:  result[6], name:result2[6]}
-         ,{value:  result[7], name:result2[7]},{value:  result[8], name:result2[8]},{value:  result[9], name:result2[9]},
-         {value:  result[10], name:result2[10]}];
+        pie_data = [{value:  result3[0], name:result2[0]+percentage[0]}, {value: result3[1], name:result2[1]+percentage[1]}, 
+        {value:  result3[2], name:result2[2]+percentage[2]}, {value: result3[3], name:result2[3]+percentage[3]},
+         {value:  result3[4], name:result2[4]+percentage[4]},{value:  result3[5], name:result2[5]+percentage[5]},{value:  result[6], name:result2[6]+percentage[6]}
+         ,{value:  result3[7], name:result2[7]+percentage[7]},{value:  result3[8], name:result2[8]+percentage[8]},{value:  result3[9], name:result2[9]+percentage[9]},
+         {value:  result3[10], name:result2[10]+percentage[10]}];
     
     option = {
         title : {
@@ -279,11 +256,6 @@
             trigger: 'item',
             formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
-        legend: {
-            orient:'vertical',
-            x : 'left',
-            data:result2//['子类0','子类1','子类2','子类3','子类4','子类5','子类6','子类7','子类8','子类9','子类10']
-        },
         toolbox: {
         show : true,
         feature : {
@@ -291,22 +263,22 @@
            dataView : {show: true, readOnly: false},
             restore : {show: true},
             
-             saveAsImage : {show: true}
-         }
-     },
-         calculable : true,
-         series : [
-             {
-                 name:'访问来源',
+            saveAsImage : {show: true}
+        }
+    },
+        calculable : true,
+        series : [
+            {
+                name:'访问来源',
                 type:'pie',
-                 radius : '50%',
-                 center: ['50%', '60%'],
-                 data: pie_data
-             }
-         ]
-     };
-     var myChart = echarts.init(document.getElementById('main'));
-     myChart.setOption(option);
+                radius : '50%',
+                center: ['50%', '60%'],
+                data: pie_data
+            }
+        ]
+    };
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption(option);
         
     }
     
@@ -355,18 +327,6 @@
                         }
                       
                         chg_weibos(dataselect);
-                       // $("#vertical-ticker").empty();       
-                       //  var weibo=[];
-                       //  for (var keyword in data){
-                       //      weibo.push(data[keyword][1]);
-                       //      console.log(data[keyword][1]);
-                       //  }
-                       //  if(weibo.length > 0){
-                       //       chg_weibos(weibo);
-                       //  }
-                       //  else{
-                       //      $("#vertical-ticker").empty();
-                       //      $("#vertical-ticker").append("关键微博为空！");
                     }
         });
     }
@@ -464,8 +424,9 @@
                     //console.log(tagout[tagin][k1]['0']);
                 }
                 var tindex = Number(tagin);
+                console.log(tagin);
                 html += '<tr>';
-                html += '<td><b>'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                html += '<td><b onclick = \"connect('+tagin+')\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
                 html += '</tr>';
                 //console.log(keyword);
                  //console.log(tagin);
@@ -475,31 +436,27 @@
            
            
         }
-            // function chg_weibos(data){  
-            //     var html = "";
-            //     var emotion_content = ['happy', 'angry', 'sad'];
-            //     for(var i=0;i<data.length;i+=1){
-            //         if (data[i]['sentiment'] == 0){
-            //             var emotion = 'nomood'
-            //         }
-            //         else{
-            //             var emotion = emotion_content[data[i]['sentiment']-1];
-            //         }
-            //         var id = data[i]['_id'];
-            //         var user = data[i]['user'];
-            //         var user_link = 'http://weibo.com/u/'+data[i]['user'];
-            //         var text = data[i]['text'];
-            //         var weibo_link = data[i]['weibo_link'];
-            //         var comments_count = data[i]['comments_count'];
-            //         var geo = data[i]['geo'];
-            //         var retweeted_text = 'None';
-            //         html += "<div class=\"chartclient-annotation-letter\"><img src='/static/img/" + emotion + "_thumb.gif'></div>"
-            //         html +="<div class=\"chartclient-annotation-title\"><a style=\"color:#000; text-decoration:none;display:inline;\" href='" + user_link + "' target='_blank' >" + user + "</a> " +  '(' + id + ')' +"发布: ";
-            //         html +="<a style=\"color:#000; text-decoration:none;display:inline;\" href='" + weibo_link + "' target='_blank' >" + text + "</a></div>";
-            //         if(retweeted_text != 'None'){
-            //             html += "<div class=\"chartclient-annotation-content\">" + retweeted_text + "</div>";
-            //                                     }
-            //         html += "<div class=\"chartclient-annotation-date\"><span style=\"float:right\"> 评论数：" +  comments_count + "</span></div>";
-            //     } 
-            //     $("#vertical-ticker").append(html);
-            // }
+        function connect(data){
+            var value_data = data;
+            refreshWeiboTab(value_data);
+        }
+
+        function refreshWeiboTab(data){
+            var curr_data = data;
+             $("#Tableselect a").each(function() {
+                var select_a = $(this);
+                console.log(select_a.attr('value'));
+                var select_a_sentiment = select_a.attr('value');
+                if (select_a_sentiment == curr_data){
+                    if(!select_a.hasClass('curr')) {
+                        select_a.addClass('curr');
+                    }
+                }
+                else{
+                    if(select_a.hasClass('curr')) {
+                        select_a.removeClass('curr');
+                    }
+                }
+            });
+            getweibos_data(curr_data);
+        }

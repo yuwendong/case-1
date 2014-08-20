@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+ {% extends "base.html" %}
 {% block title %}时间分析{% endblock %}
 {% block module_title %}深度分析{% endblock %}
 
@@ -248,8 +248,8 @@
 {% block content %}
     <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:15px;width:1033px">
-            <h4>时间走势分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <h4><b>时间走势分析</b></h4>
+            <i class="glyphicon glyphicon-question-sign" style= "color:#0072E3"onclick="javascript:void();"></i>
             <span class="pull-right" style="margin: -10px auto -10px auto;">
                 <input type="checkbox" name="abs_rel_switch" checked>
             </span>
@@ -301,8 +301,8 @@
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键词云|各类信息占比分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <h4><b>关键词云|各类信息占比分析</b></h4>
+            <i class="glyphicon glyphicon-question-sign" style= "color:#0072E3"onclick="javascript:void();"></i>
         </div>
 
         <div class="tabUnit">
@@ -322,8 +322,8 @@
 
     <div class="blkUnit grpUnit" style="float:left;" id="weiboarea">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>关键微博</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <h4><b>重要微博</b></h4>
+            <i class="glyphicon glyphicon-question-sign" style= "color:#0072E3"onclick="javascript:void();"></i>
         </div>
 
         <div class="stmTabs tabUnit" style="width:1033px;">
@@ -337,14 +337,14 @@
                         <div class="nmTab">转发</div>
                         <div class="hvTab">转发</div>
                     </a>
-                    <a  value='3' class="tabLi gColor1" href="javascript:;" style="display: block;">
+                    <a  value='3' class="tabLi gColor2" href="javascript:;" style="display: block;">
                         <div class="nmTab">评论</div>
                         <div class="hvTab">评论</div>
                     </a>
                 </div>
             </div>
             <div class="tabConts">
-                <div id="weibos_div" style="height:700px;float:left;">
+                <div id="weibos_div" style="height:850px;float:left;">
                     <div class="tabCon">
                         <div class="cur" id="vertical-ticker" style="height:690px; width:950px;"></div>
                     </div>
