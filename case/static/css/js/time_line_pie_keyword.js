@@ -64,50 +64,133 @@ $(document).ready(function(){   //网页加载时执行下面函数
     function on_update(result) {
         keyword_data();  
         var pie_data = [];
-        var percentage = []; 
-        console.log(result);
-        percentage[0] = String(parseFloat(result[0])*100)+"%";
-        percentage[1] = String(parseFloat(result[1])*100)+"%";
-        percentage[2] = String(parseFloat(result[2])*100)+"%";
-        console.log(percentage);
+        // var percentage = []; 
+        // console.log(result);
+        // percentage[0] = String(parseFloat(result[0])*100)+"%";
+        // percentage[1] = String(parseFloat(result[1])*100)+"%";
+        // percentage[2] = String(parseFloat(result[2])*100)+"%";
+        // console.log(percentage);
 
-        pie_data = [{value:  result[2], name:'转发'+percentage[2]}, {value: result[1], name:'评论'+percentage[1]}, {value:  result[0], name:'原创'+percentage[0]}];
-    option = {
+        pie_data = [{value:  result[2], name:'转发'}, {value: result[1], name:'评论'}, {value:  result[0], name:'原创'}];
+var option = {
+        backgroundColor: '#FFF',
+        color: ['#11c897', '#fa7256', '#6e87d7'],
         title : {
-            x:'center',
+            text: '', // pie_title,
+            x: 'center',
             textStyle:{
-            fontWeight:'lighter',
-            fontSize: 13,
-            }        
+                fontWeight: 'lighter',
+                fontSize: 13
+            }
         },
-        tooltip : {
+        toolbox: {
+            show: true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                //magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
         },
-            toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
+        legend: {
+            orient:'vertical',
+            x : 'left',
+            data: ['原创','评论','转发'],
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
+        },
+
         calculable : true,
         series : [
             {
-                name:'访问来源',
-                type:'pie',
+                name: '情绪占比',
+                type: 'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
-
+                itemStyle: {
+                    normal: {
+                        label: {
+                            position: 'inner',
+                            formatter: "{d}%",
+                            textStyle: {
+                                fontWeight: 'bold',
+                                fontFamily: 'Microsoft YaHei'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        }
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            formatter: "{b}\n{d}%",
+                            textStyle: {
+                                fontWeight: 'bold',
+                                fontFamily: 'Microsoft YaHei'
+                            }
+                        }
+                    }
+                },
                 data: pie_data
             }
-        ]
+        ],
+        textStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'Microsoft YaHei'
+        }
     };
+
     var myChart = echarts.init(document.getElementById('pie_div'));
-    myChart.setOption(option);        
-    }
+    myChart.setOption(option);
+}
+    // option = {
+    //     title : {
+    //         x:'center',
+    //         textStyle:{
+    //         fontWeight:'lighter',
+    //         fontSize: 13,
+    //         }        
+    //     },
+    //     tooltip : {
+    //         trigger: 'item',
+    //         formatter: "{a} <br/>{b} : {c} ({d}%)"
+    //     },
+    //         toolbox: {
+    //     show : true,
+    //     feature : {
+    //         mark : {show: true},
+    //         dataView : {show: true, readOnly: false},
+    //         restore : {show: true},
+    //         saveAsImage : {show: true}
+    //     }
+    // },
+    //     calculable : true,
+    //     series : [
+    //         {
+    //             name:'来源占比',
+    //             type:'pie',
+    //             radius : '50%',
+    //             center: ['50%', '60%'],
+
+    //             data: pie_data
+    //         }
+    //     ]
+    // };
+    // var myChart = echarts.init(document.getElementById('pie_div'));
+    // myChart.setOption(option);        
+    // }
     function isEmptyObject(obj){
         for ( var name in obj ) { 
             return false;
@@ -141,7 +224,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
                                 else{ 
                                         for(var keyword in data){
                                            alert(keyword);
-                                            $('#keywords_cloud_div').append('<a><font color="orange" font-weight:"lighter">'+ keyword +'</font></a>'); 
+                                            $('#keywords_cloud_div').append('<a><font color="#8E8E8E" font-weight:"lighter">'+ keyword +'</font></a>'); 
                                             }
                                 }
                                 on_load();
@@ -311,7 +394,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
            total_count();
         })
 function total_count () {
-        for (time = 0 ; time < 10 ;time++)
+        for (time = 0 ; time < 15 ;time++)
         {
          get_count(time);
         }
@@ -362,7 +445,7 @@ function total_count () {
 function drawpicture_total() {
         list_af = [];
         for (var i = 0; i < list.length; i++){
-            ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substr(10,17);
+            ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substring(12,20);
             list_af.push(ns);
         }
         for (var i = 0; i < list.length; i++){
@@ -490,7 +573,7 @@ function drawpicture_total_all() {
     }
 function increment_count () {
         alert("dangqian");
-        for (time = 0 ; time < 10 ;time++)
+        for (time = 0 ; time < 15 ;time++)
         {
             increment_get_count(time);
         }
@@ -558,7 +641,7 @@ function drawpicture_increment() {
         increment_af = [];
         for (var i = 0; i < increment_list.length; i++){
 
-            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString().substr(10,17);
+            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString().substring(12,20);
 
             increment_af.push(ns);
         }
