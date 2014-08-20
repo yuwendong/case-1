@@ -3,15 +3,8 @@
 {% block module_title %}深度分析{% endblock %}
 
 {% block head_css %}
-    <!--
-    <link rel="stylesheet" href="/static/css/css/style.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/css/style_blue.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/css/thickbox.css" type="text/css" media="all">
-    -->
-
     <!-- 走势图切换按钮css -->
     <style type="text/css">
-       
         .blkUnit {
             position: relative;
             clear: both;
@@ -72,20 +65,30 @@
 {% endblock head_css %}
 
 {% block head_js %}
-    <script src="/static/css/js/timelineoption.js" type="text/javascript"></script>
-    <script src="/static/css/echarts-2.0.0/build/echarts-plain-map.js"></script> 
+<!--<script src="/static/js/echarts-2.0.1/_build/echarts-plain-map.js"></script>--> 
+    <script src="/static/js/esl.js"></script> 
 {% endblock head_js %}
 
 {% block content %}
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4>微博总量走势图</h4>
+            <h4>地域分析</h4>
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
 
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
+                <div class="stmTabs tabUI" id="TabDiv">
+                    <a status="wholemap" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">全国纵览</div>
+                        <div class="hvTab">全国纵览</div>
+                    </a>
+                    <a status="zone" class="tabLi gColor2" href="javascript:;" style="display: block;">
+                        <div class="nmTab">区域走势</div>
+                        <div class="hvTab">区域走势</div>
+                    </a>
+                </div>
             </div>
             <div class="tabConts">
                 <div style="width:1033px;">
@@ -100,3 +103,4 @@
 {% block tail_js %}
     <script src="/static/css/js/map.js" type="text/javascript"></script> 
 {% endblock tail_js %}
+

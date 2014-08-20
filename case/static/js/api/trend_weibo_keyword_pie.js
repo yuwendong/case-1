@@ -18,9 +18,9 @@ Date.prototype.format = function(format) {
 }
 
 // TrendsLine Constructor
-function TrendsLine(start_ts, end_ts, pointInterval){
+function TrendsLine(query, start_ts, end_ts, pointInterval){
     //instance property
-    this.query = '中国';
+    this.query = query;
     this.start_ts = start_ts; // 开始时间戳
     this.end_ts = end_ts; // 终止时间戳
     this.pointInterval = pointInterval; // 图上一点的时间间隔
@@ -1145,10 +1145,13 @@ function get_peaks(that, series, data_obj, ts_list, during){
     }
 //})();
 
+/*
 var START_TS = 1377964800;
 var END_TS = 1378051200;
 var DURING_INTERGER = 60 * 60;
-tl = new TrendsLine(START_TS, END_TS, DURING_INTERGER)
+*/
+
+tl = new TrendsLine(QUERY, START_TS, END_TS, POINT_INTERVAL)
 tl.pullDrawTrend();
 tl.initPullDrawPie();
 tl.initPullDrawKeywords();

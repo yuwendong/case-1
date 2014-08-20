@@ -40,9 +40,13 @@
             padding: 0;
         }
 
-        a:hover {
+        .open a, a, a:hover {
             text-decoration: None;
         }
+        a:hover {
+            color: #FFF;
+        }
+
         ul, ol, li {
             list-style: none;
         }
@@ -165,32 +169,23 @@
           filter: none;
         }
 
-        .navbar-fixed-top .brand{
-            color: #FFF;
-        }
-
-        .navbar-fixed-top .nav>li>a {
-            color: #54ABDB;
-        }
-
-        .navbar-fixed-top .nav>li .source, .navbar-fixed-top .nav>li .source:hover {
+        .navbar-fixed-top .nav>li>a, .navbar-fixed-top .nav>li>a:hover {
             color: #FFF;
             background-color: transparent;
         }
 
-        .navbar-fixed-top .nav>li>a.iactive:hover{
-            color: #0088cc;
-            background-color: #FFFFFF;
-        }
-
-        .navbar-fixed-top .nav>.active>a {
+        .navbar-fixed-top .nav>.active>a, .navbar-fixed-top .nav>li>a.iactive:hover{
             color: #FFF;
-            background-color: #0461A3;
+            border-bottom: 3px solid #FFF;
         }
 
         .navbar-inverse .navbar-brand {
             color: #FFF;
             background: transparent;
+        }
+        .navbar-fixed-top ul li a {
+            display: block;
+            float: left;
         }
 
         .filter-block {
@@ -210,14 +205,15 @@
         }
 
         #mainWrap {
-            border-left: 220px solid #FFF;
+            border-left: 222px solid #ebebeb;
         }
 
         .lTools {
             z-index: 1000;
-            position: fixed;
+            position: absolute;
+            height:590px;
             width: 222px;
-            top: 54px;
+            top: 61px;
             display: block;
             padding: 1px;
             overflow-x: hidden;
@@ -255,13 +251,13 @@
             text-align: center;
             border: 1px solid #3073d1;
             background-color: #4284e2;
+            cursor: pointer;
         }
         .mainSplit {
             top: 16px;
             position: relative;
             _overflow: visible;
             padding: 20px 26px 20px 15px;
-            border-left: 2px solid #e1e1e1;
         }
     </style>
     {% block head_css %}
@@ -326,71 +322,101 @@
                     <!--<li class="tabLi"><i class="icons byArea"></i><span>按地域</span></li>-->
                 </ul>
             </div>
+
             <div class="tabConts">
-                <!--<div>
-                    <ul>
-                        <li class="compLi comCtl" id="">
-                        <div class="comBorderL">-->
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-addon">关键词</span>
-                                    <input type="text" class="form-control" placeholder="未指定" disabled>
-                                    <!--<input disabled name="word" class="comWord" maxlength="50" autocomplete="off" id="auto_gsid_16" value="关键词为空">-->
-                                </div>
-                <!--            </div>
-                            <div class="comBorderR" style="border-color: rgb(110, 135, 215);">
-                                <i class="icons delComp"></i>
-                            </div>
-                        </li>
-                    </ul>
-                </div>-->
+                <div style="margin: 20px auto 10px 20px;border-bottom: 1px dotted #666;width: 182px;font-weight: bold;font-size: 14px;">参数选择</div>
+
+                <div class="input-group input-group-sm" style="width: 200px; margin: 2px auto 2px 10px;">
+                    <span class="input-group-addon">关键词</span>
+                    <input id="keyword_input" type="text" class="form-control " style="text-align:right;" placeholder="未指定" value="{{ topic }}" disabled>
+                </div>
+
                 <div class="compVsplit"></div>
-                <div class="compOth">
-                    <div class="comCtl">
-                            <span class="pull-left">时间范围</span>
-                            <div id="reportrange" class="btn dropdown-toggle">
-                                <i class="icon-calendar icon-large"></i>
-                                <span id="all_time">{{ time_range }}</span> 
-                                <b class="caret"></b>
-                            </div>
+
+                <div class="input-group input-group-sm" style="width: 200px; margin: 2px auto 2px 10px;">
+                    <span class="input-group-addon">时间段</span>
+                        <div id="reportrange" class="form-control" style="padding: 5px;">
+                            <span id="all_time">{{ time_range }}</span>
+                            <b class="caret"></b>
+                        </div>
+                </div>
+
+                <div class="compVsplit"></div>
+
+                <div class="input-group input-group-sm" style="width: 200px; margin: 2px auto 2px 10px;">
+                    <span class="input-group-addon">时间粒度</span>
+                    <div class="form-control">
+                        <select id="select_dur" style="width:110px;text-align:right;">
+                            {% for pv in pointIntervals %}
+                                {% if pv['en'] == pointInterval['en'] %}
+                                    <option value="{{ pv['en'] }}" selected="selected"> {{ pv['zh'] }} </option>
+                                {% else %}
+                                    <option value="{{ pv['en'] }}"> {{ pv['zh'] }} </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input id="all_durtime" name="all_dur" type="hidden" value="{{ pointInterval['en'] }}">
                     </div>
                 </div>
+
                 <div class="compVsplit"></div>
-                <div class="compOth">
-                    <div class="comCtl">
-                            <span class="pull-left">时间粒度</span>
-                            <div class="btn-group" style="position:relative;height: 30px;margin-top: 0px;">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    1小时
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">15分钟</a></li>
-                                    <li><a href="#">1天</a></li>
-                                </ul>
-                            </div>
-                            <input id="all_durtime" name="all_dur" type="hidden" value="15分钟">
+
+                <div style="margin: 20px auto 10px 20px;border-bottom: 1px dotted #666;width: 182px;font-weight: bold;font-size: 14px;">要素选择</div>
+
+                <div id="radio_yaosu" style="margin:5px auto auto 20px;">
+                    <div style="margin: 20px auto 10px 0px;font-size: 13px;">舆情概况</div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="gaishu">
+                                      概况分析
+                        </label>
                     </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="zhibiao">
+                                      指标分析
+                        </label>
+                    </div>
+                    <div style="margin: 20px auto 10px 0px;font-size: 13px;">深度分析</div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="time">
+                                      时间分析
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="area">
+                                      空间分析
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="moodlens" checked>
+                                      情绪分析
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="network" >
+                                      网络分析
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="semantic" >
+                                      语义分析
+                        </label>
+                    </div>
+                    <input id="yaosu_input" name="all_dur" type="hidden" value="moodlens">
                 </div>
-                <div class="compVsplit"></div>
-                <span class="pull-left" style="margin-left: 8px;">要素选择</span>
-                <div style="padding: 20px">
-                    <ul class="nav nav-navlist">
-                        <li class="nav-header">舆情概况</li>
-                        <li><a href="/index/gaishu/" target="_blank">概况分析</a></li>
-                        <li><a href="/index/zhibiao/" target="_blank">指数分析</a></li>
-                        <li class="nav-header">深度分析</li>
-                        <li><a href="/index/time/" target="_blank">时间分析</a></li>
-                        <li><a href="/index/ditu" target="_blank">地域分析</a></li>
-                        <li><a href="/index/network" target="_blank">网络分析</a></li>
-                        <li><a href="/index/" target="_blank">语义分析</a></li>
-                        <li class="active"><a href="#" target="_blank">情感分析</a></li>
-                    </ul>
-                </div>
-                <span><a href="javascript:;" class="compOK" onclick="void();"><i class="glyphicon glyphicon-ok icons"></i>搜索</a></span>
+
+                <span id="submit_request"><a class="compOK" ><i class="glyphicon glyphicon-ok icons"></i>搜索</a></span>
             </div>
         </div>
+
         <div id="mainWrap">
-            <div class="mainSplit" style="min-height:700px;">
+            <div class="mainSplit">
                 {% block content %}
                 {% endblock content %}
             </div>
@@ -435,6 +461,36 @@
             $('#reportrange span').html(start.format('YYYYMMDD') + '-' + end.format('YYYYMMDD'));
         }
         );
+
+        $("#select_dur").change(function(){
+            $('#all_durtime').val($(this).children('option:selected').val());
+        });
+
+        $("input[name='optionsRadios']").on("click", function(){
+            $('#yaosu_input').val($(this).val());
+        });
+
+        $("#submit_request").click(function(){
+            var QUERY = document.getElementById('keyword_input').value;
+            var TIME_RANGE = $('#all_time').html();
+            var POINT_INTERVAL = document.getElementById('all_durtime').value;
+            var YAOSU = $('#yaosu_input').val();
+            window.location.href = "/index/" + YAOSU + "/?query=" + QUERY + "&time_range=" + TIME_RANGE + "&point_interval=" + POINT_INTERVAL;
+        });
+
+        function date2ts(date){
+            // 20130901
+            var year = date.substring(0, 4);
+            var month = date.substring(4, 6);
+            var day = date.substring(6, 8);
+            return new Date(year, month-1, day).getTime() / 1000;
+        }
+        var QUERY = document.getElementById('keyword_input').value;
+        var TIME_RANGE = $('#all_time').html();
+        var START_TS = date2ts(TIME_RANGE.split('-')[0]);
+        var END_TS = date2ts(TIME_RANGE.split('-')[1]) + 3600 * 24;
+        var POINT_INTERVAL = document.getElementById('all_durtime').value;
+        var YAOSU = $('#yaosu_input').val();
     </script>
     {% block tail_js %}
     {% endblock tail_js %}
