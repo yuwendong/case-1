@@ -18,9 +18,9 @@ Date.prototype.format = function(format) {
 }
 
 // TrendsLine Constructor
-function TrendsLine(start_ts, end_ts, pointInterval){
+function TrendsLine(query, start_ts, end_ts, pointInterval){
     //instance property
-    this.query = '中国';
+    this.query = query;
     this.start_ts = start_ts; // 开始时间戳
     this.end_ts = end_ts; // 终止时间戳
     this.pointInterval = pointInterval; // 图上一点的时间间隔
@@ -40,7 +40,6 @@ function TrendsLine(start_ts, end_ts, pointInterval){
     this.peak_ajax_url = function(data, ts_list, during, emotion){
         return "/moodlens/emotionpeak/?lis=" + data.join(',') + "&ts=" + ts_list + '&during=' + during + "&emotion=" + emotion;
     }
-    var ajax_method = "GET";
     this.ajax_method = "GET";
     this.call_sync_ajax_request = function(url, method, callback){
         $.ajax({
@@ -149,12 +148,20 @@ function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_
         },
         tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
         },
         legend: {
             orient:'vertical',
             x : 'left',
-            data: legend_data
+            data: legend_data,
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
         },
 
         calculable : true,
@@ -164,9 +171,38 @@ function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_
                 type: 'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            position: 'inner',
+                            formatter: "{d}%",
+                            textStyle: {
+                                fontWeight: 'bold',
+                                fontFamily: 'Microsoft YaHei'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        }
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            formatter: "{b}\n{d}%",
+                            textStyle: {
+                                fontWeight: 'bold',
+                                fontFamily: 'Microsoft YaHei'
+                            }
+                        }
+                    }
+                },
                 data: pie_data
             }
-        ]
+        ],
+        textStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'Microsoft YaHei'
+        }
     };
 
     var myChart = echarts.init(document.getElementById(pie_div_id));
@@ -474,7 +510,11 @@ TrendsLine.prototype.pullDrawTrend = function(){
 
     $("[name='abs_rel_switch']").on('switchChange.bootstrapSwitch', function(event, state) {
         var chart = $('#trend_div').highcharts();
+        var yAxis = chart.yAxis[0];
         if (state == false){
+            yAxis.update({
+                max: 1
+            });
             for (var i in chart.series){
                 var series = chart.series[i];
                 if(i == 0 || i == 1 || i == 2){
@@ -507,6 +547,9 @@ TrendsLine.prototype.pullDrawTrend = function(){
             }
         }
         else{
+            yAxis.update({
+                max: null
+            });
             for (var i in chart.series){
                 var series = chart.series[i];
                 if(i == 0 || i == 1 || i == 2){
@@ -606,10 +649,10 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
         chart: {
             type: 'spline',// line,
             animation: Highcharts.svg, // don't animate in old IE
-            marginTop: 0,
-            marginRight: 10,
-            //marginLeft: 20,
-            //marginBottom: -20,
+            style: {
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+            },
             events: {
                 load: function() {
                     var total_nodes = (end_ts - begin_ts) / during;
@@ -653,11 +696,18 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
             }
         },
         title : {
-            text: '' // trends_title
+            text: '走势分析图', // trends_title
+            margin: 20,
+            style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                fontFamily: 'Microsoft YaHei'
+            }
         },
         // 导出按钮汉化
         lang: {
-            printButtonTitle: "打印",
+            printChart: "打印",
             downloadJPEG: "下载JPEG 图片",
             downloadPDF: "下载PDF文档",
             downloadPNG: "下载PNG 图片",
@@ -684,7 +734,13 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
         xAxis: {
             title: {
                 enabled: true,
-                text: xAxisTitleText
+                text: xAxisTitleText,
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
             },
             type: 'datetime',
             tickPixelInterval: 150
@@ -692,7 +748,14 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
         yAxis: {
             min: 0,
             title: {
-                text: yAxisTitleText
+                enabled: true,
+                text: yAxisTitleText,
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
             },
         },
         tooltip: {
@@ -703,11 +766,17 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
             layout: 'horizontal',
             //verticalAlign: true,
             //floating: true,
-            align: 'center', //'right',
+            align: 'center',
             verticalAlign: 'bottom',
             x: 0,
             y: -2,
             borderWidth: 1,
+            itemStyle: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+            }
             //enabled: true,
             //itemHiddenStyle: {
                 //color: 'white'
@@ -766,8 +835,12 @@ function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
     }
 
     function peakDrawTip(click_ts, emotion, title){
-        $("#peak_tooltip").empty();
-        $("#peak_tooltip").append('<span><i class="glyphicon glyphicon-exclamation-sign"></i>当前点击了点' + title + '&nbsp;&nbsp;情绪:' + that.names[emotion] + '&nbsp;&nbsp;日期:' + new Date(click_ts * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</span>');
+        $("#peak_trend_tooltip").empty();
+        $("#peak_trend_tooltip").append('<span>当前点击了点' + title + '&nbsp;&nbsp;情绪:' + that.names[emotion] + '&nbsp;&nbsp;日期:' + new Date(click_ts * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</span>');
+        $("#peak_cloudpie_tooltip").empty();
+        $("#peak_cloudpie_tooltip").append('<span>当前点击了点' + title + '&nbsp;&nbsp;情绪:' + that.names[emotion] + '&nbsp;&nbsp;日期:' + new Date(click_ts * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</span>');
+        $("#peak_weibo_tooltip").empty();
+        $("#peak_weibo_tooltip").append('<span>当前点击了点' + title + '&nbsp;&nbsp;情绪:' + that.names[emotion] + '&nbsp;&nbsp;日期:' + new Date(click_ts * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</span>');
     }
 
     function peakPullDrawKeywords(click_ts, emotion, title){
@@ -1072,10 +1145,13 @@ function get_peaks(that, series, data_obj, ts_list, during){
     }
 //})();
 
+/*
 var START_TS = 1377964800;
 var END_TS = 1378051200;
 var DURING_INTERGER = 60 * 60;
-tl = new TrendsLine(START_TS, END_TS, DURING_INTERGER)
+*/
+
+tl = new TrendsLine(QUERY, START_TS, END_TS, POINT_INTERVAL)
 tl.pullDrawTrend();
 tl.initPullDrawPie();
 tl.initPullDrawKeywords();
