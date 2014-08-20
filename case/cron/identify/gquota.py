@@ -27,7 +27,7 @@ def get_ave(dict_value):
     ave = float(sumvalue) / float(len(dict_value)) 
     return ave
 
-def get_powerlaw(dhistogram):
+def get_powerlaw(dhistogram, prekey):
     l = len(dhistogram)
     print 'l:', l
     pre_x = []
@@ -53,6 +53,19 @@ def get_powerlaw(dhistogram):
     (t, res, rank, s) = linalg.lstsq(a, b) # 最小二乘求系数,t为2*1的矩阵
     #print 'results:', linalg.lstsq(a,b)
     #print 't:', t[0][0]
+
+    xx = x
+    r = t[0][0]
+    c = t[1][0]
+    yy = [math.e**(r*a+c) for a in lnx]
+    xx = []
+    xydict = {}
+    for i in x:
+        xx.append(i-1)
+    xydict['x'] = xx
+    xydict['y'] = yy
+    save_quota(prekey + '_xydict', xydict)
+    # 保存回归参数
     return t[0][0]
 
 def compute_quota(G, gg ,date, windowsize, topic):
@@ -103,7 +116,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
 
-    gamma = get_powerlaw(dhistogram)
+    gamma = get_powerlaw(dhistogram, prekey)
     # 幂律分布系数
     save_quota(prekey+'_power_law_distribution', gamma)
     
@@ -111,6 +124,11 @@ def compute_quota(G, gg ,date, windowsize, topic):
     nnodes = len(G.nodes())
     # the number of nodes in G
     save_quota(prekey+'_number_nodes', nnodes)
+
+    alldegree = sum(dhistogram)
+    ave_degree = float(alldegree) / float(nnodes)
+    # ave_degree 平均节点度
+    save_quota(prekey+'_ave_degree', ave_degree)
 
     
     nedges = len(G.edges())
@@ -139,6 +157,14 @@ def compute_quota(G, gg ,date, windowsize, topic):
     aveclustering = nx.average_clustering(gg)
     # 平均聚类系数
     save_quota(prekey+'_average_clustering', aveclustering)
+
+    dassortativity_coefficient = nx.degree_assortativity_coefficient(G)
+    # 同配性系数
+    save_quota(prekey + '_degree_assortativity_coefficient', dassortativity_coefficient)
+
+    #kscore = nx.k_core(G)
+    # k_score k核数
+    #save_quota(prekey + '_k_core', kscore)
 
     
     
