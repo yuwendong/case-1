@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from extensions import db
+from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'PropagateKeywords', \
@@ -12,15 +12,14 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
 class Topics(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    start_ts = db.Column(db.BigInteger(20, unsigned=True))
-    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
 
     def __init__(self, topic, start_ts, end_ts):
         self.topic = topic
         self.start_ts = start_ts
-        self.end_ts = end_ts
+        self.end_ts = end_ts 
 #实际上这一部分是需要重新修改的，但是在此次测试中用不到，就先不动。
-
 #sentiment部分
 class SentimentKeywords(db.Model):#情绪关键词---已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -322,7 +321,7 @@ class QuotaAttention(db.Model):
     def __init__(self, topic, start_ts, end_ts, domain, attention):
         self.topic = topic
         self.start_ts = start_ts
-        self.end_ta = end_ts
+        self.end_ts = end_ts
         self.domain = domain
         self.attention = attention
 

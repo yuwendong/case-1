@@ -28,29 +28,49 @@ def get_default_pointInterval():
 def get_pointIntervals():
     return [{'zh': u'15分钟', 'en': 900}, {'zh': u'1小时', 'en': 3600}, {'zh': u'1天', 'en': 3600 * 24}]
 
+def get_gaishu_yaosus():
+    return {'gaishu': u'概述分析', 'zhibiao': u'指标分析'}
+
+def get_deep_yaosus():
+    return {'time': u'时间分析' , 'area': u'空间分析', 'moodlens': u'情绪分析', 'network': u'网络分析', 'semantic': u'语义分析'}
+
 default_timerange = get_default_timerange()
 default_topic = get_default_topic()
 default_pointInterval = get_default_pointInterval()
 pointIntervals = get_pointIntervals()
+gaishu_yaosus = get_gaishu_yaosus()
+deep_yaosus = get_deep_yaosus()
 
 @mod.route('/')
 def loading():
+    """舆情案例首页
+    """
     return render_template('index/gl.html')
 
 @mod.route('/detail/')
 def detail():
+    """原有概述首页
+    """
     return render_template('index/detail.html')
 
 @mod.route('/manage/')
 def manage():
+    """案例定制页面
+    """
     return render_template('index/manage.html')
 
 @mod.route('/eva/')
 def eva():
+    """案例评价页面
+    """
     return render_template('index/eva.html')
 
 @mod.route('/moodlens/')
 def moodlens():
+    # 要素
+    yaosu = 'moodlens'
+
+    # 话题关键词
     topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
@@ -66,12 +86,34 @@ def moodlens():
                 point_interval = pi
                 break
 
-    return render_template('index/moodlens.html', time_range=time_range, \
-            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals)
+    return render_template('index/moodlens.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/area/')
 def area():
-    return render_template('index/diyu.html')
+    # 要素
+    yaosu = 'area'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/diyu.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/semantic/')
 def meaning():

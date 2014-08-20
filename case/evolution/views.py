@@ -1,11 +1,13 @@
 #-*- coding:utf-8 -*-
-from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
+
 import os
-from BeautifulSoup import BeautifulSoup
-from city_color import province_color_map    #根据count不同，给不同的城市不同的颜色
 import json
 from city_count import Pcount
-#from get_result import *
+from BeautifulSoup import BeautifulSoup
+
+# 根据count不同，给不同的城市不同的颜色
+from city_color import province_color_map
+from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 
 
 mod = Blueprint('evolution', __name__, url_prefix='/evolution')
@@ -56,7 +58,6 @@ def info2map(infos):
 def readPropagateSpatial(stylenum, topic, end_ts , during):
     """将从数据库中读取的数据转化为map_data
     """
-
     city_count = {}
     city_count = Pcount(end_ts, during, stylenum, topic) # PCount从db中计算各个省市地区的总数
     max_count = max(city_count.values())

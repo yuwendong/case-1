@@ -53,6 +53,7 @@
         #compTab .tabLi.curr {
             border-bottom: 2px solid #fff;
             background-color: #fff;
+            width: 221px;
         }
         #compTab .tabLi {
             float: left;
@@ -365,50 +366,44 @@
 
                 <div id="radio_yaosu" style="margin:5px auto auto 20px;">
                     <div style="margin: 20px auto 10px 0px;font-size: 13px;">舆情概况</div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="gaishu">
-                                      概况分析
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="zhibiao">
-                                      指标分析
-                        </label>
-                    </div>
+                    {% for en, zh in gaishu_yaosus.iteritems() %}
+                        {% if en == yaosu %}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}" checked>
+                                        {{ zh }}
+                                </label>
+                            </div>
+                        {% else %}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}">
+                                        {{ zh }}
+                                </label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                     <div style="margin: 20px auto 10px 0px;font-size: 13px;">深度分析</div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="time">
-                                      时间分析
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="area">
-                                      空间分析
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="moodlens" checked>
-                                      情绪分析
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="network" >
-                                      网络分析
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="semantic" >
-                                      语义分析
-                        </label>
-                    </div>
-                    <input id="yaosu_input" name="all_dur" type="hidden" value="moodlens">
+                    {% for en, zh in deep_yaosus.iteritems() %}
+                        {% if en == yaosu %}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}" checked>
+                                        {{ zh }}
+                                </label>
+                            </div>
+                        {% else %}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}">
+                                        {{ zh }}
+                                </label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <input id="yaosu_input" name="all_dur" type="hidden" value="{{ yaosu }}">
                 </div>
 
                 <span id="submit_request"><a class="compOK" ><i class="glyphicon glyphicon-ok icons"></i>搜索</a></span>
