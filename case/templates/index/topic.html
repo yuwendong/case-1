@@ -177,7 +177,7 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 184px;
+            width: 250px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
@@ -207,23 +207,36 @@
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top: 40px;width:1033px;height:90px;margin-bottom:10px">
+    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top: 40px;width:1033px;height:130px;margin-bottom:10px">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4><b>网络概况</b></h4>
-             <i class="glyphicon glyphicon-question-sign"style= "color:#0072E3" onclick="javascript:void();"></i>
+            <h4 style="margin-left:15px"><b>网络概况</b></h4>
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabConts"></div>
             <table class="mtable" id="mstable">
-                <tr>
-               <!--  <th>网络指标</th> -->
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">节点总数<span class="tsp">  |  </span>总边数</div><div class="lrRr"></div></div></th>
+            <tr>
+                <th>有向图</th>
                 <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    最大度数<span class="tsp">  |  </span>最大覆盖
-                </div><div class="lrRr"></div></div></th>
+                    节点总数<span class="tsp">  |  </span>总边数</div><div class="lrRr"></div></div></th>
                 <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
                     强连通图数<span class="tsp">   | </span>弱连通图数
                 </div><div class="lrRr"></div></div></th>
+            </tr>
+        </table>
+            <table class="mtable" id="mstable1">
+            <tr>
+                     <th>无向图</th>
+                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
+                    平均度中心性<span class="tsp">   | </span>平均介数中心性
+                </div><div class="lrRr"></div></div></th>
+                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
+                    平均紧密中心性<span class="tsp">   | </span>平均特征向量中心性
+                </div><div class="lrRr"></div></div></th>
+                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
+                    平均最短路径长度<span class="tsp">   | </span>平均聚类系数
+                </div><div class="lrRr"></div></div></th>
+                
                 </tr>
             </table>
         </div>
@@ -231,7 +244,7 @@
     <div class="well" style="width:1033px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-             <i class="glyphicon glyphicon-question-sign" style= "color:#0072E3"onclick="javascript:void();"></i>
+        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
         <div style="height:50px">
             <div id="loading_current_data" class="alert alert-info">
@@ -269,7 +282,7 @@
     <div class="well" style="width:1033px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-             <i class="glyphicon glyphicon-question-sign" style= "color:#0072E3" onclick="javascript:void();"></i>
+        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <form class="form-inline">
             <img class="img-polaroid">
@@ -290,4 +303,9 @@
     </div>
 {% endblock content %}
 <% block tail_js %>
+    <script>      
+        $("#summary_tooltip").tooltip();
+        $("#keyclient_tooltip").tooltip();
+        $("#display_tooltip").tooltip();
+    </script>
 <% endblock tail_js %>

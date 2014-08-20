@@ -8,39 +8,45 @@ var end_ts = null;
 var sigInst = null;
 var animation_timer = null;
 var quota={};
+var networkdata ;
+var rankdata;
+var node;
 
 
 function get_network_infor(){
-var  name=['number_nodes', 'number_edges','degree_histogram', 'number_strongly_connected_components', 'number_weakly_connected_components'];
+var  name=['number_nodes', 'number_edges','degree_histogram', 'number_strongly_connected_components',
+ 'number_weakly_connected_components','ave_degree_centrality','ave_betweenness_centrality',
+ 'ave_closeness_centrality','eigenvector_centrality','average_shortest_path_length','average_clustering'];
 var topic = "中国";
 var start_ts = 1377965700;
 var end_ts = 1378051200;
-var max = 0;
-var i = 0;
-  for ( key in name){
+  for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key],
         dataType : "json",
         type : 'GET',
         async: false,
         success: function(data){
+
             quota[name[key]] = data;
         }
 
     }) ; 
   }
-  for (var k in quota['degree_histogram'] ){
-    if(max <= quota['degree_histogram'][k]){
-      max = quota['degree_histogram'][k];
-      i = k;
-    }
-  }
   var html ='';
-  // html += "<tr><th>指标数值</th>"
+  html += "<tr>"
+  html +="<th></th>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_nodes']+"<span class=\"tsp\">   | </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+max+"<span class=\"tsp\">   | </span>"+i+"</div><div class=\"lrRr\"></div></div></th>";
+  
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_strongly_connected_components']+"<span class=\"tsp\">   | </span>"+quota['number_weakly_connected_components']+"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable").append(html);
+  var html1 = '';
+  html1 += "<tr>"
+  html1 +="<th></th>"
+  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['ave_degree_centrality']+"<span class=\"tsp\">   | </span>"+quota['ave_betweenness_centrality']+"</div><div class=\"lrRr\"></div></div></th>";
+  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['ave_closeness_centrality']+"<span class=\"tsp\">   | </span>"+quota['eigenvector_centrality']+"</div><div class=\"lrRr\"></div></div></th>"; 
+  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['average_shortest_path_length']+"<span class=\"tsp\">   | </span>"+quota['average_clustering']+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  $("#mstable1").append(html1);
   //console.log(html);
 
   
@@ -92,6 +98,7 @@ function network_request_callback(data) {
     $("#network_progress").removeClass("active");
     $("#network_progress").removeClass("progress-striped");
     networkUpdated = 1;
+
     if (data) {
         $("#loading_network_data").text("计算完成!");
         $("#sigma-graph").show();
@@ -149,15 +156,26 @@ function network_request_callback(data) {
                       return '<li>' + '博主最早出现时间' + ' : ' + new Date(o.val*1000).format("yyyy-MM-dd") + '</li>';
                   else
                       return '<li>' + o.attr + ' : ' + o.val + '</li>';
-                 }).join('') + '</ul>';
+                 } ).join('') +rankinfor(node)+ '</ul>';
+            }
+            function rankinfor(data){
+              for (var i = 0 ;i< rankdata.length; i++){
+                if(data['label'] == rankdata[i]['1']){
+                  console.log(rankdata[i]['0']);
+                  return '<li margin-left:20px>' + '排名' + ' : ' +rankdata[i]['0'] + '</li><li><a href="www.weibo.com/u/'+data["label"]+'">页面</a></li>';
+                }
+                else {
+                  return '<li margin-left:20px>排名 : 大于100</li><li><a href="www.weibo.com/u/'+data["label"]+'">页面</a></li>';
+                }
+              }
             }
             
             function showNodeInfo(event) {
                 popUp && popUp.remove();
                 
-                var node;
                 sigInst.iterNodes(function(n){
                     node = n;
+                    console.log(node['label']);
                 },[event.content[0]]);
                 popUp = $(
                     '<div class="node-info-popup"></div>'
@@ -167,9 +185,6 @@ function network_request_callback(data) {
                     // 'attributes' (unlike the keys 'label', 'color', 'size' etc),
                     // it stores it in the node 'attr' object :
                     attributesToString( node['attr']['attributes'] )
-                ).attr(
-                    'id',
-                    'node-info'+sigInst.getID()
                 ).css({
                     'display': 'inline-block',
                     'border-radius': 3,
@@ -182,17 +197,20 @@ function network_request_callback(data) {
                     'top': node.displayY+15
                 });
                 
+                //console.log(popUp);
                 $('ul',popUp).css('margin','0 0 0 20px');
                 
                 $('#sigma-graph').append(popUp);
             }
-                  
-            function hideNodeInfo(event) {
-                popUp && popUp.remove();
-                popUp = false;
-            }
-                  
-            sigInst.bind('overnodes',showNodeInfo).bind('outnodes',hideNodeInfo).draw();
+             
+
+            function waitsecond(event){
+              setTimeout(function hideNodeInfo() {
+                  popUp && popUp.remove();
+                  popUp = false;
+              }, 3000 );
+            }     
+            sigInst.bind('overnodes',showNodeInfo).bind('outnodes',waitsecond).draw();
         })();
     }
 
@@ -205,6 +223,7 @@ function network_request_callback(data) {
 
 function show_network() {
     networkShowed = 0;
+    console.log(rankdata);
     var topic = '中国'; 
     var start_ts = 1377965700;
     var end_ts = 1378051200;
@@ -217,10 +236,12 @@ function show_network() {
                     url: "/identify/graph/?topic=" + topic +'&start_ts=' + start_ts +'&end_ts='+end_ts,
                     dataType: "xml",
                     type: "GET",
+                    async: false,
 
                     success: function (data) {
 
-                            //console.log(data);
+                            console.log(data);
+                            networkdata = data;
                             network_request_callback(data);
                     },
                     error: function(result) {
@@ -241,7 +262,10 @@ function show_network() {
 
 (function ($) {
     function request_callback(data) {
-      //console.log(data);
+    
+      rankdata = data;
+      console.log(rankdata);
+
       var status = 'current finished';
       var page_num = 10 ;
   if (status == 'current finished') {
