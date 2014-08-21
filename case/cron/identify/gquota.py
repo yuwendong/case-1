@@ -33,11 +33,15 @@ def get_powerlaw(dhistogram, prekey):
     pre_x = []
     pre_y = []
     for i in range(l):
-        if dhistogram[i] != 0:
-            pre_x.append(i+1)
-            pre_y.append(dhistogram[i])
+        if i == 0:
+            pre_x.append(0.000000001)
         else:
-            continue
+            pre_x.append(i)
+
+        if dhistogram[i] == 0:
+            pre_y.append(0.000000001)
+        else:
+            pre_y.append(dhistogram[i])
     x = pre_x
     p_y = pre_y
     y =[]
@@ -54,14 +58,11 @@ def get_powerlaw(dhistogram, prekey):
     #print 'results:', linalg.lstsq(a,b)
     #print 't:', t[0][0]
 
-    xx = x
+    xx = pre_x
     r = t[0][0]
     c = t[1][0]
     yy = [math.e**(r*a+c) for a in lnx]
-    xx = []
     xydict = {}
-    for i in x:
-        xx.append(i-1)
     xydict['x'] = xx
     xydict['y'] = yy
     save_quota(prekey + '_xydict', xydict)
@@ -74,6 +75,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     #print 'G_nodes:',len(G.nodes())
     #print 'gg_nodes:', len(gg.nodes())
     #无向图的最大连通子图
+    '''
     HH = nx.connected_component_subgraphs(gg)
     maxhn = 0
     for h in HH:
@@ -111,7 +113,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # 平均最短路径长度 float
     save_quota(prekey+'_average_shortest_path_length', avespl)
     
-    
+    '''
     dhistogram = nx.degree_histogram(G)
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
@@ -120,7 +122,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # 幂律分布系数
     save_quota(prekey+'_power_law_distribution', gamma)
     
-    
+    '''
     nnodes = len(G.nodes())
     # the number of nodes in G
     save_quota(prekey+'_number_nodes', nnodes)
@@ -161,12 +163,18 @@ def compute_quota(G, gg ,date, windowsize, topic):
     dassortativity_coefficient = nx.degree_assortativity_coefficient(G)
     # 同配性系数
     save_quota(prekey + '_degree_assortativity_coefficient', dassortativity_coefficient)
-
-    #kscore = nx.k_core(G)
-    # k_score k核数
-    #save_quota(prekey + '_k_core', kscore)
-
     
+    #print 'G_edges:', len(G.edges())
+    #print 'G_edges:', len(G.selfloop_edges())
+    GG = G
+    GG.remove_edges_from(GG.selfloop_edges())
+    #print 'test_edges:',len(GG.edges())
+    kcore = nx.core_number(GG)
+    # k_score k核数
+    avekc = get_ave(kcore)
+    save_quota(prekey + '_ave_k_core', avekc)
+
+    '''
     
 
 def save_quota(key, value):
