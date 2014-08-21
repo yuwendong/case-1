@@ -1,4 +1,3 @@
-
     Date.prototype.format = function(format) { 
         var o = { 
         "M+" : this.getMonth()+1, //month 
@@ -38,13 +37,14 @@
             dataType:"json",
             async: false,
             success: function(data){
-               
+               console.log(data);
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][i][0];
                 };
                 for (var i = 0;i < data.length;i++) {
                     result1[i] = data[i][i][1]; 
                 };
+                console.log(result1);
                 for (var i = 0;i < data.length;i++) {
                     result2[i] = data[i][i][2][0]+'-'+data[i][i][2][1]; 
 
@@ -175,7 +175,7 @@
             timeline = new links.Timeline(document.getElementById('mytimeline'));
             // Draw our timeline with the created data and options
             timeline.draw(data, options);
-
+            console.log(timeline);
 
 
             
@@ -222,7 +222,7 @@
 
     function on_update(result) {
 
-
+console.log(result3);
         var percentage = []; 
         percentage[0] = (result3[0]*100).toFixed(2)+"%";
         percentage[1] = (result3[1]*100).toFixed(2)+"%";
@@ -246,7 +246,7 @@
     
     option = {
         title : {
-            text: '子类占比图',
+            text: '',
             x:'center',
             textStyle:{
             fontWeight:'lighter',
@@ -401,6 +401,7 @@
                     type: "GET",
                     dataType:"json",
                     success: function(data){
+                           //console.log(data);
                             drawtable(data);
                     }
                 });
@@ -419,40 +420,24 @@
                 tagout = data[s];
                  for (var k in tagout){
                     tagin = k;
-                 } 
-                 if(tagout[tagin].length != 5){
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
+                 }
+                for (var k1 in tagout[tagin]){
+                    if(tagout[tagin][k1]['0'] ==null || tagout[tagin][k1]['0'] == undefined ){
+                        tagout[tagin][k1]['0'] =='';
+                        console.log("abc");
                     }
-                    for (var k = tagout[tagin].length; k < 5; k++){
-                        keyword[k] = " ";
-                    }
-
-                 }  
-                 else{ 
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
-                        //console.log(tagout[tagin][k1]['0']);
-                    }
-             
-                } 
-
+                    keyword.push(tagout[tagin][k1]['0']);
+                    console.log(tagout[tagin][k1]['0']);
+                }
                 var tindex = Number(tagin);
                 console.log(keyword);
-                console.log(tindex);
-                if(tindex == 0){
-                    html += '<tr value='+tagin+' class="tablecurrent">';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
-                }
-                else{
-                    html += '<tr value='+tagin+'>';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
-                }
-
+                console.log(tagin);
+                html += '<tr>';
+                html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                html += '</tr>';
+                //console.log(keyword);
+                 //console.log(tagin);
+                 //console.log(html);
                  $("#alternatecolor").append(html);
             }
            
@@ -460,22 +445,6 @@
         }
         function connect(data){
             var value_data = data;
-
-            $("#alternatecolor tr").each(function() {
-                var select_all =$(this);
-                console.log(select_all.attr('value'));
-                if(select_all.attr('value') == value_data){
-                    if(!select_all.hasClass("tablecurrent")){
-                        select_all.addClass("tablecurrent");
-                    }
-                }
-                else{
-                    if(select_all.hasClass("tablecurrent")){
-                        select_all.removeClass('tablecurrent');
-                    }
-                }
-
-            })
             refreshWeiboTab(value_data);
         }
 
@@ -483,6 +452,7 @@
             var curr_data = data;
              $("#Tableselect a").each(function() {
                 var select_a = $(this);
+                console.log(select_a.attr('value'));
                 var select_a_sentiment = select_a.attr('value');
                 if (select_a_sentiment == curr_data){
                     if(!select_a.hasClass('curr')) {

@@ -143,7 +143,7 @@
         .pagination ul>li {
             display: inline;
         }
-        ul, ol {
+/*        ul, ol {
             padding: 0;
             margin: 0 0 10px 25px;
         }
@@ -155,7 +155,7 @@
             -webkit-margin-start: 0px;
             -webkit-margin-end: 0px;
             -webkit-padding-start: 40px;
-        }
+        }*/
         .lrRadius {
             display: inline-block;
             width: 184px;
@@ -177,11 +177,19 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 250px;
+            width: 200px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
-            text-align: center;
+            text-align: left;
+        }
+        .lrRadius .lrRb {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
         }
         td, th {
             display: table-cell;
@@ -191,11 +199,18 @@
         th {
             font-weight: bold;
         }
+        #lTools {
+            height: 600px;
+        }
+        .node-info-popup ul li a:link{color:#000000;}
+        .node-info-popup ul li a:hover{color:#00FFFF;}
 
     </style>
 {% endblock head_css %}
 
 {% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
     <script src="/static/js/identify/topic_selector.js"></script>
     <script src="/static/js/identify/sigma.min.js"></script>
@@ -207,41 +222,51 @@
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top: 40px;width:1033px;height:130px;margin-bottom:10px">
+    <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
         <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabConts"></div>
+            <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
             <table class="mtable" id="mstable">
-            <tr>
-                <th>有向图</th>
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    节点总数<span class="tsp">  |  </span>总边数</div><div class="lrRr"></div></div></th>
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    强连通图数<span class="tsp">   | </span>弱连通图数
-                </div><div class="lrRr"></div></div></th>
-            </tr>
-        </table>
-            <table class="mtable" id="mstable1">
-            <tr>
-                     <th>无向图</th>
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    平均度中心性<span class="tsp">   | </span>平均介数中心性
-                </div><div class="lrRr"></div></div></th>
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    平均紧密中心性<span class="tsp">   | </span>平均特征向量中心性
-                </div><div class="lrRr"></div></div></th>
-                <th><div class="lrRadius"><div class="lrRl"></div><div class="lrRc">
-                    平均最短路径长度<span class="tsp">   | </span>平均聚类系数
-                </div><div class="lrRr"></div></div></th>
-                
-                </tr>
             </table>
+        <h5 style="margin-left:30px"><b>无向图</b></h5>
+
+        <table class="mtable" id="mstable1">
+
+        </table>
+        <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
+
+        <table class="mtable" id="mstable2">
+
+        </table>
         </div>
     </div>
-    <div class="well" style="width:1033px">
+
+    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
+            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
+            <span id="peak_trend_tooltip"></span>
+            <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
+            </span>
+        </div>
+
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
+            </div>
+            <div class="tabConts">
+                <div id="line" style="height:300px"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
         <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
@@ -278,11 +303,15 @@
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
+
+
+
+
     
     <div class="well" style="width:1033px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络呈现"></i>&nbsp;&nbsp;
+        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <form class="form-inline">
             <img class="img-polaroid">
@@ -307,5 +336,7 @@
         $("#summary_tooltip").tooltip();
         $("#keyclient_tooltip").tooltip();
         $("#display_tooltip").tooltip();
+        $("#frequency_tooltip").tooltip();
+        $("#power_law_distribution_tooltip").tooltip();
     </script>
 <% endblock tail_js %>
