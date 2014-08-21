@@ -8,11 +8,12 @@ from model import IndexTopic
 from time_utils import ts2datetime_full
 from xapian_case.xapian_backend import XapianSearch
 from xapian_case.utils import top_keywords, gen_mset_iter
+from config import xapian_search_user as user_search
 from consts import INDEX_PATH, db
 
 
 PATH = INDEX_PATH
-RESP_ITER_KEYS = ['_id','user','text','timestamp','geo','terms','reposts_count','source']
+RESP_ITER_KEYS = ['_id','user','text','timestamp','geo','terms','reposts_count','source','comments_count']
 SORT_FIELD='-timestamp'
 TOP_CITY = 10
 K_LIMIT = 10
@@ -61,7 +62,7 @@ def cron_index_topic(topic, begin_ts = BEGIN_TS, end_ts = END_TS):
 
             time_list.append(r['timestamp']) # 时间列表
 
-            sublist_by_time.append((r['timestamp'],r['reposts_count'],r['user'],r['source'],r['text'])) # 部分字段构成子列表
+            sublist_by_time.append((r['timestamp'],r['reposts_count'],r['user'],r['source'],r['text'],r['comments_count'],r['geo'])) # 部分字段构成子列表
 
             city = geo2city(r['geo'])
             # print city
@@ -89,6 +90,10 @@ def cron_index_topic(topic, begin_ts = BEGIN_TS, end_ts = END_TS):
             print 'user',item['user']
             print 'source',item['source']
             print 'text',item['text']
+            print 'comments_count', item['comments_count']
+            print 'geo', item['geo']
+            print 'username', item['username']
+            print 'profile_image_url', item['profile_image_url']
 
         top_city_list = top_city(city_dict)
         for city in top_city_list:
@@ -127,6 +132,25 @@ def save_rt_results(topic, count, user_count, time_list, top_city_list, top_keyw
     print 'commited'
 
 
+def getuserinfo(uid):
+    user = acquire_user_by_id(uid)
+    if not user:
+        username = 'Unknown'
+        profileimage = ''
+    else:
+        username = user['name']
+        profileimage = user['image']
+    return username, profileimage
+
+def acquire_user_by_id(uid):
+    user_result = user_search.search_by_id(uid, fields=['name', 'profile_image_url'])
+    user = {}
+    if user_result:
+        user['name'] = user_result['name']
+        user['image'] = user_result['profile_image_url']
+
+    return user
+
 def select_by_time(sublist_by_time, begin_ts, end_ts,during): # 挑选各时间段的代表微博
     m = (end_ts - begin_ts) % during
     if m:
@@ -138,8 +162,12 @@ def select_by_time(sublist_by_time, begin_ts, end_ts,during): # 挑选各时间�
     for t in range(time_count):
         ts1 = begin_ts + during * t
         ts2 = min(ts1 + during, end_ts)
-        list1 = [(timestamp,reposts_count,user,source,text) for timestamp,reposts_count,user,source,text in sublist_by_time if ts1 < timestamp <= ts2]
+        list1 = [(timestamp,reposts_count,user,source,text, comments_count, geo) for timestamp,reposts_count,user,source,text, comments_count, geo in sublist_by_time if ts1 < timestamp <= ts2]
         list2 = sorted(list1, key = lambda d:d[1], reverse = True) # 按转发量排序
+        
+        username, profileimage = getuserinfo(list2[0][2])
+            
+
 
         # 元组转化为字典
         final_dict = {}
@@ -148,6 +176,10 @@ def select_by_time(sublist_by_time, begin_ts, end_ts,during): # 挑选各时间�
         final_dict['user'] = list2[0][2]
         final_dict['source'] = list2[0][3]
         final_dict['text'] = list2[0][4]
+        final_dict['comments_count'] = list2[0][5]
+        final_dict['geo'] = list2[0][6]
+        final_dict['username'] = username
+        final_dict['profile_image_url'] = profileimage
 
         final_list_by_time.append(final_dict)
 
