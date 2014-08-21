@@ -14,9 +14,10 @@ var node;
 
 
 function get_network_infor(){
-var  name=['number_nodes', 'number_edges','degree_histogram', 'number_strongly_connected_components',
- 'number_weakly_connected_components','ave_degree_centrality','ave_betweenness_centrality',
- 'ave_closeness_centrality','eigenvector_centrality','average_shortest_path_length','average_clustering'];
+var  name=['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
+ 'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
+ 'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
+ 'diameter','power_law_distribution','number_weakly_connected_components','degree_assortativity_coefficient','average_clustering','ave_k_core'];
 var topic = "中国";
 var start_ts = 1377965700;
 var end_ts = 1378051200;
@@ -35,26 +36,39 @@ var end_ts = 1378051200;
   }
   var html ='';
   html += "<tr>"
-  html +="<th></th>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_nodes']+"<span class=\"tsp\">   | </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
-  
-  html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['number_strongly_connected_components']+"<span class=\"tsp\">   | </span>"+quota['number_weakly_connected_components']+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总节点数<span class=\"tsp\">   : </span>" +quota['number_nodes'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总边数<span class=\"tsp\">   : </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均节点度<span class=\"tsp\">   : </span>" +quota['ave_degree'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">幂律分布系数<span class=\"tsp\">   : </span>" +quota['power_law_distribution'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均度中心性<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均紧密中心性<span class=\"tsp\">   : </span>" +quota['ave_closeness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">k核数<span class=\"tsp\">   : </span>"+quota['ave_k_core'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable").append(html);
+
   var html1 = '';
   html1 += "<tr>"
-  html1 +="<th></th>"
-  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['ave_degree_centrality']+"<span class=\"tsp\">   | </span>"+quota['ave_betweenness_centrality']+"</div><div class=\"lrRr\"></div></div></th>";
-  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['ave_closeness_centrality']+"<span class=\"tsp\">   | </span>"+quota['eigenvector_centrality']+"</div><div class=\"lrRr\"></div></div></th>"; 
-  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">"+quota['average_shortest_path_length']+"<span class=\"tsp\">   | </span>"+quota['average_clustering']+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html1 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均聚类系数<span class=\"tsp\">   : </span>"+quota['average_clustering'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable1").append(html1);
-  //console.log(html);
 
-  
+  var html2 = '';
+  html2 += "<tr>"
+  html2 +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均最短路径长度<span class=\"tsp\">   : </span>"+quota['average_shortest_path_length'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
+  html2 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html2 +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均离心率<span class=\"tsp\">   : </span>"+quota['ave_eccentricity'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  $("#mstable2").append(html2);
+  //console.log(html);
 }
 
 
 $(document).ready(function(){
     get_network_infor();
+    getnetwork_frequency();
 })
 // Date format
 Date.prototype.format = function(format) { 
@@ -161,11 +175,11 @@ function network_request_callback(data) {
             function rankinfor(data){
               for (var i = 0 ;i< rankdata.length; i++){
                 if(data['label'] == rankdata[i]['1']){
-                  console.log(rankdata[i]['0']);
-                  return '<li margin-left:20px>' + '排名' + ' : ' +rankdata[i]['0'] + '</li><li><a href="www.weibo.com/u/'+data["label"]+'">页面</a></li>';
+                  // console.log(rankdata[i]['0']);
+                  return '<li margin-left:20px>' + '排名' + ' : ' +rankdata[i]['0'] + '</li><li><a href="http://www.weibo.com/u/'+data["label"]+'">页面</a></li>';
                 }
                 else {
-                  return '<li margin-left:20px>排名 : 大于100</li><li><a href="www.weibo.com/u/'+data["label"]+'">页面</a></li>';
+                  return '<li margin-left:20px>排名 : 大于100</li><li><a target="_blank" href="http://www.weibo.com/u/'+data["label"]+'">页面</a></li>';
                 }
               }
             }
@@ -175,7 +189,7 @@ function network_request_callback(data) {
                 
                 sigInst.iterNodes(function(n){
                     node = n;
-                    console.log(node['label']);
+                    // console.log(node['label']);
                 },[event.content[0]]);
                 popUp = $(
                     '<div class="node-info-popup"></div>'
@@ -223,7 +237,7 @@ function network_request_callback(data) {
 
 function show_network() {
     networkShowed = 0;
-    console.log(rankdata);
+    // console.log(rankdata);
     var topic = '中国'; 
     var start_ts = 1377965700;
     var end_ts = 1378051200;
@@ -264,7 +278,7 @@ function show_network() {
     function request_callback(data) {
     
       rankdata = data;
-      console.log(rankdata);
+      // console.log(rankdata);
 
       var status = 'current finished';
       var page_num = 10 ;
@@ -378,3 +392,91 @@ function show_network() {
     identify_request();
 
 })(jQuery);
+
+
+
+
+function getnetwork_frequency(){
+var topic = "中国";
+var start_ts = 1377965700;
+var end_ts = 1378051200;
+var index = [];
+var value = [];
+    $.ajax({
+        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=degree_histogram' ,
+        dataType : "json",
+        type : 'GET',
+        async: false,
+        success: function(data){
+
+            for (var i = 0; i< data.length; i ++){
+              var s = i.toString();
+              index.push(s);
+              value.push(data[i]);
+            }
+            // console.log(index);
+            // console.log(value);
+
+            drawpicture_line(index,value);
+
+        }
+        
+
+    }) ; 
+
+}
+
+function drawpicture_line(index,value) {
+    $('#line').highcharts({
+        title: {
+            text: '',
+            x: -20 //center
+        },
+        lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
+            },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+          title: {
+            text: '节点度数'
+        },
+            categories:index
+             },
+        yAxis: {
+            title: {
+                text: '出现频数'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+            legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: '原始曲线',
+            data: value
+        // },
+        // {
+        //     name: '拟合曲线',
+        //     data: 
+        }]
+
+    });
+}

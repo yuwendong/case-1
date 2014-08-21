@@ -117,23 +117,128 @@ def area():
 
 @mod.route('/semantic/')
 def meaning():
-    return render_template('index/yuyi.html')
+        # 要素
+    yaosu = 'semantic'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/yuyi.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/time/')
 def shijian():
-    return render_template('index/shijian.html')
+        # 要素
+    yaosu = 'time'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/shijian.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/gaishu/')
 def gaishu():
-    return render_template('index/gaishu.html')
+        # 要素
+    yaosu = 'gaishu'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/gaishu.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/zhibiao/')
 def zhibiao():
-    return render_template('index/zhibiao.html')
+        # 要素
+    yaosu = 'zhibiao'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/zhibiao.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/network/')
 def topic():
-    return render_template('index/topic.html')
+        # 要素
+    yaosu = 'network'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/topic.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 # 以下为新增内容
 @mod.route('/gaishu_data/', methods = ['GET', 'POST'])

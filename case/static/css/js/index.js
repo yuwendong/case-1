@@ -1,3 +1,23 @@
+ var topic = "中国";
+ $(document).ready(function(){
+    getindex_data();
+    drawindex();
+ })
+
+ function getindex_data(){
+    console.log("abc");
+    $.ajax({
+        url:"/quota_system/topic/?topic="+topic,
+        dataType: "json",
+        type: "GET",
+        success :function(data){
+            console.log(data);
+        }
+    });
+ }
+
+
+function drawindex(){
  var labelTop = {
         normal : {
             label : {
@@ -727,3 +747,4 @@
     };
     var myChart = echarts.init(document.getElementById('index'));
     myChart.setOption(option);
+}
