@@ -55,17 +55,20 @@ def get_powerlaw(dhistogram, prekey):
     b = np.mat(lny).T
 
     (t, res, rank, s) = linalg.lstsq(a, b) # 最小二乘求系数,t为2*1的矩阵
-    #print 'results:', linalg.lstsq(a,b)
-    #print 't:', t[0][0]
-
+    print 'results:', linalg.lstsq(a,b)
     xx = pre_x
     r = t[0][0]
     c = t[1][0]
+    results_linalg = [r, c] # r*lnx+c=lny
+    save_quota(prekey + '_result_linalg', results_linalg)
+
     yy = [math.e**(r*a+c) for a in lnx]
+    lnyy = [math.log(f, math.e) for yyy in yy]
     xydict = {}
-    xydict['x'] = xx
-    xydict['y'] = yy
-    save_quota(prekey + '_xydict', yy)
+    xydict['lnx'] = lnx
+    xydict['lny'] = lnyy
+    save_quota(prekey + '_xydict_lnx', lnx)
+    save_quota(prekey + '_xydict_lny', lnyy)
     # 保存回归参数
     return t[0][0]
 
@@ -75,7 +78,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     #print 'G_nodes:',len(G.nodes())
     #print 'gg_nodes:', len(gg.nodes())
     #无向图的最大连通子图
-    '''
+    
     HH = nx.connected_component_subgraphs(gg)
     maxhn = 0
     for h in HH:
@@ -113,20 +116,29 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # 平均最短路径长度 float
     save_quota(prekey+'_average_shortest_path_length', avespl)
     
-    '''
+
     dhistogram = nx.degree_histogram(G)
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
+
+    Hdhistogram = nx.degree_histogram(H)
+    # histogram of H-----max connected graph
+    save_quota(prekey + '_H_degree_histogram', Hdhistogram)
 
     gamma = get_powerlaw(dhistogram, prekey)
     # 幂律分布系数
     save_quota(prekey+'_power_law_distribution', gamma)
     
-    '''
+    
     nnodes = len(G.nodes())
     # the number of nodes in G
     save_quota(prekey+'_number_nodes', nnodes)
-
+    
+    Hnnodes = len(H.nodes())
+    # the number o nodes in H
+    ratio_H2G = float(Hnnodes) / float(nnodes)
+    save_quota(prekey + '_ratio_H2G', ratio_H2G)
+    
     alldegree = sum(dhistogram)
     ave_degree = float(alldegree) / float(nnodes)
     # ave_degree 平均节点度
@@ -174,7 +186,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     avekc = get_ave(kcore)
     save_quota(prekey + '_ave_k_core', avekc)
 
-    '''
+
     
 
 def save_quota(key, value):
