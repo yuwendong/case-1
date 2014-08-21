@@ -7,7 +7,7 @@ from case.model import IndexTopic
 
 CITY_LIMIT = 3
 KEY_WORDS_LIMIT = 3
-OPINION_LIMIT = 5
+OPINION_LIMIT = 100
 MEDIA_OPINION_LIMIT = 10
 
 def search_count(topic):
