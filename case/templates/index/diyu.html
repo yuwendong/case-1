@@ -106,7 +106,6 @@
 
 {% block head_js %}
 <script src="/static/js/echarts-2.0.1/_build/echarts-plain-map.js"></script>
-<!--<script src="/static/js/esl.js"></script>-->
 {% endblock head_js %}
 
 {% block content %}
@@ -114,7 +113,7 @@
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4>地域分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
+            <i id="geo_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="全国纵览分析及区域走势对比"></i>&nbsp;&nbsp;
         </div>
 
         <div class="stmTabs tabUnit">
@@ -134,19 +133,20 @@
                 <div style="width:1033px;">
                     <p style="margin: 0 0 10px;">信息类型选择：
                         <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
-                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="global" checked>总数
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsStatus" id="optionsRadios1" value="global" checked>总数
                         </label>
                         <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
-                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="origin" >原创
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsStatus" id="optionsRadios1" value="origin" >原创
                         </label>
                         <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
-                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="repost" >转发
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsStatus" id="optionsRadios1" value="repost" >转发
                         </label>
                         <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
-                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="comment" >评论
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsStatus" id="optionsRadios1" value="comment" >评论
                         </label>
                     </p>
                     <div id="map_div" style="width:100%;height:600px;background-color:#FFF;">
+                    <div id="spatial_trend_div"></div>
                 </div>
             </div>
             </div>
@@ -155,6 +155,9 @@
 
 {% endblock content %}
 {% block tail_js %}
+    <script>
+        $("#geo_tooltip").tooltip();
+    </script>
     <script src="/static/css/js/map.js" type="text/javascript"></script> 
 {% endblock tail_js %}
 
