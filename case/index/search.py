@@ -7,7 +7,8 @@ from case.model import IndexTopic
 
 CITY_LIMIT = 3
 KEY_WORDS_LIMIT = 3
-OPINION_LIMIT = 5
+OPINION_LIMIT = 100
+MEDIA_OPINION_LIMIT = 10
 
 def search_count(topic):
     item = db.session.query(IndexTopic).filter(IndexTopic.topic == topic).first()
@@ -85,6 +86,17 @@ def search_opinion(topic, limit = OPINION_LIMIT):
     else:
         opinion = []
     return opinion
+
+def search_media_opinion(topic, limit = MEDIA_OPINION_LIMIT):
+    item = db.session.query(IndexTopic).filter(IndexTopic.topic == topic).first()
+    if item:
+        media_opinion_list = json.loads(item.media_opinion)
+        media_opinion = media_opinion_list[len(media_opinion_list)-limit:]
+        print 'item,media_opinion'
+        print item, media_opinion
+    else:
+        media_opinion = []
+    return media_opinion
 
 if __name__ == '__main__':
     topic = u'中国'

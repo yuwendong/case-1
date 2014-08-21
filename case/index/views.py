@@ -285,6 +285,9 @@ def gaishu_topic():
     opinion = topic_search('opinion',topic)
     results['opinion'] = opinion
 
+    media_opinion = topic_search('media_opinion',topic)
+    results['media_opinion'] = media_opinion
+
     moodlens_pie = get_moodlens_pie(topic)
     results['moodlens_pie'] = moodlens_pie
 
