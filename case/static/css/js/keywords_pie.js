@@ -12,6 +12,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
                 console.log(data);
                 writ_text(data);
                 writ_opinion(data);
+                $("#summary_tooltip").tooltip();
             }
         });       
     }
@@ -19,8 +20,9 @@ $(document).ready(function(){   //网页加载时执行下面函数
     function writ_text(data){
         var text = data;
         var html = '';
+
         html += '<h4><b>标签:'+data['tag']+'</b></h4>';
-        html += '<i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>';      
+        html +=  '<i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="事件总体概述"></i>&nbsp;&nbsp';      
         html += '<span class="pull-right" style="margin: -10px auto -10px auto;">';
         html += '<input type="checkbox" name="abs_rel_switch" checked></span>';
         $('#title_text').append(html);
