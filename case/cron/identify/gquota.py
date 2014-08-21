@@ -65,7 +65,7 @@ def get_powerlaw(dhistogram, prekey):
     xydict = {}
     xydict['x'] = xx
     xydict['y'] = yy
-    save_quota(prekey + '_xydict', xydict)
+    save_quota(prekey + '_xydict', yy)
     # 保存回归参数
     return t[0][0]
 
