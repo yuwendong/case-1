@@ -29,44 +29,84 @@
             padding-right: 15px;
             color: #858585;
         }
-        .stmTabs{
+        .stmTabs {
             padding: 20px;
         }
         .stmTabs .tabTitle {
             height: 22px;
             margin-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
-            max-width: 110px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
-            height: 23px;
-            padding: 0 14px;
-            _float: left;
+            border-bottom: 1px solid #f0f0f0
         }
         .stmTabs .tabLi {
             display: block;
             float: left;
             text-decoration: none;
-            color: #666;
+            color: #666
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float:left
         }
         .stmTabs .tabLi .hvTab {
             display: none;
             color: #6e87d7;
             height: 21px;
-            border-bottom: 2px solid #6e87d7;
+            border-bottom: 2px solid #6e87d7
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }
+        .stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
         }
 
     </style>
 {% endblock head_css %}
 
 {% block head_js %}
-<!--<script src="/static/js/echarts-2.0.1/_build/echarts-plain-map.js"></script>--> 
-    <script src="/static/js/esl.js"></script> 
+<script src="/static/js/echarts-2.0.1/_build/echarts-plain-map.js"></script>
+<!--<script src="/static/js/esl.js"></script>-->
 {% endblock head_js %}
 
 {% block content %}
@@ -77,9 +117,9 @@
             <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
         </div>
 
-        <div class="tabUnit">
+        <div class="stmTabs tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
-                <div class="stmTabs tabUI" id="TabDiv">
+                <div class="tabUI" id="TabDiv">
                     <a status="wholemap" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
                         <div class="nmTab">全国纵览</div>
                         <div class="hvTab">全国纵览</div>
@@ -92,6 +132,20 @@
             </div>
             <div class="tabConts">
                 <div style="width:1033px;">
+                    <p style="margin: 0 0 10px;">信息类型选择：
+                        <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="global" checked>总数
+                        </label>
+                        <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="origin" >原创
+                        </label>
+                        <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="repost" >转发
+                        </label>
+                        <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                            <input style="margin: -5px 5px 0" type="radio" name="optionsRadios" id="optionsRadios1" value="comment" >评论
+                        </label>
+                    </p>
                     <div id="map_div" style="width:100%;height:600px;background-color:#FFF;">
                 </div>
             </div>
