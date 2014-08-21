@@ -18,6 +18,7 @@ RESP_ITER_KEYS = ['_id','user','text','timestamp','geo','terms','reposts_count',
 SORT_FIELD='-timestamp'
 TOP_CITY = 10
 K_LIMIT = 10
+O_LIMIT = 100
 M_LIMIT = 10
 
 SECOND = 1
@@ -92,7 +93,7 @@ def cron_index_topic(topic, begin_ts = BEGIN_TS, end_ts = END_TS):
         print 'topic_begin_ts',topic_begin_ts
         print 'topic_end_ts',topic_end_ts
 
-        final_list_by_time = select_by_time(sublist_by_time,time_list[0],time_list[-1],INTERVAL)
+        final_list_by_time = select_by_time(sublist_by_time,O_LIMIT)
         final_list_by_media =select_by_media(sublist_by_time, M_LIMIT)
         print 'final_list_by_media'
         for item in final_list_by_media:
@@ -213,7 +214,10 @@ def select_by_media(sublist_by_time, limit): # 媒体代表性观点
     for t in range(count):
         a = limit * t
         b = limit * (t + 1)
-        list1 = media_opinion_list[a:b]
+        if b >= len(media_opinion_list):
+            list1 = media_opinion_list[a:]
+        else:
+            list1 = media_opinion_list[a:b]
         list2 = sorted(list1, key = lambda d:d[1], reverse = True)
 
         username,profileimage = getuserinfo(list2[0][2])
@@ -234,24 +238,26 @@ def select_by_media(sublist_by_time, limit): # 媒体代表性观点
     return final_list_by_media
 
 
-def select_by_time(sublist_by_time, begin_ts, end_ts,during): # 挑选各时间段的代表微博
-    m = (end_ts - begin_ts) % during
+def select_by_time(sublist_by_time, limit): # 挑选代表微博
+
+    m = len(sublist_by_time) % limit
     if m:
-        time_count = (end_ts - begin_ts) / during + 1
+        count = len(sublist_by_time) / limit + 1
     else:
-        time_count = (end_ts - begin_ts) / during
+        count = len(sublist_by_time) / limit
+
     final_list_by_time = []
 
-    for t in range(time_count):
-        ts1 = begin_ts + during * t
-        ts2 = min(ts1 + during, end_ts)
-        list1 = [(timestamp,reposts_count,user,source,text, comments_count, geo) for timestamp,reposts_count,user,source,text, comments_count, geo in sublist_by_time if ts1 < timestamp <= ts2]
-        list2 = sorted(list1, key = lambda d:d[1], reverse = True) # 按转发量排序
+    for t in range(limit):
+        a = count * t
+        b = count * (t + 1)
+        if b >= len(sublist_by_time):
+            list1 = sublist_by_time[a:]
+        else:
+            list1 = sublist_by_time[a:b]
+        list2 = sorted(list1, key = lambda d:d[1], reverse = True)
 
         username, profileimage = getuserinfo(list2[0][2])
-
-
-
         # 元组转化为字典
         final_dict = {}
         final_dict['timestamp'] = list2[0][0]
