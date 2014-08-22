@@ -7,7 +7,9 @@ import datetime
 from case.model import *
 from case.extensions import db
 from case.moodlens import pie as pieModule
+from case.identify import utils as identifyModule
 import search as searchModule
+from time_utils import ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
 
@@ -291,6 +293,9 @@ def gaishu_topic():
     moodlens_pie = get_moodlens_pie(topic)
     results['moodlens_pie'] = moodlens_pie
 
+    top_users = get_top_users(topic)
+    results['top_users'] = top_users
+
     return json.dumps(results)
 
 def get_moodlens_pie(topic = u'中国'):
@@ -302,6 +307,20 @@ def get_moodlens_pie(topic = u'中国'):
 
     return results
 
+def get_top_users(topic = u'中国'):
+    topn = 10
+    start_ts = 1377965700
+    end_ts = 1378051200
+    windowsize = (end_ts - start_ts + 900) / (24 * 60 * 60)
+    date = ts2datetime(end_ts)
+
+    if windowsize > 7:
+        rank_method = 'degreerank'
+    else:
+        rank_method = 'pagerank'
+
+    results = identifyModule.read_topic_rank_results(topic, topn, rank_method, date, windowsize)
+    return results
 
 def topic_search(item = 'count', topic = u'中国'):
 
