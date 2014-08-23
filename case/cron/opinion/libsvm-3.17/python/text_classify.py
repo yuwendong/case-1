@@ -173,7 +173,7 @@ def write(weibo_text,text_c,flag,lable):
         for i in range(0,len(text_c)):
             r,n = get_s(text,weibo_text[str(text_c[i][1])])#计算相似度，剔除重复文本
             if r < 0.8:
-                text.append([text_c[i][0],weibo_text[str(text_c[i][1])]])
+                text.append([text_c[i][0],text_c[i][1],weibo_text[str(text_c[i][1])]])
             else:
                 if number.has_key(str(n)):
                     number[str(n)] = number[str(n)] + 1
@@ -184,7 +184,7 @@ def write(weibo_text,text_c,flag,lable):
                 pass
             else:
                 number[str(i)] = 0
-            writer.writerow((text[i][0],text[i][1],number[str(i)]))
+            writer.writerow((text[i][0],text[i][1],text[i][2],number[str(i)]))
 
 def word_net(notin,flag):#词频词网
 
