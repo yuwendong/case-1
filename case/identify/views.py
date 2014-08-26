@@ -8,7 +8,7 @@ sys.setdefaultencoding('utf-8')
 
 from datetime import datetime
 from SSDB import SSDB 
-from config import SSDB_PORT, SSDB_HOST, db
+from case.global_config import SSDB_PORT, SSDB_HOST, db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect

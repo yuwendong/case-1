@@ -15,7 +15,7 @@ from case.extensions import db
 from utils import weiboinfo2url
 from peak_detection import detect_peaks
 from datetime import date, datetime
-from xapian_weibo.utils import top_keywords
+from xapian_case.utils import top_keywords
 from case.global_config import DOMAIN_LIST, DOMAIN_ZH_LIST, emotions_kv
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
