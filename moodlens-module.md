@@ -47,7 +47,7 @@ easy_install pip
 ```
     sudo pip install flask
 ```
-完成flask安装后，将case/package_install/目录下的压缩文件package_install.zip解压缩后，将以下文件复制到服务器/usr/local/lib/python2.7/dist-package/目录下。
+完成flask安装后，将case/package_install/目录下的压缩文件package_install.zip解压缩后，将以下文件复制到服务器/usr/local/lib/python2.7/dist-packages/目录下。
 ```
     Flask_Admin-1.0.4-py2.7.egg
     Flask_DebugToolbar-0.8.0-py2.7.egg
