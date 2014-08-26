@@ -31,8 +31,18 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 
 
 ##3.相关安装
+3.1 easy_install配置
+```
+wget https://bootstrap.pypa.io/ez_setup.py
+python ez_setup.py
+```
 
-3.1 flask安装
+3.2 pip install安装
+```
+easy_install pip
+```
+
+3.3 flask安装
 
 ```
     sudo pip install flask
@@ -54,7 +64,7 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 在运行run.py过程中可能会出现'no module named ***'，则需要再使用easy_install对其进行安装。
 
 
-3.2 Mysql安装
+3.4 Mysql安装
 
 ```
    sudo apt-get install mysql-server
