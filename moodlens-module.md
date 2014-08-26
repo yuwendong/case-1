@@ -62,6 +62,12 @@ easy_install pip
     SQLAlchemy-0.8.0-py2.7-linux-x86_64.egg
 ```
 在运行run.py过程中可能会出现'no module named ***'，则需要再使用easy_install对其进行安装。
+如
+```
+easy_install flask_debugtoolbar
+easy_install flask_admin
+easy_install flask_login
+```
 
 
 3.4 Mysql安装
