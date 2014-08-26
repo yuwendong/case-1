@@ -31,6 +31,10 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 
 
 ##3.相关安装
+预先安装
+```
+apt-get install python-dev
+```
 3.1 easy_install配置
 ```
 wget https://bootstrap.pypa.io/ez_setup.py
@@ -67,6 +71,7 @@ easy_install pip
 easy_install flask_debugtoolbar
 easy_install flask_admin
 easy_install flask_login
+easy_install flask_wtf
 ```
 
 
