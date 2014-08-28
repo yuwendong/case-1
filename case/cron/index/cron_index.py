@@ -100,6 +100,7 @@ def cron_index_topic(topic, begin_ts = BEGIN_TS, end_ts = END_TS):
             print 'timestamp', ts2datetime_full(item['timestamp'])
             print 'reposts_count',item['reposts_count']
             print 'user',item['user']
+            print 'domain',uid2domain(item['user'])
             print 'source',item['source']
             print 'text',item['text']
             print 'comments_count', item['comments_count']
@@ -194,7 +195,8 @@ def uid2domain(user): # 将用户转化为对应的领域
 
     return domain
 
-def is_media(domain):
+def is_media(user):
+    domain = uid2domain(user)
     if domain == 'media':
         return True
     else:
