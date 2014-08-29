@@ -112,16 +112,16 @@ class CityTopicCount(db.Model):
 
 class CityRepost(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    original = db.Column(db.Integer(1,unsigned = True))
     topic = db.Column(db.String(20))
     mid = db.Column(db.String(20)) # 微博ID
     ts = db.Column(db.BigInteger(20, unsigned=True))
     origin_location = db.Column(db.Text) # 原始微博发布地点
     repost_location = db.Column(db.Text) # 转发微博发布地点
-    message_type = db.Column(db.Integer(1,unsigned = True))
 
-    def __init__(self, message_type, topic, mid, ts, origin_location, repost_location ):
+    def __init__(self, original, topic, mid, ts, origin_location, repost_location ):
         self.topic = topic
-        self.message_type = message_type
+        self.original = original
         self.mid = mid
         self.ts = ts
         self.origin_location = origin_location
