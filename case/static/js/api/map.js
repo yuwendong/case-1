@@ -106,13 +106,51 @@ function CaseMap(start_ts, end_ts, pointInterval){
         $('input:radio[name="optionsStatus"]').on('change', function (e) {
             var curIndex = e.target.value;
             var curIdx = that.Index2Idx[curIndex];
-            that.showMyChart(curIdx);
+            var curStatus = $('a.curr').attr('status');
+            if(curStatus == 'wholemap'){
+                that.showWholeMapChart(curIdx);
+            }
+            else{
+                that.showZoneChart(curIdx);
+            }
         });
     }
 
-    this.showMyChart = function (curSta) {
+    this.showWholeMapChart = function (curSta) {
         this.disposeMyChart();
         this.initPullDrawMap(curSta);
+    }
+
+    this.addSwitchTabListener = function(){
+        var that = this;
+        $("#mapTabDiv").children("a").unbind();
+        $("#mapTabDiv").children("a").click(function() {
+            var select_a = $(this);
+            var unselect_a = $(this).siblings('a');
+            if(!select_a.hasClass('curr')) {
+                select_a.addClass('curr');
+                unselect_a.removeClass('curr');
+                var select_map = select_a.attr('status');
+                that.showSwitchedTab(select_map);
+            }
+        });
+    }
+
+    this.showSwitchedTab = function(curSta) {
+        this.disposeMyChart();
+        if(curSta == 'wholemap'){
+            var curIdx = '1';
+            this.showWholeMapChart(curIdx);
+        }
+        else{
+            var curIdx = '1';
+            this.showZoneChart(curIdx);
+        }
+    }
+
+    this.showZoneChart = function(curSta) {
+        this.disposeMyChart();
+        this.initPullDrawZoneChart(curSta);
     }
 }
 
@@ -137,12 +175,106 @@ CaseMap.prototype.initPullDrawMap = function(sta){
     }
 }
 
+// instance method, 地区图表对比
+CaseMap.prototype.initPullDrawZoneChart = function(sta){
+    var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, sta);
+    var myChart = echarts.init(document.getElementById(this.map_div_id));
+    this.myChart = myChart;
+
+    myChart.showLoading({
+        text: '努力加载数据中...'
+    });
+    var that = this;
+    this.call_async_ajax_request(ajax_url, this.ajax_method, callback);
+
+    function callback(data){
+        myChart.hideLoading();
+        var province_data = data['province_data'];
+        var ts_list = data['ts_list'];
+        var date_list = [];
+        for(var i=0; i<ts_list.length; i+= 1){
+            date_list.push(new Date(parseInt(ts_list[i]) * 1000).format("yyyy年MM月dd日 hh:mm:ss"));
+        }
+        drawZoneChart(that, province_data, date_list, myChart);
+    }
+}
+
+
 // 默认加载总数
 var curIdx = '1';
 var casemap = new CaseMap(START_TS, END_TS, DURING_INTERGER);
-casemap.showMyChart(curIdx);
+casemap.showWholeMapChart(curIdx);
+casemap.addSwitchTabListener();
 casemap.addSwitchMyChartListener();
 
+function drawZoneChart(that, data, ts_list, myChart){
+    var keyCity = that.pList;
+
+    var option = {
+        tooltip : {
+            trigger: 'axis',
+        },
+        
+        legend: {
+            data: keyCity
+        },
+        
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [{
+            type : 'category',
+            boundaryGap : false,
+            data : ts_list,
+            axisLabel: {
+                /*
+                formatter: function(s){
+                    return new Date(parseInt(s) * 1000).format("yyyy年MM月dd日 hh:mm:ss");
+                }*/
+            }
+        }],
+            
+        yAxis : [{
+            type : 'value'
+        }],
+        
+        series : []
+    };
+    
+    var selected = {};
+    var series = [];
+
+    var singleData;
+    var city;
+    var seriesData;
+    for (var i = 0, l = keyCity.length; i < l; i++) {
+        city = keyCity[i];
+        
+        seriesData = data[city];
+        series.push({
+            name: city,
+            type: 'line',
+            stack: '总量',
+            data: seriesData
+        });
+        selected[city] = false;
+    }
+    selected['北京'] = true;
+    selected['上海'] = true;
+    selected['广东'] = true;
+    option.legend.selected = selected;
+    option.series = series;
+
+    myChart.setOption(option);
+}
 
 function drawWholeMap(that, fdata, max_count, myChart){
     var get_bar_series_data_ele = function(name, data) {
@@ -329,175 +461,4 @@ function drawWholeMap(that, fdata, max_count, myChart){
 
     myChart.setOption(option);
 }
-
-/*
-myChart = echarts.init(document.getElementById('spatial_trend_div'));
-myChart.setOption(option1());
-
-function option1 (name) {
-    var keyCity = [
-        '北京','上海','广州','长春','长沙','成都','福州','哈尔滨','沈阳','杭州','呼和浩特',
-        '昆明','南京','贵阳','太原','天津','武汉','西安','郑州','重庆','济南',
-        '银川','石家庄','乌鲁木齐','南昌','海口','兰州','西宁','合肥','南宁','深圳',
-        '包头','大连','大同','保定','东莞','佛山','桂林','开封','连云港',
-        '廊坊','宁波','齐齐哈尔','泉州','绍兴','苏州','唐山','无锡','延安',
-        '扬州','徐州','烟台','宜宾','玉溪','湛江','中山','珠海','淄博',
-        '威海','潍坊','温州','汕头','青岛','厦门','九江','秦皇岛','洛阳',
-        '北京','上海','广州','重庆','天津','太原','沈阳','大连','长春',
-        '南京','杭州','宁波','合肥','福州','厦门','南昌','济南','青岛',
-        '郑州','武汉','长沙','深圳','南宁','海口','成都','贵阳','昆明',
-        '拉萨','西安','兰州','西宁','银川','哈尔滨','石家庄','呼和浩特','乌鲁木齐'
-    ];
-    var option = {
-        title : {
-            text: '重点城市对比',
-            subtext: 'data from PM25.in',
-            sublink: 'http://www.pm25.in',
-            x:'right',
-            y:'bottom'
-        },
-        tooltip : {
-            trigger: 'axis',
-            formatter: function (v) {
-                var res = v[0][1] + '<br/>';
-                if (v.length < 5) {
-                    for (var i = 0, l = v.length; i < l; i++) {
-                        res += v[i][0] + ' : ' + v[i][2] + '<br/>';
-                    }
-                }
-                else {
-                    for (var i = 0, l = v.length; i < l; i++) {
-                        res += v[i][0] + ' : ' + v[i][2] + ((i + 1) % 3 == 0 ? '<br/>' : ' ');
-                    }
-                }
-                return res;
-            }
-        },
-        legend: {
-            data: keyCity
-        },
-        toolbox: {
-            show : true,
-            orient : 'vertical',
-            x: 'right',
-            y: 'center',
-            feature : {
-                mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar']},
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        grid:{
-            x: 50,
-            y: 80,
-            x2: '32%',
-            borderWidth:0
-        },
-        xAxis : [
-            {
-                type : 'category',
-                splitLine : {show : false},
-                data : ['AQI','PM2.5','PM10','NO2','O3','SO2']
-            }
-        ],
-        yAxis : [
-            {
-                type : 'value',
-                splitArea : {show : true},
-                splitLine : {show : true}
-            }
-        ],
-        polar : [
-           {
-               indicator : [
-                   { text: 'AQI'},
-                   { text: 'PM2.5'},
-                   { text: 'PM10'},
-                   { text: 'NO2'},
-                   { text: 'O3'},
-                   { text: 'SO2'}
-                ],
-                center : ['84%', 230],
-                radius : 120
-            }
-        ]
-    };
-    
-    var selected = {};
-    var series = [
-        {
-            name: '对比',
-            type: 'radar',
-            tooltip: {
-                trigger:'axis',
-                formatter: function (v) {
-                    var res = v[0][3] + '<br/>';
-                    if (v.length < 5) {
-                        for (var i = 0, l = v.length; i < l; i++) {
-                            res += v[i][1] + ' : ' + v[i][2] + '<br/>';
-                        }
-                    }
-                    else {
-                        for (var i = 0, l = v.length; i < l; i++) {
-                            res += v[i][1] + ' : ' + v[i][2] + ((i + 1) % 3 == 0 ? '<br/>' : ' ');
-                        }
-                    }
-                    return res;
-                }
-            },
-            itemStyle: {
-                normal: {
-                    lineStyle: {
-                        width: 1
-                    }
-                }
-            },
-            data: []
-        }
-    ];
-    var cityToData = data.cityToData;
-    var singleData;
-    var city;
-    var seriesData;
-    for (var i = 0, l = keyCity.length; i < l; i++) {
-        city = keyCity[i];
-        singleData = cityToData[city];
-        if (typeof singleData == 'undefined') {
-            continue;
-        }
-        seriesData = [
-            singleData.aqi, 
-            singleData.pm2_5, 
-            singleData.pm10, 
-            singleData.no2, 
-            singleData.o3, 
-            singleData.so2
-        ];
-        series[0].data.push({
-            name: city,
-            value: seriesData
-        });
-        series.push({
-            name: city,
-            type: 'bar',
-            barGap:'5%',
-            barCategoryGap:'10%',
-            data: seriesData
-        });
-        selected[city] = false;
-    }
-    selected['北京'] = true;
-    selected['上海'] = true;
-    selected['广州'] = true;
-    //selected['重庆'] = true;
-    //selected['哈尔滨'] = true;
-    //selected['乌鲁木齐'] = true;
-    //selected['拉萨'] = true;
-    option.legend.selected = selected;
-    //option.series = series;
-    //console.log(option);
-    return option;
-}*/
 
