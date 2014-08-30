@@ -50,7 +50,18 @@ def info2map(infos):
 
         top10[info] = map_dict['summary']
 
-    data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10}
+    province_data = {}
+    for p in province_list:
+        province_data[p] = []
+
+    ts_list = []
+    sorted_count_by_ts = sorted(count.iteritems(), key=lambda (k, v) : k, reverse=False)
+    for ts, pdata in sorted_count_by_ts:
+        ts_list.append(ts)
+        for idx, d in enumerate(pdata):
+            province_data[province_list[idx]].append(d)
+
+    data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10, 'province_data': province_data, 'ts_list': ts_list} 
 
     return data
 
