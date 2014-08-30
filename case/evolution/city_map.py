@@ -3,7 +3,8 @@
 import math
 import time
 import datetime
-from city_repost_search import repost_search
+from case.extensions import db
+from case.model import CityRepost
 
 SECOND = 1
 TENSECONDS = 10 * SECOND
@@ -22,13 +23,12 @@ def partition_count(ts_arr, data, interval = INTERVAL):
     ts_series = []
     each_step = interval
     index = 0
-    index += each_step
     data_cursor = -1
     groups = []
     while index < len(ts_arr):
-        p_index = index - each_step
-        s_ts = ts_arr[p_index]
-        f_ts = ts_arr[index]
+        f_index = min(index + each_step, len(ts_arr) - 1)
+        s_ts = ts_arr[index]
+        f_ts = ts_arr[f_index]
         ts_series.append([s_ts, f_ts])
         group = []
         for d in data[data_cursor + 1:]:
@@ -39,19 +39,11 @@ def partition_count(ts_arr, data, interval = INTERVAL):
             data_cursor += 1
         groups.append(group)
         index += each_step
-    if index >= len(ts_arr):
-        p_index = index - each_step
-        s_ts = ts_arr[p_index]
-        f_ts = ts_arr[-1]
-        ts_series.append([s_ts, f_ts])
-        group = []
-        for d in data[data_cursor + 1:]:
-            ts = d['ts']
-            if ts >= f_ts:
-                break
-            group.append(d)
-            data_cursor += 1
-        groups.append(group)
+
+    while data_cursor < len(data) - 1: # 有剩余
+        groups[-1].append(data[data_cursor + 1])
+        data_cursor += 1
+
     return ts_series, groups
 
 
@@ -147,58 +139,60 @@ def map_line_data(groups):
             province_repost_count[key]['rank'] = repost_level(count, max_repost_num)
     return max_repost_num, draw_line_data
 
-def statistics_data(groups, alertcoe):
+def statistics_data(groups):
     statistics_data = []
-    fipost_series = []
+    origin_series = []
     repost_series = []
     post_series = []
     history_data = []
-    alerts = []
-    alert = False
-    first = True
-    max_phi = 0
-    max_delta_repost = 0
-    max_delta_fipost = 0
     for index, group in enumerate(groups):
         latlng_count_dict = {}
         for status in group:
-            release_latlng = status['release_province_latlng']
-            province_name = status['release_province']
+            if status['original']:
+                release_latlng = status['origin_location']
+            else:
+                release_latlng = status['repost_location']
+
             if release_latlng not in latlng_count_dict:
                 repost_num = 0
-                fipost_num = 0
-                latlng_count_dict[release_latlng] = [repost_num, fipost_num, province_name]
+                origin_num = 0
+                latlng_count_dict[release_latlng] = [repost_num, origin_num]
+
             if status['original']:
                 latlng_count_dict[release_latlng][1] += 1
             else:
                 latlng_count_dict[release_latlng][0] += 1
+
         province_count_repost_dict = {}
-        province_count_fipost_dict = {}
+        province_count_origin_dict = {}
         province_count_post_dict = {}
-##        province_alert = {}
-        all_fipost = 0
+
+        all_origin = 0
         all_repost = 0
         all_post = 0
         for latlng in latlng_count_dict:
             cur_repost = latlng_count_dict[latlng][0]
-            cur_fipost = latlng_count_dict[latlng][1]
-            all_fipost += cur_repost
-            all_repost += cur_fipost
-            all_post += all_fipost + all_repost
-            province_name = latlng_count_dict[latlng][2]
+            cur_origin = latlng_count_dict[latlng][1]
+            total_post = cur_repost + cur_origin
+            all_repost += cur_repost
+            all_origin += cur_origin
+            all_post += total_post
+
             pre_repost = 0
-            pre_fipost = 0
+            pre_origin = 0
+
             j = index
             while j > 0:
                 pre_data = history_data[index-1]
                 if latlng in pre_data:
                     pre_repost = pre_data[latlng][0]
-                    pre_fipost = pre_data[latlng][1]
+                    pre_origin = pre_data[latlng][1]
                     break
                 else:
                     j -= 1
+
             status_repost = -1
-            status_fipost = -1
+            status_origin = -1
             status_post = -1
             if pre_repost != 0:
                 delta_repost = repr(int((cur_repost - pre_repost)*10000/pre_repost)/100.0) + '%'
@@ -210,91 +204,42 @@ def statistics_data(groups, alertcoe):
                 if cur_repost - pre_repost > 0:
                     delta_repost = '+' + delta_repost
                     status_repost = 1
-            if pre_fipost != 0:
-                delta_fipost = repr(int((cur_fipost - pre_fipost)*10000/pre_fipost)/100.0) + '%'
-                if cur_fipost - pre_fipost > 0:
-                    delta_fipost = '+' + delta_fipost
-                    status_fipost = 1
+            if pre_origin != 0:
+                delta_origin = repr(int((cur_origin - pre_origin)*10000/pre_origin)/100.0) + '%'
+                if cur_origin - pre_origin > 0:
+                    delta_origin = '+' + delta_origin
+                    status_origin = 1
             else:
-                delta_fipost = repr(cur_fipost - pre_fipost)
-                if cur_fipost - pre_fipost > 0:
-                    delta_fipost = '+' + delta_fipost
-                    status_fipost = 1
-            if pre_repost + pre_fipost != 0:
-                phi = repr(int((cur_repost - pre_repost + cur_fipost - pre_fipost)*10000/(pre_repost + pre_fipost))/100.0) + '%'
-                if cur_repost - pre_repost + cur_fipost - pre_fipost > 0:
+                delta_origin = repr(cur_origin - pre_origin)
+                if cur_origin - pre_origin > 0:
+                    delta_origin = '+' + delta_origin
+                    status_origin = 1
+            if pre_repost + pre_origin != 0:
+                phi = repr(int((cur_repost - pre_repost + cur_origin - pre_origin)*10000/(pre_repost + pre_origin))/100.0) + '%'
+                if cur_repost - pre_repost + cur_origin - pre_origin > 0:
                     phi = '+' + phi
                     status_post = 1
             else:
-                phi = repr(cur_repost - pre_repost + cur_fipost - pre_fipost)
-                if cur_repost - pre_repost + cur_fipost - pre_fipost > 0:
+                phi = repr(cur_repost - pre_repost + cur_origin - pre_origin)
+                if cur_repost - pre_repost + cur_origin - pre_origin > 0:
                     phi = '+' + phi
                     status_post = 1
-            total_post = cur_repost + cur_fipost
-            
-##            if j > 0:
-##                if max_phi < phi:
-##                    max_phi = phi
-##                if max_delta_repost < delta_repost:
-##                    max_delta_repost = delta_repost
-##                if max_delta_fipost < delta_fipost:
-##                    max_delta_fipost = delta_fipost
-                
-##            if phi > 200 and first:
-##                alert = True
-##                province_alert[latlng] = {'name': province_name, 'count': phi}
-##            province_alert[latlng] = {'name': province_name, 'count': (phi, delta_repost, delta_fipost)}
-                
-##            data = [cur_repost, cur_fipost, total_post]
-            province_count_repost_dict[province_name] = [cur_repost, delta_repost, repr(status_repost)]
-            province_count_fipost_dict[province_name] = [cur_fipost, delta_fipost, repr(status_fipost)]
-            province_count_post_dict[province_name] = [total_post, phi, repr(status_post)]
-##        if alert:
-##            first = False
-##        alerts.append(province_alert)
+
+            province_count_repost_dict[latlng] = [cur_repost, delta_repost, repr(status_repost)]
+            province_count_origin_dict[latlng] = [cur_origin, delta_origin, repr(status_origin)]
+            province_count_post_dict[latlng] = [total_post, phi, repr(status_post)]
+
         history_data.append(latlng_count_dict)
         province_count_repost_dict = sorted(province_count_repost_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
-        province_count_fipost_dict = sorted(province_count_fipost_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
+        province_count_origin_dict = sorted(province_count_origin_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
         province_count_post_dict = sorted(province_count_post_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
-        
-        statistics_data.append([province_count_repost_dict, province_count_fipost_dict, province_count_post_dict])
-        
+
+        statistics_data.append([province_count_repost_dict, province_count_origin_dict, province_count_post_dict])
+
         repost_series.append(all_repost)
-        fipost_series.append(all_fipost)
+        origin_series.append(all_origin)
         post_series.append(all_post)
-    return repost_series, fipost_series, post_series, statistics_data                 
-##    alerts.append({})
-##    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe)
-##    
-##    alerts_results = []
-##    count = 0
-##    for ale in alerts:
-##        if count == 0:
-##            alerts_results.append({})
-##            count +=1
-##            continue
-##        count += 1
-##        alert_dict = {}
-##        for key in ale.keys():
-##            latlng = key
-##            name = ale[key]['name']
-##            phi, delta_repost, delta_fipost = ale[key]['count']
-##            status_dict = {}
-##            if phi > alert_phi:
-##                status_dict['total'] = int(phi*100/max_phi)/100.0
-##            else:
-##                status_dict['total'] = 0
-##            if delta_repost > alert_delta_repost:
-##                status_dict['repost'] = int(delta_repost*100/max_delta_repost)/100.0
-##            else:
-##                status_dict['repost'] = 0
-##            if delta_fipost > alert_delta_fipost:
-##                status_dict['fipost'] = int(delta_fipost*100/max_delta_fipost)/100.0
-##            else:
-##                status_dict['fipost'] = 0
-##            if status_dict['total'] != 0 or status_dict['repost'] != 0 or status_dict['fipost'] != 0:
-##                alert_dict[latlng] = {'name': name, 'status': status_dict}
-##        alerts_results.append(alert_dict)
+    return repost_series, origin_series, post_series, statistics_data
 
 def repost_level(count, max_repost_num):
     step = int(max_repost_num / 3)
@@ -302,7 +247,7 @@ def repost_level(count, max_repost_num):
         rank = 1
     elif step < count <= 2 * step:
         rank = 2
-    elif:
+    else:
         rank = 3
     return rank
 
@@ -310,10 +255,3 @@ def reverse_key(key):
     t_province_latlng, f_province_latlng = key.split('-')
     return '%s-%s' % (f_province_latlng, t_province_latlng)
 
-if __name__ == '__main__':
-    topic = u'中国'
-    ts_arr, results = repost_search(topic, BEGIN_TS, END_TS)
-    ts_series, groups = partition_count(ts_arr, results)
-    draw_circle_data = map_circle_data(groups)
-    max_repost_num, draw_line_data = map_line_data(groups)
-    statistic_data, alerts = statistics_data(groups)

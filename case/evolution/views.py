@@ -4,11 +4,12 @@ import os
 import json
 from city_count import Pcount
 from BeautifulSoup import BeautifulSoup
-
+from case.extensions import db
+from case.model import CityRepost
 # 根据count不同，给不同的城市不同的颜色
 from city_color import province_color_map
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
-
+from city_map import partition_count, map_circle_data, map_line_data, statistics_data
 
 mod = Blueprint('evolution', __name__, url_prefix='/evolution')
 
@@ -97,3 +98,32 @@ def ajax_spatial():
 
     return json.dumps(map_data)
 
+@mod.route('/city_map_view/')
+def city_map_view():
+    topic = u'中国'
+    ts_arr = []
+    results = []
+    items = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
+    if items:
+        for item in items:
+            r = {}
+            r['original'] = item.original
+            r['topic'] = item.topic
+            r['mid'] = item.mid
+            r['ts'] = item.ts
+            r['origin_location'] = item.origin_location
+            r['repost_location'] = item.repost_location
+
+            ts_arr.append(r['ts'])
+            ts_arr = sorted(list(set(ts_arr)))
+            results.append(r)
+        ts_series, groups = partition_count(ts_arr, results)
+        draw_circle_data = map_circle_data(groups)
+        max_repost_num, draw_line_data = map_line_data(groups)
+        repost_series, origin_series, post_series, statistic_data = statistics_data(groups)
+        print 'end'
+        return json.dumps({'ts_arr':ts_arr, 'results':results, 'ts_series':ts_series, 'groups': groups, \
+                'draw_circle_data':draw_circle_data, 'draw_line_data': draw_line_data, 'max_repost_num': max_repost_num, \
+                'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistic_data':statistic_data})
+    else:
+        print 'no results'
