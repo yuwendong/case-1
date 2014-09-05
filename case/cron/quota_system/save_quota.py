@@ -2,12 +2,8 @@
 import json
 import time
 from config import db
-from time_utils import datetime2ts, ts2HourlyTime
-from model import TopicStatus, Topics, QuotaAttention, QuotaPenetration, QuotaQuickness, \
-                  QuotaSentiment, QuotaDuration, QuotaSensitivity, QuotaImportance #, QuotaTotal
-# QuotaTotal怎么计算未知，待定---注：该表未建
-
-
+from model import TopicStatus, Topics, QuotaAttention, QuotaMediaImportance, QuotaGeoPenetration,\
+                  QuotaQuickness, QuotaSentiment, QuotaDuration, QuotaSensitivity, QuotaImportance
 
 def save_attention_quota(topic, start_ts, end_ts, domain, attention):
     # being used to test, it's should be modified
@@ -33,18 +29,31 @@ def save_attention_quota(topic, start_ts, end_ts, domain, attention):
 
     db.session.commit()
 
-def save_penetration_quota(topic, start_ts, end_ts, domain, penetration):
-    item = QuotaPenetration(topic, start_ts, end_ts, domain, penetration)
-    item_exist = db.session.query(QuotaPenetration).filter(QuotaPenetration.topic==topic, \
-                                                           QuotaPenetration.start_ts==start_ts, \
-                                                           QuotaPenetration.end_ts==end_ts, \
-                                                           QuotaPenetration.domain==domain).first()
+# save_penetration_quota弃用
+# 分为两个:save_meidia_importance_quota, save_geo_pentration
+
+def save_media_importance_quota(topic, start_ts, end_ts, media_importance): # 重要媒体参与度
+    item = QuotaMediaImportance(topic, start_ts, end_ts, media_importance)
+    item_exist = db.session.query(QuotaMediaImportance).filter(QuotaMediaImportance.topic==topic ,\
+                                                               QuotaMediaImportance.start_ts==start_ts ,\
+                                                               QuotaMediaImportance.end_ts==end_ts).first()
     if item_exist:
         db.session.delete(item_exist)
     db.session.add(item)
 
     db.session.commit()
 
+def save_geo_penetration(topic, start_ts, end_ts, geo_penetration): # 地域渗透度
+    item = QuotaGeoPenetration(topic, start_ts, end_ts, geo_penetration)
+    item_exist = db.session.query(QuotaGeoPenetration).filter(QuotaGeoPenetration.topic==topic ,\
+                                                              QuotaGeoPenetration.start_ts==start_ts ,\
+                                                              QuotaGeoPenetration.end_ts==end_ts).first()
+    if item_exist:
+        db.session.delete(item_exist)
+    db.session.add(item)
+
+    db.session.commit()
+   
     
 def save_quickness_quota(topic, start_ts, end_ts, domain, quickness):
     item = QuotaQuickness(topic, start_ts, end_ts, domain, quickness)
@@ -60,14 +69,13 @@ def save_quickness_quota(topic, start_ts, end_ts, domain, quickness):
     db.session.commit()
 
 
-def save_sentiment_quota(topic, start_ts, end_ts, sentiment, ratio):
-    item = QuotaSentiment(topic, start_ts, end_ts, sentiment, ratio)
+def save_sentiment_quota(topic, start_ts, end_ts, emotion_ratio_dict): 
+    item = QuotaSentiment(topic, start_ts, end_ts, json.dumps(emotion_ratio_dict))
     item_exist = db.session.query(QuotaSentiment).filter(QuotaSentiment.topic==topic, \
                                                    QuotaSentiment.start_ts==start_ts, \
-                                                   QuotaSentiment.end_ts==end_ts, \
-                                                   QuotaSentiment.sentiment==sentiment).first()
+                                                   QuotaSentiment.end_ts==end_ts).first()
     if item_exist:
-        db.session.add(item_exist)
+        db.session.delete(item_exist)
     db.session.add(item)
 
     db.session.commit()
@@ -106,7 +114,3 @@ def save_importance_quota(topic, start_ts, end_ts, score):
 
     db.session.commit()
 
-'''
-QuotaTotal未知，待定
-def save_total_quota():
-'''
