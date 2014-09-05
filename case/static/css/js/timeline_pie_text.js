@@ -1,3 +1,4 @@
+
     Date.prototype.format = function(format) { 
         var o = { 
         "M+" : this.getMonth()+1, //month 
@@ -174,7 +175,7 @@
             timeline = new links.Timeline(document.getElementById('mytimeline'));
             // Draw our timeline with the created data and options
             timeline.draw(data, options);
-            console.log(timeline);
+
 
 
             
@@ -221,7 +222,7 @@
 
     function on_update(result) {
 
-console.log(result3);
+
         var percentage = []; 
         percentage[0] = (result3[0]*100).toFixed(2)+"%";
         percentage[1] = (result3[1]*100).toFixed(2)+"%";
@@ -269,7 +270,7 @@ console.log(result3);
         calculable : true,
         series : [
             {
-                name:'访问来源',
+                name: '子话题比例',
                 type:'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
@@ -400,7 +401,6 @@ console.log(result3);
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                           //console.log(data);
                             drawtable(data);
                     }
                 });
@@ -441,13 +441,18 @@ console.log(result3);
 
                 var tindex = Number(tagin);
                 console.log(keyword);
-                console.log(tagin);
-                html += '<tr>';
-                html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                html += '</tr>';
-                //console.log(keyword);
-                 //console.log(tagin);
-                 //console.log(html);
+                console.log(tindex);
+                if(tindex == 0){
+                    html += '<tr value='+tagin+' class="tablecurrent">';
+                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                    html += '</tr>';
+                }
+                else{
+                    html += '<tr value='+tagin+'>';
+                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                    html += '</tr>';
+                }
+
                  $("#alternatecolor").append(html);
             }
            
@@ -455,6 +460,22 @@ console.log(result3);
         }
         function connect(data){
             var value_data = data;
+
+            $("#alternatecolor tr").each(function() {
+                var select_all =$(this);
+                console.log(select_all.attr('value'));
+                if(select_all.attr('value') == value_data){
+                    if(!select_all.hasClass("tablecurrent")){
+                        select_all.addClass("tablecurrent");
+                    }
+                }
+                else{
+                    if(select_all.hasClass("tablecurrent")){
+                        select_all.removeClass('tablecurrent');
+                    }
+                }
+
+            })
             refreshWeiboTab(value_data);
         }
 
@@ -462,7 +483,6 @@ console.log(result3);
             var curr_data = data;
              $("#Tableselect a").each(function() {
                 var select_a = $(this);
-                console.log(select_a.attr('value'));
                 var select_a_sentiment = select_a.attr('value');
                 if (select_a_sentiment == curr_data){
                     if(!select_a.hasClass('curr')) {

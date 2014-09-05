@@ -53,29 +53,65 @@ $(document).ready(function(){   //网页加载时执行下面函数
 
     function writ_opinion(data){
         var opinion;
+        var html = "";
+        html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+        html += '<div class="tang-scrollpanel-content">';
+        html += '<ul id="weibo_ul">';
 
         for (var op in data['opinion']){
-            console.log(op);
-            var html1 = '';
             opinion= data['opinion'][op];
             console.log(opinion);
-            var user = opinion['user'];
-            var text = opinion['text'];
-            var reposts_count = opinion['reposts_count'];
-            var timestamp = opinion['timestamp'];
-            var date = new Date(parseInt(timestamp) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
-            html1 += '<li class="item">';
+                var name = opinion['username'];
+                var mid = opinion['user'];
+                var ip = opinion['geo'];
+                var loc = ip;
+                var text = opinion['text'];
+                var comments_count = opinion['comments_count'];
+                var timestamp = opinion['timestamp'];
+                //var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
+                var user_link = 'http://weibo.com/u/' + mid;
+                var user_image_link = opinion['profile_image_url'];
+                if (user_image_link == 'unknown'){
+                    user_image_link = '/static/img/unknown_profile_image.gif';
+                }
+                html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
+                html += '<img src="' + user_image_link + '">';
+                html += '</a></div>';
+                html += '<div class="weibo_detail">';
+                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + mid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+                html += '<div class="weibo_info">';
+                html += '<div class="weibo_pz">';
+                html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+                html += '<div class="m">';
+                html += '<a class="undlin" target="_blank">' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+                html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+                html += '</li>';
+            }
+            
+            html += '</ul>';
+            html += '</div>';
+
+            // var user = opinion['user'];
+            // var text = opinion['text'];
+            // var reposts_count = opinion['reposts_count'];
+            // var timestamp = opinion['timestamp'];
+            // var date = new Date(parseInt(timestamp) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
+            // html1 += '<li class="item">';
        
-            html1 += '<p5 padding-left:15px;text-decoration: none;>用户id:' + '<b style="background:#ACD6FF  ">'+user +'</b>' + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + " "+ "发布时间"+'<a class="undlin" target="_blank">'+date + '</a>&nbsp;&nbsp;'+'</p5>';
-            html1 += '<div class="weibo_info">';
+            // html1 += '<p5 padding-left:15px;text-decoration: none;>用户id:' + '<b style="background:#ACD6FF  ">'+user +'</b>' + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + " "+ "发布时间"+'<a class="undlin" target="_blank">'+date + '</a>&nbsp;&nbsp;'+'</p5>';
+            // html1 += '<div class="weibo_info">';
             
            
 
           
-            html1 += '</div>';
-            html1 += '</li>';
-            $("#opinion_text").append(html1);
+            // html1 += '</div>';
+            // html1 += '</li>';
+            $("#opinion_text").append(html);
 
         }
-    }
+ 
    

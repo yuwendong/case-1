@@ -7,7 +7,7 @@ from case.extensions import db
 from case.model import SentimentWeibos 
 from time_utils import datetime2ts,ts2date
 from utils import weiboinfo2url
-from config import xapian_search_user as user_search
+from case.global_config import xapian_search_user as user_search
 
 
 TOP_WEIBOS_LIMIT = 50

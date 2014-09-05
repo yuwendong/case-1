@@ -7,10 +7,10 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from SSDB import SSDB
-from config import db, SSDB_HOST, SSDB_PORT
-from model import TopicStatus, TopicIdentification 
+from case.global_config import db, SSDB_HOST, SSDB_PORT
+from case.model import TopicStatus, TopicIdentification 
 from time_utils import ts2datetime, datetime2ts, window2time
-from config import xapian_search_user as user_search
+from case.global_config import xapian_search_user as user_search
 
 
 
