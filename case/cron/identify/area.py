@@ -60,7 +60,7 @@ def pagerank_rank(top_n, date, topic_id, window_size):
     job_id = generate_job_id(datetime2ts(date), window_size, topic_id) # 将其转换为'%s_%s_%s'的形式
     iter_count = PAGERANK_ITER_MAX
 
-    sorted_uids = pagerank(job_id, iter_count, input_tmp_path, top_n) # 排序的uid的序列
+    sorted_uids, all_uid_pr = pagerank(job_id, iter_count, input_tmp_path, top_n) # 排序的uid的序列
 
     topicname = acquire_topic_name(topic_id)
     if not topicname:
@@ -68,7 +68,7 @@ def pagerank_rank(top_n, date, topic_id, window_size):
 
     data = save_rank_results(sorted_uids, 'topic', 'pagerank', date, window_size, topicname)
 
-    return data
+    return all_uid_pr
 
 def prepare_data_for_degree(topic_id, date, window_size): 
     topic = acquire_topic_name(topic_id) # 将topic_id>>topic_name
@@ -121,7 +121,7 @@ def prepare_data_for_pr(topic_id, date, window_size): # ？？？为什么把方
     tmp_file.flush() # 强制提交内存中还未提交的内容
     return tmp_file
 
-def make_network_graph(current_date, topic_id, topic, window_size, key_user_labeled=True):
+def make_network_graph(current_date, topic_id, topic, window_size, key_user_labeled=True, all_uid_pr):
     date = current_date
 
     if key_user_labeled:
@@ -129,11 +129,11 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     else:
         key_users = []
 
-    #topic = acquire_topic_name(topic_id)
-    #if not topic:
-    #    return None
-              
     G ,gg= make_network(topic, date, window_size)
+
+    # community detection, http://perso.crans.org/aynaud/communities/
+    import community
+    partition = community.best_partition(G)
 
     N = len(G.nodes())
 
@@ -156,6 +156,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     graph.addNodeAttribute('name', type='string', force_id='name')
     graph.addNodeAttribute('location', type='string', force_id='location') # 添加地理位置属性
     graph.addNodeAttribute('timestamp', type='int', force_id='timestamp')
+    graph.addNodeAttribute('pagerank', type='int', force_id='pagerank')
+    graph.addNodeAttribute('acategory', type='string', force_id='acategory')
 
     pos = nx.spring_layout(G) # 定义一个布局 pos={node:[v...]/(v...)}
 
@@ -173,6 +175,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
             _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='255', g='51', b='51', size=str(degree))
         else:
             _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='0', g='204', b='204', size=str(degree))
+        cluster_id = partition[node]
+        _node.addAttribute('acategory', cluster_id)
+        pr = all_uid_pr[uid]
+        _node.addAttribute('pagerank', pr)
         user_info = acquire_user_by_id(uid) # 获取对应的用户信息，添加属性
         if user_info:
             _node.addAttribute('name', user_info['name'])
