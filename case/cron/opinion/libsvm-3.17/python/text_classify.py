@@ -83,7 +83,7 @@ def get_s(text,weibo):#计算相似度，剔除重复文本
     max_r = 0
     n = 0
     for i in range(0,len(text)):
-        r = Levenshtein.ratio(str(text[i][1]), str(weibo))
+        r = Levenshtein.ratio(str(text[i][2]), str(weibo))
         if max_r < r:
             max_r = r
             n = i
