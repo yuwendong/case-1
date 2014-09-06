@@ -99,17 +99,21 @@
         function drawVisualization() {
             var data = [];
             var data1 = [];
+            var tem =[];
+            var tem1 =[];
             for (var i =0 ; i< result.length; i++){
                 data1[i] = new Date(parseInt(result1[i]) * 1000);
                 data[i] = new Date(parseInt(result[i]) * 1000);
+              
             }
+            console.log(tem1);
+            console.log(data1);
 
             data = [
                 {
                     'start': data[0],
                     'end': data1[0],
                     'content': result2[0],
-                    'link': "www.baidu.com"
                 },
                 {
                     'start': data[1],
@@ -174,6 +178,7 @@
             // Instantiate our timeline object.
             timeline = new links.Timeline(document.getElementById('mytimeline'));
             // Draw our timeline with the created data and options
+
             timeline.draw(data, options);
 
 
@@ -181,7 +186,6 @@
             
 
         }
-
     var query = "中国";
     var ts = 1378035900;
     var START_TS = 1377965700
@@ -246,7 +250,7 @@
     
     option = {
         title : {
-            text: '子类占比图',
+            text: '',
             x:'center',
             textStyle:{
             fontWeight:'lighter',
@@ -434,14 +438,12 @@
                     for (var k1 in tagout[tagin]){
                 
                         keyword.push(tagout[tagin][k1]['0']);
-                        //console.log(tagout[tagin][k1]['0']);
+                        
                     }
              
                 } 
 
                 var tindex = Number(tagin);
-                console.log(keyword);
-                console.log(tindex);
                 if(tindex == 0){
                     html += '<tr value='+tagin+' class="tablecurrent">';
                     html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
@@ -463,7 +465,6 @@
 
             $("#alternatecolor tr").each(function() {
                 var select_all =$(this);
-                console.log(select_all.attr('value'));
                 if(select_all.attr('value') == value_data){
                     if(!select_all.hasClass("tablecurrent")){
                         select_all.addClass("tablecurrent");
