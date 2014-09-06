@@ -20,6 +20,8 @@ from save_quota import save_attention_quota, save_duration_quota, save_sensitivi
 from quotaexp import save_exp # quotaexp 初始化经验值两张表
 from sensitivity_word_origin import save_sensitivity
 from getkeywords import get_keywords
+from quota_importance_origin import origin_quota_importance
+
 '''
 考虑到可能会出现一个话题会针对不同时间区间进行分析。这种情况在TopicStatus中设置为不同的topic， 所以此处在每一张表中也有start_ts,end_ts
 ps1:指标体系中所有指标计算结束后，要修改TopicStatus中quota_system模块对应的标识
@@ -188,20 +190,29 @@ def get_media_set(): # 从redis中的set表ImporMedia中读出重要media的uid�
     # print 'len(media_set):', len(media_set), type(media_set)
     return media_set
 
+def get_weight_dict():
+    item = db.session.query(GeoWeight).first() # 该表中实际只有一条数据
+    weight_dict = json.loads(item.weight_dict)
+    return weight_dict
+
 
 # quota_penetration弃用，改为两部分：重要媒体参与度与地域渗透度
 
 def quota_geo_penetration(topic,start_ts, end_ts, pset): # 计算地域渗透度
-
+    
+    '''
     weight_dict = {(100000, 10000000):1, (80000, 100000):0.9, (60000, 80000):0.7, \
-                   (40000, 600000):0.5, (20000, 40000):0.3, (10000,20000):0.1, (0,10000):0}
-    # weight_dict = {(boundry_low, boundry_up):weight, } 权重和界限划分根据实际数据有待调整
+                   (40000, 600000):0.5, (20000, 40000):0.3, (10000,20000):0.1, (0,10000):0} 该值为默认值--所有话题均使用
+    weight_dict = {(boundry_low, boundry_up):weight, } 权重和界限划分字典存在GeoWeight表，提供初始值，管理员根据具体情况在前端进行数据修改，更新
+    '''
+    # weight_dict = get_weight_dict()
     s=0
     pcount = {} # pcount = {province:count}
     ppenetration = {} # ppenetration = {weight:count}
     for province in province_dict:
         count = len(pset[province])
         pcount[province] = count
+        '''
         for boundry in weight_dict:
             weight = weight_dict[boundry]
             if count>=boundry[0] and count<=boundry[1]:
@@ -209,12 +220,14 @@ def quota_geo_penetration(topic,start_ts, end_ts, pset): # 计算地域渗透度
                     ppenetration[weight] += 1
                 except:
                     ppenetration[weight] = 1
+        '''
+    '''
     geopenetration = 0
     for weight in ppenetration:
         count = ppenetration[weight]
         geopenetration += weight * count
-        
-    save_geo_penetration(topic, start_ts, end_ts, geopenetration)
+    '''    
+    save_geo_penetration(topic, start_ts, end_ts, pcount)
 
 
 def quota_media_importance(topic, start_ts, end_ts, domain_uid): # 计算重要媒体参与度 
@@ -330,13 +343,10 @@ def quota_sensitivity(topic, start_ts, end_ts):
         ratio_class = 1
         save_sensitivity_quota(topic, start_ts, end_ts, classfication, ratio_place)
     
-def quota_importance(topic, start_ts, end_ts): # 后续要进行删除，此处仅为给表进行初始化。实际使用时，将通过前端页面进行处理
-    score = random.random() # 计算未明，先0~1的随机值
-    save_importance_quota(topic, start_ts, end_ts, score)
+def quota_importance(topic, start_ts, end_ts): # 此处仅为给表进行初始化。实际使用时，将通过前端页面进行处理
+    
+    origin_quota_importance(topic, start_ts, end_ts)
 
-'''该表未建，计算未知
-def quota_total():
-'''
 
 
 def cal_topic_quotasystem_count_by_date(topic, start, end):
