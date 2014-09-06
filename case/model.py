@@ -110,8 +110,9 @@ class IndexTopic(db.Model):
     area = db.Column(db.Text) # 地理区域
     key_words = db.Column(db.Text) # 关键词
     opinion = db.Column(db.Text) # 代表文本
+    media_opinion = db.Column(db.Text) # 媒体观点
 
-    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion):
+    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion, media_opinion):
         self.topic = topic
         self.count = count
         self.user_count = user_count
@@ -120,6 +121,7 @@ class IndexTopic(db.Model):
         self.area = area
         self.key_words = key_words
         self.opinion = opinion
+        self.media_opinion = media_opinion
 
 #city模块
 class CityTopicCount(db.Model):
