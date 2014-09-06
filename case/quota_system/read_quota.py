@@ -61,9 +61,9 @@ def ReadGeoPenetration(topic, start_ts, end_ts):
     item = db.session.query(QuotaGeoPenetration).filter(QuotaGeoPenetration.topic==topic, \
                                                       QuotaGeoPenetration.start_ts==start_ts, \
                                                       QuotaGeoPenetration.end_ts==end_ts).first()
-    geo_penetration_dict = item.geo_penetration
-    print 'geo_penetration:', geo_penetration_dict
-    return geo_penetration_dict
+    pcount_dict = json.loads(item.pcount)
+    print 'pcount_dict:', pcount_dict
+    return pcount_dict
 
 def ReadMediaImportance(topic, start_ts, end_ts):
     item = db.session.query(QuotaMediaImportance).filter(QuotaMediaImportance.topic==topic ,\
@@ -103,7 +103,7 @@ def ReadSensitivity(topic, start_ts, end_ts):
         classfication = item.classfication
         score = item.score
         sensitivity_dict[classfication] = score
-    print 'sensitivity_dict:', sensitivity_dict    
+    print 'sensitivity_dict:', sensitivity_dict
     return sensitivity_dict
 
 def ReadSentiment(topic, start_ts, end_ts):
@@ -120,7 +120,11 @@ def ReadImportance(topic, start_ts, end_ts):
     item = db.session.query(QuotaImportance).filter(QuotaImportance.topic==topic, \
                                                   QuotaImportance.start_ts==start_ts, \
                                                   QuotaImportance.end_ts==end_ts).first()
-    importance_dict = item.score
+    importance_dict = {}
+    importance_dict['score'] = item.score
+    importance_dict['weight'] = item.weight
+    print 'importance_dict:', importance_dict
+
     return importance_dict
     
         

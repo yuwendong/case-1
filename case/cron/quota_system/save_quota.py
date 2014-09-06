@@ -43,8 +43,8 @@ def save_media_importance_quota(topic, start_ts, end_ts, media_importance): # �
 
     db.session.commit()
 
-def save_geo_penetration(topic, start_ts, end_ts, geo_penetration): # 地域渗透度
-    item = QuotaGeoPenetration(topic, start_ts, end_ts, geo_penetration)
+def save_geo_penetration(topic, start_ts, end_ts, pcount): # 地域渗透度
+    item = QuotaGeoPenetration(topic, start_ts, end_ts, json.dumps(pcount))
     item_exist = db.session.query(QuotaGeoPenetration).filter(QuotaGeoPenetration.topic==topic ,\
                                                               QuotaGeoPenetration.start_ts==start_ts ,\
                                                               QuotaGeoPenetration.end_ts==end_ts).first()
@@ -103,8 +103,8 @@ def save_sensitivity_quota(topic, start_ts, end_ts, classfication, score):
 
     db.session.commit()
 
-def save_importance_quota(topic, start_ts, end_ts, score):
-    item = QuotaImportance(topic, start_ts, end_ts, score)
+def save_importance_quota(topic, start_ts, end_ts, score, weight):
+    item = QuotaImportance(topic, start_ts, end_ts, score, weight)
     item_exist = db.session.query(QuotaImportance).filter(QuotaImportance.topic==topic, \
                                                           QuotaImportance.start_ts==start_ts, \
                                                           QuotaImportance.end_ts==end_ts).first()
