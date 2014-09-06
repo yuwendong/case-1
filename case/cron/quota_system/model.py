@@ -363,14 +363,20 @@ class QuotaGeoPenetration(db.Model):
     topic = db.Column(db.String(20))
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-    geo_penetration = db.Column(db.Float)
+    pcount = db.Column(db.Text)
 
-    def __init__(self, topic, start_ts, end_ts, geo_penetration):
+    def __init__(self, topic, start_ts, end_ts, pcount):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
-        self.geo_penetration = geo_penetration
-  
+        self.pcount = pcount
+
+class GeoWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
 
 class QuotaQuickness(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -497,13 +503,14 @@ class QuotaImportance(db.Model):
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
     score = db.Column(db.Float)
+    weight = db.Column(db.Float)
 
-    def __init__(self, topic, start_ts, end_ts, score):
+    def __init__(self, topic, start_ts, end_ts, score, weight):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.score = score # 0<=score<1
-#need add total quota???how to compute?!!
+        self.weight = weight
 
 #以下是语义模块（李文文看）
 class OpinionTopic(db.Model):#话题、观点对应表
