@@ -512,6 +512,13 @@ class QuotaImportance(db.Model):
         self.score = score # 0<=score<1
         self.weight = weight
 
+class QuotaWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
+
 #以下是语义模块（李文文看）
 class OpinionTopic(db.Model):#话题、观点对应表
     id = db.Column(db.Integer, primary_key=True)

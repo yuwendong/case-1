@@ -8,6 +8,7 @@ def set2list(word_set):
     word_list = list(word_set)
     return word_list
 
+'''
 def save_sensitivity(topic, start, end):
     class_words_set = set()
     class_words_list = set2list(class_words_set)
@@ -18,6 +19,7 @@ def save_sensitivity(topic, start, end):
     place_words_set = set()
     place_words_list = set2list(place_words_set)
     save_place(topic, start, end, place_words_list)
+'''
 
 def save_class(topic, start_ts, end_ts, words_list):
     item = ClassSensitivity(topic, start_ts, end_ts, json.dumps(words_list))
@@ -51,4 +53,14 @@ def save_place(topic, start_ts, end_ts, words_list):
     db.session.add(item)
 
     db.session.commit()
-    
+
+if __name__=='__main__':
+    class_words_set = set()
+    class_words_list = set2list(class_words_set)
+    save_class(topic, start, end, class_words_list)
+    word_words_set = set()
+    word_words_list = set2list(word_words_set)
+    save_word(topic, start, end, word_words_list)
+    place_words_set = set()
+    place_words_list = set2list(place_words_set)
+    save_place(topic, start, end, place_words_list)

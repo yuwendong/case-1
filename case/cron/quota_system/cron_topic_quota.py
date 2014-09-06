@@ -388,12 +388,12 @@ if __name__=='__main__':
     topic = u'中国'
     start = 1377965700
     end = 1378051200
-    db_date = int(time.time()) # 入库时间
+    #db_date = int(time.time()) # 入库时间
     #save_item = TopicStatus(module, status, topic, start, end, db_date)
     #db.session.add(save_item)
     #db.session.commit()
-    attention_exp = {'folk':100, 'media':100, 'other':100, 'opinion_leader':100, 'oversea':100} # 此处仅对经验值进行初始化，需要管理员根据具体情况进行修改
-    duration_exp = 5 * Day
-    save_exp(topic, start, end, attention_exp, duration_exp) # 给关注度经验值和持续度经验值默认值
-    save_sensitivity(topic, start, end) # 给类型敏感词表、词汇敏感词表、地点敏感词表进行初始化----三张表中均为每个话题一条记录
+    #attention_exp = {'folk':100, 'media':100, 'other':100, 'opinion_leader':100, 'oversea':100} # 此处仅对经验值进行初始化，需要管理员根据具体情况进行修改
+    #duration_exp = 5 * Day
+    #save_exp(topic, start, end, attention_exp, duration_exp) # 给关注度经验值和持续度经验值默认值
+    #save_sensitivity(topic, start, end) # 给类型敏感词表、词汇敏感词表、地点敏感词表进行初始化----三张表中均为每个话题一条记录
     worker(topic, start, end)
