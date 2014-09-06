@@ -37,7 +37,7 @@
             dataType:"json",
             async: false,
             success: function(data){
-               console.log(data);
+               // console.log(data);
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][i][0];
                 };
@@ -68,8 +68,6 @@
                getkeywords_data();
                              
             }
-
-       
     });
 
 }
@@ -109,7 +107,7 @@
                     'start': data[0],
                     'end': data1[0],
                     'content': result2[0],
-                    'link': "www.baidu.com"
+                    // 'link': "www.baidu.com"
                 },
                 {
                     'start': data[1],
@@ -422,16 +420,16 @@ console.log(result3);
                     tagin = k;
                  }
                 for (var k1 in tagout[tagin]){
-                    if(tagout[tagin][k1]['0'] ==null || tagout[tagin][k1]['0'] == undefined ){
-                        tagout[tagin][k1]['0'] =='';
-                        console.log("abc");
+                    if(tagout[tagin][k1]['0'] == null || tagout[tagin][k1]['0'] == undefined ){
+                        tagout[tagin][k1]['0'] == '';
+                        // console.log("abc");
                     }
                     keyword.push(tagout[tagin][k1]['0']);
-                    console.log(tagout[tagin][k1]['0']);
+                    // console.log(tagout[tagin][k1]['0']);
                 }
                 var tindex = Number(tagin);
-                console.log(keyword);
-                console.log(tagin);
+                // console.log(keyword);
+                // console.log(tagin);
                 html += '<tr>';
                 html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
                 html += '</tr>';

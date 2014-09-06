@@ -51,10 +51,7 @@
             background-color: #fff;
         }
         .blkUnit .titlBar {
-            z-index: 4;
             position: relative;
-            height: 16px;
-            padding: 20px;
             background-color: #f6f6f6;
         }
         .titlBar h4 {
@@ -99,38 +96,94 @@
             height: 21px;
             border-bottom: 2px solid #6e87d7;
         }
+                .lrRadius {
+            display: inline-block;
+            width: 184px;
+            height: 25px;
+            margin: 0 6px;
+            text-align: right;
+            font-weight: normal;
+        }
+        .lrRadius .lrRl {
+            float: left;
+            margin-left: -6px;
+            background-position: -100px -180px;
+        }
+        .lrRadius .lrRl, .lrRadius .lrRr {
+            top: 0;
+            width: 6px;
+            height: 20px;
+            background-image: url(../imgs/icons.png?0508);
+        }
+        .lrRadius .lrRc {
+            float: left;
+            width: 150px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        .lrRadius .lrRb {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        td, th {
+            display: table-cell;
+            vertical-align: inherit;
+            padding-left: 80px;
+        }
+        th {
+            font-weight: bold;
+        }
 
     </style>
 {% endblock head_css %}
 
 {% block head_js %}
-    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4>指数分析</h4>
-            <i class="glyphicon glyphicon-question-sign" onclick="javascript:void();"></i>
-            <span class="pull-right" style="margin: -10px auto -10px auto;">
-                <input type="checkbox" name="abs_rel_switch" checked>
-            </span>
-            <!--<span class="compInfo" style="display: none;"> </span>
-            <span class="compInfo">2014-08-07 至 2014-08-13</span>
-            <span class="compInfo">全国</span>-->
+
+    <div class="blkUnit grpUnit" id="trendProfile"style="height:300px">
+
+        <div class="titlBar">
+            <div><h4><b>社会舆情指标体系</b><h4></div>
+            <div><h4 style="margin-left:15px"><b>面向内容</b></h4>
+        <i id="" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="待补充"></i>&nbsp;&nbsp;</div>
+        
+        </div>
+        <div class="tabUnit">  
+                <div style="margin-left:85px">
+                重视度：值<input type=text name="txtname" size=12 maxlength=6>权重：<input type=text name="txtname" size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定"><p></div>
+                <table class="mstable" id="mstable1" style="margin-top:10px">
+                </table>
+        <h5 style="margin-left:105px;margin-top:10px">敏感度指标<h5>
+            <div id="index" style="width:900px;height:300px"></div>
         </div>
 
-        <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
-            </div>
-            <div class="tabConts">
-                  <div id="index" style="height:500px;width:900px"></div>
-            </div>
-        </div>
     </div>
 
+
+
+    <div class="blkUnit grpUnit" id="trendProfile"style="height:320px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>面向传播过程</b></h4>
+        <i id="" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="待补充"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+                <table class="mstable" id="mstable" style="margin-top:15px">
+                </table>
+                <h5 style="margin-left:105px;margin-top:10px">关注度爆发度各领域指标<h5>
+                <div id="main" style="width:900px;height:230px"></div>
+        </div>
+    </div>
 {% endblock content %}
 {% block tail_js %}
-    <script src="/static/css/js/index.js" type="text/javascript"></script>
-   {% endblock tail_js %}
+   <script src="/static/css/js/index.js" type="text/javascript"></script> 
+{% endblock tail_js %}

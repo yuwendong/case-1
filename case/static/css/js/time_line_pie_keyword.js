@@ -54,6 +54,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
             type: "GET",
             dataType:"json",
             success: function(data){
+                console.log(data);
                 result[0]=data["happy"];
                 result[1]=data["sad"];
                 result[2]=data["angry"];
@@ -223,7 +224,7 @@ var option = {
                                 }
                                 else{ 
                                         for(var keyword in data){
-                                           alert(keyword);
+                                           // alert(keyword);
                                             $('#keywords_cloud_div').append('<a><font color="#8E8E8E" font-weight:"lighter">'+ keyword +'</font></a>'); 
                                             }
                                 }
@@ -418,7 +419,7 @@ function total_count () {
             dataType:"json",
             async:false,
             success: function(data){
-                console.log(data);
+                // console.log(data);
 
                 folk_value = data["dcount"];
                 folk = folk_value["folk"] 
@@ -507,15 +508,16 @@ function drawpicture_total() {
                 name: '媒体',
                 data: media_count,
             }, {
-                name: '观点领袖',
+                name: '名人',
                 data: opinion_leader_count,
-            }, {
-                name: '其他',
-                data: other_count,
             },
                {
                 name: '海外',
                 data: oversea_count,
+            }, 
+               {
+                name: '其他',
+                data: other_count,
             }]
         });
     }
@@ -574,7 +576,7 @@ function drawpicture_total_all() {
         });
     }
 function increment_count () {
-        alert("dangqian");
+        // alert("dangqian");
         for (time = 0 ; time < 15 ;time++)
         {
             increment_get_count(time);
@@ -702,15 +704,14 @@ function drawpicture_increment() {
                 name: '媒体',
                 data: increment_media_count,
             }, {
-                name: '观点领袖',
+                name: '名人',
                 data: increment_opinion_leader_count,
+            }, {
+                name: '海外',
+                data: increment_oversea_count,
             }, {
                 name: '其他',
                 data: increment_other_count,
-            },
-               {
-                name: '海外',
-                data: increment_oversea_count,
             }]
         });
     }

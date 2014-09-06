@@ -53,7 +53,25 @@
  * Bug: cannot set max width for an item, like div.timeline-event-content {white-space: normal; max-width: 100px;}
  * Bug on IE in Quirks mode. When you have groups, and delete an item, the groups become invisible
  */
-
+ //日期函数的处理
+Date.prototype.format = function(format) { 
+    var o = { 
+    "M+" : this.getMonth()+1, //month 
+    "d+" : this.getDate(),    //day 
+    "h+" : this.getHours(),   //hour 
+    "m+" : this.getMinutes(), //minute 
+    "s+" : this.getSeconds(), //second 
+    "q+" : Math.floor((this.getMonth()+3)/3),  //quarter 
+    "S" : this.getMilliseconds() //millisecond 
+    } 
+    if(/(y+)/.test(format)) 
+    format=format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    for(var k in o)
+    if(new RegExp("("+ k +")").test(format)) 
+        format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
+    return format; 
+}
+//日期处理结束
 /**
  * Declare a unique namespace for CHAP's Common Hybrid Visualisation Library,
  * "links"
@@ -274,6 +292,7 @@ links.Timeline = function(container) {
  * @param {Object} options         A name/value map containing settings for the
  *                                 timeline. Optional.
  */
+var indata;
 links.Timeline.prototype.draw = function(data, options) {
     this.setOptions(options);
     
@@ -282,6 +301,7 @@ links.Timeline.prototype.draw = function(data, options) {
     }
 
     // read the data
+    indata = data;
     this.setData(data);
 
     // set timer range. this will also redraw the timeline
@@ -881,11 +901,17 @@ links.Timeline.prototype.reflowFrame = function() {
  * @return {boolean} needsReflow   Returns true if the DOM is changed such that
  *                                 a reflow is needed.
  */
+ links.Timeline.prototype.showinfor = function(){
+    console.log(indata);
+
+} 
+
 links.Timeline.prototype.repaintFrame = function() {
     var needsReflow = false,
         dom = this.dom,
         options = this.options,
         size = this.size;
+        that = this ;
 
     // main frame
     if (!dom.frame) {
@@ -923,7 +949,7 @@ links.Timeline.prototype.repaintFrame = function() {
         var params = this.eventParams,
             me = this;
         if (!params.onMouseDown) {
-            params.onMouseDown = function (event) {me.onMouseDown(event);};
+            params.onMouseDown = function (event) {that.showinfor();};
             links.Timeline.addEventListener(dom.content, "mousedown", params.onMouseDown);
         }
         if (!params.onTouchStart) {
@@ -935,7 +961,7 @@ links.Timeline.prototype.repaintFrame = function() {
             links.Timeline.addEventListener(dom.content, "mousewheel", params.onMouseWheel);
         }
         if (!params.onDblClick) {
-            params.onDblClick = function (event) {me.onDblClick(event);};
+            params.onDblClick = function (event) {};
             links.Timeline.addEventListener(dom.content, "dblclick", params.onDblClick);
         }
 
@@ -950,6 +976,8 @@ links.Timeline.prototype.repaintFrame = function() {
 
     return needsReflow;
 };
+
+
 
 /**
  * Reflow the timeline axis. Calculate its height, width, positioning, etc...
@@ -3709,9 +3737,8 @@ links.Timeline.ItemBox.prototype.createDOM = function () {
     // contents box (inside the background box). used for making margins
     var divContent = document.createElement("DIV");
     divContent.className = "timeline-event-content";
-    divContent.innerHTML = this.content;
+    divContent.innerHTML ='<p class="timetab" data-toggle="tooltip" data-placement="bottom" title=\"开始时间:'+ this.start.format("yyyy-MM-dd hh:mm:ss") +'\r结束时间:'+ this.end.format("yyyy-MM-dd hh:mm:ss") +'\">'+ this.content +'</p>';
     divBox.appendChild(divContent);
-
     // line to axis
     var divLine = document.createElement("DIV");
     divLine.style.position = "absolute";
@@ -3794,7 +3821,7 @@ links.Timeline.ItemBox.prototype.updateDOM = function () {
         var divDot = divBox.dot;
 
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        divBox.firstChild.innerHTML ='<p class="timetab" data-toggle="tooltip" data-placement="bottom" title=\"开始时间:'+ this.start.format("yyyy-MM-dd hh:mm:ss") +'\r结束时间:'+ this.end.format("yyyy-MM-dd hh:mm:ss") +'\">'+ this.content +'</p>';
 
         // update class
         divBox.className = "timeline-event timeline-event-box ui-widget ui-state-default";
@@ -4024,8 +4051,8 @@ links.Timeline.ItemRange.prototype.hideDOM = function () {
 links.Timeline.ItemRange.prototype.updateDOM = function () {
     var divBox = this.dom;
     if (divBox) {
-        // update contents
-        divBox.firstChild.innerHTML = this.content;
+        // update contents改变框里面的内容
+        divBox.firstChild.innerHTML ='<p class="timetab" data-toggle="tooltip" data-placement="bottom" title=\"开始时间:'+ this.start.format("yyyy-MM-dd hh:mm:ss") +'\r结束时间:'+ this.end.format("yyyy-MM-dd hh:mm:ss") +'\">'+ this.content +'</p>';
 
         // update class
         divBox.className = "timeline-event timeline-event-range ui-widget ui-state-default";
@@ -4263,7 +4290,7 @@ links.Timeline.ItemDot.prototype.updateDOM = function () {
         var divDot = divBox.dot;
 
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        divBox.firstChild.innerHTML = '<p class="timetab" data-toggle="tooltip" data-placement="bottom" title=\"开始时间:'+ this.start.format("yyyy-MM-dd hh:mm:ss")+'\r结束时间:'+ this.end.format("yyyy-MM-dd hh:mm:ss") +'\">'+ this.content +'</p>';
 
         // update classes
         divBox.className = "timeline-event-dot-container";
