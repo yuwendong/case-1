@@ -40,15 +40,20 @@ def hadoop_results(job_id, top_n):
     fs = HadoopFS()
     outputs = fs.cat('%s/hat_results/*' % job_id)
     if not outputs:
-        return []
+        return [], {}
+    all_outputs = outputs
     if len(outputs) > top_n:
         outputs = outputs[-top_n:]
     outputs.reverse()
     sorted_uids = []
+    all_uid_pr = {}
+    for line in all_outputs:
+        uid, pr = line.strip().split('\t')
+        all_uid_pr[uid] = pr
     for line in outputs:
         uid, pr = line.strip().split('\t')
         sorted_uids.append(uid)
-    return sorted_uids
+    return sorted_uids, all_uid_pr
 
 def prepare_data(topic_id):
     tmp_file = tempfile.NamedTemporaryFile(delete=False)

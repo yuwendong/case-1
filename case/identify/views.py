@@ -60,9 +60,6 @@ def network():
     end_ts = int(end_ts)
     windowsize = (end_ts - start_ts+900)/Day
     windowsize = int(windowsize)
-    #strat_ts = datetimestr2ts(start_ts)
-    #end_ts = datetimestr2ts(end_ts)
-    #start_ts = ts2datetime(start_ts)
     end = ts2datetime(end_ts)
   
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
@@ -70,20 +67,12 @@ def network():
     if topic_status == COMPLETED_STATUS:  
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize)
         key = str(query_key)
-       
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
-           
             results = ssdb.request('get', [key])
-           
-        
             if results.code == 'ok' and results.data:
-               
-               
-            
                 response = make_response(results.data)
                 response.headers['Content-Type'] = 'text/xml'
-                #return results.data
                 return response
             return None
         except Exception, e:
@@ -136,12 +125,8 @@ def network_quota():
     key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)
-        print 'ssdb yes'
         value = ssdb.request('get',[key])
-        print 'value yes'
         if value.code == 'ok' and value.data:
-            print 'code yes'
-            print value.data
             response = make_response(value.data)
             return response
         return None
