@@ -325,20 +325,52 @@ class QuotaAttention(db.Model):
         self.domain = domain
         self.attention = attention
 
-class QuotaPenetration(db.Model):
+'''
+# 关注度经验值QuotaAttentionExp
+'''
+class QuotaAttentionExp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-    domain = db.Column(db.String(20))
-    penetration = db.Column(db.Float)
+    exp = db.Column(db.Text) # exp={'media':x1, 'other':x2, 'opinion_leader':x3, 'oversea':x4, 'folk':x5}
 
-    def __init__(self, topic, start_ts, end_ts, domain, penetration):
+    def __init__(self, topic, start_ts, end_ts, exp):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
-        self.domain = domain
-        self.penetration = penetration
+        self.exp = exp
+       
+
+# QuotaPenetration 弃用
+# 分为两个：QuotaMediaImportance, QuotaGeoPenetration
+
+class QuotaMediaImportance(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    media_importance = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, media_importance):
+        self.topic =topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.media_importance = media_importance
+
+class QuotaGeoPenetration(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    geo_penetration = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, geo_penetration):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.geo_penetration = geo_penetration
+  
 
 class QuotaQuickness(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -360,15 +392,15 @@ class QuotaSentiment(db.Model):
     topic = db.Column(db.String(20))
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-    sentiment = db.Column(db.Integer(1, unsigned=True))
-    ratio = db.Column(db.Float)
-
-    def __init__(self, topic, start_ts, end_ts, sentiment, ratio):
+    #sentiment = db.Column(db.Integer(1, unsigned=True))
+    #ratio = db.Column(db.Float)
+    sratio = db.Column(db.Text)
+    
+    def __init__(self, topic, start_ts, end_ts, sratio):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
-        self.sentiment = sentiment
-        self.ratio = ratio
+        self.sratio = sratio
 
 class QuotaDuration(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -382,6 +414,24 @@ class QuotaDuration(db.Model):
         self. start_ts = start_ts
         self.end_ts = end_ts
         self.duration = duration
+'''
+# 持续度经验值QuotaDurationExp
+'''
+class QuotaDurationExp(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    exp = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, exp):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.exp = exp
+    
+
+
 
 class QuotaSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -397,6 +447,49 @@ class QuotaSensitivity(db.Model):
         self.end_ts = end_ts
         self.classfication = classfication
         self.score = score
+
+'''
+类型敏感词表、词汇敏感词表、地点敏感词表
+'''
+class ClassSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+
+class WordSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+
+class PlaceSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+    
 
 class QuotaImportance(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
