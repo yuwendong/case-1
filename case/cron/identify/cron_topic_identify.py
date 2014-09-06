@@ -38,18 +38,20 @@ def main():
         windowsize = (end_ts - start_ts+900) / Day # 确定时间跨度的大小,daixiuzheng
         date = ts2datetime(end_ts)
         print 'windowsize:',windowsize
+
+        all_uid_pr = {}
         if windowsize > 7:
             print 'degree_rank'
             degree_rank(TOPK, date, topic_id, windowsize) # topic的时间跨度大，就选择典型的几个点进行计算
         else:
             print 'pagerank_rank'
-            pagerank_rank(TOPK, date, topic_id, windowsize) # topic的时间跨度小，进行pagerank
+            all_uid_pr = pagerank_rank(TOPK, date, topic_id, windowsize) # topic的时间跨度小，进行pagerank
         topic_id = int(topic_id)
         windowsize = int(windowsize)
         if not topic_id:
             gexf = ''
         else:
-            gexf = make_network_graph(date, topic_id, topicname, windowsize) # 绘制gexf图--返回值是序列化字符串
+            gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr) # 绘制gexf图--返回值是序列化字符串
         
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf) 

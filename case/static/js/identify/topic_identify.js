@@ -744,8 +744,7 @@ function getnetwork_frequency(){
       for (var i = 0; i< data.length; i ++){
           var ydata = Number(data[i].toFixed(3));
           y_data.push(ydata);
-        }
-        // console.log(y_data);
+        } 
       }  
   }) ; 
 

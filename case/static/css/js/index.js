@@ -1,19 +1,58 @@
  var topic = "中国";
+ var quota = {}; 
+ var attention_value = [];
+ var quickness_value = [];
+ var attention;
+ var quickness; 
 $(document).ready(function(){
     drawpicture_bar();
-    write_index();
     draw_index();
     getindex_data();
+
  })
- function write_index(){
+ function getindex_data(){
+var  name = ['duration','geo_penetration','media_importance','attention','quickness','sensitivity'];
+     for ( var key in name){
+        $.ajax({
+        url:"/quota_system/topic/?topic="+topic+ '&quota=' + name[key],
+        dataType: "json",
+        type: "GET",
+        success :function(data){
+            quota[name[key]] = data;  
+        }       
+    });
+    }
+     console.log(quota['duration']);
+    //  attention = quota['attention'];
+    //  quickness = quota['quickness'];
+    //  sensitivity = quota['sensitivity'];
+    //  for (var i = 0 ;i< attention.length; i++){
+    //       attention_all += attention_all[i]; 
+    //     attention_value.push = attention[i]
+    //  }
+    //   attention_average = attention_all/5;
+    // for (var i = 0 ;i< quickness.length; i++){
+    //     quickness_all += quickness[i]; 
+    //     quickness_value.push = quickness[i]
+    //  }
+    //   quickness_average = quickness_all/5;
+    // for (var i = 0 ;i< sensitivity.length; i++){
+    //     sensitivity_all += sensitivity[i]; 
+    //     sensitivity_value.push = sensitivity[i]
+    //  }
+    //   sensitivity_average = sensitivity_all/3;
+
+ 
 var html ='';
   html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">重要媒体参与度<span class=\"tsp\">   : </span>" +'0.323728' +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">地域渗透度<span class=\"tsp\">   : </span>" +'0.32321' +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">持续度<span class=\"tsp\">   : </span>" +'0.728472' +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">重要媒体参与度<span class=\"tsp\">   : </span>" +quota['media_importance'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">持续度<span class=\"tsp\">   : </span>" + quota['duration'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">关注度<span class=\"tsp\">   : </span>" +'0.32321' +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">爆发度<span class=\"tsp\">   : </span>" +'0.728472' +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">地域渗透度<span class=\"tsp\">   : </span>" + quota['geo_penetration'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
+
+  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">关注度<span class=\"tsp\">   : </span>" +'0.12131' +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">爆发度<span class=\"tsp\">   : </span>" +'0.32632' +"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable").append(html);
   var html1 ='';
   html1 += "<tr>"
@@ -24,20 +63,9 @@ var html ='';
 
  }
 
- function getindex_data(){
-    alert("wqnwnqnwoq");
-    $.ajax({
-        url:"/quota_system/topic/?topic="+topic,
-        dataType: "json",
-        type: "GET",
-        success :function(data){
-            console.log(data);
-        }
-    });
- }
-
-
-
+// function show_text(){ 
+//     $("#text_graph").show(); 
+// }
 
  function drawpicture_bar(){
  option = {

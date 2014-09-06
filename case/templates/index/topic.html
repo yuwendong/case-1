@@ -3,9 +3,6 @@
 {% block module_title %}深度分析{% endblock %}
 
 {% block head_css %}
-    <!-- 走势图切换按钮css -->
-    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
-
     <style type="text/css">
         #trend_div {
             height: 270px;
@@ -351,7 +348,6 @@
             </div>
         </div>
     </div>
->
 
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
@@ -514,7 +510,6 @@
         $("#display_tooltip").tooltip();
         $("#frequency_tooltip").tooltip();
         $("#power_law_distribution_tooltip").tooltip();
-
     })
     </script>
 <% endblock tail_js %>

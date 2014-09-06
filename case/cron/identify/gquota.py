@@ -62,8 +62,9 @@ def get_powerlaw(dhistogram, prekey):
     results_linalg = [r, c] # r*lnx+c=lny
     save_quota(prekey + '_result_linalg', results_linalg)
 
-    yy = [math.e**(r*a+c) for a in lnx]
-    lnyy = [math.log(f, math.e) for yyy in yy]
+    #yy = [math.e**(r*a+c) for a in lnx]
+    #lnyy = [math.log(f, math.e) for yyy in yy]
+    lnyy = [r*a+c for a in lnx]
     xydict = {}
     xydict['lnx'] = lnx
     xydict['lny'] = lnyy
@@ -78,7 +79,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     #print 'G_nodes:',len(G.nodes())
     #print 'gg_nodes:', len(gg.nodes())
     #无向图的最大连通子图
-    
+    '''
     HH = nx.connected_component_subgraphs(gg)
     maxhn = 0
     for h in HH:
@@ -115,21 +116,21 @@ def compute_quota(G, gg ,date, windowsize, topic):
     avespl = nx.average_shortest_path_length(H)
     # 平均最短路径长度 float
     save_quota(prekey+'_average_shortest_path_length', avespl)
-    
+    '''
 
     dhistogram = nx.degree_histogram(G)
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
-
+    '''
     Hdhistogram = nx.degree_histogram(H)
     # histogram of H-----max connected graph
     save_quota(prekey + '_H_degree_histogram', Hdhistogram)
-
+    '''
     gamma = get_powerlaw(dhistogram, prekey)
     # 幂律分布系数
     save_quota(prekey+'_power_law_distribution', gamma)
     
-    
+    '''
     nnodes = len(G.nodes())
     # the number of nodes in G
     save_quota(prekey+'_number_nodes', nnodes)
@@ -185,7 +186,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # k_score k核数
     avekc = get_ave(kcore)
     save_quota(prekey + '_ave_k_core', avekc)
-
+    '''
 
     
 

@@ -9,6 +9,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
             type: "GET",
             dataType:"json",
             success: function(data){
+                console.log(data);
                 writ_text(data);
                 weibo_page(data);
                 $("#summary_tooltip").tooltip();
@@ -18,6 +19,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
 
     function writ_text(data){
         var text = data;
+        console.log(data);
         var html = '';
 
         html += '<h4><b>标签:'+data['tag']+'</b></h4><br/>';

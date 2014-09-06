@@ -103,9 +103,9 @@ def pagerank(job_id, iter_count, input_path, top_n):
     fs.rmr('%s/hat_tmp*' % job_id)
     fs.rmr('%s/hat_init' % job_id)
 
-    sorted_uids = hadoop_results(job_id, top_n)
+    sorted_uids, all_uid_pr = hadoop_results(job_id, top_n)
 
-    return sorted_uids # 返回uid排序组成的序列
+    return sorted_uids, all_uid_pr # 返回uid排序组成的序列，所有uid的pr
     
 if __name__ == '__main__':
     from optparse import OptionParser

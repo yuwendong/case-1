@@ -274,7 +274,7 @@
         calculable : true,
         series : [
             {
-                name:'访问来源',
+                name: '子话题比例',
                 type:'pie',
                 radius : '50%',
                 center: ['50%', '60%'],

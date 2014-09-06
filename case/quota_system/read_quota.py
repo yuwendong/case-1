@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import json
 from case.extensions import db
-from case.model import  Topics, QuotaAttention, QuotaPenetration, QuotaQuickness, \
-                        QuotaDuration, QuotaSentiment, QuotaSensitivity, \
-                        QuotaImportance# 需要查询的表
+from case.model import  Topics, QuotaAttention, QuotaGeoPenetration, QuotaMediaImportance, \
+                        QuotaQuickness, QuotaImportance ,\
+                        QuotaDuration, QuotaSentiment, QuotaSensitivity # 需要查询的表
 
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -27,14 +28,16 @@ def ReadTopic(topic):
         end_ts = item.end_ts
         #print 'item:',item.topic, item.start_ts, item.end_ts
         attention_dict = ReadAttention(topic, start_ts, end_ts)
-        penetration_dict = ReadPenetration(topic, start_ts, end_ts)
+        geo_penetration_dict = ReadGeoPenetration(topic, start_ts, end_ts)
+        media_importance_dict = ReadMediaImportance(topic, start_ts, end_ts)
         quickness_dict = ReadQuickness(topic, start_ts, end_ts)
         duration_dict = ReadDuration(topic, start_ts, end_ts)
         sensitivity_dict = ReadSensitivity(topic, start_ts, end_ts)
         sentiment_dict = ReadSentiment(topic, start_ts, end_ts)
         importance_dict = ReadImportance(topic, start_ts, end_ts)
         quota_system_dict= {'attention': attention_dict, \
-                            'penetration': penetration_dict, \
+                            'geo_penetration': geo_penetration_dict, \
+                            'media_importance': media_importance_dict ,\
                             'quickness': quickness_dict, \
                             'duration': duration_dict, \
                             'sensitivity': sensitivity_dict, \
@@ -54,17 +57,21 @@ def ReadAttention(topic, start_ts, end_ts):
     print 'attention:', attention_dict
     return attention_dict
 
-def ReadPenetration(topic, start_ts, end_ts):
-    items = db.session.query(QuotaPenetration).filter(QuotaPenetration.topic==topic, \
-                                                      QuotaPenetration.start_ts==start_ts, \
-                                                      QuotaPenetration.end_ts==end_ts).all()
-    penetration_dict = {}
-    for item in items:
-        domain = item.domain
-        penetration = item.penetration
-        penetration_dict[domain] = penetration
-    print 'penetration:', penetration_dict
-    return penetration_dict
+def ReadGeoPenetration(topic, start_ts, end_ts):
+    item = db.session.query(QuotaGeoPenetration).filter(QuotaGeoPenetration.topic==topic, \
+                                                      QuotaGeoPenetration.start_ts==start_ts, \
+                                                      QuotaGeoPenetration.end_ts==end_ts).first()
+    geo_penetration_dict = item.geo_penetration
+    print 'geo_penetration:', geo_penetration_dict
+    return geo_penetration_dict
+
+def ReadMediaImportance(topic, start_ts, end_ts):
+    item = db.session.query(QuotaMediaImportance).filter(QuotaMediaImportance.topic==topic ,\
+                                                         QuotaMediaImportance.start_ts==start_ts ,\
+                                                         QuotaMediaImportance.end_ts==end_ts).first()
+    media_importance_dict = item.media_importance
+    print 'media_importance:', media_importance_dict
+    return media_importance_dict
 
 def ReadQuickness(topic, start_ts, end_ts):
     items = db.session.query(QuotaQuickness).filter(QuotaQuickness.topic==topic, \
@@ -96,18 +103,16 @@ def ReadSensitivity(topic, start_ts, end_ts):
         classfication = item.classfication
         score = item.score
         sensitivity_dict[classfication] = score
-        
+    print 'sensitivity_dict:', sensitivity_dict    
     return sensitivity_dict
 
 def ReadSentiment(topic, start_ts, end_ts):
-    items = db.session.query(QuotaSentiment).filter(QuotaSentiment.topic==topic, \
+    item = db.session.query(QuotaSentiment).filter(QuotaSentiment.topic==topic, \
                                                   QuotaSentiment.start_ts==start_ts, \
-                                                  QuotaSentiment.end_ts==end_ts).all()
+                                                  QuotaSentiment.end_ts==end_ts).first()
     sentiment_dict = {}
-    for item in items:
-        sentiment = item.sentiment
-        ratio = item.ratio
-        sentiment_dict[sentiment] = ratio
+    sentiment_dict = json.loads(item.sratio)
+    print 'sentiment_dict:', sentiment_dict
 
     return sentiment_dict
 
@@ -119,4 +124,6 @@ def ReadImportance(topic, start_ts, end_ts):
     return importance_dict
     
         
+
+
 

@@ -31,13 +31,27 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 
 
 ##3.相关安装
+预先安装
+```
+apt-get install python-dev
+```
+3.1 easy_install配置
+```
+wget https://bootstrap.pypa.io/ez_setup.py
+python ez_setup.py
+```
 
-3.1 flask安装
+3.2 pip install安装
+```
+easy_install pip
+```
+
+3.3 flask安装
 
 ```
     sudo pip install flask
 ```
-完成flask安装后，将case/package_install/目录下的压缩文件package_install.zip解压缩后，将以下文件复制到服务器/usr/local/lib/python2.7/dist-package/目录下。
+完成flask安装后，将case/package_install/目录下的压缩文件package_install.zip解压缩后，将以下文件复制到服务器/usr/local/lib/python2.7/dist-packages/目录下。
 ```
     Flask_Admin-1.0.4-py2.7.egg
     Flask_DebugToolbar-0.8.0-py2.7.egg
@@ -52,9 +66,16 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
     SQLAlchemy-0.8.0-py2.7-linux-x86_64.egg
 ```
 在运行run.py过程中可能会出现'no module named ***'，则需要再使用easy_install对其进行安装。
+如
+```
+easy_install flask_debugtoolbar
+easy_install flask_admin
+easy_install flask_login
+easy_install flask_wtf
+```
 
 
-3.2 Mysql安装
+3.4 Mysql安装
 
 ```
    sudo apt-get install mysql-server
