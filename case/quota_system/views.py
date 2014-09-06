@@ -2,7 +2,7 @@
 import os
 import json
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
-# from read_quota import ReadTopic
+from read_quota import ReadTopic
 
 
 mod = Blueprint('quota_system', __name__, url_prefix='/quota_system')
