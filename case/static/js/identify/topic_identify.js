@@ -156,21 +156,59 @@ var _ = {
 function updatePane (graph, filter) {
   // get max degree
   var maxDegree = 0,
+      maxPagerank = 0,
       categories = {};
   
   // read nodes
   graph.nodes().forEach(function(n) {
     maxDegree = Math.max(maxDegree, graph.degree(n.id));
-    categories[n.attributes.acategory] = true;
-  })
+    maxPagerank = Math.max(maxPagerank, n.attributes.pagerank);
+    if(n.attributes.acategory in categories){
+        categories[n.attributes.acategory] += 1;
+    }
+    else{
+        categories[n.attributes.acategory] = 1;
+    }
+  });
+
+  var categoriesSorted = Object.keys(categories).sort(function(a, b){
+      return categories[b] - categories[a]
+  });
+  var categoriesSortedTop10 = categoriesSorted.slice(0, 10);
+  
+  var cluster_colors = ['#CF0072', '#ED1B24', '#F15A25', '#F8931F', '#FBB03B', '#FDEE21', '#8CC63E', '#009345', '#0171BD', '#2D2F93'];
+  var clusterid2color = {};
+  for(var i=0; i<cluster_colors.length; i+=1 ){
+      clusterid2color[categoriesSortedTop10[i]] = cluster_colors[i];
+  }
+  function contains(a, obj) {
+      for (var i = 0; i < a.length; i++) {
+          if (a[i] === obj) {
+              return true;
+          }
+      }
+      return false;
+  }
+  graph.nodes().forEach(function(n) {
+      if(contains(categoriesSortedTop10, n.attributes.acategory)){
+          n.color = clusterid2color[n.attributes.acategory];
+      }
+      else{
+          n.color = '#11c897';
+      }
+  });
 
   // min degree
   _.$('min-degree').max = maxDegree;
   _.$('max-degree-value').textContent = maxDegree;
+
+  _.$('min-pagerank').max = maxPagerank * 100000000;
+  _.$('max-pagerank-value').textContent = maxPagerank * 100000000;
   
   // node category
   var nodecategoryElt = _.$('node-category');
-  Object.keys(categories).forEach(function(c) {
+  // Object.keys(categories).forEach(function(c) {
+  categoriesSortedTop10.forEach(function(c) {
     var optionElt = document.createElement("option");
     optionElt.text = c;
     nodecategoryElt.add(optionElt);
@@ -180,6 +218,8 @@ function updatePane (graph, filter) {
   _.$('reset-btn').addEventListener("click", function(e) {
     _.$('min-degree').value = 0;
     _.$('min-degree-val').textContent = '0';
+    _.$('min-pagerank').value = 0;
+    _.$('min-pagerank-val').textContent = '0';
     _.$('node-category').selectedIndex = 0;
     filter.undo().apply();
   });
@@ -242,15 +282,6 @@ function network_request_callback(data) {
         $("#loading_network_data").text("计算完成!");
         $("#sigma-graph").show();
 
-        /*
-        sigInst = sigma.init($('#sigma-graph')[0]).drawingProperties({
-            defaultLabelColor: '#fff'
-        }).graphProperties({
-            minNodeSize: 0.5,
-            maxNodeSize: 5
-        });
-        */
-
         sigma.parsers.gexf(data, {
             container: 'sigma-graph',
             settings: {
@@ -288,8 +319,41 @@ function network_request_callback(data) {
                   .apply();
               }
 
+              function applyMinPagerankFilter(e) {
+                var v = e.target.value;
+                _.$('min-pagerank-val').textContent = v;
+
+                filter
+                  .undo('min-pagerank')
+                  .nodesBy(function(n) {
+                    return n.attributes.pagerank * 100000000 >= v;
+                  }, 'min-pagerank')
+                  .apply();
+              }
+
+              function applyZhibiaoCategoryFilter(e){
+                var v = e.target.value;
+                _.$('min-degree').value = 0;
+                _.$('min-degree-val').textContent = '0';
+                _.$('min-pagerank').value = 0;
+                _.$('min-pagerank-val').textContent = '0';
+                _.$('node-category').selectedIndex = 0;
+                filter.undo().apply();
+                if(v == 'degree'){
+                    $('#min_degree_container').removeClass('hidden');
+                    $('#min_pagerank_container').addClass('hidden');
+                }
+                if(v == 'pagerank'){
+                    $('#min_pagerank_container').removeClass('hidden');
+                    $('#min_degree_container').addClass('hidden');
+                }
+              }
+
               _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
               _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+, that sucks
+              _.$('min-pagerank').addEventListener("input", applyMinPagerankFilter);  // for Chrome and FF
+              _.$('min-pagerank').addEventListener("change", applyMinPagerankFilter); // for IE10+, that sucks
+              _.$('zhibiao-category').addEventListener("change", applyZhibiaoCategoryFilter);
               _.$('node-category').addEventListener("change", applyCategoryFilter);
 
               // Start the ForceAtlas2 algorithm:
@@ -345,24 +409,6 @@ function network_request_callback(data) {
                   s.killForceAtlas2();
               });
 
-              s.graph.nodes().forEach(function(n) {
-                  
-                  var id = n.id;
-                  if(id % 3 == 0){
-                      n.attributes.acategory = '0';
-                      n.color = '#11c897';
-                  }
-                  else if(id % 3 == 1){
-                      n.attributes.acategory = '1';
-                      n.color = '#fa7256';
-                  }
-                  else if(id % 3 == 2){
-                      n.attributes.acategory = '2';
-                      n.color = '#6e87d7';
-                  }
-                  console.log(n);
-              });
-
                 // We first need to save the original colors of our
                 // nodes and edges, like this:
                 s.graph.nodes().forEach(function(n) {
@@ -381,7 +427,20 @@ function network_request_callback(data) {
                 s.bind('clickNode', function(e) {
                   var nodeId = e.data.node.id,
                       neighbor_graph = s.graph.neighborhood(nodeId),
-                      toKeep = {};
+                      toKeep = {},
+                      node = e.data.node;
+
+                  var node_uid = node.label;
+                  var node_name = node.attributes.name;
+                  var node_location = node.attributes.location;
+                  var node_pagerank = node.attributes.pagerank;
+                  var node_community = node.attributes.acategory;
+
+                  $('#nickname').html(node_name);
+                  $('#location').html(node_location);
+                  $('#user_link').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">http://weibo.com/u/' + node_uid + '</a>');
+                  $('#pagerank').html(node_pagerank);
+                  $('#community').html(node_community);
 
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -423,117 +482,6 @@ function network_request_callback(data) {
                   s.refresh();
                 });
         });
-        
-        /*
-        if (animation) {
-            sigInst.iterNodes(function(n){
-              n.hidden = 1;
-              var timestamp = 0;
-              for (var i=0;i<n.attr['attributes'].length;i++) {
-                  if (n.attr['attributes'][i]['attr'] == 'timestamp')
-                      timestamp = parseInt(n.attr['attributes'][i]['val']);
-              }
-              if (!start_ts)
-                  start_ts = timestamp;
-              else {
-                  if (timestamp < start_ts)
-                    start_ts = timestamp;
-              }
-              if (!end_ts)
-                  end_ts = timestamp;
-              else {
-                  if (timestamp > end_ts) end_ts = timestamp;
-              }
-            }).draw(2,2,2);
-            start_ts = end_ts - 5*24*60*60;
-            setInterval(draw_animation, 1000);
-        }
-
-        (function(){
-            var popUp;
-            
-            // This function is used to generate the attributes list from the node attributes.
-            // Since the graph comes from GEXF, the attibutes look like:
-            // [
-            //   { attr: 'Lorem', val: '42' },
-            //   { attr: 'Ipsum', val: 'dolores' },
-            //   ...
-            //   { attr: 'Sit',   val: 'amet' }
-            // ]
-            function attributesToString(attr) {
-                return '<ul>' + attr.map(function(o){
-                  if (o.attr == 'name'){
-                    if(o.val == 'Unknown'){
-                      return '<li>' + '博主昵称' + ' : ' + '未知' + '</li>';
-                    }
-                    else  
-                      return '<li>' + '博主昵称' + ' : ' + o.val + '</li>';
-                    }
-                  else if (o.attr == 'location'){
-                    if(o.val == 'Unknown'){
-                      return '<li>' + '博主地域' + ' : ' + '未知' + '</li>';
-                    }
-                    else  
-                      return '<li>' + '博主地域' + ' : ' + o.val + '</li>';
-
-                  }
- 
-                  else if (o.attr == 'timestamp')
-                      return '<li>' + '博主最早出现时间' + ' : ' + new Date(o.val*1000).format("yyyy-MM-dd") + '</li>';
-                  else
-                      return '<li>' + o.attr + ' : ' + o.val + '</li>';
-                 } ).join('') +rankinfor(node)+ '</ul>';
-            }
-            function rankinfor(data){
-              for (var i = 0 ;i< rankdata.length; i++){
-                if(data['label'] == rankdata[i]['1']){
-                  return '<li margin-left:20px>' + '排名' + ' : ' +rankdata[i]['0'] + '</li><li><a href="http://www.weibo.com/u/'+data["label"]+'">博主链接</a></li>';
-                }
-                else {
-                  return '<li margin-left:20px>排名 : 大于100</li><li><a target="_blank" href="http://www.weibo.com/u/'+data["label"]+'">博主链接</a></li>';
-                }
-              }
-            }
-            
-            function showNodeInfo(event) {
-                popUp && popUp.remove();
-                
-                sigInst.iterNodes(function(n){
-                    node = n;
-                },[event.content[0]]);
-                popUp = $(
-                    '<div class="node-info-popup"></div>'
-                ).append(
-                    // The GEXF parser stores all the attributes in an array named
-                    // 'attributes'. And since sigma.js does not recognize the key
-                    // 'attributes' (unlike the keys 'label', 'color', 'size' etc),
-                    // it stores it in the node 'attr' object :
-                    attributesToString( node['attr']['attributes'] )
-                ).css({
-                    'display': 'inline-block',
-                    'border-radius': 3,
-                    'padding': 5,
-                    'background': '#fff',
-                    'color': '#000',
-                    'box-shadow': '0 0 4px #666',
-                    'position': 'absolute',
-                    'left': node.displayX,
-                    'top': node.displayY+15
-                });
-                
-                $('ul',popUp).css('margin','0 0 0 20px');
-                $('#sigma-graph').append(popUp);
-            }
-             
-
-            function waitsecond(event){
-              setTimeout(function hideNodeInfo() {
-                  popUp && popUp.remove();
-                  popUp = false;
-              }, 5000 );
-            }     
-            //sigInst.bind('overnodes',showNodeInfo).bind('outnodes',waitsecond).draw();
-        })();*/
     }
 
     else {

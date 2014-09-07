@@ -121,7 +121,7 @@ def prepare_data_for_pr(topic_id, date, window_size): # ？？？为什么把方
     tmp_file.flush() # 强制提交内存中还未提交的内容
     return tmp_file
 
-def make_network_graph(current_date, topic_id, topic, window_size, key_user_labeled=True, all_uid_pr):
+def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, key_user_labeled=True):
     date = current_date
 
     if key_user_labeled:
@@ -129,11 +129,11 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     else:
         key_users = []
 
-    G ,gg= make_network(topic, date, window_size)
+    G, gg = make_network(topic, date, window_size)
 
-    # community detection, http://perso.crans.org/aynaud/communities/
+    # community detection, http://perso.crans.org/aynaud/communities/, undirected graph
     import community
-    partition = community.best_partition(G)
+    partition = community.best_partition(gg)
 
     N = len(G.nodes())
 
@@ -156,7 +156,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
     graph.addNodeAttribute('name', type='string', force_id='name')
     graph.addNodeAttribute('location', type='string', force_id='location') # 添加地理位置属性
     graph.addNodeAttribute('timestamp', type='int', force_id='timestamp')
-    graph.addNodeAttribute('pagerank', type='int', force_id='pagerank')
+    graph.addNodeAttribute('pagerank', type='string', force_id='pagerank')
     graph.addNodeAttribute('acategory', type='string', force_id='acategory')
 
     pos = nx.spring_layout(G) # 定义一个布局 pos={node:[v...]/(v...)}
@@ -175,9 +175,9 @@ def make_network_graph(current_date, topic_id, topic, window_size, key_user_labe
             _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='255', g='51', b='51', size=str(degree))
         else:
             _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='0', g='204', b='204', size=str(degree))
-        cluster_id = partition[node]
+        cluster_id = str(partition[node])
         _node.addAttribute('acategory', cluster_id)
-        pr = all_uid_pr[uid]
+        pr = str(all_uid_pr[str(uid)])
         _node.addAttribute('pagerank', pr)
         user_info = acquire_user_by_id(uid) # 获取对应的用户信息，添加属性
         if user_info:
