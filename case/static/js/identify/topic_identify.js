@@ -371,14 +371,14 @@ function network_request_callback(data) {
               var gravity = parseInt($('#gravity_input').val());
               var slowDown = parseInt($('#slowdown_input').val());
               var config = {
-                  linLogMode: linLogMode,
-                  outboundAttractionDistribution: outboundAttractionDistribution,
-                  adjustSizes: adjustSizes,
-                  edgeWeightInfluence: edgeWeightInfluence,
-                  scalingRatio: scalingRatio,
-                  strongGravityMode: strongGravityMode,
-                  gravity: gravity,
-                  slowDown: slowDown
+                  'linLogMode': linLogMode,
+                  'outboundAttractionDistribution': outboundAttractionDistribution,
+                  'adjustSizes': adjustSizes,
+                  'edgeWeightInfluence': edgeWeightInfluence,
+                  'scalingRatio': scalingRatio,
+                  'strongGravityMode': strongGravityMode,
+                  'gravity': gravity,
+                  'slowDown': slowDown
               }
               s.startForceAtlas2(config);
 
@@ -393,24 +393,25 @@ function network_request_callback(data) {
                   var gravity = parseInt($('#gravity_input').val());
                   var slowDown = parseInt($('#slowdown_input').val());
                   var config = {
-                      linLogMode: linLogMode,
-                      outboundAttractionDistribution: outboundAttractionDistribution,
-                      adjustSizes: adjustSizes,
-                      edgeWeightInfluence: edgeWeightInfluence,
-                      scalingRatio: scalingRatio,
-                      strongGravityMode: strongGravityMode,
-                      gravity: gravity,
-                      slowDown: slowDown
+                      'linLogMode': linLogMode,
+                      'outboundAttractionDistribution': outboundAttractionDistribution,
+                      'adjustSizes': adjustSizes,
+                      'edgeWeightInfluence': edgeWeightInfluence,
+                      'scalingRatio': scalingRatio,
+                      'strongGravityMode': strongGravityMode,
+                      'gravity': gravity,
+                      'slowDown': slowDown
                   }
                   s.configForceAtlas2(config);
                   s.startForceAtlas2();
+                  s.refresh();
               });
 
               $("#pause_layout").click(function(){
                   s.stopForceAtlas2();
               });
 
-              $("#pause_layout").click(function(){
+              $("#stop_layout").click(function(){
                   s.killForceAtlas2();
               });
 
