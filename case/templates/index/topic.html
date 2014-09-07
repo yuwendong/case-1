@@ -3,9 +3,6 @@
 {% block module_title %}深度分析{% endblock %}
 
 {% block head_css %}
-    <!-- 走势图切换按钮css -->
-    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
-
     <style type="text/css">
         #trend_div {
             height: 270px;
@@ -140,7 +137,7 @@
         .lrRadius {
             display: inline-block;
             width: 184px;
-            height: 20px;
+            height: 25px;
             margin: 0 6px;
             text-align: right;
             font-weight: normal;
@@ -158,7 +155,7 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 200px;
+            width: 250px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
@@ -317,19 +314,19 @@
     <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况指标统计"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabConts"></div>
-            <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
+            <h5 style="padding-left:30px;padding-top:5px">有向图</h5>
             <table class="mtable" id="mstable">
             </table>
-        <h5 style="margin-left:30px"><b>无向图</b></h5>
+        <h5 style="margin-left:30px">无向图</h5>
 
         <table class="mtable" id="mstable1">
 
         </table>
-        <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
+        <h5 style="margin-left:30px">无向图-最大连通子图</h5>
 
         <table class="mtable" id="mstable2">
 
@@ -337,10 +334,13 @@
         </div>
     </div>
 
-    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
-            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
+        <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
+          <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>分布曲线图</b></h4>
+            <div>
+            <span style="width:150px;height:25px;"><button onclick="drawpicture()"><b>度分布曲线</b></button></span>
+            <span style="width:150px;height:25px;"><button onclick="drawpicture_ln()"><b>双对数曲线</b></button></span>   
+            <span  style="width:150px;height:25px"><button onclick="drawpicture_H(index,H_degree_histogram)"><b>最大连通子图度分布曲线</b></button></span></div>
             <span id="peak_trend_tooltip"></span>
             <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
             </span>
@@ -358,7 +358,7 @@
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络中排名靠前的用户"></i>&nbsp;&nbsp;
         </div>
         <div style="height:50px">
             <div id="loading_current_data" class="alert alert-info">
@@ -395,7 +395,7 @@
     <div class="well" style="width:1033px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络关系图"></i>&nbsp;&nbsp;
         </div>
         <form class="form-inline">
             <img class="img-polaroid">
@@ -534,11 +534,14 @@
 
 {% endblock content %}
 <% block tail_js %>
-    <script>      
+    <script> 
+    $(document).ready(function(){  
+
         $("#summary_tooltip").tooltip();
         $("#keyclient_tooltip").tooltip();
         $("#display_tooltip").tooltip();
         $("#frequency_tooltip").tooltip();
         $("#power_law_distribution_tooltip").tooltip();
+    })
     </script>
 <% endblock tail_js %>

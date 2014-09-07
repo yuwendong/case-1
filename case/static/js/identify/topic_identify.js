@@ -15,10 +15,11 @@ var y_data;
 
 
 function get_network_infor(){
-var  name=['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
+var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
  'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
- 'diameter','power_law_distribution','number_weakly_connected_components','degree_assortativity_coefficient','average_clustering','ave_k_core'];
+ 'diameter','power_law_distribution','number_weakly_connected_components',
+ 'degree_assortativity_coefficient','average_clustering','ave_k_core','ratio_H2G'];
 var topic = "中国";
 var start_ts = 1377965700;
 var end_ts = 1378051200;
@@ -29,6 +30,7 @@ var end_ts = 1378051200;
         type : 'GET',
         async: false,
         success: function(data){
+
             quota[name[key]] = data;
         }
 
@@ -48,7 +50,7 @@ var end_ts = 1378051200;
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"如果总体上度大的节点倾向于连接度大的节点，那么网络同配。同配性系数用作考察度值相近的节点是否倾向于互相连接\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">k核数<span class=\"tsp\">   : </span>"+quota['ave_k_core'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">k核数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"若一个节点存在于k-核，而在（k-1）-核中被移去，那么此节点的核数为k\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['ave_k_core'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable").append(html);
 
   var html1 = '';
@@ -61,6 +63,7 @@ var end_ts = 1378051200;
   html2 +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均最短路径长度<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两节点间最短路径长度的均值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_shortest_path_length'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
   html2 += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两个节点之间距离的最大值为网络直径\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th>";
   html2 +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均离心率<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点偏心率计算了单点偏离中心的程度\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['ave_eccentricity'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html2 +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">最大连通子图的节点数占总图比<span class=\"tsp\">   : </span>"+quota['ratio_H2G'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   $("#mstable2").append(html2);
 }
 
@@ -68,6 +71,8 @@ var end_ts = 1378051200;
 $(document).ready(function(){
     get_network_infor();
     getnetwork_frequency();
+    drawpicture(index,value);
+    // switch_curr_add();
 })
 // Date format
 Date.prototype.format = function(format) { 
@@ -640,12 +645,17 @@ function show_network() {
 
 
 
-function getnetwork_frequency(){
 var topic = "中国";
 var start_ts = 1377965700;
 var end_ts = 1378051200;
 var index = [];
 var value = [];
+var x_data = [];
+var y_data = [];
+
+
+function getnetwork_frequency(){
+
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=degree_histogram' ,
         dataType : "json",
@@ -660,31 +670,80 @@ var value = [];
             }
         }
     }) ;
-
-      $.ajax({
-      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict' ,
+            $.ajax({
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lnx' ,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
-        y_data = data;
-          // for (var i = 0; i< data.length; i ++){
-          //   var s = i.toString();
-          //   index.push(s);
-          //   value.push(data[i]);
-          // }
-          // drawpicture_line(index,value);
+        
+      for (var i = 0; i< data.length; i ++){
+          var xdata = Number(data[i].toFixed(3));
+          x_data.push(xdata);
+        }
+        // console.log(x_data);
       }
-  }); 
-  drawpicture_line(index,value,y_data);
+  }) ; 
+            $.ajax({
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lny' ,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      for (var i = 0; i< data.length; i ++){
+          var ydata = Number(data[i].toFixed(3));
+          y_data.push(ydata);
+        } 
+      }  
+  }) ; 
+
+
+            $.ajax({
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=H_degree_histogram' ,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+        // console.log(data);
+        H_degree_histogram = data;
+      }  
+  }) ;
+
+  // drawpicture_H(index,H_degree_histogram);
+  // drawpicture_ln(x_data,y_data);
+  // drawpicture(index,value);
+
+
+              $.ajax({
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=result_linalg' ,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+        // console.log(data);
+        var result_r = Number(data[0].toFixed(3));
+        var result_c = Number(data[1].toFixed(3));
+        // console.log(result_r);
+        // console.log(result_c); 
+      }
+  }) ; 
+         
 }
 
-function drawpicture_line(index,value,y_data) {
+
+
+function drawpicture() {
     $('#line').highcharts({
         title: {
-            text: '',
-            x: -20 //center
-        },
+            text: '拟合曲线公式r.lnx + C =lny [r,C] = [-2.833,-12.319]',
+            align:'right',
+            x : -70,
+        style:{
+        fontSize: '13px',
+        
+        }
+      },
         lang: {
             printButtonTitle: "打印",
             downloadJPEG: "下载JPEG 图片",
@@ -699,7 +758,7 @@ function drawpicture_line(index,value,y_data) {
         },
         xAxis: {
           title: {
-            text: '节点度数'
+            text: '度数'
         },
             categories:index,
           labels: {
@@ -721,19 +780,143 @@ function drawpicture_line(index,value,y_data) {
         },
             legend: {
             layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
+            align: 'center',
+            verticalAlign: 'bottom',
             borderWidth: 0
         },
         series: [{
             name: '原始曲线',
             data: value
+        }]
+
+    });
+}
+function drawpicture_ln() {
+    $('#line').highcharts({
+        title: {
+            text: '',
+            x: -20 //center
         },
-        {
-            name: '拟合曲线',
+        lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
+            },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+          title: {
+            text: 'lnx'
+        },
+            categories:x_data,
+          labels: {
+                step: 20
+            }
+          },
+        yAxis: {
+            title: {
+                text: 'lny'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+            legend: {
+            layout: 'vertical',
+            align: 'center',
+            verticalAlign: 'bottom',
+            borderWidth: 0
+        },
+        series: [{
+            name: '双对数曲线',
             data: y_data
         }]
 
     });
 }
 
+ 
+
+
+function drawpicture_H(index,H_degree_histogram) {
+    $('#line').highcharts({
+        title: {
+            text: '',
+            x: -20 //center
+        },
+        lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
+            },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+          title: {
+            text: '度数'
+        },
+            categories:index,
+          labels: {
+                step: 20
+            }
+          },
+        yAxis: {
+            title: {
+                text: '出现频数'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+            legend: {
+            layout: 'vertical',
+            align: 'center',
+            verticalAlign: 'bottom',
+            borderWidth: 0
+        },
+        series: [{
+            name: '最大连通子图节点度分布',
+            data: H_degree_histogram
+        }]
+
+    });
+}
+
+    // function switch_curr_add(){
+    //     $("[name='abs_rel_switch']").bootstrapSwitch('readonly', false);
+    //     $("[name='abs_rel_switch']").on('switchChange.bootstrapSwitch', function(event, state) {
+
+    //         if (state == true){
+    //          drawpicture(index,value);
+    //         }
+    //             else if{
+    //          drawpicture_ln(x_data,y_data);
+    //         }
+    //             else{
+    //          drawpicture_H(index,H_degree_histogram);    
+
+    //             }
+            
+    //     });
+
+    // }

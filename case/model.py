@@ -110,8 +110,9 @@ class IndexTopic(db.Model):
     area = db.Column(db.Text) # 地理区域
     key_words = db.Column(db.Text) # 关键词
     opinion = db.Column(db.Text) # 代表文本
+    media_opinion = db.Column(db.Text) # 媒体观点
 
-    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion):
+    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion, media_opinion):
         self.topic = topic
         self.count = count
         self.user_count = user_count
@@ -120,6 +121,7 @@ class IndexTopic(db.Model):
         self.area = area
         self.key_words = key_words
         self.opinion = opinion
+        self.media_opinion = media_opinion
 
 #city模块
 class CityTopicCount(db.Model):
@@ -381,14 +383,20 @@ class QuotaGeoPenetration(db.Model):
     topic = db.Column(db.String(20))
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-    geo_penetration = db.Column(db.Float)
+    pcount = db.Column(db.Text)
 
-    def __init__(self, topic, start_ts, end_ts, geo_penetration):
+    def __init__(self, topic, start_ts, end_ts, pcount):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
-        self.geo_penetration = geo_penetration
-  
+        self.pcount = pcount
+
+class GeoWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
 
 class QuotaQuickness(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -410,8 +418,6 @@ class QuotaSentiment(db.Model):
     topic = db.Column(db.String(20))
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-    #sentiment = db.Column(db.Integer(1, unsigned=True))
-    #ratio = db.Column(db.Float)
     sratio = db.Column(db.Text)
     
     def __init__(self, topic, start_ts, end_ts, sratio):
@@ -515,13 +521,22 @@ class QuotaImportance(db.Model):
     start_ts = db.Column(db.BigInteger(10, unsigned=True))
     end_ts = db.Column(db.BigInteger(10, unsigned=True))
     score = db.Column(db.Float)
+    weight = db.Column(db.Float) # 0<=weight<=1
 
-    def __init__(self, topic, start_ts, end_ts, score):
+    def __init__(self, topic, start_ts, end_ts, score, weight):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.score = score # 0<=score<1
-#need add total quota???how to compute?!!
+        self.weight = weight
+
+class QuotaWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
+
 
 #以下是语义模块（李文文看）
 class OpinionTopic(db.Model):#话题、观点对应表
