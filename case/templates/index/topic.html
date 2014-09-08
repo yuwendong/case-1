@@ -3,6 +3,9 @@
 {% block module_title %}深度分析{% endblock %}
 
 {% block head_css %}
+    <!-- 走势图切换按钮css -->
+    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
+
     <style type="text/css">
         #trend_div {
             height: 270px;
@@ -134,23 +137,10 @@
         .pagination ul>li {
             display: inline;
         }
-/*        ul, ol {
-            padding: 0;
-            margin: 0 0 10px 25px;
-        }
-        ul, menu, dir {
-            display: block;
-            list-style-type: disc;
-            -webkit-margin-before: 1em;
-            -webkit-margin-after: 1em;
-            -webkit-margin-start: 0px;
-            -webkit-margin-end: 0px;
-            -webkit-padding-start: 40px;
-        }*/
         .lrRadius {
             display: inline-block;
             width: 184px;
-            height: 25px;
+            height: 20px;
             margin: 0 6px;
             text-align: right;
             font-weight: normal;
@@ -168,7 +158,7 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 250px;
+            width: 200px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
@@ -211,6 +201,9 @@
             margin: 10px;
             overflow-x: auto;
         }
+        #control-pane-left a:hover{
+            color: #428bca;
+        }
         #control-pane {
             top: 59px;
             right: 2px;
@@ -220,6 +213,21 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         #control-pane > div {
+            margin: 10px;
+            overflow-x: auto;
+        }
+        #control-pane-rightdown {
+            top: 276px;
+            right: 2px;
+            position: absolute;
+            width: 230px;
+            background-color: rgb(249, 247, 237);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        #control-pane-rightdown a:hover{
+            color: #428bca;
+        }
+        #control-pane-rightdown > div {
             margin: 10px;
             overflow-x: auto;
         }
@@ -244,8 +252,9 @@
             display: none;
             visibility: hidden;
         }
-        input[type=range] {
-            width: 160px;
+        #control-pane input[type=range] {
+            width: 130px;
+            display: inline;
         }
 
     </style>
@@ -308,19 +317,19 @@
     <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况指标统计"></i>&nbsp;&nbsp;
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabConts"></div>
-            <h5 style="padding-left:30px;padding-top:5px">有向图</h5>
+            <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
             <table class="mtable" id="mstable">
             </table>
-        <h5 style="margin-left:30px">无向图</h5>
+        <h5 style="margin-left:30px"><b>无向图</b></h5>
 
         <table class="mtable" id="mstable1">
 
         </table>
-        <h5 style="margin-left:30px">无向图-最大连通子图</h5>
+        <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
 
         <table class="mtable" id="mstable2">
 
@@ -328,13 +337,10 @@
         </div>
     </div>
 
-        <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-          <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>分布曲线图</b></h4>
-            <div>
-            <span style="width:150px;height:25px;"><button onclick="drawpicture()"><b>度分布曲线</b></button></span>
-            <span style="width:150px;height:25px;"><button onclick="drawpicture_ln()"><b>双对数曲线</b></button></span>   
-            <span  style="width:150px;height:25px"><button onclick="drawpicture_H(index,H_degree_histogram)"><b>最大连通子图度分布曲线</b></button></span></div>
+    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
+            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
             <span id="peak_trend_tooltip"></span>
             <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
             </span>
@@ -352,7 +358,7 @@
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络中排名靠前的用户"></i>&nbsp;&nbsp;
+        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
         <div style="height:50px">
             <div id="loading_current_data" class="alert alert-info">
@@ -389,7 +395,7 @@
     <div class="well" style="width:1033px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络关系图"></i>&nbsp;&nbsp;
+        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <form class="form-inline">
             <img class="img-polaroid">
@@ -410,64 +416,64 @@
                 <h3 class="underline">布局控制器</h3>
                 <div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        linLogMode
+                        <!--linLogMode-->对数模式
                         <label>
                             <input type="radio" name="linLogModeRadios" value="true" checked>
-                                true
+                                是
                         </label>
                         <label>
                             <input type="radio" name="linLogModeRadios" value="false">
-                                false
+                                否
                         </label>
                         <input id="linLogModeInput" value="true" type="hidden">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        outboundAttractionDistribution
+                        <!--outboundAttractionDistribution-->离心力分布模式
                         <label>
                             <input type="radio" name="outboundAttractionRadios" value="true" checked>
-                                true
+                                是
                         </label>
                         <label>
                             <input type="radio" name="outboundAttractionRadios" value="false">
-                                false
+                                否
                         </label>
                         <input id="outboundAttractionInput" value="true" type="hidden">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        adjustSizes
+                        <!--adjustSizes-->调整尺寸模式
                         <label>
                             <input type="radio" name="adjustSizesRadios" value="true" checked>
-                                true
+                                是
                         </label>
                         <label>
                             <input type="radio" name="adjustSizesRadios" value="false">
-                                false
+                                否
                         </label>
                         <input id="adjustSizesInput" value="true" type="hidden">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        strongGravityMode
+                        <!--strongGravityMode-->强引力模式
                         <label>
                             <input type="radio" name="strongGravityModeRadios" value="true" checked>
-                                true
+                                是
                         </label>
                         <label>
                             <input type="radio" name="strongGravityModeRadios" value="false">
-                                false
+                                否
                         </label>
                         <input id="strongGravityModeInput" value="true" type="hidden">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        edgeWeightInfluence<span id="edgeWeightInfluence_span">0</span><input id="edgeWeightInfluence_input" type="range" min="0" value="0" onclick="change_edgeWeightInfluence();">
+                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span">1</span><input id="edgeWeightInfluence_input" type="range" min="0" value="1" onclick="change_edgeWeightInfluence();">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        scalingRatio<span id="scalingRatio_span">1</span><input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
+                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span">1</span><input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        gravity<span id="gravity_span">1</span><input id="gravity_input" type="range" min="0" value="1" onclick="change_gravity();"> 
+                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span">10</span><input id="gravity_input" type="range" min="0" value="10" onclick="change_gravity();"> 
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        slowdown<span id="slowdown_span">1</span><input id="slowdown_input" type="range" min="0" value="1" onclick="change_slowdown();"> 
+                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span">2</span><input id="slowdown_input" type="range" min="0" value="2" onclick="change_slowdown();"> 
                     </div>
                 </div>
                 <span class="line"></span>
@@ -480,16 +486,24 @@
             <div id="control-pane">
                 <h3 class="underline">过滤器</h3>
                 <div>
-                  最小度<span id="min-degree-val">0</span>
+                    指标类别
+                    <select id="zhibiao-category">
+                        <option value="degree" selected>度</option>
+                        <option value="pagerank">Pagerank</option>
+                    </select>
+                </div>
+                <div id="min_degree_container">
+                  最小度&nbsp;&nbsp;<span id="min-degree-val">0</span><br>
                   <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
+                </div>
+                <div id="min_pagerank_container" class="hidden">
+                  最小Pagerank&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
+                  <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
                 </div>
                 <div>
                   节点类别
                   <select id="node-category">
                     <option value="" selected>所有类别</option>
-                    <option value="0" >0</option>
-                    <option value="1" >1</option>
-                    <option value="2" >2</option>
                   </select>
                 </div>
                 <span class="line"></span>
@@ -497,19 +511,34 @@
                   <button id="reset-btn">重置过滤器</button>
                 </div>
             </div>
+            <div id="control-pane-rightdown">
+                <h3 class="underline">节点信息</h3>
+                <div>
+                用户昵称: <span id="nickname"></span>
+                </div>
+                <div>
+                用户所在地: <span id="location"></span>
+                </div>
+                <div>
+                用户微博链接: <span id="user_link"></span>
+                </div>
+                <div>
+                用户Pagerank值: <span id="pagerank"></span>
+                </div>
+                <div>
+                用户所属社区: <span id="community"></span>
+                </div>
+            </div>
         </div>
     </div>
 
 {% endblock content %}
 <% block tail_js %>
-    <script> 
-    $(document).ready(function(){  
-
+    <script>      
         $("#summary_tooltip").tooltip();
         $("#keyclient_tooltip").tooltip();
         $("#display_tooltip").tooltip();
         $("#frequency_tooltip").tooltip();
         $("#power_law_distribution_tooltip").tooltip();
-    })
     </script>
 <% endblock tail_js %>
