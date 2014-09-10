@@ -1,6 +1,7 @@
 #-*- coding:utf-8 -*-
 
 import os
+import IP
 import json
 from city_count import Pcount
 from BeautifulSoup import BeautifulSoup
@@ -27,12 +28,26 @@ province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东
                  u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
                  u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门', u'海外', u'其他']
 
+def geo2city(geo):
+    try:
+        city = IP.find(str(geo))
+        if city:
+            city = city.encode('utf-8')
+        else:
+            return None
+    except Exception, e:
+        print e
+        return None
+    return city
+
 
 def info2map(infos):
     count = {}
     rank = {}
     ratio = {}
     top10 = {}
+    total_count = {}
+
     for info in infos:
         map_dict = infos[info]
         count[info] = [0] * 35
@@ -49,7 +64,15 @@ def info2map(infos):
             rank[info][p] = prank
             ratio[info][p] = pratio
 
+            try:
+                total_count[province_list[p]] += pcount
+            except:
+                total_count[province_list[p]] = pcount
+
         top10[info] = map_dict['summary']
+
+    total_count_list_reverse = []
+    total_count_list_reverse = topSelect(total_count)
 
     province_data = {}
     for p in province_list:
@@ -62,20 +85,27 @@ def info2map(infos):
         for idx, d in enumerate(pdata):
             province_data[province_list[idx]].append(d)
 
-    data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10, 'province_data': province_data, 'ts_list': ts_list} 
+    data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10, 'province_data': province_data, 'ts_list': ts_list, \
+            'total_count': total_count_list_reverse}
 
     return data
 
+def topSelect(total_count):
+    total_count_list_reverse = []
+    total_count_list_reverse = sorted(total_count.iteritems(), key = lambda (k, v):v, reverse = True)
 
 def readPropagateSpatial(stylenum, topic, end_ts , during):
     """将从数据库中读取的数据转化为map_data
     """
+    max_count = 0
     city_count = {}
-    city_count = Pcount(end_ts, during, stylenum, topic) # PCount从db中计算各个省市地区的总数
-    max_count = max(city_count.values())
+    first_item = {}
+    first_item, city_count = Pcount(end_ts, during, stylenum, topic) # PCount从db中计算各个省市地区的总数
+    if city_count.values():
+        max_count = max(city_count.values())
     map_data = province_color_map(city_count)
 
-    return max_count, map_data
+    return max_count, map_data, first_item
 
 
 @mod.route("/topic_ajax_spatial/")
@@ -97,15 +127,26 @@ def ajax_spatial():
 
     spatial_dict = {}
     global_max_count = 0
+    global_first_timestamp = end_ts
+    global_first_city = ""
     for i in range(pointnum):
         end_ts = start_ts +  during * (i + 1)
-        max_count, topic_spatial_info = readPropagateSpatial(stylenum, topic, end_ts , during)  # 查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
+        max_count, topic_spatial_info, first_item = readPropagateSpatial(stylenum, topic, end_ts , during)  # 查询在一定时间范围内，某个topic的stylenum信息各个省市的数量
+
         if global_max_count < max_count:
             global_max_count = max_count
+
+        try:
+            if first_item['timestamp'] <= global_first_timestamp:
+                global_first_timestamp = first_item['timestamp']
+                global_first_city = geo2city(first_item['geo'])
+        except KeyError:
+            pass
         spatial_dict[str(end_ts)] = topic_spatial_info
 
     map_data = info2map(spatial_dict)
     map_data['max_count'] = global_max_count
+    map_data['first_city'] = global_first_city
 
     return json.dumps(map_data)
 

@@ -36,11 +36,11 @@ def geo2city(geo): #将weibo中的'geo'字段解析为地址
 
 
 
-def save_rt_results(topic, mtype, results, during):
+def save_rt_results(topic, mtype, results, during, first_item):
     for k, v in results.iteritems():
         mtype = k
         ts, ccount = v
-        item = CityTopicCount(topic, during, ts, mtype, json.dumps(ccount))
+        item = CityTopicCount(topic, during, ts, mtype, json.dumps(ccount), json.dumps(first_item))
         item_exist = db.session.query(CityTopicCount).filter(CityTopicCount.topic==topic, \
                                                                             CityTopicCount.range==during, \
                                                                             CityTopicCount.end==ts, \
@@ -81,12 +81,19 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
             '''
             for k, v in mtype_kv.iteritems():
                 ccount={}
+                first_timestamp = end_ts
+                first_item = {}
                 query_dict['message_type'] = v
                 count,weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list)# weibo_results是在指定时间段、topic、message_type的微博匹配集
                 print 'count:',count
                 #for r in weibo_results():
                 #    print r['_id']
                 for weibo_result in weibo_results():
+                    if ((v == 1) or (v == 4)):
+                        if (weibo_result['timestamp'] <= first_timestamp) and (weibo_result['message_type'] == 1):
+                            first_timestamp = weibo_result['timestamp']
+                            first_item = weibo_result
+
                     #print weibo_result['geo']
                     if geo2city(weibo_result['geo']):
                         try:
@@ -98,7 +105,8 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                 mtype_ccount[v] = [end_ts, ccount]
                 #print mtype_ccount[v]
                 #print '%s %s saved message_type city_count' % (begin_ts, end_ts)
-                save_rt_results(topic,v, mtype_ccount, during)
+                print first_item
+                save_rt_results(topic,v, mtype_ccount, during, first_item)
 
 
 

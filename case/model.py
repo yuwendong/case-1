@@ -131,13 +131,15 @@ class CityTopicCount(db.Model):
     range = db.Column(db.BigInteger(10, unsigned=True))
     mtype = db.Column(db.Integer(1, unsigned=True))  #message_type:原创-1、转发-2、评论-3
     ccount = db.Column(db.Text)                      #city_count:{city:count}
+    first_item = db.Column(db.Text)          # 原创 初始微博 其他类型为空
 
-    def __init__(self, topic, range, end, mtype, ccount):
+    def __init__(self, topic, range, end, mtype, ccount, first_item):
         self.topic = query 
         self.range = range
         self.end = end
         self.mtype = mtype
         self.ccount = ccount
+        self.first_item = first_item
 
 class CityRepost(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)

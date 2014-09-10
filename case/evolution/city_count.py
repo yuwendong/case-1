@@ -57,9 +57,27 @@ def sum_pcount(item):
 
     return pcount
 
+def first_select(item, end_ts):
+    first_item = {}
+    first_timestamp = end_ts
+    for r in item:
+        if r.first_item:
+            rfirst_item = json.loads(r.first_item)
+            try:
+                if (rfirst_item['timestamp'] <= first_timestamp):
+                    first_timestamp = rfirst_item['timestamp']
+                    first_item = rfirst_item
+            except KeyError:
+                pass
+        else:
+            continue
+    return first_item
+
+
 
 def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
     pcount = {} # 省市对应count
+    first_item = {} # 源头微博
     if during <= unit: # 时间范围选择小于默认最小时间段15分钟，则默认为15分钟
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if stylenum == 4: # 求所有的和
@@ -74,9 +92,11 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
         if item: # 若查询结果存在，计算ccount中属于同一个省份count和
             if not isinstance(item, list):
                 item = [item]
+            first_item = first_select(item, end_ts)
             pcount=sum_pcount(item)
         else:
             pcount={} # 查询结果为空
+            first_item = {}
 
     else:                         #时间范围大于15分钟时，将其转化为15分钟的整数倍段
         start_ts =end_ts - during
@@ -97,9 +117,11 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
         if item:
             if not isinstance(item, list):
                 item = [item]
+            first_item = first_select(item, end_ts)
             pcount=sum_pcount(item)
         else:
             pcount = {}
+            first_item = {}
 
-    return pcount
+    return first_item, pcount
 

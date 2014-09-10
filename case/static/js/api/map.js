@@ -170,7 +170,11 @@ CaseMap.prototype.initPullDrawMap = function(sta){
         myChart.hideLoading();
         var data_count = data["count"];
         var max_count = data["max_count"];
+        var total_count = data["total_count"];
+        var first_city = data["first_city"]
         var format_data = that.dataFormatter(data_count);
+        console.log("first_city" + first_city);
+        console.log("total_count" + total_count);
         drawWholeMap(that, format_data, max_count, myChart);
     }
 }
