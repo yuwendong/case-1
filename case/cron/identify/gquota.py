@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import networkx as nx
 import time
 import sys
@@ -11,7 +12,8 @@ import numpy as np
 
 
 from SSDB import SSDB 
-from config import SSDB_HOST, SSDB_PORT
+from config import db, SSDB_HOST, SSDB_PORT
+from model import DegreeCentralityUser, BetweenessCentralityUser, ClosenessCentralityUser, NodeDegreeUser
 
 def _utf8_unicode(s):
     if isinstance(s, unicode):
@@ -79,7 +81,7 @@ def compute_quota(G, gg ,date, windowsize, topic):
     #print 'G_nodes:',len(G.nodes())
     #print 'gg_nodes:', len(gg.nodes())
     #无向图的最大连通子图
-    '''
+   
     HH = nx.connected_component_subgraphs(gg)
     maxhn = 0
     for h in HH:
@@ -88,26 +90,39 @@ def compute_quota(G, gg ,date, windowsize, topic):
             H = h
     #print 'H_nodes:', len(H.nodes())
 
+    ndegree = G.degree()
+    # 节点度，dict{nodes:value}
+    get_key_user('node_degree', topic, date, windowsize, ndegree)
+    #根据节点度排序，获取节点度层面的关键用户
+
     dCentrality = nx.degree_centrality(G)
     # 度中心性 dict{nodes:value} 度量重要性
+    get_key_user('degree_centrality', topic, date, windowsize, dCentrality)
+    # 根据度中心性排序，获取度中心性层面的关键用户
     avedc = get_ave(dCentrality)
     #平均度中心性 float
     save_quota(prekey+'_ave_degree_centrality', avedc)
     
     bCentrality = nx.betweenness_centrality(G)
     # 介数中心 dict{nodes:value},度量其对网络流程的重要性
+    get_key_user('betweeness_centrality', topic, date, windowsize, bCentrality)
+    # 获取介数中心层面对应的关键用户
     avebc = get_ave(bCentrality)
     # 平均介数中心性 float
     save_quota(prekey+'_ave_betweenness_centrality', avebc)
 
     cCentrality = nx.closeness_centrality(G)
-    # 紧密中心性 dict{nodes:value},，度量感知整个网络流程事件的位置
+    # 紧密中心性 dict{nodes:value},度量感知整个网络流程事件的位置
+    get_key_user('closeness_centrality', topic, date, windowsize, cCentrality)
+    # 获取紧密中心性层面的关键用户
     avecc = get_ave(cCentrality)
     # 平均紧密中心性 float
     save_quota(prekey+'_ave_closeness_centrality', avecc)
     
     eCentrality = nx.eigenvector_centrality_numpy(G)
     # 特征向量中心性
+    get_key_user('eigenvector_centrality', topic, date, windowsize, eCentrality)
+    # 获取特征向量中心性层面的关键用户
     aveec = get_ave(eCentrality)
     # 平均特征向量中心性 float
     save_quota(prekey+'_eigenvector_centrality', aveec)
@@ -116,21 +131,21 @@ def compute_quota(G, gg ,date, windowsize, topic):
     avespl = nx.average_shortest_path_length(H)
     # 平均最短路径长度 float
     save_quota(prekey+'_average_shortest_path_length', avespl)
-    '''
+   
 
     dhistogram = nx.degree_histogram(G)
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
-    '''
+  
     Hdhistogram = nx.degree_histogram(H)
     # histogram of H-----max connected graph
     save_quota(prekey + '_H_degree_histogram', Hdhistogram)
-    '''
+    
     gamma = get_powerlaw(dhistogram, prekey)
     # 幂律分布系数
     save_quota(prekey+'_power_law_distribution', gamma)
     
-    '''
+    
     nnodes = len(G.nodes())
     # the number of nodes in G
     save_quota(prekey+'_number_nodes', nnodes)
@@ -186,9 +201,52 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # k_score k核数
     avekc = get_ave(kcore)
     save_quota(prekey + '_ave_k_core', avekc)
-    '''
+   
 
-    
+def get_key_user(class_name, topic, date, windowsize, sort_dict): # 根据对应指标获取排序在前100的用户
+    result = sorted(sort_dict.iteritems(), key=lambda (k, v):v, reverse=True)
+    sort_result = result[:100]
+    save_key_user(class_name, topic, date, windowsize, sort_result)
+
+def save_key_user(classname, topic, date, windowsize, sorted_dict): # 将排序结果存放在mysql中
+    if classname == 'degree_centrality':
+        item = DegreeCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        item_exist = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
+                                                                   DegreeCentralityUser.date==date ,\
+                                                                   DegreeCentralityUser.windowsize==windowsize).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+        db.session.commit()
+    elif classname == 'betweeness_centrality':
+        item = BetweenessCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        item_exist = db.session.query(BetweenessCentralityUser).filter(BetweenessCentralityUser.topic==topic ,\
+                                                                       BetweenessCentralityUser.date==date ,\
+                                                                       BetweenessCentralityUser.windowsize==windowsize).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+        db.session.commit()
+    elif classname == 'closeness_centrality':
+        item = ClosenessCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        item_exist = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
+                                                                      ClosenessCentralityUser.date==date ,\
+                                                                      ClosenessCentralityUser.windowsize==windowsize).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+        db.session.commit()
+    elif classname == 'node_degree': 
+        item =NodeDegreeUser(topic, date, windowsize, json.dumps(sorted_dict))
+        item_exist = db.session.query(NodeDegreeUser).filter(NodeDegreeUser.topic==topic ,\
+                                                             NodeDegreeUser.date==date ,\
+                                                             NodeDegreeUser.windowsize==windowsize).first()
+        if item_exist:
+            db.session.delete(item_exist)
+        db.session.add(item)
+        db.session.commit()
+        
+    print 'save success:', classname
 
 def save_quota(key, value):
     '''保存网络指标

@@ -1,31 +1,32 @@
 # -*- coding: utf-8 -*-
 
-from config import db # 在config文件中配置mysqldb
+from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'TopicStatus']
+        'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', 'PropagateKeywords', \
+        'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
+           'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
+          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
 
 
 class Topics(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.String(20))
-    topic = db.Column(db.Text)
-    iscustom = db.Column(db.Boolean)
-    expire_date = db.Column(db.BigInteger(10, unsigned=True))
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
 
-    def __init__(self, user, topic, iscustom, expire_date):
-        self.user = user
+    def __init__(self, topic, start_ts, end_ts):
         self.topic = topic
-        self.iscustom = iscustom
-        self.expire_date = expire_date  #实际上这一部分是需要重新修改的，但是在此次测试中用不到，就先不动。
-
+        self.start_ts = start_ts
+        self.end_ts = end_ts 
+#实际上这一部分是需要重新修改的，但是在此次测试中用不到，就先不动。
 #sentiment部分
 class SentimentKeywords(db.Model):#情绪关键词---已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     query = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    limit = db.Column(db.BigInteger(10, unsigned=True))
     sentiment = db.Column(db.Integer(1, unsigned=True))
     kcount = db.Column(db.Text)
 
@@ -42,7 +43,7 @@ class SentimentWeibos(db.Model):#情绪微博--已改
     query = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
-    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    limit = db.Column(db.BigInteger(10, unsigned=True))
     sentiment = db.Column(db.Integer(1, unsigned=True))
     weibos = db.Column(db.Text)
 
@@ -53,6 +54,17 @@ class SentimentWeibos(db.Model):#情绪微博--已改
         self.end = end
         self.sentiment = sentiment
         self.weibos = weibos
+
+class SentimentPoint(db.Model):#情绪拐点
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.String(20))#话题名
+    stype = db.Column(db.String(20))#拐点情绪类型标签（'happy','angry','sad'）
+    ts = db.Column(db.BigInteger(20, unsigned=True))#拐点时间
+
+    def __init__(self, topic, stype, ts):
+        self.topic = topic
+        self.stype = stype
+        self.ts = ts
 
 class SentimentCount(db.Model):#情绪绝对数量曲线--已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -74,15 +86,42 @@ class SentimentCountRatio(db.Model):#情绪相对比例曲线--已改
     query = db.Column(db.String(20))#话题名
     end = db.Column(db.BigInteger(20, unsigned=True))#时间
     range = db.Column(db.BigInteger(10, unsigned=True))
-    ratio = db.Column(db.Float)#相对比例
+    count = db.Column(db.BigInteger(20, unsigned=True))
+    allcount = db.Column(db.BigInteger(20, unsigned=True))
     sentiment = db.Column(db.Integer(1, unsigned=True))#情绪类型（'happy','angry','sad'）
 
-    def __init__(self, query, end, range, ratio, sentiment):
+    def __init__(self, query, end, range, sentiment, count, allcount):
         self.query = query
         self.end = end
         self.ts = ts
-        self.ratio = ratio
+        self.count = count
+        self.allcount = allcount
         self.sentiment = sentiment
+
+# Index 模块
+
+class IndexTopic(db.Model):
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    topic = db.Column(db.Text)
+    count = db.Column(db.Integer) # 微博数
+    user_count = db.Column(db.Integer) # 用户数
+    begin = db.Column(db.BigInteger(10,unsigned = True)) # 起始时间
+    end = db.Column(db.BigInteger(10,unsigned = True)) # 终止时间
+    area = db.Column(db.Text) # 地理区域
+    key_words = db.Column(db.Text) # 关键词
+    opinion = db.Column(db.Text) # 代表文本
+    media_opinion = db.Column(db.Text) # 媒体观点
+
+    def __init__(self, topic, count, user_count, begin, end, area, key_words, opinion, media_opinion):
+        self.topic = topic
+        self.count = count
+        self.user_count = user_count
+        self.begin = begin
+        self.end = end
+        self.area = area
+        self.key_words = key_words
+        self.opinion = opinion
+        self.media_opinion = media_opinion
 
 #city模块
 class CityTopicCount(db.Model):
@@ -99,6 +138,24 @@ class CityTopicCount(db.Model):
         self.end = end
         self.mtype = mtype
         self.ccount = ccount
+
+class CityRepost(db.Model):
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    original = db.Column(db.Integer(1,unsigned = True))
+    topic = db.Column(db.String(20))
+    mid = db.Column(db.String(20)) # 微博ID
+    ts = db.Column(db.BigInteger(20, unsigned=True))
+    origin_location = db.Column(db.Text) # 原始微博发布地点
+    repost_location = db.Column(db.Text) # 转发微博发布地点
+
+    def __init__(self, original, topic, mid, ts, origin_location, repost_location ):
+        self.topic = topic
+        self.original = original
+        self.mid = mid
+        self.ts = ts
+        self.origin_location = origin_location
+        self.repost_location = repost_location
+
 
 #时间分析模块
 class PropagateCount(db.Model):
@@ -153,17 +210,50 @@ class QuicknessCount(db.Model):
         self.domain = domain
         self.topnum = topnum
         self.allnum = allnum
+    
+class PropagateKeywords(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    kcount = db.Column(db.Text) # kcount=[terms]
+
+    def __init__(self, topic, end, range, mtype, limit, kcount):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.limit = limit
+        self.mtype = mtype
+
+class PropagateWeibos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    weibos = db.Column(db.Text) # weibos=[weibos]
+
+    def __init__(self, topic, end, range, mtype, limit, weibos):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.mtype = mtype
+        self.limit = limit
+        self.weibos = weibos
 
 
-#统一对topic管理
-class TopicStatus(db.Model):  
+
+class TopicStatus(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     module = db.Column(db.String(10))# 显示是哪个模块---moodlens/evolution/propagate/identify
-    status = db.Column(db.Integer)# 1: completed 0: computing, -1: not_start -2:清空计算数据
+    status = db.Column(db.Integer)# 1: completed 0: computing, -1:not compute, -2:delete
     topic = db.Column(db.Text)
     start = db.Column(db.BigInteger(10, unsigned=True))#起始时间
-    end = db.Column(db.BigInteger(10, unsigned=True))#终止时间 
-    db_date = db.Column(db.BigInteger(10, unsigned=True))#入库时间---提交时间
+    end = db.Column(db.BigInteger(10, unsigned=True))#终止时间
+    db_date = db.Column(db.BigInteger(10, unsigned=True))#入库时间❯
 
     def __init__(self, module, status, topic, start, end, db_date):
         self.module = module
@@ -175,7 +265,7 @@ class TopicStatus(db.Model):
 
 #网络模块--存放pagerank的计算结果
 class TopicIdentification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     rank = db.Column(db.Integer)
     userId = db.Column(db.BigInteger(11, unsigned=True))
@@ -189,8 +279,316 @@ class TopicIdentification(db.Model):
         self.userId = userId
         self.identifyDate = identifyDate
         self.identifyWindow = identifyWindow
-        self.identifyMethod = identifyMethod 
+        self.identifyMethod = identifyMethod
+
+class DegreeCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class BetweenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic =topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class ClosenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=True)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class NodeDegreeUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+        
+
+# opinion module used in test
+class OpinionTestTime(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+
+    def __init__(self, topic, child_topic, start_ts, end_ts):
+        self.topic = topic
+        self.child_topic = child_topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+
+class OpinionTestRatio(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    #ts = db.clumns(db.BigInteger(10),unsigned=True)
+    child_topic = db.Column(db.String(20))
+    ratio = db.Column(db.Float)
+
+    def __init__(self, topic, child_topic, ratio):
+        self.topc = topic
+        self.child_topic = child_topic
+        self.ratio = ratio
+
+class OpinionTestKeywords(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    child_topic = db.Column(db.String(20))
+    keywords = db.Column(db.Text)
+
+    def __init__(self, topic, child_topic, keywords):
+        self.topic = topic
+        self.child_topic = child_topic
+        self.keywords = keywords
+
+class OpinionTestWeibos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    child_topic = db.Column(db.String(20))
+    weibos = db.Column(db.Text)
+
+    def __init__(self, topic, child_topic, weibos):
+        self.topic = topic
+        self.child_topic = child_topic
+        self.weibos = weibos
+
+# Quota_system Module
+class QuotaAttention(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    domain = db.Column(db.String(20))
+    attention = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, domain, attention):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.domain = domain
+        self.attention = attention
+
+'''
+# 关注度经验值QuotaAttentionExp
+'''
+class QuotaAttentionExp(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    exp = db.Column(db.Text) # exp={'media':x1, 'other':x2, 'opinion_leader':x3, 'oversea':x4, 'folk':x5}
+
+    def __init__(self, topic, start_ts, end_ts, exp):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.exp = exp
+       
+
+# QuotaPenetration 弃用
+# 分为两个：QuotaMediaImportance, QuotaGeoPenetration
+
+class QuotaMediaImportance(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    media_importance = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, media_importance):
+        self.topic =topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.media_importance = media_importance
+
+class QuotaGeoPenetration(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    pcount = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, pcount):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.pcount = pcount
+
+class GeoWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
+
+class QuotaQuickness(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    domain = db.Column(db.String(20))
+    quickness = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, domain, quickness):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.domain = domain
+        self.quickness = quickness
+
+class QuotaSentiment(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    sratio = db.Column(db.Text)
     
+    def __init__(self, topic, start_ts, end_ts, sratio):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.sratio = sratio
+
+class QuotaDuration(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    duration = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, duration):
+        self.topic = topic
+        self. start_ts = start_ts
+        self.end_ts = end_ts
+        self.duration = duration
+'''
+# 持续度经验值QuotaDurationExp
+'''
+class QuotaDurationExp(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    exp = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, exp):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.exp = exp
+    
+
+
+
+class QuotaSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    classfication = db.Column(db.Integer(1, unsigned=True)) # ['category':1, 'word':2, 'place':3]
+    score = db.Column(db.Float) # 1<=score<=5
+
+    def __init__(self, topic, start_ts, end_ts, classfication, score):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.classfication = classfication
+        self.score = score
+
+'''
+类型敏感词表、词汇敏感词表、地点敏感词表
+'''
+class ClassSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+
+class WordSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+
+class PlaceSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    words = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, words):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.words = words
+    
+
+class QuotaImportance(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    score = db.Column(db.Float)
+    weight = db.Column(db.Float) # 0<=weight<=1
+
+    def __init__(self, topic, start_ts, end_ts, score, weight):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.score = score # 0<=score<1
+        self.weight = weight
+
+class QuotaWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
 
 
 #以下是语义模块（李文文看）
