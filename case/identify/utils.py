@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 import os
 import time
 import random
@@ -8,7 +8,8 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 from SSDB import SSDB
 from case.global_config import db, SSDB_HOST, SSDB_PORT
-from case.model import TopicStatus, TopicIdentification 
+from case.model import TopicStatus, TopicIdentification, DegreeCentralityUser ,\
+                       BetweenessCentralityUser, ClosenessCentralityUser
 from time_utils import ts2datetime, datetime2ts, window2time
 from case.global_config import xapian_search_user as user_search
 
@@ -63,15 +64,100 @@ def read_topic_rank_results(topic, top_n, method, date, window):
             uid = item.userId
             user = acquire_user_by_id_v2(uid)
             if not user:
-                continue
-            name = user['name']
-            location = user['location']
-            count1 = user['count1']
-            count2 = user['count2']
+                name = 'Unknown'
+                location = 'Unknown'
+                count1 = 'Unknown'
+                count2 = 'Unknown'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
             #read from external knowledge database
             status = user_status(uid)
             row = (rank, uid, name, location, count1, count2, status)
             data.append(row)
+    return data
+
+def read_degree_centrality_rank(topic, date, windowsize):
+    results = []
+    items = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
+                                                          DegreeCentralityUser.date==date ,\
+                                                          DegreeCentralityUser.windowsize==windowsize).first()
+    results = json.loads(items.sorted_dict) # results = [[uid, degree_centrality_value],[],[]]
+    rank = 0
+    data = []
+    for result in results:
+        rank += 1
+        uid = result[0]
+        user = acquire_user_by_id_v2(uid)
+        if not user:
+            name = 'Unknown'
+            location = 'Unknown'
+            count1 = 'Unknown'
+            count2 = 'Unknown'
+        else:
+            name = user['name']
+            location = user['location']
+            count1 = user['count1']
+            count2 = user['count2']
+        status = user_status(uid)
+        row = (rank, uid, name, location, count1, count2, status)
+        data.append(row)
+    return data
+
+def read_betweeness_centrality_rank(topic, date, windowsize):
+    results = []
+    items = db.session.query(BetweenessCentralityUser).filter(BetweenessCentralityUser.topic==topic , \
+                                                              BetweenessCentralityUser.date==date ,\
+                                                              BetweenessCentralityUser.windowsize==windowsize).first()
+    results = json.loads(items.sorted_dict)
+    rank = 0
+    data = []
+    for result in results:
+        rank += 1
+        uid = result[0]
+        user = acquire_user_by_id_v2(uid)
+        if not user:
+            name = 'Unknown'
+            location = 'Unknown'
+            count1 = 'Unknown'
+            count2 = 'Unkonwn'
+        else:
+            name = user['name']
+            location = user['location']
+            count1 = user['count1']
+            count2 = user['count2']
+        status = user_status(uid)
+        row = (rank, uid, name, location, count1, count2, status)
+        data.append(row)
+    return data
+
+def read_closeness_centrality_rank(topic, date, windowsize):
+    results = []
+    items = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
+                                                             ClosenessCentralityUser.date==date ,\
+                                                             ClosenessCentralityUser.windowsize==windowsize).first()
+    results = json.loads(items.sorted_dict)
+    rank = 0
+    data = []
+    for result in results:
+        rank += 1
+        uid = result[0]
+        user = acquire_user_by_id_v2(uid)
+        if not user:
+            name = 'Unknown'
+            location = 'Unknown'
+            count1 = 'Unknown'
+            count2 = 'Unknown'
+        else:
+            name = user['name']
+            location = user['location']
+            count1 = user['count1']
+            count2 = user['count2']
+        status = user_status(uid)
+        row = (rank, uid, name, location, count1, count2, status)
+        data.append(row)
     return data
 
 def acquire_user_by_id_v2(uid):
