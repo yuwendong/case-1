@@ -84,7 +84,8 @@ def save_keywords(excel_name, topic, k_limit):
 
     for child_topic in keywords_dict:
         keywords_dict[child_topic] = sorted(keywords_dict[child_topic], key=lambda x:x[1], reverse=False) 
-        keywords_list = keywords_dict[child_topic][len(keywords_dict[child_topic]) - k_limit:]
+        # keywords_list = keywords_dict[child_topic][len(keywords_dict[child_topic]) - k_limit:]
+        keywords_list = keywords_dict[child_topic]
         keywords_list_new = []
         for i in range(len(keywords_list)):
             keywords_list_new.append(keywords_list[len(keywords_list)-1-i]) # keywords_list_new=[(keywords:weight),()] 根据weight从大到小排列

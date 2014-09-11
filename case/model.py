@@ -131,13 +131,15 @@ class CityTopicCount(db.Model):
     range = db.Column(db.BigInteger(10, unsigned=True))
     mtype = db.Column(db.Integer(1, unsigned=True))  #message_type:原创-1、转发-2、评论-3
     ccount = db.Column(db.Text)                      #city_count:{city:count}
+    first_item = db.Column(db.Text)          # 原创 初始微博 其他类型为空
 
-    def __init__(self, topic, range, end, mtype, ccount):
+    def __init__(self, topic, range, end, mtype, ccount, first_item):
         self.topic = query 
         self.range = range
         self.end = end
         self.mtype = mtype
         self.ccount = ccount
+        self.first_item = first_item
 
 class CityRepost(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -265,7 +267,7 @@ class TopicStatus(db.Model):
 
 #网络模块--存放pagerank的计算结果
 class TopicIdentification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     rank = db.Column(db.Integer)
     userId = db.Column(db.BigInteger(11, unsigned=True))
@@ -280,6 +282,58 @@ class TopicIdentification(db.Model):
         self.identifyDate = identifyDate
         self.identifyWindow = identifyWindow
         self.identifyMethod = identifyMethod
+
+class DegreeCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class BetweenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class ClosenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
+
+class NodeDegreeUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    sorted_dict = db.Column(db.Text)
+
+    def __init__(self, topic, date, windowsize, sorted_dict):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.sorted_dict = sorted_dict
 
 # opinion module used in test
 class OpinionTestTime(db.Model):
@@ -529,6 +583,13 @@ class QuotaImportance(db.Model):
         self.end_ts = end_ts
         self.score = score # 0<=score<1
         self.weight = weight
+
+class QuotaWeight(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    weight_dict = db.Column(db.Text)
+
+    def __init__(self, weight_dict):
+        self.weight_dict = weight_dict
 
 
 #以下是语义模块（李文文看）

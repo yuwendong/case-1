@@ -366,7 +366,7 @@
 
                 <div id="radio_yaosu" style="margin:5px auto auto 20px;">
                     <div style="margin: 20px auto 10px 0px;font-size: 13px;">舆情概况</div>
-                    {% for en, zh in gaishu_yaosus.iteritems() %}
+                    {% for en, zh in gaishu_yaosus['yaosu'] %}
                         {% if en == yaosu %}
                             <div class="radio">
                                 <label>
@@ -385,7 +385,7 @@
                     {% endfor %}
 
                     <div style="margin: 20px auto 10px 0px;font-size: 13px;">深度分析</div>
-                    {% for en, zh in deep_yaosus.iteritems() %}
+                    {% for en, zh in deep_yaosus['yaosu'] %}
                         {% if en == yaosu %}
                             <div class="radio">
                                 <label>

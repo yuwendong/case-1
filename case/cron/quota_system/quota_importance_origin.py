@@ -10,12 +10,17 @@ def origin_quota_importance(topic, start_ts, end_ts):
                                                           QuotaImportance.start_ts==start_ts ,\
                                                           QuotaImportance.end_ts==end_ts).first()
     if not item_exist:
-        score = random.random()
-        weight = 0.125
+        score = 0
+        weight = 0
         item = QuotaImportance(topic, start_ts, end_ts, score, weight)
         db.session.add(item)
         db.session.commit()
         print 'success save default quota_importance'
     else:
         print 'default value of quota_importance exist'
-        
+
+if __name__=='__main__':
+    topic = u'中国'
+    start_ts = 1377965700
+    end_ts = 1378051200
+    origin_quota_importance(topic, start_ts, end_ts)
