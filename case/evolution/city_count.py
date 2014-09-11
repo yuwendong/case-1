@@ -62,6 +62,7 @@ def first_select(item, end_ts):
     first_timestamp = end_ts
     for r in item:
         if r.first_item:
+            print 'rfirst_item', r.first_item
             rfirst_item = json.loads(r.first_item)
             try:
                 if (rfirst_item['timestamp'] <= first_timestamp):

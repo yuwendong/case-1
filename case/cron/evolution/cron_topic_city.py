@@ -88,11 +88,11 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                 print 'count:',count
                 #for r in weibo_results():
                 #    print r['_id']
+                print 'v', v
                 for weibo_result in weibo_results():
-                    if ((v == 1) or (v == 4)):
-                        if (weibo_result['timestamp'] <= first_timestamp) and (weibo_result['message_type'] == 1):
-                            first_timestamp = weibo_result['timestamp']
-                            first_item = weibo_result
+                    if (weibo_result['timestamp'] <= first_timestamp ):
+                        first_timestamp = weibo_result['timestamp']
+                        first_item = weibo_result
 
                     #print weibo_result['geo']
                     if geo2city(weibo_result['geo']):
