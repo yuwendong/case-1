@@ -93,7 +93,7 @@ def info2map(infos):
 def topSelect(total_count):
     total_count_list_reverse = []
     total_count_list_reverse = sorted(total_count.iteritems(), key = lambda (k, v):v, reverse = True)
-
+    return total_count_list_reverse
 def readPropagateSpatial(stylenum, topic, end_ts , during):
     """将从数据库中读取的数据转化为map_data
     """
@@ -135,7 +135,6 @@ def ajax_spatial():
 
         if global_max_count < max_count:
             global_max_count = max_count
-
         try:
             if first_item['timestamp'] <= global_first_timestamp:
                 global_first_timestamp = first_item['timestamp']
