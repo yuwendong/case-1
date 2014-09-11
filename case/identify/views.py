@@ -13,7 +13,8 @@ from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
 
-from utils import read_topic_rank_results
+from utils import read_topic_rank_results, read_degree_centrality_rank ,\
+                  read_betweeness_centrality_rank, read_closeness_centrality_rank
 
 TOPK = 1000
 Minute = 60
@@ -104,6 +105,45 @@ def network_rank():
         rank_method = 'pagerank'
 
     results = read_topic_rank_results(topic, topn, rank_method, date, windowsize)
+    return json.dumps(results)
+
+@mod.route('/degree_centrality_rank/')
+def node_degree_rank():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    windowsize = (end_ts - start_ts + 900) / Day
+    date = ts2datetime(end_ts)
+
+    results = read_degree_centrality_rank(topic, date, windowsize)
+    return json.dumps(results)
+
+@mod.route('/betweeness_centrality_rank/')
+def betweeness_degree_rank():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    windowsize = (end_ts - start_ts + 900) / Day
+    date = ts2datetime(end_ts)
+
+    results = read_betweeness_centrality_rank(topic, date, windowsize)
+    return json.dumps(results)
+
+@mod.route('/closeness_centrality_rank/')
+def closeness_centrality_rank():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    windowsize = (end_ts - start_ts + 900) / Day
+    date = ts2datetime(end_ts)
+
+    results = read_closeness_centrality_rank(topic, date, windowsize)
     return json.dumps(results)
 
 def _utf8_unicode(s):

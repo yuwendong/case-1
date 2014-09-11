@@ -61,7 +61,8 @@ def pagerank_rank(top_n, date, topic_id, window_size):
     iter_count = PAGERANK_ITER_MAX
 
     sorted_uids, all_uid_pr = pagerank(job_id, iter_count, input_tmp_path, top_n) # 排序的uid的序列
-
+    print 'top_n:', top_n
+    print 'len(sorted_uid):', len(sorted_uids)
     topicname = acquire_topic_name(topic_id)
     if not topicname:
         return data
@@ -88,8 +89,8 @@ def prepare_data_for_degree(topic_id, date, window_size):
 
     return g.degree() # 返回所有节点的度
 
-def prepare_data_for_pr(topic_id, date, window_size): # ？？？为什么把方向破坏了
-    tmp_file = tempfile.NamedTemporaryFile(delete=False) # 用来做什么？！----存放pagerank计算过程生成的value数据？
+def prepare_data_for_pr(topic_id, date, window_size):
+    tmp_file = tempfile.NamedTemporaryFile(delete=False)
 
     topic = acquire_topic_name(topic_id)
     if not topic:
@@ -130,7 +131,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, k
         key_users = []
 
     G, gg = make_network(topic, date, window_size)
-
+    print 'G:', len(G)
+    print 'gg:', len(gg)
     # community detection, http://perso.crans.org/aynaud/communities/, undirected graph
     import community
     partition = community.best_partition(gg)
@@ -141,12 +143,15 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, k
         return ''
 
     node_degree = nx.degree(G)
-
-    G = cut_network(G, node_degree) # 筛选出节点数>=2的节点数
-    gg = cut_network(gg, node_degree)
+    G.remove_edges_from(G.selfloop_edges())
+    gg.remove_edges_from(G.selfloop_edges())
+    G = cut_network(G, node_degree, 1) # 筛选出节点数>=2的节点数
+    gg = cut_network(gg, nx.degree(gg), 1)
+    print 'G:',len(G.edges())
+    print 'gg:', len(gg.edges())
     
     print 'start computing quota'
-    compute_quota(G, gg, date, window_size, topic) # compute quota
+    compute_quota(G, gg, date, window_size, topic, all_uid_pr) # compute quota
     print 'quota computed complicated'
 
     gexf = Gexf("Yang Han", "Topic Network")
@@ -189,7 +194,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, k
         #_node.addAttribute('timestamp', str(uid_ts[uid]))
 
     for edge in G.edges():
-        start, end = edge # (repost_uid, source_uid)----顺序好像反着的？！
+        start, end = edge # (repost_uid, source_uid)
         start_id = node_id[start]
         end_id = node_id[end]
         graph.addEdge(str(edge_counter), str(start_id), str(end_id))
@@ -197,8 +202,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, k
 
     return etree.tostring(gexf.getXML(), pretty_print=True, encoding='utf-8', xml_declaration=True) # 生成序列化字符串
 
-def cut_network(g, node_degree): # 筛选出节点度数大于等于2的节点，作为绘图的展示节点
-    degree_threshold = 2
+def cut_network(g, node_degree, degree_threshold): # 筛选出节点度数大于等于2的节点，作为绘图的展示节点
+    # degree_threshold = 1
     for node in g.nodes():
         degree = node_degree[node]
         if degree < degree_threshold:
