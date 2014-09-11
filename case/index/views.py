@@ -31,10 +31,12 @@ def get_pointIntervals():
     return [{'zh': u'15分钟', 'en': 900}, {'zh': u'1小时', 'en': 3600}, {'zh': u'1天', 'en': 3600 * 24}]
 
 def get_gaishu_yaosus():
-    return {'zhibiao': u'指标分析', 'gaishu': u'概述分析'}
+    return {'yaosu': (('gaishu', u'概述分析'), ('zhibiao', u'指标分析'))}
 
 def get_deep_yaosus():
-    return {'time': u'时间分析' , 'area': u'地域分析', 'moodlens': u'情绪分析', 'network': u'网络分析', 'semantic': u'语义分析'}
+    return {'yaosu': (('time', u'时间分析'), ('area', u'地域分析'), \
+                      ('moodlens', u'情绪分析'), ('network', u'网络分析'), \
+                      ('semantic', u'语义分析'))}
 
 default_timerange = get_default_timerange()
 default_topic = get_default_topic()
