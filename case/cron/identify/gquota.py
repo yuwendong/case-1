@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf-8')
 import math
 from scipy import linalg
 import numpy as np
-
+from collections import Counter
 
 from SSDB import SSDB 
 from config import db, SSDB_HOST, SSDB_PORT
@@ -75,13 +75,33 @@ def get_powerlaw(dhistogram, prekey):
     # 保存回归参数
     return t[0][0]
 
-def compute_quota(G, gg ,date, windowsize, topic):
+def get_counter(value_dict):
+    value_list = []
+    for uid in value_dict:
+        v = value_dict[uid]
+        value_list.append(v)
+    cnt = Counter()
+    for v in value_list:
+        cnt[v] += 1
+        
+    return cnt
+
+def compute_quota(G, gg ,date, windowsize, topic, all_uid_pr):
     prekey = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)
     
     #print 'G_nodes:',len(G.nodes())
     #print 'gg_nodes:', len(gg.nodes())
     #无向图的最大连通子图
-   
+    '''
+    indegree = nx.in_degree_centrality(G)
+    #print 'indegree:', indegree
+    indegree_histogram = get_counter(indegree)
+    save_quota(prekey+'_indegree_histogram', indegree_histogram)
+    outdegree = nx.out_degree_centrality(G)
+    #print 'outdegree:', outdegree
+    outdegree_histogram = get_counter(outdegree)
+    save_quota(prekey+'_outdegree_histogram', outdegree_histogram)
+    
     HH = nx.connected_component_subgraphs(gg)
     maxhn = 0
     for h in HH:
@@ -92,32 +112,37 @@ def compute_quota(G, gg ,date, windowsize, topic):
 
     ndegree = G.degree()
     # 节点度，dict{nodes:value}
-    get_key_user('node_degree', topic, date, windowsize, ndegree)
+    #get_key_user('node_degree', topic, date, windowsize, ndegree)
     #根据节点度排序，获取节点度层面的关键用户
 
     dCentrality = nx.degree_centrality(G)
     # 度中心性 dict{nodes:value} 度量重要性
-    get_key_user('degree_centrality', topic, date, windowsize, dCentrality)
-    # 根据度中心性排序，获取度中心性层面的关键用户
+    
     avedc = get_ave(dCentrality)
     #平均度中心性 float
     save_quota(prekey+'_ave_degree_centrality', avedc)
-    
-    bCentrality = nx.betweenness_centrality(G)
+    '''
+    maxwcc = nx.weakly_connected_component_subgraphs(G).next()
+    print 'maxwcc_G:', len(maxwcc)
+
+    bCentrality = nx.betweenness_centrality(maxwcc)
     # 介数中心 dict{nodes:value},度量其对网络流程的重要性
-    get_key_user('betweeness_centrality', topic, date, windowsize, bCentrality)
-    # 获取介数中心层面对应的关键用户
+    
     avebc = get_ave(bCentrality)
     # 平均介数中心性 float
     save_quota(prekey+'_ave_betweenness_centrality', avebc)
-
+    '''
     cCentrality = nx.closeness_centrality(G)
     # 紧密中心性 dict{nodes:value},度量感知整个网络流程事件的位置
-    get_key_user('closeness_centrality', topic, date, windowsize, cCentrality)
-    # 获取紧密中心性层面的关键用户
     avecc = get_ave(cCentrality)
     # 平均紧密中心性 float
     save_quota(prekey+'_ave_closeness_centrality', avecc)
+    
+    # get_key_user module
+    get_key_user('degree_centrality', topic, date, windowsize, dCentrality, bCentrality, cCentrality, all_uid_pr)
+    get_key_user('betweeness_centrality', topic, date, windowsize, dcentrality, bCentrality, cCentrality, all_uid_pr)
+    get_key_user('closeness_centrality', topic, date, windowsize, dCentrality, bCentrality, cCentrality, all_uid_pr)
+
     
     eCentrality = nx.eigenvector_centrality_numpy(G)
     # 特征向量中心性
@@ -127,16 +152,16 @@ def compute_quota(G, gg ,date, windowsize, topic):
     # 平均特征向量中心性 float
     save_quota(prekey+'_eigenvector_centrality', aveec)
     
-
     avespl = nx.average_shortest_path_length(H)
-    # 平均最短路径长度 float
+    # 平均最短路径长度 float--only for connected gragh
     save_quota(prekey+'_average_shortest_path_length', avespl)
    
-
     dhistogram = nx.degree_histogram(G)
     # 节点度分布（从一到最大度的出现频次）
     save_quota(prekey+'_degree_histogram', dhistogram)
-  
+
+
+    
     Hdhistogram = nx.degree_histogram(H)
     # histogram of H-----max connected graph
     save_quota(prekey + '_H_degree_histogram', Hdhistogram)
@@ -174,16 +199,19 @@ def compute_quota(G, gg ,date, windowsize, topic):
     avegec = get_ave(geccentricity)
     save_quota(prekey+'_ave_eccentricity',avegec)
 
-
-    sconnectedn = nx.number_strongly_connected_components(G)
-    # 强连通子图数量  int-n
-    save_quota(prekey+'_number_strongly_connected_components', sconnectedn)
-
-    wconnectesn = nx.number_weakly_connected_components(G)
-    # 弱连通子图数量 int-n
-    save_quota(prekey+'_number_weakly_connected_components', wconnectesn)
     
-
+    #sconnectedn = nx.number_strongly_connected_components(G)
+    # 强连通子图数量  int-n
+    #save_quota(prekey+'_number_strongly_connected_components', sconnectedn)
+    maxscc = nx.strongly_connected_component_subgraphs(G).next()
+    print 'maxwcc:', len(maxwcc.nodes())
+    #wconnectesn = nx.number_weakly_connected_components(G)
+    # 弱连通子图数量 int-n
+    
+    #save_quota(prekey+'_number_weakly_connected_components', wconnectesn)
+    maxwcc = nx.weakly_connected_component_subgraphs(G).next()
+    print 'maxwcc_G:', len(maxwcc)
+    
     aveclustering = nx.average_clustering(gg)
     # 平均聚类系数
     save_quota(prekey+'_average_clustering', aveclustering)
@@ -198,19 +226,46 @@ def compute_quota(G, gg ,date, windowsize, topic):
     GG.remove_edges_from(GG.selfloop_edges())
     #print 'test_edges:',len(GG.edges())
     kcore = nx.core_number(GG)
+    #print 'kcore:', kcore
     # k_score k核数
-    avekc = get_ave(kcore)
-    save_quota(prekey + '_ave_k_core', avekc)
-   
+    #avekc = get_ave(kcore)
+    
+    maxkc = get_max(kcore)
+    save_quota(prekey + '_max_k_core', maxkc)
+    '''
+def get_max(result_dict):
+    for node_id in result_dict:
+        max_result = 0
+        value = result_dict[node_id]
+        if value > max_result:
+            max_result = value
+    return max_result
 
-def get_key_user(class_name, topic, date, windowsize, sort_dict): # 根据对应指标获取排序在前100的用户
-    result = sorted(sort_dict.iteritems(), key=lambda (k, v):v, reverse=True)
-    sort_result = result[:100]
-    save_key_user(class_name, topic, date, windowsize, sort_result)
+def get_key_user(class_name, topic, date, windowsize, dCentrality, bCentrality, cCentrality, all_uid_pr): # 根据对应指标获取排序在前100的用户
+    rank_method = ['degree_centrality', 'betweeness_centrality', 'closeness_centrality', 'page_rank']
+    for method in rank_method:
+        if method=='degree_centrality':
+            sorted_dict = dCentrality
+        elif method=='betweeness_centrality':
+            sorted_dict = bCentrality
+        elif method=='closeness_centrality':
+            sorted_dict = cCentrality
+        result = sorted(sort_dict.iteritems(), key=lambda (k, v):v, reverse=True)
+        sort_result = result[:100]
+        save_key_user(class_name, topic, date, windowsize, sort_result, dCentrality, bCentrality, cCentrality, all_uid_pr)
 
-def save_key_user(classname, topic, date, windowsize, sorted_dict): # 将排序结果存放在mysql中
+def save_key_user(classname, topic, date, windowsize, sorted_dict, dCentrality, bCentrality, cCentrality, all_uid_pr): # 将排序结果存放在mysql中
+    results_dict = []
     if classname == 'degree_centrality':
-        item = DegreeCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        for k in sorted_dict:
+            uid = k[0]
+            dc = k[1]
+            bc = bCentrality[k[0]]
+            cc = cCentrality[k[0]]
+            prv = all_uid_pr[k[0]]
+            row = [uid, dc, bc, cc, prv]
+            results_dict.append(row)
+        item = DegreeCentralityUser(topic, date, windowsize, json.dumps(results_dict))
         item_exist = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
                                                                    DegreeCentralityUser.date==date ,\
                                                                    DegreeCentralityUser.windowsize==windowsize).first()
@@ -219,7 +274,15 @@ def save_key_user(classname, topic, date, windowsize, sorted_dict): # 将排序�
         db.session.add(item)
         db.session.commit()
     elif classname == 'betweeness_centrality':
-        item = BetweenessCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        for k in sorted_dict:
+            uid = k[0]
+            dc = dCentrality[k[0]]
+            bc = k[1]
+            cc = cCentrality[k[0]]
+            prv = all_uid_pr[k[0]]
+            row = [uid, dc, bc, cc, prv]
+            results_dict.append(row)
+        item = BetweenessCentralityUser(topic, date, windowsize, json.dumps(results_dict))
         item_exist = db.session.query(BetweenessCentralityUser).filter(BetweenessCentralityUser.topic==topic ,\
                                                                        BetweenessCentralityUser.date==date ,\
                                                                        BetweenessCentralityUser.windowsize==windowsize).first()
@@ -228,7 +291,15 @@ def save_key_user(classname, topic, date, windowsize, sorted_dict): # 将排序�
         db.session.add(item)
         db.session.commit()
     elif classname == 'closeness_centrality':
-        item = ClosenessCentralityUser(topic, date, windowsize, json.dumps(sorted_dict))
+        for k in sorted_dict:
+            uid = k[0]
+            dc = dCentrality[k[0]]
+            bc = bCentrality[k[0]]
+            cc = k[1]
+            prv = all_uid_pr[k[0]]
+            row = [uid, dc, bc, cc, prv]
+            results_dict.append(row)
+        item = ClosenessCentralityUser(topic, date, windowsize, json.dumps(results_dict))
         item_exist = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
                                                                       ClosenessCentralityUser.date==date ,\
                                                                       ClosenessCentralityUser.windowsize==windowsize).first()
@@ -236,16 +307,7 @@ def save_key_user(classname, topic, date, windowsize, sorted_dict): # 将排序�
             db.session.delete(item_exist)
         db.session.add(item)
         db.session.commit()
-    elif classname == 'node_degree': 
-        item =NodeDegreeUser(topic, date, windowsize, json.dumps(sorted_dict))
-        item_exist = db.session.query(NodeDegreeUser).filter(NodeDegreeUser.topic==topic ,\
-                                                             NodeDegreeUser.date==date ,\
-                                                             NodeDegreeUser.windowsize==windowsize).first()
-        if item_exist:
-            db.session.delete(item_exist)
-        db.session.add(item)
-        db.session.commit()
-        
+
     print 'save success:', classname
 
 def save_quota(key, value):

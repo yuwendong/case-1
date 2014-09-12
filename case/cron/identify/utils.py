@@ -68,13 +68,17 @@ def save_rank_results(sorted_uids, identifyRange, method, date, window, topicnam
     db.session.commit()
     for uid in sorted_uids:
         user = acquire_user_by_id(uid)
+        count += 1
         if not user:
-            continue
-        count = count + 1
-        name = user['name']
-        location = user['location']
-        count1 = user['count1']
-        count2 = user['count2']
+            name = 'Unknown'
+            location = 'Unknown'
+            count1 = 'Unknown'
+            count2 = 'Unknown'
+        else:
+            name = user['name']
+            location = user['location']
+            count1 = user['count1']
+            count2 = user['count2']
         #read from external knowledge database
         status = user_status(uid)
         row = (rank, uid, name, location, count1, count2, status)
@@ -87,6 +91,7 @@ def save_rank_results(sorted_uids, identifyRange, method, date, window, topicnam
         rank += 1
     db.session.commit()
     print 'done'
+    print 'len(data):', len(data)
     return data
 
 
