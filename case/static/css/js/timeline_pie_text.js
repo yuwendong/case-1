@@ -274,7 +274,7 @@
         calculable : true,
         series : [
             {
-                name: '子话题比例',
+                name:'访问来源',
                 type:'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
@@ -417,6 +417,7 @@
             var html = '';
             for (var i =0 ;i<data.length; i++){
                 var html = '';
+                var html1 = '';
                 var m = i+1;
                 var keyword = [];
                 var s = i.toString();
@@ -449,16 +450,21 @@
                     html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
                     html += '</tr>';
                 }
+                
+                    
+                              
                 else{
                     html += '<tr value='+tagin+'>';
                     html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
                     html += '</tr>';
-                }
 
+                    html1 += '<tr>';
+                    html1 += '<td><b>'+m+'</b></td><td><b style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
+                    html1 += '</tr>';
+                }
                  $("#alternatecolor").append(html);
+                 $("#alternate").append(html1);
             }
-           
-           
         }
         function connect(data){
             var value_data = data;

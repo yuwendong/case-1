@@ -31,7 +31,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
         var content = '';
         var begin = new Date(parseInt(data['begin']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
         var end = new Date(parseInt(data['end']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
-        content += ' <p style="padding-top:25px"> 九一八发生于' + '<b style="background:#ACD6FF  ">'+data['event_time']+'</b>' + '，事件发生地点为' +'<b style="background:#ACD6FF  ">'+data['event_spot']+'</b>'  + '。' + '<b style="background:#ACD6FF  ">'+data['event_summary']+'</b>';
+        content += ' <p style="padding-top:25px ;text-indent:2em">九一八发生于' + '<b style="background:#ACD6FF  ">'+data['event_time']+'</b>' + '，事件发生地点为' +'<b style="background:#ACD6FF  ">'+data['event_spot']+'</b>'  + '。' ;
         content += '该事件的舆情信息起始于' + '<b style="background:#ACD6FF  ">'+begin+'</b>' + '，终止于' + '<b style="background:#ACD6FF  ">'+end+'</b>';
         content += '，共' +data['user_count'] + '人参与信息发布与传播，' + '舆情信息累计' + data['count']+ '条。';
         content += '参与人群集中于' + '<b style="background:#ACD6FF  ">'+data['area'] +'</b>'+ '。';
@@ -43,7 +43,19 @@ $(document).ready(function(){   //网页加载时执行下面函数
         content += '' + '网民情绪分布情况为：' ;
         for(var mood in data['moodlens_pie']){
             // console.log(mood);
-            content += mood+':' + '<b style="background:#ACD6FF  ">'+data['moodlens_pie'][mood]+'</b>'+',';
+            if(mood== "angry"){
+                content += '愤怒'+':' + '<b style="background:#ACD6FF  ">'+data['moodlens_pie'][mood]+'</b>'+',';
+            }
+            else if(mood = "happy"){
+                content += '高兴'+':' + '<b style="background:#ACD6FF  ">'+data['moodlens_pie'][mood]+'</b>'+',';
+            }
+            else if(mood = 'sad'){
+                content += '悲伤'+':' + '<b style="background:#ACD6FF  ">'+data['moodlens_pie'][mood]+'</b>'+',';
+            }
+            else {
+                content += '';
+            }
+            
         }
         content +=  '。';
         content += '代表性媒体报道如鱼骨图所示。</p>'
