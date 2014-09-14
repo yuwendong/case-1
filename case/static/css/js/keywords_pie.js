@@ -1,7 +1,11 @@
+
 $(document).ready(function(){   //网页加载时执行下面函数
            gettext_data();
         })
-    var query = "中国";
+    var query =QUERY;
+    var begin_ts = START_TS;
+    var end_ts =  END_TS;
+    var during = POINT_INTERVAL;
     function gettext_data() {
         var result=[];
         $.ajax({
@@ -9,24 +13,52 @@ $(document).ready(function(){   //网页加载时执行下面函数
             type: "GET",
             dataType:"json",
             success: function(data){
-                console.log(data);
+                // console.log(data);
                 writ_text(data);
                 weibo_page(data);
+                 bindTabClick();
                 $("#summary_tooltip").tooltip();
             }
         });       
     }
+       function bindTabClick(){
+        
+        $("#Tablebselect").children("a").unbind();
+
+        $("#Tableselect").children("a").click(function() {
+            
+            var select_a = $(this);
+            var unselect_a = $(this).siblings('a');
+            if(!select_a.hasClass('curr')) {
+                select_a.addClass('curr');
+                unselect_a.removeClass('curr');
+                style = select_a.attr('value');
+              
+                getweibos_data(style);
+
+            }
+        });
+    }
 
     function writ_text(data){
         var text = data;
-        console.log(data);
+        // console.log(data);
         var html = '';
 
         html += '<h4><b>标签:'+data['tag']+'</b></h4><br/>';
-        html += '<h4 style="padding-top:10px"><b>事件概述</b></h4>';
+        html += '<h4 style="padding-top:10px"><b>事件摘要</b></h4>';
         // html += '<span class="pull-right" style="margin: -10px auto -10px auto;">';
         // html += '<input type="checkbox" name="abs_rel_switch" checked></span>';
         $('#title_text').append(html);
+        var keyhtml = '';  
+
+        keyhtml += '<h5 style="padding-top:5px;margin-left:20px"><b>时间关键字:</b>'
+        // console.log(data['key_words']);
+        for(var k in data['key_words']){
+            keyhtml += k+',';
+        }
+        keyhtml +='</h5>';        
+        $('#tabkeywords').append(keyhtml);
         
         var content = '';
         var begin = new Date(parseInt(data['begin']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
@@ -60,9 +92,197 @@ $(document).ready(function(){   //网页加载时执行下面函数
         content +=  '。';
         content += '代表性媒体报道如鱼骨图所示。</p>'
         $("#keywords_text").append(content);
+        draw_line()
         //content += '      网民代表性观点列举如下：' + opinion
     }
     
+
+
+            var happy_count = [];
+            var sad_count = [];
+            var angry_count = [];
+            var total_count = [];
+            var stramp_count = [];
+            var stramp = [];
+            var happy = [];
+            var sad = [];
+            var angry = [];
+
+
+            var folk_value = [];
+            var folk_count = [];
+            var folk = [];
+           
+            var media_value = [];
+            var media_count = [];
+            var media = [];
+
+            var opinion_leader_value = [];
+            var opinion_leader_count = [];
+            var opinion_leader = [];
+
+            var other_value = [];
+            var other_count = [];
+            var other = [];
+
+            var oversea_value = [];
+            var oversea_count = [];
+            var oversea = [];
+
+            var total = [];
+            var total_allarea = [];
+        function draw_line(){
+
+            var emotion_type = "global";
+            var names = {'happy': '高兴','angry': '愤怒','sad': '悲伤'};
+
+            for( var time_s = 0;begin_ts + time_s * during<end_ts; time_s++){
+                var ts = begin_ts + time_s * during ;
+                var ajax_url = "/moodlens/data/?ts=" + ts + '&during=' + during + '&emotion=' + emotion_type + '&query=' + query;
+                $.ajax({
+                    url: ajax_url,
+                    type: "GET",
+                    dataType:"json",
+                    async:false,
+                    success: function(data){
+                        // console.log(data);
+                        happy = data['happy'][1]; 
+                        var ns =  data['happy'][0]; 
+                        // console.log(ns);                   
+                        stramp =  new Date(ns).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g, "").replace(/下午/g, "");                      
+                        sad = data['sad'][1];
+                        angry = data['angry'][1];
+                        total =  sad + angry;
+                         stramp_count.push(stramp);
+                         happy_count.push(happy);
+                         angry_count.push(angry);
+                         sad_count.push(sad);
+                         total_count.push(total); 
+                        // for(var name in names){
+                        //     var count = data[name][1];
+                        //     if(name in data){
+                                
+                        //         // console.log(name);
+   
+                        //         if(name = 'happy'){
+                        //         happy_count.push(count); 
+                        //          // console.log(happy_count);                              
+                        //     }
+                        //         if(name = 'angry'){
+                        //         angry_count.push(count);
+                        //     }
+                        //         if(name = 'sad'){
+                        //         sad_count.push(count);
+                        //     }
+                        //         }                           
+                        // }
+                    }
+
+                });
+           }
+    var topic = "中国";
+    var style;
+    var style_list = [1,2,3];
+   
+    for( var time_s = 0;begin_ts + time_s * during<end_ts; time_s++){
+         var ts = begin_ts + time_s * during ;
+             var all = 0;
+        for (var i =0; i < style_list.length; i++){
+            style = style_list[i];
+            // console.log(style);
+
+        $.ajax({
+            url: "/propagate/total/?end_ts=" + end_ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
+            type: "GET",
+            dataType:"json",
+            async:false,
+            success: function(data){
+                console.log(data);
+
+                folk_value = data["dcount"];
+                folk = folk_value["folk"];
+
+
+                media_value = data["dcount"];
+                media = media_value["media"]; 
+             
+                opinion_leader_value = data["dcount"];
+                opinion_leader = opinion_leader_value["opinion_leader"]; 
+                        
+                other_value = data["dcount"];
+                other = other_value["other"];
+            
+                oversea_value = data["dcount"];
+                oversea = oversea_value["oversea"]; 
+                
+            }
+        });
+        all_area = folk+media+opinion_leader+other+oversea;
+        // console.log(all_area);
+        all += all_area;
+
+        }
+            // console.log(all);
+                total_allarea.push(all);
+            
+                  }
+                  drawpicture(stramp_count,total_count,total_allarea);
+   }
+ function drawpicture(stramp_count,total_count,total_allarea){
+    $('#line').highcharts({
+        chart: {
+            type: 'spline',
+         
+        },
+        title: {
+            text: '',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: stramp_count,
+                
+        labels: {
+                step: 5
+            }
+          },
+        yAxis: {
+            title: {
+                text: '条'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '条'
+        },
+        legend: {
+            layout: 'horizontal',
+            align: 'center',
+            verticalAlign: 'bottom',
+            borderWidth: 0
+        },
+        series: [{
+            name: '消极',
+            data: total_count
+        },{
+            name: '微博总数',
+            data: total_allarea
+        }]
+    });
+}
+
+
+
+
+
+
     function weibo_page(data){          //关键微博翻页函数
         var current_data = data;
         var page_num = 10;

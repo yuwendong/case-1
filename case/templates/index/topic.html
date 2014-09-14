@@ -206,22 +206,8 @@
             width: 130px;
             display: inline;
         }
-        /*
-        #control-pane {
-            position: relative;
-            float: left;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        #control-pane > div {
-            margin: 10px;
-            overflow-x: auto;
-        }
 
         #control-pane-rightdown {
-            top: 276px;
-            right: 2px;
-            position: absolute;
-            width: 230px;
             background-color: rgb(249, 247, 237);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
@@ -230,8 +216,7 @@
         }
         #control-pane-rightdown > div {
             margin: 10px;
-            overflow-x: auto;
-        }*/
+        }
         .line {
             clear: both;
             display: block;
@@ -319,33 +304,19 @@
         <div class="tabUnit">
             <div class="tabConts"></div>
             <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
-            <table class="mtable" id="mstable">
-            </table>
-        <h5 style="margin-left:30px"><b>无向图</b></h5>
-
-        <table class="mtable" id="mstable1">
-
-        </table>
-        <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
-
-        <table class="mtable" id="mstable2">
-
-        </table>
+            <table class="mtable" id="mstable"></table>
+            <h5 style="margin-left:30px"><b>无向图</b></h5>
+            <table class="mtable" id="mstable1"></table>
+            <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
+            <table class="mtable" id="mstable2"></table>
         </div>
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
-            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
-            <span id="peak_trend_tooltip"></span>
-            <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
-            </span>
-        </div>
-
+        <button class="btn btn-primary btn-xs" style="margin-left:18px" onclick='drawpicture()'>最短路径长度曲线</button>
+        <button class="btn btn-primary btn-xs" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
         <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
-            </div>
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
             <div class="tabConts">
                 <div id="line" style="height:300px"></div>
             </div>
@@ -355,12 +326,22 @@
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
         <div style="height:50px">
             <div id="loading_current_data" class="alert alert-info">
                 系统繁忙计算中，请稍后...
             </div>
+            <label>
+                <div id="current_process" class="progress progress-striped active"></div>
+            </label>
+        </div>
+        <div style="height:50px">
+            <button class="btn btn-primary btn-xs" onclick='get_pagerank()'>pagerank排名</button>
+            <button class="btn btn-primary btn-xs" onclick='get_centrelity()'>度中心性排名</button>
+            <button class="btn btn-primary btn-xs" onclick='betweeness_centrality_rank()'>介数排名</button>
+            <button class="btn btn-primary btn-xs" onclick='closeness_centrality_rank()'>紧密中心性排名</button>
+            
             <label>
                 <div id="current_process" class="progress progress-striped active"></div>
             </label>
@@ -384,15 +365,14 @@
         </div>
         -->
         <div id="rank_table">
-            <table class="table table-bordered">
-            </table>
+            <table class="table table-bordered"></table>
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
     <div class="well" style="width:1033px; position: relative;height: 684px;">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <div style="position: relative; height: 40px;">
             <div class="control-pane">
@@ -516,25 +496,24 @@
                 <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
             </label>
             <div class="sigma-expand" id="sigma-graph"></div>
-            
-            <div style="float:left;width: 250px;">
-                <h4 class="underline">节点信息</h4>
-                <div>
-                用户昵称: <span id="nickname"></span>
+                <div style="float:left;width: 250px;">
+                    <h4 class="underline">节点信息</h4>
+                    <div>
+                    用户昵称: <span id="nickname"></span>
+                    </div>
+                    <div>
+                    用户所在地: <span id="location"></span>
+                    </div>
+                    <div>
+                    用户微博链接: <span id="user_link"></span>
+                    </div>
+                    <div>
+                    用户Pagerank值: <span id="pagerank"></span>
+                    </div>
+                    <div>
+                    用户所属社区: <span id="community"></span>
+                    </div>
                 </div>
-                <div>
-                用户所在地: <span id="location"></span>
-                </div>
-                <div>
-                用户微博链接: <span id="user_link"></span>
-                </div>
-                <div>
-                用户Pagerank值: <span id="pagerank"></span>
-                </div>
-                <div>
-                用户所属社区: <span id="community"></span>
-                </div>
-            </div>
         </div>
     </div>
 {% endblock content %}
