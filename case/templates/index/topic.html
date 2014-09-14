@@ -158,7 +158,7 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 200px;
+            width: 230px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
@@ -319,7 +319,7 @@
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
         <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
-        <div class="tabUnit">
+        <div class="tabUnit" style="height:220px">
             <div class="tabConts"></div>
             <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
             <table class="mtable" id="mstable">
@@ -338,14 +338,11 @@
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
-            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
-            <span id="peak_trend_tooltip"></span>
-            <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
-            </span>
-        </div>
-
+         
+                    <button class="btn btn-primary btn-xs" style="margin-left:18px"
+                    onclick='drawpicture()'>最短路径长度曲线</button>
+                    <button class="btn btn-primary btn-xs" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
+         
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
             </div>
@@ -361,9 +358,12 @@
         <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
         <div style="height:50px">
-            <div id="loading_current_data" class="alert alert-info">
-                系统繁忙计算中，请稍后...
-            </div>
+            
+                    <button class="btn btn-primary btn-xs" onclick='get_pagerank()'>pagerank排名</button>
+                    <button class="btn btn-primary btn-xs" onclick='get_centrelity()'>度中心性排名</button>
+                    <button class="btn btn-primary btn-xs" onclick='betweeness_centrality_rank()'>介数排名</button>
+                    <button class="btn btn-primary btn-xs" onclick='closeness_centrality_rank()'>紧密中心性排名</button>
+            
             <label>
                 <div id="current_process" class="progress progress-striped active"></div>
             </label>
@@ -400,8 +400,8 @@
         <form class="form-inline">
             <img class="img-polaroid">
             <!--<label><input type="checkbox" checked="true"> 动画演示 </label> -->
-            <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture"></i><h5>生成并查看网络</h5></a1>
-            <a2 href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><i class="icon-picture"></i><h5>下载图片</h5></a2>
+            <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-primary btn-xs"><i class="icon-picture"></i><h5>生成并查看网络</h5></a1>
+            <a2 href="javascript:void(0);" onclick="download();" class="btn btn-primary btn-xs" ><i class="icon-picture"></i><h5>下载图片</h5></a2>
         </form>
 
         <div id="network" class="collapse out" style="position: relative;">

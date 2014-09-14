@@ -1,6 +1,8 @@
 var START_TS = 1377964800;
 var END_TS = 1378051200;
 var DURING_INTERGER = 60 * 60;
+var total_count = [];
+var first_city = [];
 
 // Date format
 Date.prototype.format = function(format) { 
@@ -170,15 +172,58 @@ CaseMap.prototype.initPullDrawMap = function(sta){
         myChart.hideLoading();
         var data_count = data["count"];
         var max_count = data["max_count"];
-        var total_count = data["total_count"];
-        var first_city = data["first_city"]
+            total_count = data["total_count"];
+            first_city = data["first_city"]
+        console.log(total_count);
+        console.log(first_city);
+        console.log(total_count[0][0]);
         var format_data = that.dataFormatter(data_count);
-        console.log("first_city" + first_city);
-        console.log("total_count" + total_count);
+        // console.log("first_city" + first_city);
+        // console.log("total_count" + total_count);
         drawWholeMap(that, format_data, max_count, myChart);
+        drawtable(total_count);
+        source_data(first_city);
     }
 }
 
+    function drawtable(total_count){
+     var cellCount = 2;
+      var table = '<table class="table table-bordered">';
+      var thead = '<thead><tr><th>排名</th><th>省份</th><th>微博数量</th></tr></thead>';
+      var tbody = '<tbody>';
+      for (var i = 0;i < 10;i++) {
+                 var tr = '<tr>';
+                 var s = i + 1;
+        //   if (total_count[i][3].match("海外")) {
+        // tr = '<tr class="success">';
+        //   }
+            var td = '<td><span class="label label-important">'+ s +'</span></td>';
+              tr += td;
+
+        for(var j = 0;j < cellCount;j++) {
+         if(j == 0){
+             td = '<td>'+total_count[i][j]+'</td>';
+        }
+        else{
+             td = '<td>'+total_count[i][j]+'</td>';
+        }
+        tr += td;
+                }
+          tr += '</tr>';
+          tbody += tr;
+      }
+              
+      tbody += '</tbody>';
+      table += thead + tbody;
+      table += '</table>'
+      $("#rank_table").html(table); 
+    }
+  function source_data(first_city){
+    html = '';
+    $("#source").empty();
+    html += '传播源头:' + first_city;
+    $("#source").append(html);  
+}
 // instance method, 地区图表对比
 CaseMap.prototype.initPullDrawZoneChart = function(sta){
     var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, sta);

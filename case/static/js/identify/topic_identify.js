@@ -15,14 +15,16 @@ var y_data;
 
 
 function get_network_infor(){
-var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
+  var topic = "中国";
+  var start_ts = 1377965700;
+  var end_ts = 1378051200;
+
+  var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
  'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
  'diameter','power_law_distribution','number_weakly_connected_components',
  'degree_assortativity_coefficient','average_clustering','ave_k_core','ratio_H2G'];
-var topic = "中国";
-var start_ts = 1377965700;
-var end_ts = 1378051200;
+
   for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key],
@@ -30,7 +32,7 @@ var end_ts = 1378051200;
         type : 'GET',
         async: false,
         success: function(data){
-
+            console.log(data);
             quota[name[key]] = data;
         }
 
@@ -71,7 +73,8 @@ var end_ts = 1378051200;
 $(document).ready(function(){
     get_network_infor();
     getnetwork_frequency();
-    drawpicture(index,value);
+     drawpicture(index,value);
+
     // switch_curr_add();
 })
 // Date format
@@ -161,59 +164,21 @@ var _ = {
 function updatePane (graph, filter) {
   // get max degree
   var maxDegree = 0,
-      maxPagerank = 0,
       categories = {};
   
   // read nodes
   graph.nodes().forEach(function(n) {
     maxDegree = Math.max(maxDegree, graph.degree(n.id));
-    maxPagerank = Math.max(maxPagerank, n.attributes.pagerank);
-    if(n.attributes.acategory in categories){
-        categories[n.attributes.acategory] += 1;
-    }
-    else{
-        categories[n.attributes.acategory] = 1;
-    }
-  });
-
-  var categoriesSorted = Object.keys(categories).sort(function(a, b){
-      return categories[b] - categories[a]
-  });
-  var categoriesSortedTop10 = categoriesSorted.slice(0, 10);
-  
-  var cluster_colors = ['#CF0072', '#ED1B24', '#F15A25', '#F8931F', '#FBB03B', '#FDEE21', '#8CC63E', '#009345', '#0171BD', '#2D2F93'];
-  var clusterid2color = {};
-  for(var i=0; i<cluster_colors.length; i+=1 ){
-      clusterid2color[categoriesSortedTop10[i]] = cluster_colors[i];
-  }
-  function contains(a, obj) {
-      for (var i = 0; i < a.length; i++) {
-          if (a[i] === obj) {
-              return true;
-          }
-      }
-      return false;
-  }
-  graph.nodes().forEach(function(n) {
-      if(contains(categoriesSortedTop10, n.attributes.acategory)){
-          n.color = clusterid2color[n.attributes.acategory];
-      }
-      else{
-          n.color = '#11c897';
-      }
-  });
+    categories[n.attributes.acategory] = true;
+  })
 
   // min degree
   _.$('min-degree').max = maxDegree;
   _.$('max-degree-value').textContent = maxDegree;
-
-  _.$('min-pagerank').max = maxPagerank * 100000000;
-  _.$('max-pagerank-value').textContent = maxPagerank * 100000000;
   
   // node category
   var nodecategoryElt = _.$('node-category');
-  // Object.keys(categories).forEach(function(c) {
-  categoriesSortedTop10.forEach(function(c) {
+  Object.keys(categories).forEach(function(c) {
     var optionElt = document.createElement("option");
     optionElt.text = c;
     nodecategoryElt.add(optionElt);
@@ -223,8 +188,6 @@ function updatePane (graph, filter) {
   _.$('reset-btn').addEventListener("click", function(e) {
     _.$('min-degree').value = 0;
     _.$('min-degree-val').textContent = '0';
-    _.$('min-pagerank').value = 0;
-    _.$('min-pagerank-val').textContent = '0';
     _.$('node-category').selectedIndex = 0;
     filter.undo().apply();
   });
@@ -287,6 +250,15 @@ function network_request_callback(data) {
         $("#loading_network_data").text("计算完成!");
         $("#sigma-graph").show();
 
+        /*
+        sigInst = sigma.init($('#sigma-graph')[0]).drawingProperties({
+            defaultLabelColor: '#fff'
+        }).graphProperties({
+            minNodeSize: 0.5,
+            maxNodeSize: 5
+        });
+        */
+
         sigma.parsers.gexf(data, {
             container: 'sigma-graph',
             settings: {
@@ -324,41 +296,8 @@ function network_request_callback(data) {
                   .apply();
               }
 
-              function applyMinPagerankFilter(e) {
-                var v = e.target.value;
-                _.$('min-pagerank-val').textContent = v;
-
-                filter
-                  .undo('min-pagerank')
-                  .nodesBy(function(n) {
-                    return n.attributes.pagerank * 100000000 >= v;
-                  }, 'min-pagerank')
-                  .apply();
-              }
-
-              function applyZhibiaoCategoryFilter(e){
-                var v = e.target.value;
-                _.$('min-degree').value = 0;
-                _.$('min-degree-val').textContent = '0';
-                _.$('min-pagerank').value = 0;
-                _.$('min-pagerank-val').textContent = '0';
-                _.$('node-category').selectedIndex = 0;
-                filter.undo().apply();
-                if(v == 'degree'){
-                    $('#min_degree_container').removeClass('hidden');
-                    $('#min_pagerank_container').addClass('hidden');
-                }
-                if(v == 'pagerank'){
-                    $('#min_pagerank_container').removeClass('hidden');
-                    $('#min_degree_container').addClass('hidden');
-                }
-              }
-
               _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
               _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+, that sucks
-              _.$('min-pagerank').addEventListener("input", applyMinPagerankFilter);  // for Chrome and FF
-              _.$('min-pagerank').addEventListener("change", applyMinPagerankFilter); // for IE10+, that sucks
-              _.$('zhibiao-category').addEventListener("change", applyZhibiaoCategoryFilter);
               _.$('node-category').addEventListener("change", applyCategoryFilter);
 
               // Start the ForceAtlas2 algorithm:
@@ -371,14 +310,14 @@ function network_request_callback(data) {
               var gravity = parseInt($('#gravity_input').val());
               var slowDown = parseInt($('#slowdown_input').val());
               var config = {
-                  'linLogMode': linLogMode,
-                  'outboundAttractionDistribution': outboundAttractionDistribution,
-                  'adjustSizes': adjustSizes,
-                  'edgeWeightInfluence': edgeWeightInfluence,
-                  'scalingRatio': scalingRatio,
-                  'strongGravityMode': strongGravityMode,
-                  'gravity': gravity,
-                  'slowDown': slowDown
+                  linLogMode: linLogMode,
+                  outboundAttractionDistribution: outboundAttractionDistribution,
+                  adjustSizes: adjustSizes,
+                  edgeWeightInfluence: edgeWeightInfluence,
+                  scalingRatio: scalingRatio,
+                  strongGravityMode: strongGravityMode,
+                  gravity: gravity,
+                  slowDown: slowDown
               }
               s.startForceAtlas2(config);
 
@@ -393,26 +332,41 @@ function network_request_callback(data) {
                   var gravity = parseInt($('#gravity_input').val());
                   var slowDown = parseInt($('#slowdown_input').val());
                   var config = {
-                      'linLogMode': linLogMode,
-                      'outboundAttractionDistribution': outboundAttractionDistribution,
-                      'adjustSizes': adjustSizes,
-                      'edgeWeightInfluence': edgeWeightInfluence,
-                      'scalingRatio': scalingRatio,
-                      'strongGravityMode': strongGravityMode,
-                      'gravity': gravity,
-                      'slowDown': slowDown
+                      linLogMode: linLogMode,
+                      outboundAttractionDistribution: outboundAttractionDistribution,
+                      adjustSizes: adjustSizes,
+                      edgeWeightInfluence: edgeWeightInfluence,
+                      scalingRatio: scalingRatio,
+                      strongGravityMode: strongGravityMode,
+                      gravity: gravity,
+                      slowDown: slowDown
                   }
                   s.configForceAtlas2(config);
                   s.startForceAtlas2();
-                  s.refresh();
               });
 
               $("#pause_layout").click(function(){
                   s.stopForceAtlas2();
               });
 
-              $("#stop_layout").click(function(){
+              $("#pause_layout").click(function(){
                   s.killForceAtlas2();
+              });
+
+              s.graph.nodes().forEach(function(n) {
+                  var id = n.id;
+                  if(id % 3 == 0){
+                      n.attributes.acategory = '0';
+                      n.color = '#11c897';
+                  }
+                  else if(id % 3 == 1){
+                      n.attributes.acategory = '1';
+                      n.color = '#fa7256';
+                  }
+                  else if(id % 3 == 2){
+                      n.attributes.acategory = '2';
+                      n.color = '#6e87d7';
+                  }
               });
 
                 // We first need to save the original colors of our
@@ -433,20 +387,7 @@ function network_request_callback(data) {
                 s.bind('clickNode', function(e) {
                   var nodeId = e.data.node.id,
                       neighbor_graph = s.graph.neighborhood(nodeId),
-                      toKeep = {},
-                      node = e.data.node;
-
-                  var node_uid = node.label;
-                  var node_name = node.attributes.name;
-                  var node_location = node.attributes.location;
-                  var node_pagerank = node.attributes.pagerank;
-                  var node_community = node.attributes.acategory;
-
-                  $('#nickname').html(node_name);
-                  $('#location').html(node_location);
-                  $('#user_link').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">http://weibo.com/u/' + node_uid + '</a>');
-                  $('#pagerank').html(node_pagerank);
-                  $('#community').html(node_community);
+                      toKeep = {};
 
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -488,6 +429,117 @@ function network_request_callback(data) {
                   s.refresh();
                 });
         });
+        
+        /*
+        if (animation) {
+            sigInst.iterNodes(function(n){
+              n.hidden = 1;
+              var timestamp = 0;
+              for (var i=0;i<n.attr['attributes'].length;i++) {
+                  if (n.attr['attributes'][i]['attr'] == 'timestamp')
+                      timestamp = parseInt(n.attr['attributes'][i]['val']);
+              }
+              if (!start_ts)
+                  start_ts = timestamp;
+              else {
+                  if (timestamp < start_ts)
+                    start_ts = timestamp;
+              }
+              if (!end_ts)
+                  end_ts = timestamp;
+              else {
+                  if (timestamp > end_ts) end_ts = timestamp;
+              }
+            }).draw(2,2,2);
+            start_ts = end_ts - 5*24*60*60;
+            setInterval(draw_animation, 1000);
+        }
+
+        (function(){
+            var popUp;
+            
+            // This function is used to generate the attributes list from the node attributes.
+            // Since the graph comes from GEXF, the attibutes look like:
+            // [
+            //   { attr: 'Lorem', val: '42' },
+            //   { attr: 'Ipsum', val: 'dolores' },
+            //   ...
+            //   { attr: 'Sit',   val: 'amet' }
+            // ]
+            function attributesToString(attr) {
+                return '<ul>' + attr.map(function(o){
+                  if (o.attr == 'name'){
+                    if(o.val == 'Unknown'){
+                      return '<li>' + '博主昵称' + ' : ' + '未知' + '</li>';
+                    }
+                    else  
+                      return '<li>' + '博主昵称' + ' : ' + o.val + '</li>';
+                    }
+                  else if (o.attr == 'location'){
+                    if(o.val == 'Unknown'){
+                      return '<li>' + '博主地域' + ' : ' + '未知' + '</li>';
+                    }
+                    else  
+                      return '<li>' + '博主地域' + ' : ' + o.val + '</li>';
+
+                  }
+ 
+                  else if (o.attr == 'timestamp')
+                      return '<li>' + '博主最早出现时间' + ' : ' + new Date(o.val*1000).format("yyyy-MM-dd") + '</li>';
+                  else
+                      return '<li>' + o.attr + ' : ' + o.val + '</li>';
+                 } ).join('') +rankinfor(node)+ '</ul>';
+            }
+            function rankinfor(data){
+              for (var i = 0 ;i< rankdata.length; i++){
+                if(data['label'] == rankdata[i]['1']){
+                  return '<li margin-left:20px>' + '排名' + ' : ' +rankdata[i]['0'] + '</li><li><a href="http://www.weibo.com/u/'+data["label"]+'">博主链接</a></li>';
+                }
+                else {
+                  return '<li margin-left:20px>排名 : 大于100</li><li><a target="_blank" href="http://www.weibo.com/u/'+data["label"]+'">博主链接</a></li>';
+                }
+              }
+            }
+            
+            function showNodeInfo(event) {
+                popUp && popUp.remove();
+                
+                sigInst.iterNodes(function(n){
+                    node = n;
+                },[event.content[0]]);
+                popUp = $(
+                    '<div class="node-info-popup"></div>'
+                ).append(
+                    // The GEXF parser stores all the attributes in an array named
+                    // 'attributes'. And since sigma.js does not recognize the key
+                    // 'attributes' (unlike the keys 'label', 'color', 'size' etc),
+                    // it stores it in the node 'attr' object :
+                    attributesToString( node['attr']['attributes'] )
+                ).css({
+                    'display': 'inline-block',
+                    'border-radius': 3,
+                    'padding': 5,
+                    'background': '#fff',
+                    'color': '#000',
+                    'box-shadow': '0 0 4px #666',
+                    'position': 'absolute',
+                    'left': node.displayX,
+                    'top': node.displayY+15
+                });
+                
+                $('ul',popUp).css('margin','0 0 0 20px');
+                $('#sigma-graph').append(popUp);
+            }
+             
+
+            function waitsecond(event){
+              setTimeout(function hideNodeInfo() {
+                  popUp && popUp.remove();
+                  popUp = false;
+              }, 5000 );
+            }     
+            //sigInst.bind('overnodes',showNodeInfo).bind('outnodes',waitsecond).draw();
+        })();*/
     }
 
     else {
@@ -495,6 +547,7 @@ function network_request_callback(data) {
     }
 
 }
+
 
 function show_network() {
     networkShowed = 0;
@@ -513,6 +566,8 @@ function show_network() {
                 async: false,
 
                 success: function (data) {
+                  console.log(data);
+                  alert("wqde");
                     networkdata = data;
                     network_request_callback(data);
                 },
@@ -529,7 +584,7 @@ function show_network() {
  }
 }
 
-(function ($) {
+
     function request_callback(data) {
       rankdata = data;
       var status = 'current finished';
@@ -540,7 +595,6 @@ function show_network() {
       $("#current_process").removeClass("progress-striped");
       current_data = data;
       if (current_data.length) {
-    $("#loading_current_data").text("计算完成!");
     if (current_data.length < page_num) {
         page_num = current_data.length
         create_current_table(current_data, 0, page_num);
@@ -576,28 +630,15 @@ function show_network() {
     }
     
     function create_current_table(data, start_row, end_row) {
-      var cellCount = 6;
+      $("#rank_table").empty();
+      var cellCount = 10;
       var table = '<table class="table table-bordered">';
-      var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th></tr></thead>';
+      var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>pagerank-value</th><th>d-centrelity</th><th>b-centrelity</th><th>c-centrelity</th></tr></thead>';
       var tbody = '<tbody>';
       for (var i = start_row;i < end_row;i++) {
-                var tr = '<tr>';
-          if (data[i][3].match("海外")) {
-        tr = '<tr class="success">';
-          }
+          var tr = '<tr>';
                 for(var j = 0;j < cellCount;j++) {
-        if (j == 7) {
-            // checkbox
-            var td = '<td><input id="uid_'+ data[i][1] + '" type="checkbox" name="now_user"></td>';
-        }
-        else if (j == 6) {
-            // identify status
-            if (data[i][j])
-          var td = '<td><i class="icon-ok"></i></td>';
-            else
-          var td = '<td><i class="icon-remove"></i></td>';
-        }
-        else if(j == 0) {
+          if(j == 0) {
             // rank status
             var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
         }
@@ -619,6 +660,7 @@ function show_network() {
       table += thead + tbody;
       table += '</table>'
       $("#rank_table").html(table);
+
       $('#select_all').click(function(){
           var $this = $(this);
           this.checked = !this.checked;
@@ -629,19 +671,19 @@ function show_network() {
       });
     }
 
-    function identify_request() {
+    // function identify_request() {
 
-      var topic = '中国'; 
-      var start_ts = 1377965700;
-      var end_ts = 1378051200;
-      var topn = 100;
+    //   var topic = '中国'; 
+    //   var start_ts = 1377965700;
+    //   var end_ts = 1378051200;
+    //   var topn = 100;
 
-      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
-    }
+    //   $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
+    // }
 
-    identify_request();
+    // identify_request();
 
-})(jQuery);
+
 
 
 
@@ -653,8 +695,72 @@ var index = [];
 var value = [];
 var x_data = [];
 var y_data = [];
+var topn = 100;
 
+function get_pagerank(){
+        $.ajax({
+      url: "/identify/rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&topn=' + topn,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+      console.log(data);
+        request_callback(data);
+      }  
+  }) ; 
+}
+function get_centrelity(){
+        $.ajax({
+      url: "/identify/degree_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+        request_callback(data);
+      }  
+  }) ; 
+}
 
+function betweeness_centrality_rank(){
+        $.ajax({
+      url: "/identify/betweeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+        request_callback(data);
+      }  
+  }) ; 
+        
+}
+
+function closeness_centrality_rank(){
+        $.ajax({
+      url: "/identify/closeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+      request_callback(data);
+      }  
+  }) ;
+
+}
 function getnetwork_frequency(){
 
     $.ajax({
@@ -671,7 +777,7 @@ function getnetwork_frequency(){
             }
         }
     }) ;
-            $.ajax({
+    $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lnx' ,
       dataType : "json",
       type : 'GET',
@@ -695,9 +801,12 @@ function getnetwork_frequency(){
       for (var i = 0; i< data.length; i ++){
           var ydata = Number(data[i].toFixed(3));
           y_data.push(ydata);
-        } 
+        }
+        // console.log(y_data);
       }  
   }) ; 
+
+
 
 
             $.ajax({
@@ -723,6 +832,7 @@ function getnetwork_frequency(){
       async: false,
       success: function(data){
         // console.log(data);
+
         var result_r = Number(data[0].toFixed(3));
         var result_c = Number(data[1].toFixed(3));
         // console.log(result_r);
@@ -735,16 +845,17 @@ function getnetwork_frequency(){
 
 
 function drawpicture() {
+ 
+  // get_centrelity();
+  // betweeness_centrality_rank();
+  // closeness_centrality_rank();
     $('#line').highcharts({
         title: {
-            text: '拟合曲线公式r.lnx + C =lny [r,C] = [-2.833,-12.319]',
+            text: '',
+            fontSize:'10px',
             align:'right',
-            x : -70,
-        style:{
-        fontSize: '13px',
-        
-        }
-      },
+            x : -70
+        },
         lang: {
             printButtonTitle: "打印",
             downloadJPEG: "下载JPEG 图片",
@@ -793,131 +904,41 @@ function drawpicture() {
     });
 }
 function drawpicture_ln() {
-    $('#line').highcharts({
-        title: {
-            text: '',
-            x: -20 //center
-        },
-        lang: {
-            printButtonTitle: "打印",
-            downloadJPEG: "下载JPEG 图片",
-            downloadPDF: "下载PDF文档",
-            downloadPNG: "下载PNG 图片",
-            downloadSVG: "下载SVG 矢量图",
-            exportButtonTitle: "导出图片"
-            },
-        subtitle: {
-            text: '',
-            x: -20
-        },
-        xAxis: {
-          title: {
-            text: 'lnx'
-        },
-            categories:x_data,
-          labels: {
-                step: 20
-            }
-          },
-        yAxis: {
-            title: {
-                text: 'lny'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-            legend: {
-            layout: 'vertical',
-            align: 'center',
-            verticalAlign: 'bottom',
-            borderWidth: 0
-        },
-        series: [{
-            name: '双对数曲线',
-            data: y_data
-        }]
 
+    $('#line').highcharts({
+        
+        chart: {
+        },
+        
+        title: {
+            text: ''
+        },
+        
+        xAxis: {
+            tickInterval: 1
+        },
+        
+        yAxis: {
+            type: 'logarithmic',
+            minorTickInterval: 0.1
+        },
+        
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: 'x = {point.x}, y = {point.y}'
+        },
+        
+        series: [{            
+            data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+            pointStart: 1
+        },{
+            data: [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
+            pointStart: 1
+          }
+        ]
     });
 }
 
  
 
 
-function drawpicture_H(index,H_degree_histogram) {
-    $('#line').highcharts({
-        title: {
-            text: '',
-            x: -20 //center
-        },
-        lang: {
-            printButtonTitle: "打印",
-            downloadJPEG: "下载JPEG 图片",
-            downloadPDF: "下载PDF文档",
-            downloadPNG: "下载PNG 图片",
-            downloadSVG: "下载SVG 矢量图",
-            exportButtonTitle: "导出图片"
-            },
-        subtitle: {
-            text: '',
-            x: -20
-        },
-        xAxis: {
-          title: {
-            text: '度数'
-        },
-            categories:index,
-          labels: {
-                step: 20
-            }
-          },
-        yAxis: {
-            title: {
-                text: '出现频数'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-            legend: {
-            layout: 'vertical',
-            align: 'center',
-            verticalAlign: 'bottom',
-            borderWidth: 0
-        },
-        series: [{
-            name: '最大连通子图节点度分布',
-            data: H_degree_histogram
-        }]
-
-    });
-}
-
-    // function switch_curr_add(){
-    //     $("[name='abs_rel_switch']").bootstrapSwitch('readonly', false);
-    //     $("[name='abs_rel_switch']").on('switchChange.bootstrapSwitch', function(event, state) {
-
-    //         if (state == true){
-    //          drawpicture(index,value);
-    //         }
-    //             else if{
-    //          drawpicture_ln(x_data,y_data);
-    //         }
-    //             else{
-    //          drawpicture_H(index,H_degree_histogram);    
-
-    //             }
-            
-    //     });
-
-    // }

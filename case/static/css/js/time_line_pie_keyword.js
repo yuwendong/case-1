@@ -19,7 +19,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                style = select_a.attr('value');
+                var style = select_a.attr('value');
                 // console.log(style);
                 getweibos_data(style);
             }
@@ -43,14 +43,22 @@ $(document).ready(function(){   //网页加载时执行下面函数
     }
     var status;
     var result1=[];
-    var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700;
-    var during = ts-START_TS;
+    var query = QUERY;
+    var end_ts = END_TS;
+    if(query=='中国'){
+        var start_ts = 1377997200 + 900;
+    }
+    else{
+        var start_ts = START_TS;
+    }
+    var during_pie = end_ts-start_ts;
+    var topic = query;
+    var  during = POINT_INTERVAL;
+    var  limit = 50;
     function getpie_data() {
     var result=[];
         $.ajax({
-            url: "/moodlens/pie/?ts=" + ts + "&query=" + query +"&during="+ during,
+            url: "/moodlens/pie/?ts=" + end_ts + "&query=" + query +"&during="+ during_pie,
             type: "GET",
             dataType:"json",
             success: function(data){
@@ -201,10 +209,7 @@ var option = {
 
     function keyword_data()
     {       
-        var  topic = "中国";
-        var  end_ts = 1377965700;
-        var  during = 900;
-        var  limit = 50;
+
         var  style = 3; 
 
         $.ajax({
@@ -212,7 +217,7 @@ var option = {
                 data: "GET",
                 dataType:"json",
                 success: function(data)
-                {   
+                {   console.log(data);
                             if(data=='search function undefined'){
                                 $("#keywords_cloud_div").empty();
                                 $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");  
@@ -235,19 +240,15 @@ var option = {
     }   
 
    function getweibos_data(data){      //请求文本数据
-                var end_ts = 1378051200;
-                var topic = "中国";
-                var during = 900;
                 var selectstyle = data;
                 var styleweibo = Number(data);
-                var limit = 50;
                 // console.log(data);
                 $.ajax({
                     url: "/propagate/weibos/?&topic=" + topic + "&end_ts=" + end_ts +"&limit="+limit + "&during=" + during + "&style=" + styleweibo,
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                        // console.log(data);
+                        console.log(data);
                        $("#vertical-ticker").empty();       
                         var weibo=[];
                         for (var keyword in data[selectstyle]){
@@ -395,7 +396,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
            total_count();
         })
 function total_count () {
-        for (time = 0 ; time < 15 ;time++)
+        for (var time = 0 ; time *during + start_ts< end_ts ;time++)
         {
          get_count(time);
         }
@@ -408,24 +409,23 @@ function total_count () {
         drawpicture_total_all();
     }
    function get_count(time){
-    var during = 900;
     var atime = time;
-    var end_ts = 1377998100+900 * atime;
-    var topic = "中国";
+    var deadtime = start_ts + during * atime;
+
     var style = 2; 
         $.ajax({
-            url: "/propagate/total/?end_ts=" + end_ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
+            url: "/propagate/total/?end_ts=" + deadtime + "&style=" + style +"&during="+ during + "&topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
-                // console.log(data);
+                 console.log(data);
 
                 folk_value = data["dcount"];
                 folk = folk_value["folk"] 
                 folk_count.push(folk);
                              
-                list.push(end_ts);
+                list.push(deadtime);
 
                 media_value = data["dcount"];
                 media = media_value["media"] 
@@ -448,6 +448,7 @@ function total_count () {
 function drawpicture_total() {
         list_af = [];
         for (var i = 0; i < list.length; i++){
+            console.log(list[i]);
             ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substring(12,20);
             list_af.push(ns);
         }
@@ -456,8 +457,11 @@ function drawpicture_total() {
 }
         list = [];
         $('#trend_div').highcharts({
+            chart: {
+            type: 'spline',
+            },
             title: {
-        style: { 
+                style: { 
                 fontWeight: 'lighter',
                 fontSize: '13px',
                 x: -20 //center
@@ -523,8 +527,11 @@ function drawpicture_total() {
     }
 function drawpicture_total_all() {
         $('#trend_div1').highcharts({
+            chart: {
+                type: 'spline',
+            },
             title: {
-        style: {
+            style: {
                 
                 fontWeight: 'lighter',
                 fontSize: '13px',
@@ -577,7 +584,7 @@ function drawpicture_total_all() {
     }
 function increment_count () {
         // alert("dangqian");
-        for (time = 0 ; time < 15 ;time++)
+        for (var time = 0 ; time *during + start_ts< end_ts ;time++)
         {
             increment_get_count(time);
         }
@@ -600,23 +607,22 @@ function increment_count () {
      oversea_count = [];
     }
    function increment_get_count(time){
-    var during = 900;
     var atime = time;
-    var end_ts = 1377998100+900 * atime;
-    var topic = "中国";
+    var counttime = start_ts+during * atime;
     var style = 3;     
         $.ajax({
-            url: "/propagate/increment/?end_ts=" + end_ts + "&style=" + style +"&during="+     during + "&topic=" + topic,
+            url: "/propagate/increment/?end_ts=" + counttime + "&style=" + style +"&during="+     during + "&topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
+                console.log(data);
                 increment_folk_value = data["dincrement"];
                 increment_folk = increment_folk_value["folk"] 
                 increment_folk_count.push(increment_folk);
                
               
-                increment_list.push(end_ts);
+                increment_list.push(counttime);
 
                 increment_media_value = data["dincrement"];
                 increment_media = increment_media_value["media"] 
