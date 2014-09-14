@@ -1,10 +1,17 @@
+var topic = QUERY;
+if(topic == '中国'){
+  var start_ts = 1377964800 + 900;
+}
+else{
+  var start_ts = START_TS;
+}
+var end_ts = END_TS;
+
 var previous_data = null;
 var current_data = null;
 var networkShowed = 0;
 var networkUpdated = 0;
 var animation = 0;
-var start_ts = null;
-var end_ts = null;
 var sigInst = null;
 var animation_timer = null;
 var quota={};
@@ -13,16 +20,12 @@ var rankdata;
 var node;
 var y_data;
 
-
 function get_network_infor(){
 var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
  'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
  'diameter','power_law_distribution','number_weakly_connected_components',
  'degree_assortativity_coefficient','average_clustering','ave_k_core','ratio_H2G'];
-var topic = "中国";
-var start_ts = 1377965700;
-var end_ts = 1378051200;
   for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key],
@@ -498,9 +501,6 @@ function network_request_callback(data) {
 
 function show_network() {
     networkShowed = 0;
-    var topic = '中国'; 
-    var start_ts = 1377965700;
-    var end_ts = 1378051200;
     if (!networkShowed) {
         $("#network").removeClass('out');
         $("#network").addClass('in');
@@ -630,10 +630,6 @@ function show_network() {
     }
 
     function identify_request() {
-
-      var topic = '中国'; 
-      var start_ts = 1377965700;
-      var end_ts = 1378051200;
       var topn = 100;
 
       $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
@@ -643,12 +639,6 @@ function show_network() {
 
 })(jQuery);
 
-
-
-
-var topic = "中国";
-var start_ts = 1377965700;
-var end_ts = 1378051200;
 var index = [];
 var value = [];
 var x_data = [];
