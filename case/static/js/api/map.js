@@ -1,6 +1,7 @@
-var START_TS = 1377964800;
-var END_TS = 1378051200;
-var DURING_INTERGER = 60 * 60;
+var topic = QUERY;
+var START_TS = START_TS;
+var END_TS = END_TS;
+var DURING_INTERGER = POINT_INTERVAL;
 var total_count = [];
 var first_city = [];
 
@@ -24,8 +25,8 @@ Date.prototype.format = function(format) {
 }
 
 // map类
-function CaseMap(start_ts, end_ts, pointInterval){
-    this.query = '中国';
+function CaseMap(topic, start_ts, end_ts, pointInterval){
+    this.query = topic;
     this.start_ts = start_ts;
     this.end_ts = end_ts;
     this.pointInterval = pointInterval;
@@ -251,7 +252,7 @@ CaseMap.prototype.initPullDrawZoneChart = function(sta){
 
 // 默认加载总数
 var curIdx = '1';
-var casemap = new CaseMap(START_TS, END_TS, DURING_INTERGER);
+var casemap = new CaseMap(topic, START_TS, END_TS, POINT_INTERVAL);
 casemap.showWholeMapChart(curIdx);
 casemap.addSwitchTabListener();
 casemap.addSwitchMyChartListener();
@@ -262,10 +263,17 @@ function drawZoneChart(that, data, ts_list, myChart){
     var option = {
         tooltip : {
             trigger: 'axis',
+            orient: 'vertical',
+            x: 'left',
+            y: -20
         },
         
         legend: {
-            data: keyCity
+            data: keyCity,
+            padding: 1,
+            //orient: 'vertical',
+            y: 'top',
+            x: 'right'
         },
         
         toolbox: {
