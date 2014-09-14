@@ -12,6 +12,9 @@
  var sensitivity;
  var sensitivity_value = [];
  var sensitivity_all = 0;
+ var sensitivity_average = 0;
+ var attention_average = 0;
+ var quickness_average = 0;
 $(document).ready(function(){
     getindex_data();
     draw_index();
@@ -27,7 +30,7 @@ $(document).ready(function(){
         async:false,  //最好用回调函数
         success :function(data){
             quota = data;
-            json_data(data); 
+            
             console.log(data);          
         }       
     });
@@ -38,14 +41,32 @@ $(document).ready(function(){
     //  sensitivity = quota['sensitivity'];
     for (var key in attention){
         attention_value.push(attention[key]);
-        attention_index.push(key);
+        // console.log(key);
+        var key_index = '';
+        if (key == 'folk'){
+             key_index = '民众';
+        }
+        console.log(key_index);
+        if (key == 'opinion_leader'){
+           key_index = '名人';
+        }
+        if (key == 'media'){
+          key_index = '媒体';
+        }
+        if (key == 'other'){
+          key_index = '其他';
+        }
+        if (key == 'oversea'){
+          key_index = '海外';
+        }
+        attention_index.push(key_index);
     }
-    console.log(attention_index);
-    console.log(attention_value);
+    // console.log(attention_index);
+    // console.log(attention_value);
 
 
     for (var i=0 ;i<attention_value.length;i++){
-         console.log(attention_value[0]);
+         // console.log(attention_value[0]);
         attention_all += attention_value[i];
     }
             attention_average = attention_all/5;
@@ -71,7 +92,7 @@ $(document).ready(function(){
         sensitivity_all += sensitivity_value[i];
     }
         sensitivity_average = sensitivity_all/3;
-
+        json_data(quota); 
  }
 
 function json_data(data){
@@ -109,28 +130,26 @@ function json_data(data){
     json_data["name"] = root ;
     content_data["name"] = "面向内容";
     process_data["name"] = "面向对象";
-    sensitivity_data["name"] = "sensitivity";
-    attention_data["name"] = "attention";
-    quickness_data["name"] = "quickness";
-    sentiment_data["name"] = "sentiment";
-    importance_data["name"] = "importance";
-    media_importance_data["name"] = "media_importance";
-    duration_data["name"] = "duration:"+ data["duration"].toString();
+    sensitivity_data["name"] = "敏感度: "+sensitivity_average.toExponential(3).toString();
+    attention_data["name"] = "关注度: "+attention_average.toExponential(3).toString();
+    quickness_data["name"] = "爆发度: "+quickness_average.toExponential(3).toString();
+    sentiment_data["name"] = "情绪度"
+    importance_data["name"] = "重视度";
+    media_importance_data["name"] = "重要媒体参与度: "+data["media_importance"].toExponential(3).toString();
+    duration_data["name"] = "持续度: "+ data["duration"].toExponential(3).toString();
 
-    quickness_data["children"] = [{"name":"folk", "size":quickness_folk},{"name":"media", "size":quickness_media},{"name":"opinion_leader", "size":quickness_opinion_leader},{"name":"other", "size":quickness_other},{"name":"oversea", "size":quickness_oversea}];
-    attention_data["children"] = [{"name":"folk", "size":attention_folk},{"name":"media", "size":attention_media},{"name":"opinion_leader", "size":attention_opinion_leader},{"name":"other", "size":attention_other},{"name":"oversea", "size":attention_oversea}];
+    quickness_data["children"] = [{"name":"民众", "size":quickness_folk},{"name":"媒体", "size":quickness_media},{"name":"名人", "size":quickness_opinion_leader},{"name":"海外", "size":quickness_oversea},{"name":"其他", "size":quickness_other}];
+    attention_data["children"] = [{"name":"民众", "size":attention_folk},{"name":"媒体", "size":attention_media},{"name":"名人", "size":attention_opinion_leader},{"name":"海外", "size":attention_oversea},{"name":"其他", "size":attention_other}];
     sensitivity_data["children"] = [{"name":"类型" ,"size":sensitivity_1},{"name":"词汇" ,"size":sensitivity_2},{"name":"地域" ,"size":sensitivity_3}];
-    sentiment_data["children"] = [{"name": "negative","size":negative}];
-    importance_data["children"] = [{"name":"权" ,"size":score},{"name":"权重" ,"size":weight}];
+    sentiment_data["children"] = [{"name": "消极情绪度: "+data['sentiment']['negative'].toExponential(3),"size":negative}];
+    importance_data["children"] = [{"name":"值" ,"size":score},{"name":"权重" ,"size":weight}];
     media_importance_data["size"] = media_importance;
     duration_data["size"] = data["duration"];
     content_data["children"] = [importance_data, sensitivity_data, sentiment_data];
     process_data["children"] = [duration_data, media_importance_data, quickness_data, attention_data];
     json_data["children"] = [content_data, process_data];
     drawtree(json_data);
-
 }
-
 var m = [20, 120, 20, 120],
     w = 1280 - m[1] - m[3],
     h = 800 - m[0] - m[2],
@@ -194,8 +213,8 @@ function update(source) {
 
   nodeEnter.append("svg:circle")
       .attr("r", 1e-6)
-      .attr("data-toggle", function(d) {if(d.name =="sensitivity" ||  "quickness" || "attention") return "modal" ; })
-      .attr("data-target", function(d) {if(d.name =="sensitivity") return "#sensitivity_1" ; else if (d.name =="quickness") return "#quickness_1";else if (d.name =="attention") return "#attention_1";})
+      .attr("data-toggle", function(d) {if(d.name =="敏感度: "+sensitivity_average.toExponential(3).toString() ||  "爆发度: "+quickness_average.toExponential(3).toString() || "关注度: "+attention_average.toExponential(3).toString() ) return "modal" ; })
+      .attr("data-target", function(d) {if(d.name =="敏感度: "+sensitivity_average.toExponential(3).toString()) return "#sensitivity_1" ; else if (d.name =="爆发度: "+quickness_average.toExponential(3).toString()) return "#quickness_1";else if (d.name == "关注度: "+attention_average.toExponential(3).toString()) return "#attention_1";})
       // .attr("data-toggle", function(d) {if(d.name =="quickness") return "modal" ; })
       // .attr("data-target", function(d) {if(d.name =="quickness") return "#quickness_1" ; })
       // .attr("data-toggle", function(d) {if(d.name =="attention") return "modal" ; })
@@ -205,16 +224,12 @@ function update(source) {
   nodeEnter.append("svg:text")
       .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
       .attr("dy", ".35em")
+      .attr("id",function(d){if(d.name =="总量度") return "total"})
       .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
   
-  nodeEnter.append("svg:text")
-      .attr("x", function(d) { return d.children || d._children ? -40 : 10; })
-      .attr("dy", "15")
-      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-      .text(function() { if(d.children) {return ;} else{return d.size;} })
-      .style("fill-opacity", 1);
+
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
@@ -284,6 +299,7 @@ function toggle(d) {
     d.children = d._children;
     d._children = null;
   }
+
   // if(d.name = "sensitivity"){
   //      draw_sensitivity();
   // }
@@ -616,7 +632,7 @@ function draw_quickness(){
         trigger: 'axis'
     },
     legend: {
-        data:['attention', 'quickness']
+        data:['关注度', '爆发度']
     },
     toolbox: {
          x:"left",
@@ -629,7 +645,7 @@ function draw_quickness(){
     },
     calculable : true,
     xAxis : [
-        {   splitNumber: 0.5,
+        {   splitNumber: 1,
             type : 'value',
             boundaryGap : [0, 0.01]
         }
@@ -642,12 +658,12 @@ function draw_quickness(){
     ],
     series : [
         {
-            name:'attention',
+            name:'关注度',
             type:'bar',
             data:attention_value
         },
         {
-            name:'quickness',
+            name:'爆发度',
             type:'bar',
             data:quickness_value
         }
@@ -666,7 +682,7 @@ var option = {
         trigger: 'axis'
     },
     legend: {
-        data:['attention', 'quickness']
+        data:['关注度', '爆发度']
     },
     toolbox: {
         x:"left",
@@ -679,7 +695,7 @@ var option = {
     },
     calculable : true,
     xAxis : [
-        {   splitNumber: 0.5,
+        {   splitNumber: 1,
             type : 'value',
             boundaryGap : [0, 0.01]
         }
@@ -692,12 +708,12 @@ var option = {
     ],
     series : [
         {
-            name:'attention',
+            name:'关注度',
             type:'bar',
             data:attention_value
         },
         {
-            name:'quickness',
+            name:'爆发度',
             type:'bar',
             data:quickness_value
         }

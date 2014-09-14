@@ -28,9 +28,10 @@
         var result = [];
         var result1 = [];
         var result2 = [];
+        var result3 = [];
+        var topic = '博鳌';
 
     function gettimeline_data() {
-        var topic = '博鳌';
         var html ="";
         $.ajax({
             url: "/opinion/time/?topic=" + topic,
@@ -186,11 +187,8 @@
             
 
         }
-    var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700
-    var during = ts-START_TS;
-    var result3 = [];
+
+
 
 
     $(document).ready(function(){   //网页加载时执行下面函数
@@ -199,7 +197,6 @@
 
     function getpie_data() {
         var result = [];
-        var topic = '博鳌';
         $.ajax({
             url: "/opinion/ratio/?topic=" + topic,
             type: "GET",
@@ -314,7 +311,6 @@
     // }
 
         function getweibos_data(style){   
-                var topic = '博鳌';
                 var selects = style;
                 //console.log(selects);
                 var dataselect = [];
@@ -340,6 +336,37 @@
             function chg_weibos(data){  
                 $("#vertical-ticker").empty();
                 var html = "";
+                var temporary
+                var data_af = [];
+                var time;
+                // for (var j =0 ; j < data.length; j++){
+                //     rank_count.push(data[j]['reposts_count']);
+                // }
+                // rank_count_af = rank_count.sort(function(a,b){return b-a});
+                
+                // for (var m = 0; m < rank_count_af.length; m++){
+                //     time = 0;
+                //     for (var k = 0; k < data.length; k++){
+                //         if(data[k]['reposts_count'] == rank_count_af[m]){ 
+                //             time++;                           
+                //             if(time == 1){
+                //                 date_af.push(data[k]);
+                //             }
+                                                                                          
+                //         }
+                //     }
+                // }
+                for(var m = 0; m< data.length; m++){
+                    for(var n = m+1; n< data.length; n++){
+                        if(data[m]['reposts_count'] < data[n]['reposts_count']){
+                            temporary = data[n];
+                            data[n] = data[m];
+                            data[m] = temporary;
+
+                        }
+                    }
+                }
+                console.log(data);
                 html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
@@ -399,7 +426,6 @@
 
 
         function getkeywords_data(){   
-                var topic = '博鳌';
                 $.ajax({
                     url: "/opinion/keywords/?&topic=" + topic,
                     type: "GET",
