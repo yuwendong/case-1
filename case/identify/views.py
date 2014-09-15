@@ -95,8 +95,8 @@ def network_rank():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts+900) / Day
-    topn = request.args.get('topn', 10)
+    windowsize = (end_ts - start_ts) / Day
+    topn = request.args.get('topn', 100)
     topn = int(topn)
     date = ts2datetime(end_ts)
     if windowsize > 7:
@@ -114,10 +114,11 @@ def node_degree_rank():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts + 900) / Day
+    windowsize = (end_ts - start_ts ) / Day
     date = ts2datetime(end_ts)
-
-    results = read_degree_centrality_rank(topic, date, windowsize)
+    topn = request.args.get('topn', 100)
+    topn = int(topn)
+    results = read_degree_centrality_rank(topic, topn, date, windowsize)
     return json.dumps(results)
 
 @mod.route('/betweeness_centrality_rank/')
@@ -127,10 +128,11 @@ def betweeness_degree_rank():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts + 900) / Day
+    windowsize = (end_ts - start_ts) / Day
     date = ts2datetime(end_ts)
-
-    results = read_betweeness_centrality_rank(topic, date, windowsize)
+    topn = request.args.get('topn', 100)
+    topn = int(topn)
+    results = read_betweeness_centrality_rank(topic, topn, date, windowsize)
     return json.dumps(results)
 
 @mod.route('/closeness_centrality_rank/')
@@ -140,10 +142,11 @@ def closeness_centrality_rank():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts + 900) / Day
+    windowsize = (end_ts - start_ts ) / Day
     date = ts2datetime(end_ts)
-
-    results = read_closeness_centrality_rank(topic, date, windowsize)
+    topn = request.args.get('topn', 100)
+    topn = int(topn)
+    results = read_closeness_centrality_rank(topic, topn, date, windowsize)
     return json.dumps(results)
 
 def _utf8_unicode(s):
@@ -161,7 +164,7 @@ def network_quota():
     end_ts = request.args.get('end_ts','')
     end_ts = int(end_ts)
     date = ts2datetime(end_ts)
-    windowsize = (end_ts - start_ts+900) / Day
+    windowsize = (end_ts - start_ts ) / Day
     key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)

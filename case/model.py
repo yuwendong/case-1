@@ -274,53 +274,67 @@ class TopicIdentification(db.Model):
     identifyDate = db.Column(db.Date)
     identifyWindow = db.Column(db.Integer, default=1)
     identifyMethod = db.Column(db.String(20), default='pagerank')
+    pr = db.Column(db.Float)
 
-    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod):
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod, pr):
         self.topic = topic
         self.rank = rank
         self.userId = userId
         self.identifyDate = identifyDate
         self.identifyWindow = identifyWindow
         self.identifyMethod = identifyMethod
+        self.pr = pr
 
-class DegreeCentralityUser(db.Model):
+class DegreeCentralityUser(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    dc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, dc):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.dc = dc
 
 class BetweenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    bc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
-        self.topic = topic
+    def __init__(self, topic, date, windowsize, rank, userid, bc):
+        self.topic =topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.bc = bc
 
 class ClosenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
-    windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    windowsize = db.Column(db.Integer, default=True)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    cc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, cc):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.cc = cc
 
 class NodeDegreeUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
