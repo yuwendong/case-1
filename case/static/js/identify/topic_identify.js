@@ -502,6 +502,7 @@ function network_request_callback(data) {
 function show_network() {
     networkShowed = 0;
     if (!networkShowed) {
+        $("#loading_network_data").css("display", "block");
         $("#network").removeClass('out');
         $("#network").addClass('in');
         networkShowed = 0;
@@ -575,6 +576,10 @@ function request_callback(data) {
             return
         }
     }
+
+function filter_node_in_network(node_uid){
+    console.log(node_uid);
+}
     
 function create_current_table(data, start_row, end_row) {
     $("#rank_table").empty();
@@ -593,7 +598,7 @@ function create_current_table(data, start_row, end_row) {
           var td = '<td style="display:none">'+data[i][j]+'</td>';
       }
       else if(j == 2){
-          var td = '<td><a target=\"_blank\" href=\"/profile/search/person?nickname=' + data[i][j] + '\">' + data[i][j] + '</a></td>';
+          var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
       }
       else{
           var td = '<td>'+data[i][j]+'</td>';

@@ -23,6 +23,10 @@
             background: #F0F0F0;
         }
 
+        #rank_table a:hover{
+            color: #428bca;
+        }
+
         .blkUnit {
             position: relative;
             clear: both;
@@ -207,8 +211,10 @@
             width: 130px;
             display: inline;
         }
-
         #control-pane-rightdown {
+            position: relative;
+            float: left;
+            width: 250px;
             background-color: rgb(249, 247, 237);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
@@ -217,6 +223,7 @@
         }
         #control-pane-rightdown > div {
             margin: 10px;
+            overflow-x: scroll;
         }
         .line {
             clear: both;
@@ -333,15 +340,19 @@
             <h4><b>关键用户</b></h4>
             <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
-        
-            <button class="btn btn-danger" onclick='get_pagerank()'>Pagerank值排名</button>
-            <button class="btn btn-danger" onclick='get_centrelity()'>度中心性排名</button>
-            <button class="btn btn-danger" onclick='betweeness_centrality_rank()'>介数排名</button>
-            <button class="btn btn-danger" onclick='closeness_centrality_rank()'>紧密中心性排名</button>
-              
-                <span id="loading_current_data" class="alert alert-info" >
-                系统繁忙计算中，请稍后...
-                </span>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">Pagerank值排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
+            </div>
+            <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
         
         <!--
         <div>
@@ -366,14 +377,14 @@
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
-    <div class="well" style="width:1033px; position: relative;height: 684px;">
+    <div class="well" style="width:1033px; position: relative;height: 609px;">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
             <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <div style="position: relative; height: 40px;">
             <div class="control-pane">
-                <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" ><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
                 <div id="layout_controller_div" style="display: none;">
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
                         <!--linLogMode-->对数模式
@@ -448,7 +459,7 @@
                 </div>
             </div>
             <div class="control-pane">
-                <a id="filter_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" ><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <a id="filter_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 181px;"><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
                 <div id="filter_controller_div" style="display: none;">
                     <div>
                         指标类别
@@ -483,7 +494,7 @@
             <div class="control-pane">
                 <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
             </div>
-            <div id="loading_network_data" class="alert alert-info" style="float:left;">
+            <div id="loading_network_data" class="alert alert-info" style="float:left;height: 33px;width: 308px;padding: 9px;display: none;">
             系统繁忙计算中，请稍后...
             </div>
         </div>
@@ -493,24 +504,24 @@
                 <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
             </label>
             <div class="sigma-expand" id="sigma-graph"></div>
-                <div style="float:left;width: 250px;">
-                    <h4 class="underline">节点信息</h4>
-                    <div>
-                    用户昵称: <span id="nickname"></span>
-                    </div>
-                    <div>
-                    用户所在地: <span id="location"></span>
-                    </div>
-                    <div>
-                    用户微博链接: <span id="user_link"></span>
-                    </div>
-                    <div>
-                    用户Pagerank值: <span id="pagerank"></span>
-                    </div>
-                    <div>
-                    用户所属社区: <span id="community"></span>
-                    </div>
+            <div id="control-pane-rightdown">
+                <h4 class="underline">节点信息</h4>
+                <div>
+                用户昵称: <span id="nickname"></span>
                 </div>
+                <div>
+                用户所在地: <span id="location"></span>
+                </div>
+                <div>
+                用户微博链接: <span id="user_link"></span>
+                </div>
+                <div>
+                用户Pagerank值: <span id="pagerank"></span>
+                </div>
+                <div>
+                用户所属社区: <span id="community"></span>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock content %}
