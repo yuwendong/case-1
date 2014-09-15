@@ -192,15 +192,25 @@
 
     <div class="blkUnit grpUnit" id="trendProfile">
 
-        <div class="titlBar">
-            <div><h4><b>社会舆情指标体系</b><h4></div>
+        <div class="titlBar" style="padding-bottom:0px;">
+            <br>
+            <h4>社会舆情指标体系</h4>
+            <i id="trend_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="社会舆情的各类信息"></i>&nbsp;&nbsp;
+            <span id="peak_trend_tooltip"></span>
+            <span class="pull-right" style="margin: -14px -9px -10px auto;" data-animated="false">
+            </span>
+            <!--<span class="compInfo" style="display: none;"> </span>
+            <span class="compInfo">2014-08-07 至 2014-08-13</span>
+            <span class="compInfo">全国</span>-->
         </div>
         <div class="tabUnit">  
-            <div style="margin-left:40px">
-            重视度：值: <input type=text name="txtname" value= '0' size=12 maxlength=6>权重：<input type=text name="txtname" value= '0' size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定" onclick = showtotal()><p></div>
+            <div style="margin-left:20px;margin-top:10px;margin-right:20px;">
+            专家重视度：值: <input type=text name="txtname" value= '0' size=12 maxlength=6>权重：<input type=text name="txtname" value= '0' size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定" onclick = "showtotal()">
+            <span style="float:right;color: #666 ;padding-left:5px">[0/1] 0:表示的是元素的值 1：表示的是元素的权重</span><p>
+            </div>
             <table class="mstable" id="mstable1" style="margin-top:10px">
             </table>
-            <div id="body">
+            <div id="body" style ="margin-left:25px">
               <div id="footer">
               </div>
             </div>
@@ -272,9 +282,10 @@
             function showtotal(){
                var obj = document.getElementById("total");
                console.log(obj.innerHTML);
-               obj.innerHTML = "总量度"+"1";
+               obj.innerHTML = "总量度"+'['+Math.random().toExponential(2).toString()+"/"+Math.random().toExponential(2).toString()+']';
 
             }
+            $("#trend_tooltip").tooltip();
         </script>
         <script src="/static/css/js/index.js" type="text/javascript"></script>
 

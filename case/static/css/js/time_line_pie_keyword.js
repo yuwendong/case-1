@@ -41,36 +41,98 @@ $(document).ready(function(){   //网页加载时执行下面函数
         });
 
     }
-    var status;
-    var result1=[];
-    var query = QUERY;
-    var end_ts = END_TS;
-    if(query=='中国'){
-        var start_ts = 1377997200 + 900;
-    }
-    else{
-        var start_ts = START_TS;
-    }
-    var during_pie = end_ts-start_ts;
-    var topic = query;
-    var  during = POINT_INTERVAL;
-    var  limit = 50;
+        var status;
+        var result1=[];
+        var query = QUERY;
+        var end_ts = END_TS;
+        if(query=='中国'){
+            var start_ts = 1377997200 + 900;
+        }
+        else{
+            var start_ts = START_TS;
+        }
+        var  during_pie = end_ts-start_ts;
+        var  topic = query;
+        var  during = POINT_INTERVAL;
+        var  limit = 50;
+
     function getpie_data() {
-    var result=[];
-        $.ajax({
-            url: "/moodlens/pie/?ts=" + end_ts + "&query=" + query +"&during="+ during_pie,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                console.log(data);
-                result[0]=data["happy"];
-                result[1]=data["sad"];
-                result[2]=data["angry"];
-                on_update(result);
-            }
-        });       
-    }
-    function on_update(result) {
+        var  style;
+        var  style_list = [1,2,3];
+        var  all_area = 0;
+        var  all = 0;
+        var  every_style = [];
+        var  all_data = 0;
+        var  origin_data = 0;
+        var  comment_data = 0;
+        var  forward_data = 0;
+        for (var i =0; i < style_list.length; i++){
+                    style = style_list[i];
+            for( var time_s = 0;start_ts + time_s * during<end_ts; time_s++){
+                 var ts = start_ts + time_s * during ;
+                     var all = 0;
+            $.ajax({
+                url: "/propagate/total/?end_ts=" + ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
+                type: "GET",
+                dataType:"json",
+                async:false,
+                success: function(data){
+                    // console.log(data);
+
+                    folk_value = data["dcount"];
+                    folk = folk_value["folk"];
+
+                    media_value = data["dcount"];
+                    media = media_value["media"]; 
+                 
+                    opinion_leader_value = data["dcount"];
+                    opinion_leader = opinion_leader_value["opinion_leader"]; 
+                            
+                    other_value = data["dcount"];
+                    other = other_value["other"];
+                
+                    oversea_value = data["dcount"];
+                    oversea = oversea_value["oversea"]; 
+                    
+                }
+            });
+        all_area = folk+media+opinion_leader+other+oversea;
+        all += all_area;
+   
+        }
+
+                every_style.push(all);
+            
+                  }
+
+                    for (i = 0;i<every_style.length;i++){
+                      all_data += every_style[i];  
+                    }
+                        origin_data = (every_style[0]/all_data).toFixed(2);
+                        forward_data = (every_style[1]/all_data).toFixed(2);
+                        comment_data = (every_style[2]/all_data).toFixed(2);
+                        console.log(origin_data);
+                        // console.log(forward_data);
+                        // console.log(comment_data);
+                 on_update(origin_data,forward_data,comment_data);
+}
+
+
+    // var result=[];
+    //     $.ajax({
+    //         url: "/moodlens/pie/?ts=" + end_ts + "&query=" + query +"&during="+ during_pie,
+    //         type: "GET",
+    //         dataType:"json",
+    //         success: function(data){
+    //             console.log(data);
+    //             result[0]=data["happy"];
+    //             result[1]=data["sad"];
+    //             result[2]=data["angry"];
+    //             on_update(result);
+    //         }
+    //     });       
+    // }
+    function on_update(origin_data,forward_data,comment_data) {
         keyword_data();  
         var pie_data = [];
         // var percentage = []; 
@@ -80,7 +142,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
         // percentage[2] = String(parseFloat(result[2])*100)+"%";
         // console.log(percentage);
 
-        pie_data = [{value:  result[2], name:'转发'}, {value: result[1], name:'评论'}, {value:  result[0], name:'原创'}];
+        pie_data = [{value:  origin_data, name:'原创'},{value: comment_data, name:'评论'},{value:  forward_data, name:'转发'}];
 var option = {
         backgroundColor: '#FFF',
         color: ['#11c897', '#fa7256', '#6e87d7'],
@@ -123,7 +185,7 @@ var option = {
         calculable : true,
         series : [
             {
-                name: '情绪占比',
+                name: '类型占比',
                 type: 'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
@@ -217,7 +279,8 @@ var option = {
                 data: "GET",
                 dataType:"json",
                 success: function(data)
-                {   console.log(data);
+                {   
+                    // console.log(data);
                             if(data=='search function undefined'){
                                 $("#keywords_cloud_div").empty();
                                 $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");  
@@ -248,7 +311,7 @@ var option = {
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                        console.log(data);
+                        // console.log(data);
                        $("#vertical-ticker").empty();       
                         var weibo=[];
                         for (var keyword in data[selectstyle]){
@@ -348,23 +411,33 @@ var option = {
 
         var folk_value = [];
         var folk_count = [];
-        var folk = [];
+        var folk = 0;
+        var folk_data = [];
+        var folk_all = 0;
        
         var media_value = [];
         var media_count = [];
-        var media = [];
+        var media = 0;
+        var media_data = [];
+        var media_all = 0;
 
         var opinion_leader_value = [];
         var opinion_leader_count = [];
-        var opinion_leader = [];
+        var opinion_leader = 0;
+        var opinion_leader_data =[];
+        var opinion_leader_all = 0;
 
         var other_value = [];
         var other_count = [];
-        var other = [];
+        var other = 0;
+        var other_data = [];
+        var other_all = 0;
 
         var oversea_value = [];
         var oversea_count = [];
-        var oversea = [];
+        var oversea = 0;
+        var oversea_data = [];
+        var oversea_all = 0;
 
         var all = [];
 
@@ -396,66 +469,114 @@ $(document).ready(function(){   //网页加载时执行下面函数
            total_count();
         })
 function total_count () {
-        for (var time = 0 ; time *during + start_ts< end_ts ;time++)
-        {
-         get_count(time);
-        }
-        drawpicture_total();
-        folk_count = [];
-        media_count = [];
-        opinion_leader_count = [];
-        other_count = [];
-        oversea_count = [];
-        drawpicture_total_all();
-    }
-   function get_count(time){
-    var atime = time;
-    var deadtime = start_ts + during * atime;
+        for (var time = 0 ; time *during + start_ts< end_ts ;time++){
+            var deadtime = time *during + start_ts;
 
-    var style = 2; 
+            var style_list = [1,2,3];
+            var style;
+              for (var i =0; i < style_list.length; i++){
+            style = style_list[i];
         $.ajax({
             url: "/propagate/total/?end_ts=" + deadtime + "&style=" + style +"&during="+ during + "&topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
-                 console.log(data);
+                //console.log(data);
 
                 folk_value = data["dcount"];
-                folk = folk_value["folk"] 
-                folk_count.push(folk);
-                             
-                list.push(deadtime);
+                folk = folk_value["folk"];
+                folk_all += folk;
+
 
                 media_value = data["dcount"];
-                media = media_value["media"] 
-                media_count.push(media);
-
+                media = media_value["media"]; 
+                media_all += media;
+             
                 opinion_leader_value = data["dcount"];
-                opinion_leader = opinion_leader_value["opinion_leader"] 
-                opinion_leader_count.push(media);
-                
+                opinion_leader = opinion_leader_value["opinion_leader"]; 
+                opinion_leader_all += opinion_leader;
+                        
                 other_value = data["dcount"];
-                other = other_value["other"] 
-                other_count.push(other);
-
+                other = other_value["other"];
+                other_all += other;
+            
                 oversea_value = data["dcount"];
-                oversea = oversea_value["oversea"] 
-                oversea_count.push(oversea);
-                      }
+                oversea = oversea_value["oversea"];
+                oversea_all += oversea; 
+                
+            }
         });
+    }
+                 list.push(deadtime);
+                 folk_data.push(folk_all); 
+                 media_data.push(media_all);
+                 opinion_leader_data.push(opinion_leader_all);
+                 other_data.push(other_all);
+                 oversea_data.push(oversea_all);
+                 // console.log(other_data);
+                 drawpicture_total();
+                 drawpicture_total_all();
+    }
 }
+//         {
+//          get_count(time);
+//         }
+//         drawpicture_total();
+//         // folk_count = [];
+//         // media_count = [];
+//         // opinion_leader_count = [];
+//         // other_count = [];
+//         // oversea_count = [];
+//         drawpicture_total_all();
+//     }
+//    function get_count(time){
+//     var atime = time;
+//     var deadtime = start_ts + during * atime;
+
+//     var style = 2; 
+//         $.ajax({
+//             url: "/propagate/total/?end_ts=" + deadtime + "&style=" + style +"&during="+ during + "&topic=" + topic,
+//             type: "GET",
+//             dataType:"json",
+//             async:false,
+//             success: function(data){
+//                  // console.log(data);
+
+//                 folk_value = data["dcount"];
+//                 folk = folk_value["folk"] 
+//                 folk_count.push(folk);
+                             
+//                 list.push(deadtime);
+
+//                 media_value = data["dcount"];
+//                 media = media_value["media"] 
+//                 media_count.push(media);
+
+//                 opinion_leader_value = data["dcount"];
+//                 opinion_leader = opinion_leader_value["opinion_leader"] 
+//                 opinion_leader_count.push(media);
+                
+//                 other_value = data["dcount"];
+//                 other = other_value["other"] 
+//                 other_count.push(other);
+
+//                 oversea_value = data["dcount"];
+//                 oversea = oversea_value["oversea"] 
+//                 oversea_count.push(oversea);
+//                       }
+//         });
+// }
 function drawpicture_total() {
         list_af = [];
         for (var i = 0; i < list.length; i++){
-            console.log(list[i]);
-            ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substring(12,20);
+            // console.log(list[i]);
+            ns= new Date(parseInt(list[i]) * 1000).toLocaleString().substring(5,20);
             list_af.push(ns);
         }
         for (var i = 0; i < list.length; i++){
-          all[i] = folk_count[i]+media_count[i]+opinion_leader_count[i]+other_count[i]+oversea_count[i];   
+          all[i] = folk_data[i]+media_data[i]+opinion_leader_data[i]+other_data[i]+oversea_data[i];   
 }
-        list = [];
         $('#trend_div').highcharts({
             chart: {
             type: 'spline',
@@ -483,11 +604,20 @@ function drawpicture_total() {
                 x: -20
             },
             xAxis: {
-                categories:list_af
+                categories:list_af,
+                labels: {
+                step: 24//控制多少个点显示一个
+            }
             },
             yAxis: {
                 title: {
-                    text: '微博条数'
+                    text: '微博条数',
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
                 },
                 plotLines: [{
                     value: 0,
@@ -495,6 +625,19 @@ function drawpicture_total() {
                     color: '#808080'
                 }]
             },
+            plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
             tooltip: {
                 valueSuffix: ''
             },
@@ -503,25 +646,31 @@ function drawpicture_total() {
                 align: 'center',
                 verticalAlign: 'bottom',
                 borderWidth: 0,
-                borderColor: '#F0F0F0'
+                borderColor: '#F0F0F0',
+                itemStyle: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
             },
             series: [{
                 name: '民众',
-                data: folk_count,
+                data: folk_data,
             }, {
                 name: '媒体',
-                data: media_count,
+                data: media_data,
             }, {
                 name: '名人',
-                data: opinion_leader_count,
+                data: opinion_leader_data,
             },
                {
                 name: '海外',
-                data: oversea_count,
+                data: oversea_data,
             }, 
                {
                 name: '其他',
-                data: other_count,
+                data: other_data,
             }]
         });
     }
@@ -554,11 +703,20 @@ function drawpicture_total_all() {
                 x: -20
             },
             xAxis: {
-                categories: list_af
+                categories: list_af,
+                labels: {
+                step: 24//控制多少个点显示一个
+            }
             },
             yAxis: {
                 title: {
-                    text: '微博条数'
+                    text: '微博条数',
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
                 },
                 plotLines: [{
                     value: 0,
@@ -566,6 +724,19 @@ function drawpicture_total_all() {
                     color: '#808080'
                 }]
             },
+                plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
             tooltip: {
                 valueSuffix: ''
             },
@@ -574,7 +745,13 @@ function drawpicture_total_all() {
                 align: 'center',
                 verticalAlign: 'bottom',
                 fontWeight: 'lighter',
-                borderWidth: 0
+                borderWidth: 0,
+                    itemStyle: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
             },
             series: [{
                 name: '全领域',
@@ -616,7 +793,7 @@ function increment_count () {
             dataType:"json",
             async:false,
             success: function(data){
-                console.log(data);
+                // console.log(data);
                 increment_folk_value = data["dincrement"];
                 increment_folk = increment_folk_value["folk"] 
                 increment_folk_count.push(increment_folk);
@@ -651,13 +828,16 @@ function drawpicture_increment() {
         increment_af = [];
         for (var i = 0; i < increment_list.length; i++){
 
-            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString().substring(12,20);
+            ns= new Date(parseInt(increment_list[i]) * 1000).toLocaleString().substring(5,20);
 
             increment_af.push(ns);
         }
         increment_list = [];
 
         $('#trend_div').highcharts({
+             chart: {
+                type: 'spline',
+            },
             title: {
         style: {
                 
@@ -682,11 +862,29 @@ function drawpicture_increment() {
                 x: -20
             },
             xAxis: {
-                categories:increment_af
+                title: {
+                enabled: true,
+                style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+                    }  
+                },
+                categories:increment_af,
+                labels: {
+                step: 24//控制多少个点显示一个
+            }
             },
             yAxis: {
                 title: {
-                    text: '增长率'
+                    text: '增长率',
+                style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+                }
                 },
                 plotLines: [{
                     value: 0,
@@ -694,6 +892,32 @@ function drawpicture_increment() {
                     color: '#808080'
                 }]
             },
+            plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
+            plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
             tooltip: {
                 valueSuffix: ''
             },
@@ -701,7 +925,13 @@ function drawpicture_increment() {
                 layout: 'horizontal',
                 align: 'center',
                 verticalAlign: 'bottom',
-                borderWidth: 0
+                borderWidth: 0,
+                    itemStyle: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
             },
             series: [{
                 name: '民众',
@@ -724,6 +954,9 @@ function drawpicture_increment() {
 function drawpicture_increment_all(){
 
         $('#trend_div1').highcharts({
+             chart: {
+                type: 'spline',
+            },
             title: {
         style: {
                 fontWeight: 'lighter',
@@ -747,11 +980,29 @@ function drawpicture_increment_all(){
                 x: -20
             },
             xAxis: {
-                categories: increment_af
+                title: {
+                    enabled: true,
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                        }  
+                    }, 
+                categories: increment_af,
+                labels: {
+                step: 24//控制多少个点显示一个
+            }
             },
             yAxis: {
                 title: {
-                    text: '增长率'
+                    text: '增长率',
+                    style: {
+                        color: '#666',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Microsoft YaHei'
+                        }
                 },
                 plotLines: [{
                     value: 0,
@@ -759,6 +1010,32 @@ function drawpicture_increment_all(){
                     color: '#808080'
                 }]
             },
+                plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
+            plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
             tooltip: {
                 valueSuffix: ''
             },
@@ -767,7 +1044,13 @@ function drawpicture_increment_all(){
                 align: 'center',
                 verticalAlign: 'bottom',
                 fontWeight: 'lighter',
-                borderWidth: 0
+                borderWidth: 0,
+                itemStyle: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                    }
             },
             series: [{
                 name: '全领域',
