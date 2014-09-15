@@ -169,12 +169,19 @@ def pie():
     begin_ts = ts - during
     end_ts = ts
 
+    emotion = request.args.get('emotion', 'global') # 情绪类型
+
     results = {}
+
     search_method = 'topic'
     area = None
-    search_func = getattr(pieModule, 'search_%s_pie' % search_method, None)
+    search_func = getattr(countsModule, 'search_%s_counts' % search_method, None)
     if search_func:
-        results= search_func(end_ts, during, query=query)
+        if emotion == 'global':
+            for k, v in emotions_kv.iteritems():
+                results[k] = search_func(end_ts, during, v, query=query, domain=area)[1]
+        else:
+            results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area)[1]
     else:
         return json.dumps('search function undefined')
 
