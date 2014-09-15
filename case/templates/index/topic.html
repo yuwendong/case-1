@@ -23,6 +23,10 @@
             background: #F0F0F0;
         }
 
+        #rank_table a:hover{
+            color: #428bca;
+        }
+
         .blkUnit {
             position: relative;
             clear: both;
@@ -82,7 +86,8 @@
             position: relative;
             margin: 0px auto;
             height: 500px;
-            width: 500px;
+            width: 750px;
+            float: left;
         }
         .label-important, .badge-important {
             background-color: #b94a48;
@@ -189,38 +194,27 @@
         .node-info-popup ul li a:hover {
             color: #00FFFF;
         }
-        #control-pane-left {
-            top: 59px;
-            left: 2px;
-            position: absolute;
-            width: 230px;
-            background-color: rgb(249, 247, 237);
+        .control-pane{
+            position: relative;
+            float: left;
+            z-index: 1000;
+            margin-right: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-        #control-pane-left > div {
+        .control-pane > div {
             margin: 10px;
-            overflow-x: auto;
         }
-        #control-pane-left a:hover{
+        .control-pane a:hover{
             color: #428bca;
         }
-        #control-pane {
-            top: 59px;
-            right: 2px;
-            position: absolute;
-            width: 230px;
-            background-color: rgb(249, 247, 237);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        #control-pane > div {
-            margin: 10px;
-            overflow-x: auto;
+        .control-pane input[type=range] {
+            width: 130px;
+            display: inline;
         }
         #control-pane-rightdown {
-            top: 276px;
-            right: 2px;
-            position: absolute;
-            width: 230px;
+            position: relative;
+            float: left;
+            width: 250px;
             background-color: rgb(249, 247, 237);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
@@ -229,7 +223,7 @@
         }
         #control-pane-rightdown > div {
             margin: 10px;
-            overflow-x: auto;
+            overflow-x: scroll;
         }
         .line {
             clear: both;
@@ -251,10 +245,6 @@
         .hidden {
             display: none;
             visibility: hidden;
-        }
-        #control-pane input[type=range] {
-            width: 130px;
-            display: inline;
         }
 
     </style>
@@ -310,11 +300,11 @@
     <!-- END SIGMA IMPORTS -->
 
     <script src="/static/js/identify/jquery.bootpag.js"></script> 
-    <script src="/static/js/identify/topic_identify.js"></script>
+    
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile">
+    <div class="blkUnit grpUnit" id="trendProfile" style="height:250px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
         <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
@@ -322,33 +312,23 @@
         <div class="tabUnit">
             <div class="tabConts"></div>
             <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
-            <table class="mtable" id="mstable">
-            </table>
-        <h5 style="margin-left:30px"><b>无向图</b></h5>
-
-        <table class="mtable" id="mstable1">
-
-        </table>
-        <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
-
-        <table class="mtable" id="mstable2">
-
-        </table>
+            <table class="mtable" id="mstable"></table>
+            <h5 style="margin-left:30px"><b>无向图</b></h5>
+            <table class="mtable" id="mstable1"></table>
+            <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
+            <table class="mtable" id="mstable2"></table>
         </div>
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>节点度分布</b></h4>
-            <i id="frequency_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="从一到最大度的出现频次"></i>&nbsp;&nbsp;
-            <span id="peak_trend_tooltip"></span>
-            <span class="pull-right" style="margin: -14px -9px  -10px auto;" data-animated="false">
-            </span>
+        <div class="titlBar" style="padding-bottom:10px;">
+            <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
-
+        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>最短路径长度曲线</button>
+        <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
         <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3">
-            </div>
+            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
             <div class="tabConts">
                 <div id="line" style="height:300px"></div>
             </div>
@@ -358,16 +338,22 @@
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-        <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
-        <div style="height:50px">
-            <div id="loading_current_data" class="alert alert-info">
-                系统繁忙计算中，请稍后...
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">Pagerank值排名</button>
             </div>
-            <label>
-                <div id="current_process" class="progress progress-striped active"></div>
-            </label>
-        </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
+            </div>
+            <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+        
         <!--
         <div>
             <p>
@@ -386,35 +372,20 @@
             </p>
         </div>
         -->
-        <div id="rank_table">
-            <table class="table table-bordered">
-            </table>
+        <div id="rank_table" style="margin-top:5px">
+            <table class="table table-bordered"></table>
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
-    <div class="well" style="width:1033px">
+    <div class="well" style="width:1033px; position: relative;height: 609px;">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-        <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
-        <form class="form-inline">
-            <img class="img-polaroid">
-            <!--<label><input type="checkbox" checked="true"> 动画演示 </label> -->
-            <a1 href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><i class="icon-picture"></i><h5>生成并查看网络</h5></a1>
-            <a2 href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><i class="icon-picture"></i><h5>下载图片</h5></a2>
-        </form>
-
-        <div id="network" class="collapse out" style="position: relative;">
-            <div id="loading_network_data" class="alert alert-info">
-            系统繁忙计算中，请稍后...
-            </div>
-            <label>
-                <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
-            </label>
-            <div class="sigma-expand" id="sigma-graph"></div>
-            <div id="control-pane-left">
-                <h3 class="underline">布局控制器</h3>
-                <div>
+        <div style="position: relative; height: 40px;">
+            <div class="control-pane">
+                <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <div id="layout_controller_div" style="display: none;">
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
                         <!--linLogMode-->对数模式
                         <label>
@@ -464,55 +435,77 @@
                         <input id="strongGravityModeInput" value="true" type="hidden">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span">1</span><input id="edgeWeightInfluence_input" type="range" min="0" value="1" onclick="change_edgeWeightInfluence();">
+                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span">1</span><br>
+                        <input id="edgeWeightInfluence_input" type="range" min="0" value="1" onclick="change_edgeWeightInfluence();">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span">1</span><input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
+                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span">1</span><br>
+                        <input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span">10</span><input id="gravity_input" type="range" min="0" value="10" onclick="change_gravity();"> 
+                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span">10</span><br>
+                        <input id="gravity_input" type="range" min="0" value="10" onclick="change_gravity();"> 
                     </div>
                     <div style="margin: 2px auto 10px 0px;font-size: 13px;">
-                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span">2</span><input id="slowdown_input" type="range" min="0" value="2" onclick="change_slowdown();"> 
+                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span">2</span><br>
+                        <input id="slowdown_input" type="range" min="0" value="2" onclick="change_slowdown();"> 
                     </div>
-                </div>
-                <span class="line"></span>
-                <span>
-                    <a id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
-                    <a id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
-                    <a id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
-                </span>
-            </div>
-            <div id="control-pane">
-                <h3 class="underline">过滤器</h3>
-                <div>
-                    指标类别
-                    <select id="zhibiao-category">
-                        <option value="degree" selected>度</option>
-                        <option value="pagerank">Pagerank</option>
-                    </select>
-                </div>
-                <div id="min_degree_container">
-                  最小度&nbsp;&nbsp;<span id="min-degree-val">0</span><br>
-                  <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
-                </div>
-                <div id="min_pagerank_container" class="hidden">
-                  最小Pagerank&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
-                  <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
-                </div>
-                <div>
-                  节点类别
-                  <select id="node-category">
-                    <option value="" selected>所有类别</option>
-                  </select>
-                </div>
-                <span class="line"></span>
-                <div>
-                  <button id="reset-btn">重置过滤器</button>
+                    <span class="line"></span>
+                    <span>
+                        <a id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+                        <a id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+                        <a id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+                    </span>
                 </div>
             </div>
+            <div class="control-pane">
+                <a id="filter_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 181px;"><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <div id="filter_controller_div" style="display: none;">
+                    <div>
+                        指标类别
+                        <select id="zhibiao-category">
+                            <option value="degree" selected>度</option>
+                            <option value="pagerank">Pagerank</option>
+                        </select>
+                    </div>
+                    <div id="min_degree_container">
+                      最小度&nbsp;&nbsp;<span id="min-degree-val">0</span><br>
+                      <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
+                    </div>
+                    <div id="min_pagerank_container" class="hidden">
+                      最小Pagerank&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
+                      <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
+                    </div>
+                    <div>
+                      节点类别
+                      <select id="node-category">
+                        <option value="" selected>所有类别</option>
+                      </select>
+                    </div>
+                    <span class="line"></span>
+                    <div>
+                      <button id="reset-btn">重置过滤器</button>
+                    </div>
+                </div>
+            </div>
+            <div class="control-pane">
+                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
+            </div>
+            <div class="control-pane">
+                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
+            </div>
+            <div id="loading_network_data" class="alert alert-info" style="float:left;height: 33px;width: 308px;padding: 9px;display: none;">
+            系统繁忙计算中，请稍后...
+            </div>
+        </div>
+
+        <div id="network" class="collapse out" style="position: absolute;top: 89px;">
+            <label>
+                <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
+            </label>
+            <div class="sigma-expand" id="sigma-graph"></div>
             <div id="control-pane-rightdown">
-                <h3 class="underline">节点信息</h3>
+                <h4 class="underline">节点信息</h4>
                 <div>
                 用户昵称: <span id="nickname"></span>
                 </div>
@@ -531,14 +524,38 @@
             </div>
         </div>
     </div>
-
 {% endblock content %}
-<% block tail_js %>
+{% block tail_js %}
     <script>      
         $("#summary_tooltip").tooltip();
         $("#keyclient_tooltip").tooltip();
         $("#display_tooltip").tooltip();
         $("#frequency_tooltip").tooltip();
         $("#power_law_distribution_tooltip").tooltip();
+        $("#layout_controller").click(function(){
+            if($("#layout_controller").attr('status') == 'closed'){
+                $("#layout_controller_div").css("display", "block");
+                $("#layout_controller").attr('status', 'opened')
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+            }
+            else{
+                $("#layout_controller_div").css("display", "none");
+                $("#layout_controller").attr('status', 'closed');
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+            }
+        });
+        $("#filter_controller").click(function(){
+            if($("#filter_controller").attr('status') == 'closed'){
+                $("#filter_controller_div").css("display", "block");
+                $("#filter_controller").attr('status', 'opened')
+                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+            }
+            else{
+                $("#filter_controller_div").css("display", "none");
+                $("#filter_controller").attr('status', 'closed');
+                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+            }
+        });
     </script>
-<% endblock tail_js %>
+    <script src="/static/js/identify/topic_identify.js"></script>
+{% endblock tail_js %}

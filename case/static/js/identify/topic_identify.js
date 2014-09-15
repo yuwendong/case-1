@@ -1,10 +1,17 @@
+var topic = QUERY;
+if(topic == '中国'){
+  var start_ts = 1377964800 + 900;
+}
+else{
+  var start_ts = START_TS;
+}
+var end_ts = END_TS;
+
 var previous_data = null;
 var current_data = null;
 var networkShowed = 0;
 var networkUpdated = 0;
 var animation = 0;
-var start_ts = null;
-var end_ts = null;
 var sigInst = null;
 var animation_timer = null;
 var quota={};
@@ -13,16 +20,12 @@ var rankdata;
 var node;
 var y_data;
 
-
 function get_network_infor(){
-var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
+var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betweenness_centrality',
  'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
  'diameter','power_law_distribution','number_weakly_connected_components',
  'degree_assortativity_coefficient','average_clustering','ave_k_core','ratio_H2G'];
-var topic = "中国";
-var start_ts = 1377965700;
-var end_ts = 1378051200;
   for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key],
@@ -44,7 +47,7 @@ var end_ts = 1378051200;
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">幂律分布系数<i id=\"power_law_distribution_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"度分布进行幂律分布拟合得到的系数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['power_law_distribution'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均度中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点度中心性即节点的所有连接数除以可能的最大连接数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_betweenness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均紧密中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点紧密中心性即节点到达它可达节点的平均距离\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_closeness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
@@ -498,10 +501,8 @@ function network_request_callback(data) {
 
 function show_network() {
     networkShowed = 0;
-    var topic = '中国'; 
-    var start_ts = 1377965700;
-    var end_ts = 1378051200;
     if (!networkShowed) {
+        $("#loading_network_data").css("display", "block");
         $("#network").removeClass('out');
         $("#network").addClass('in');
         networkShowed = 0;
@@ -529,132 +530,175 @@ function show_network() {
  }
 }
 
-(function ($) {
-    function request_callback(data) {
-      rankdata = data;
-      var status = 'current finished';
-      var page_num = 10 ;
-  if (status == 'current finished') {
-      $("#current_process_bar").css('width', "100%")
-      $("#current_process").removeClass("active");
-      $("#current_process").removeClass("progress-striped");
-      current_data = data;
-      if (current_data.length) {
-    $("#loading_current_data").text("计算完成!");
-    if (current_data.length < page_num) {
-        page_num = current_data.length
-        create_current_table(current_data, 0, page_num);
-    }
-    else {
-        create_current_table(current_data, 0, page_num);
-        var total_pages = 0;
-        if (current_data.length % page_num == 0) {
-      total_pages = current_data.length / page_num;
-        }
-        else {
-      total_pages = current_data.length / page_num + 1;
-        }
-        $('#rank_page_selection').bootpag({
-      total: total_pages,
-      page: 1,
-      maxVisible: 30
-        }).on("page", function(event, num){
-      start_row = (num - 1)* page_num;
-      end_row = start_row + page_num;
-      if (end_row > current_data.length)
-          end_row = current_data.length;
-      create_current_table(current_data, start_row, end_row);
-        });
-    }
-      }
-      else {
-    $("#loading_current_data").text("很抱歉，本期计算结果为空!");
-      }
-  }
-  else
-      return
-    }
-    
-    function create_current_table(data, start_row, end_row) {
-      var cellCount = 6;
-      var table = '<table class="table table-bordered">';
-      var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th></tr></thead>';
-      var tbody = '<tbody>';
-      for (var i = start_row;i < end_row;i++) {
-                var tr = '<tr>';
-          if (data[i][3].match("海外")) {
-        tr = '<tr class="success">';
-          }
-                for(var j = 0;j < cellCount;j++) {
-        if (j == 7) {
-            // checkbox
-            var td = '<td><input id="uid_'+ data[i][1] + '" type="checkbox" name="now_user"></td>';
-        }
-        else if (j == 6) {
-            // identify status
-            if (data[i][j])
-          var td = '<td><i class="icon-ok"></i></td>';
-            else
-          var td = '<td><i class="icon-remove"></i></td>';
-        }
-        else if(j == 0) {
-            // rank status
-            var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
-        }
-        else if(j == 1){
-            var td = '<td style="display:none">'+data[i][j]+'</td>';
-        }
-        else if(j == 2){
-            var td = '<td><a target=\"_blank\" href=\"/profile/search/person?nickname=' + data[i][j] + '\">' + data[i][j] + '</a></td>';
+function request_callback(data) {
+        rankdata = data;
+        var status = 'current finished';
+        var page_num = 10 ;
+        if (status == 'current finished') {
+            $("#current_process_bar").css('width', "100%")
+            $("#current_process").removeClass("active");
+            $("#current_process").removeClass("progress-striped");
+            current_data = data;
+            if (current_data.length) {
+                $("#loading_current_data").text("计算完成!");
+                if (current_data.length < page_num) {
+                    page_num = current_data.length
+                    create_current_table(current_data, 0, page_num);
+                }
+                else {
+                    create_current_table(current_data, 0, page_num);
+                    var total_pages = 0;
+                    if (current_data.length % page_num == 0) {
+                        total_pages = current_data.length / page_num;
+                    }
+                    else {
+                        total_pages = current_data.length / page_num + 1;
+                    }
+            
+                    $('#rank_page_selection').bootpag({
+                        total: total_pages,
+                        page: 1,
+                        maxVisible: 30
+                    }).on("page", function(event, num){
+                        start_row = (num - 1)* page_num;
+                        end_row = start_row + page_num;
+                        if (end_row > current_data.length)
+                            end_row = current_data.length;
+                            create_current_table(current_data, start_row, end_row);
+                    });
+                }
+            }
+            else {
+                $("#loading_current_data").text("很抱歉，本期计算结果为空!");
+            }
         }
         else{
-            var td = '<td>'+data[i][j]+'</td>';
+            return
         }
-        tr += td;
-                }
-          tr += '</tr>';
-          tbody += tr;
+    }
+
+function filter_node_in_network(node_uid){
+    console.log(node_uid);
+}
+    
+function create_current_table(data, start_row, end_row) {
+    $("#rank_table").empty();
+    var cellCount = 11;
+    var table = '<table class="table table-bordered">';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>K-核数</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var tbody = '<tbody>';
+    for (var i = start_row;i < end_row;i++) {
+        var tr = '<tr>';
+              for(var j = 0;j < cellCount;j++) {
+        if(j == 0) {
+          // rank status
+          var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
       }
-      tbody += '</tbody>';
-      table += thead + tbody;
-      table += '</table>'
-      $("#rank_table").html(table);
-      $('#select_all').click(function(){
-          var $this = $(this);
+      else if(j == 1){
+          var td = '<td style="display:none">'+data[i][j]+'</td>';
+      }
+      else if(j == 2){
+          var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+      }
+      else{
+          var td = '<td>'+data[i][j]+'</td>';
+      }
+      tr += td;
+              }
+        tr += '</tr>';
+        tbody += tr;
+    }
+    tbody += '</tbody>';
+    table += thead + tbody;
+    table += '</table>'
+    $("#rank_table").html(table);
+
+    $('#select_all').click(function(){
+        var $this = $(this);
+        this.checked = !this.checked;
+        $.each($('#rank_table :checkbox'), function(i, val) {
+      if ($(this) != $this)
           this.checked = !this.checked;
-          $.each($('#rank_table :checkbox'), function(i, val) {
-        if ($(this) != $this)
-            this.checked = !this.checked;
-          });  
-      });
-    }
+        });  
+    });
+}
 
-    function identify_request() {
+function identify_request() {
+  var topn = 100;
+  $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
+}
 
-      var topic = '中国'; 
-      var start_ts = 1377965700;
-      var end_ts = 1378051200;
-      var topn = 100;
+identify_request();
 
-      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
-    }
-
-    identify_request();
-
-})(jQuery);
-
-
-
-
-var topic = "中国";
-var start_ts = 1377965700;
-var end_ts = 1378051200;
 var index = [];
 var value = [];
 var x_data = [];
 var y_data = [];
+var topn = 100;
 
+function get_pagerank(){
+        $.ajax({
+      url: "/identify/rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&topn=' + topn,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+        request_callback(data);
+      }  
+  }) ; 
+}
+function get_centrelity(){
+        $.ajax({
+      url: "/identify/degree_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+        request_callback(data);
+      }  
+  }) ; 
+}
 
+function betweeness_centrality_rank(){
+        $.ajax({
+      url: "/identify/betweeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+        request_callback(data);
+      }  
+  }) ; 
+        
+}
+
+function closeness_centrality_rank(){
+        $.ajax({
+      url: "/identify/closeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+     
+      // for (var i = 0; i< data.length; i ++){
+      //     var ydata = Number(data[i].toFixed(3));
+      //     y_data.push(ydata);
+      //   }
+      request_callback(data);
+      }  
+  }) ;
+
+}
 function getnetwork_frequency(){
 
     $.ajax({
@@ -671,7 +715,7 @@ function getnetwork_frequency(){
             }
         }
     }) ;
-            $.ajax({
+    $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lnx' ,
       dataType : "json",
       type : 'GET',
@@ -682,10 +726,9 @@ function getnetwork_frequency(){
           var xdata = Number(data[i].toFixed(3));
           x_data.push(xdata);
         }
-        // console.log(x_data);
       }
   }) ; 
-            $.ajax({
+  $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lny' ,
       dataType : "json",
       type : 'GET',
@@ -695,9 +738,11 @@ function getnetwork_frequency(){
       for (var i = 0; i< data.length; i ++){
           var ydata = Number(data[i].toFixed(3));
           y_data.push(ydata);
-        } 
+        }
       }  
   }) ; 
+
+
 
 
             $.ajax({
@@ -706,7 +751,6 @@ function getnetwork_frequency(){
       type : 'GET',
       async: false,
       success: function(data){
-        // console.log(data);
         H_degree_histogram = data;
       }  
   }) ;
@@ -715,18 +759,14 @@ function getnetwork_frequency(){
   // drawpicture_ln(x_data,y_data);
   // drawpicture(index,value);
 
-
-              $.ajax({
+  $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=result_linalg' ,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
-        // console.log(data);
         var result_r = Number(data[0].toFixed(3));
         var result_c = Number(data[1].toFixed(3));
-        // console.log(result_r);
-        // console.log(result_c); 
       }
   }) ; 
          
@@ -735,16 +775,17 @@ function getnetwork_frequency(){
 
 
 function drawpicture() {
+ 
+  // get_centrelity();
+  // betweeness_centrality_rank();
+  // closeness_centrality_rank();
     $('#line').highcharts({
         title: {
-            text: '拟合曲线公式r.lnx + C =lny [r,C] = [-2.833,-12.319]',
+            text: '',
+            fontSize:'10px',
             align:'right',
-            x : -70,
-        style:{
-        fontSize: '13px',
-        
-        }
-      },
+            x : -70
+        },
         lang: {
             printButtonTitle: "打印",
             downloadJPEG: "下载JPEG 图片",
@@ -759,7 +800,13 @@ function drawpicture() {
         },
         xAxis: {
           title: {
-            text: '度数'
+            text: '度数',
+        style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
         },
             categories:index,
           labels: {
@@ -768,7 +815,13 @@ function drawpicture() {
           },
         yAxis: {
             title: {
-                text: '出现频数'
+                text: '出现频数',
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
             },
             plotLines: [{
                 value: 0,
@@ -786,17 +839,21 @@ function drawpicture() {
             borderWidth: 0
         },
         series: [{
-            name: '原始曲线',
+            name: '最短路径长度曲线',
             data: value
         }]
 
     });
 }
 function drawpicture_ln() {
+
     $('#line').highcharts({
+        
+        chart: {
+        },
+        
         title: {
-            text: '',
-            x: -20 //center
+            text: ''
         },
         lang: {
             printButtonTitle: "打印",
@@ -806,100 +863,28 @@ function drawpicture_ln() {
             downloadSVG: "下载SVG 矢量图",
             exportButtonTitle: "导出图片"
             },
-        subtitle: {
-            text: '',
-            x: -20
-        },
         xAxis: {
-          title: {
-            text: 'lnx'
+            tickInterval: 1
         },
-            categories:x_data,
-          labels: {
-                step: 20
-            }
-          },
+        
         yAxis: {
-            title: {
-                text: 'lny'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
+            type: 'logarithmic',
+            minorTickInterval: 0.1
         },
+        
         tooltip: {
-            valueSuffix: ''
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: 'x = {point.x}, y = {point.y}'
         },
-            legend: {
-            layout: 'vertical',
-            align: 'center',
-            verticalAlign: 'bottom',
-            borderWidth: 0
-        },
-        series: [{
-            name: '双对数曲线',
-            data: y_data
-        }]
-
-    });
-}
-
- 
-
-
-function drawpicture_H(index,H_degree_histogram) {
-    $('#line').highcharts({
-        title: {
-            text: '',
-            x: -20 //center
-        },
-        lang: {
-            printButtonTitle: "打印",
-            downloadJPEG: "下载JPEG 图片",
-            downloadPDF: "下载PDF文档",
-            downloadPNG: "下载PNG 图片",
-            downloadSVG: "下载SVG 矢量图",
-            exportButtonTitle: "导出图片"
-            },
-        subtitle: {
-            text: '',
-            x: -20
-        },
-        xAxis: {
-          title: {
-            text: '度数'
-        },
-            categories:index,
-          labels: {
-                step: 20
-            }
-          },
-        yAxis: {
-            title: {
-                text: '出现频数'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-            legend: {
-            layout: 'vertical',
-            align: 'center',
-            verticalAlign: 'bottom',
-            borderWidth: 0
-        },
-        series: [{
-            name: '最大连通子图节点度分布',
-            data: H_degree_histogram
-        }]
-
+        
+        series: [{            
+            data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+            pointStart: 1
+        },{
+            data: [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
+            pointStart: 1
+          }
+        ]
     });
 }
 

@@ -15,14 +15,13 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, se
 
 mod = Blueprint('case', __name__, url_prefix='/index')
 
-#tag = ['九一八','钓鱼岛','历史',]
 comment = ['历史是不能改变的',]
 
 def get_default_timerange():
-    return u'20130901-20130901'
+    return u'20130902-20130907'
 
 def get_default_topic():
-    return u'中国'
+    return u'东盟,博览'
 
 def get_default_pointInterval():
     return {'zh': u'1小时', 'en': 3600}
@@ -35,8 +34,8 @@ def get_gaishu_yaosus():
 
 def get_deep_yaosus():
     return {'yaosu': (('time', u'时间分析'), ('area', u'地域分析'), \
-                      ('moodlens', u'情绪分析'), ('network', u'网络分析'), \
-                      ('semantic', u'语义分析'))}
+                      ('moodlens', u'情绪分析'), ('network', u'网络分析'), \
+                      ('semantic', u'语义分析'))}
 
 default_timerange = get_default_timerange()
 default_topic = get_default_topic()
