@@ -45,7 +45,7 @@ def cut_filter(text):
 
 def test(weibo,weibo_dict,flag):
     word_dict = dict()
-    reader = csv.reader(file('./svm/new_feature.csv', 'rb'))
+    reader = csv.reader(file('./libsvm-3.17/python/svm/new_feature.csv', 'rb'))
     for w,c in reader:
         word_dict[str(w)] = c 
 
@@ -73,7 +73,7 @@ def test(weibo,weibo_dict,flag):
                 f_row = f_row + ' ' + str(item) 
         f_items.append(f_row)
 
-    with open('./svm_test/test%s.txt' % flag, 'wb') as f:
+    with open('./libsvm-3.17/python/svm_test/test%s.txt' % flag, 'wb') as f:
         writer = csv.writer(f)
         for i in range(0,len(f_items)):
             row = []
@@ -83,10 +83,10 @@ def test(weibo,weibo_dict,flag):
     return items
     
 def choose_ad(flag):
-    y, x = svm_read_problem('./svm/new_train.txt')
+    y, x = svm_read_problem('./libsvm-3.17/python/svm/new_train.txt')
     m = svm_train(y, x, '-c 4')
 
-    y, x = svm_read_problem('./svm_test/test%s.txt' % flag)
+    y, x = svm_read_problem('./libsvm-3.17/python/svm_test/test%s.txt' % flag)
     p_label, p_acc, p_val  = svm_predict(y, x, m)
 
     return p_label
@@ -106,12 +106,16 @@ def start(weibo,flag):
                 weibo_mid.append(str(mid))
                 weibo_dict[str(mid)] = str(text)
 
+    final_data = []
+    if len(weibo_mid) == 0:
+        return final_data
+    
     test(weibo_mid,weibo_dict,flag)#生成测试数据
     
     lable = choose_ad(flag)#广告过滤
-
-    final_data = []
+    print 'len(lable), len(weibo_mid):',len(lable), len(weibo_mid)
     for i in range(0,len(lable)):
+        
         if lable[i] == 0:
             final_data.append(weibo_mid[i])
 
