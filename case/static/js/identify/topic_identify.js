@@ -21,7 +21,7 @@ var node;
 var y_data;
 
 function get_network_infor(){
-var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree_centrality',
+var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betweenness_centrality',
  'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
  'diameter','power_law_distribution','number_weakly_connected_components',
@@ -47,7 +47,7 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_degree
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">幂律分布系数<i id=\"power_law_distribution_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"度分布进行幂律分布拟合得到的系数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['power_law_distribution'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均度中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点度中心性即节点的所有连接数除以可能的最大连接数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_betweenness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均紧密中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点紧密中心性即节点到达它可达节点的平均距离\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_closeness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
@@ -578,9 +578,9 @@ function request_callback(data) {
     
 function create_current_table(data, start_row, end_row) {
     $("#rank_table").empty();
-    var cellCount = 10;
+    var cellCount = 11;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>pagerank-value</th><th>d-centrelity</th><th>b-centrelity</th><th>c-centrelity</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>K-核数</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
         var tr = '<tr>';
@@ -795,7 +795,13 @@ function drawpicture() {
         },
         xAxis: {
           title: {
-            text: '度数'
+            text: '度数',
+        style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
         },
             categories:index,
           labels: {
@@ -804,7 +810,13 @@ function drawpicture() {
           },
         yAxis: {
             title: {
-                text: '出现频数'
+                text: '出现频数',
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
             },
             plotLines: [{
                 value: 0,
@@ -822,7 +834,7 @@ function drawpicture() {
             borderWidth: 0
         },
         series: [{
-            name: '原始曲线',
+            name: '最短路径长度曲线',
             data: value
         }]
 
@@ -838,7 +850,14 @@ function drawpicture_ln() {
         title: {
             text: ''
         },
-        
+        lang: {
+            printButtonTitle: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
+            },
         xAxis: {
             tickInterval: 1
         },

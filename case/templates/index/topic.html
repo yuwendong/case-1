@@ -297,7 +297,7 @@
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile">
+    <div class="blkUnit grpUnit" id="trendProfile" style="height:250px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
         <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
@@ -314,8 +314,12 @@
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <button class="btn btn-primary btn-xs" style="margin-left:18px" onclick='drawpicture()'>最短路径长度曲线</button>
-        <button class="btn btn-primary btn-xs" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
+        <div class="titlBar" style="padding-bottom:10px;">
+            <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        </div>
+        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>最短路径长度曲线</button>
+        <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
             <div class="tabConts">
@@ -329,24 +333,16 @@
             <h4><b>关键用户</b></h4>
             <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
-        <div style="height:50px">
-            <div id="loading_current_data" class="alert alert-info">
+        
+            <button class="btn btn-danger" onclick='get_pagerank()'>Pagerank值排名</button>
+            <button class="btn btn-danger" onclick='get_centrelity()'>度中心性排名</button>
+            <button class="btn btn-danger" onclick='betweeness_centrality_rank()'>介数排名</button>
+            <button class="btn btn-danger" onclick='closeness_centrality_rank()'>紧密中心性排名</button>
+              
+                <span id="loading_current_data" class="alert alert-info" >
                 系统繁忙计算中，请稍后...
-            </div>
-            <label>
-                <div id="current_process" class="progress progress-striped active"></div>
-            </label>
-        </div>
-        <div style="height:50px">
-            <button class="btn btn-primary btn-xs" onclick='get_pagerank()'>pagerank排名</button>
-            <button class="btn btn-primary btn-xs" onclick='get_centrelity()'>度中心性排名</button>
-            <button class="btn btn-primary btn-xs" onclick='betweeness_centrality_rank()'>介数排名</button>
-            <button class="btn btn-primary btn-xs" onclick='closeness_centrality_rank()'>紧密中心性排名</button>
-            
-            <label>
-                <div id="current_process" class="progress progress-striped active"></div>
-            </label>
-        </div>
+                </span>
+        
         <!--
         <div>
             <p>
@@ -365,7 +361,7 @@
             </p>
         </div>
         -->
-        <div id="rank_table">
+        <div id="rank_table" style="margin-top:5px">
             <table class="table table-bordered"></table>
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
@@ -482,10 +478,10 @@
                 </div>
             </div>
             <div class="control-pane">
-                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></h5></a>
+                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
             </div>
             <div class="control-pane">
-                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></h5></a>
+                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
             </div>
             <div id="loading_network_data" class="alert alert-info" style="float:left;">
             系统繁忙计算中，请稍后...
