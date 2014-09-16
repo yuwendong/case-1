@@ -45,12 +45,12 @@ $(document).ready(function(){   //网页加载时执行下面函数
         var result1=[];
         var query = QUERY;
         var end_ts = END_TS;
-        if(query=='中国'){
-            var start_ts = 1377997200 + 900;
-        }
-        else{
-            var start_ts = START_TS;
-        }
+        // if(query=='中国'){
+        var start_ts = START_TS+ 900;
+        // }
+        // else{
+        //     var start_ts = START_TS;
+        // }
         var  during_pie = end_ts-start_ts;
         var  topic = query;
         var  during = POINT_INTERVAL;
@@ -66,18 +66,23 @@ $(document).ready(function(){   //网页加载时执行下面函数
         var  origin_data = 0;
         var  comment_data = 0;
         var  forward_data = 0;
+        var  folk = 0;
+        var  media = 0;
+        var  oversea = 0;
+        var  opinion_leader = 0;
+        var  other = 0;
         for (var i =0; i < style_list.length; i++){
                     style = style_list[i];
+                    var all = 0;
             for( var time_s = 0;start_ts + time_s * during<end_ts; time_s++){
                  var ts = start_ts + time_s * during ;
-                     var all = 0;
+                     
             $.ajax({
                 url: "/propagate/total/?end_ts=" + ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
                 type: "GET",
                 dataType:"json",
                 async:false,
                 success: function(data){
-                    // console.log(data);
 
                     folk_value = data["dcount"];
                     folk = folk_value["folk"];
@@ -90,10 +95,10 @@ $(document).ready(function(){   //网页加载时执行下面函数
                             
                     other_value = data["dcount"];
                     other = other_value["other"];
+                    // console.log(other);
                 
                     oversea_value = data["dcount"];
-                    oversea = oversea_value["oversea"]; 
-                    
+                    oversea = oversea_value["oversea"];                    
                 }
             });
         all_area = folk+media+opinion_leader+other+oversea;
@@ -102,6 +107,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
         }
 
                 every_style.push(all);
+                console.log(every_style);
             
                   }
 
@@ -112,8 +118,8 @@ $(document).ready(function(){   //网页加载时执行下面函数
                         forward_data = (every_style[1]/all_data).toFixed(2);
                         comment_data = (every_style[2]/all_data).toFixed(2);
                         console.log(origin_data);
-                        // console.log(forward_data);
-                        // console.log(comment_data);
+                        console.log(forward_data);
+                        console.log(comment_data);
                  on_update(origin_data,forward_data,comment_data);
 }
 
@@ -411,33 +417,23 @@ var option = {
 
         var folk_value = [];
         var folk_count = [];
-        var folk = 0;
-        var folk_data = [];
-        var folk_all = 0;
+        var folk = [];
        
         var media_value = [];
         var media_count = [];
-        var media = 0;
-        var media_data = [];
-        var media_all = 0;
+        var media = [];
 
         var opinion_leader_value = [];
         var opinion_leader_count = [];
-        var opinion_leader = 0;
-        var opinion_leader_data =[];
-        var opinion_leader_all = 0;
+        var opinion_leader = [];
 
         var other_value = [];
         var other_count = [];
-        var other = 0;
-        var other_data = [];
-        var other_all = 0;
+        var other = [];
 
         var oversea_value = [];
         var oversea_count = [];
-        var oversea = 0;
-        var oversea_data = [];
-        var oversea_all = 0;
+        var oversea = [];
 
         var all = [];
 
@@ -469,104 +465,55 @@ $(document).ready(function(){   //网页加载时执行下面函数
            total_count();
         })
 function total_count () {
-        for (var time = 0 ; time *during + start_ts< end_ts ;time++){
-            var deadtime = time *during + start_ts;
+        for (var time = 0 ; time *during + start_ts< end_ts ;time++)
+        {
+         get_count(time);
+        }
+        drawpicture_total();
+        folk_count = [];
+        media_count = [];
+        opinion_leader_count = [];
+        other_count = [];
+        oversea_count = [];
+        drawpicture_total_all();
+    }
+   function get_count(time){
+    var atime = time;
+    var deadtime = start_ts + during * atime;
 
-            var style_list = [1,2,3];
-            var style;
-              for (var i =0; i < style_list.length; i++){
-            style = style_list[i];
+    var style = 2; 
         $.ajax({
             url: "/propagate/total/?end_ts=" + deadtime + "&style=" + style +"&during="+ during + "&topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
-                //console.log(data);
+                 // console.log(data);
 
                 folk_value = data["dcount"];
-                folk = folk_value["folk"];
-                folk_all += folk;
-
+                folk = folk_value["folk"] 
+                folk_count.push(folk);
+                             
+                list.push(deadtime);
 
                 media_value = data["dcount"];
-                media = media_value["media"]; 
-                media_all += media;
-             
+                media = media_value["media"] 
+                media_count.push(media);
+
                 opinion_leader_value = data["dcount"];
-                opinion_leader = opinion_leader_value["opinion_leader"]; 
-                opinion_leader_all += opinion_leader;
-                        
+                opinion_leader = opinion_leader_value["opinion_leader"] 
+                opinion_leader_count.push(media);
+                
                 other_value = data["dcount"];
-                other = other_value["other"];
-                other_all += other;
-            
+                other = other_value["other"] 
+                other_count.push(other);
+
                 oversea_value = data["dcount"];
-                oversea = oversea_value["oversea"];
-                oversea_all += oversea; 
-                
-            }
+                oversea = oversea_value["oversea"] 
+                oversea_count.push(oversea);
+                      }
         });
-    }
-                 list.push(deadtime);
-                 folk_data.push(folk_all); 
-                 media_data.push(media_all);
-                 opinion_leader_data.push(opinion_leader_all);
-                 other_data.push(other_all);
-                 oversea_data.push(oversea_all);
-                 // console.log(other_data);
-                 drawpicture_total();
-                 drawpicture_total_all();
-    }
 }
-//         {
-//          get_count(time);
-//         }
-//         drawpicture_total();
-//         // folk_count = [];
-//         // media_count = [];
-//         // opinion_leader_count = [];
-//         // other_count = [];
-//         // oversea_count = [];
-//         drawpicture_total_all();
-//     }
-//    function get_count(time){
-//     var atime = time;
-//     var deadtime = start_ts + during * atime;
-
-//     var style = 2; 
-//         $.ajax({
-//             url: "/propagate/total/?end_ts=" + deadtime + "&style=" + style +"&during="+ during + "&topic=" + topic,
-//             type: "GET",
-//             dataType:"json",
-//             async:false,
-//             success: function(data){
-//                  // console.log(data);
-
-//                 folk_value = data["dcount"];
-//                 folk = folk_value["folk"] 
-//                 folk_count.push(folk);
-                             
-//                 list.push(deadtime);
-
-//                 media_value = data["dcount"];
-//                 media = media_value["media"] 
-//                 media_count.push(media);
-
-//                 opinion_leader_value = data["dcount"];
-//                 opinion_leader = opinion_leader_value["opinion_leader"] 
-//                 opinion_leader_count.push(media);
-                
-//                 other_value = data["dcount"];
-//                 other = other_value["other"] 
-//                 other_count.push(other);
-
-//                 oversea_value = data["dcount"];
-//                 oversea = oversea_value["oversea"] 
-//                 oversea_count.push(oversea);
-//                       }
-//         });
-// }
 function drawpicture_total() {
         list_af = [];
         for (var i = 0; i < list.length; i++){
@@ -575,8 +522,9 @@ function drawpicture_total() {
             list_af.push(ns);
         }
         for (var i = 0; i < list.length; i++){
-          all[i] = folk_data[i]+media_data[i]+opinion_leader_data[i]+other_data[i]+oversea_data[i];   
+          all[i] = folk_count[i]+media_count[i]+opinion_leader_count[i]+other_count[i]+oversea_count[i];   
 }
+        list = [];
         $('#trend_div').highcharts({
             chart: {
             type: 'spline',
@@ -656,21 +604,21 @@ function drawpicture_total() {
             },
             series: [{
                 name: '民众',
-                data: folk_data,
+                data: folk_count,
             }, {
                 name: '媒体',
-                data: media_data,
+                data: media_count,
             }, {
                 name: '名人',
-                data: opinion_leader_data,
+                data: opinion_leader_count,
             },
                {
                 name: '海外',
-                data: oversea_data,
+                data: oversea_count,
             }, 
                {
                 name: '其他',
-                data: other_data,
+                data: other_count,
             }]
         });
     }
