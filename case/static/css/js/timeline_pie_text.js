@@ -29,7 +29,7 @@
         var result1 = [];
         var result2 = [];
         var result3 = [];
-        var topic = '博鳌';
+        var topic = '东盟,博览会';
 
     function gettimeline_data() {
         var html ="";
@@ -41,13 +41,9 @@
             success: function(data){
                
                for (var i = 0;i < data.length;i++) {
-                    result[i] = data[i][i][0];
-                };
-                for (var i = 0;i < data.length;i++) {
-                    result1[i] = data[i][i][1]; 
-                };
-                for (var i = 0;i < data.length;i++) {
-                    result2[i] = data[i][i][2][0]+'-'+data[i][i][2][1]; 
+                    result[i] = data[i][1];
+                    result1[i] = data[i][2];
+                    result2[i] = data[i][0]; 
 
                     var s = i.toString();
                     if(i==0){
@@ -60,7 +56,6 @@
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
-                    
                 };
                 $("#Tableselect").append(html);
                 bindSentimentTabClick();
@@ -203,17 +198,9 @@
             dataType:"json",
             async:false,
             success: function(data){
-                result3[0]=data['10']['10'];
-                result3[1]=data['0']['0'];
-                result3[10]=data['1']['1'];
-                result3[3]=data['2']['2'];
-                result3[2]=data['3']['3'];
-                result3[5]=data['4']['4'];
-                result3[4]=data['5']['5'];
-                result3[7]=data['6']['6'];
-                result3[6]=data['7']['7'];
-                result3[9]=data['8']['8'];
-                result3[8]=data['9']['9'];
+            	for (var i =0 ; i< result2.length; i++){
+            		result3[i] = data[result2[i]]
+            	}
 
                 on_update(result);
             }
@@ -321,9 +308,9 @@
                     success: function(data){
                         
 
-                        for (var i = 0 ;i< data[selects][selects].length; i++){
+                        for (var i = 0 ;i< data.length; i++){
                              var s = i.toString();
-                             dataselect.push(data[selects][selects][s]['0'])
+                             dataselect.push(data[i][1])
 
                         }
                       
@@ -356,7 +343,7 @@
                 //         }
                 //     }
                 // }
-                for(var m = 0; m< data.length; m++){
+               /* for(var m = 0; m< data.length; m++){
                     for(var n = m+1; n< data.length; n++){
                         if(data[m]['reposts_count'] < data[n]['reposts_count']){
                             temporary = data[n];
@@ -365,7 +352,7 @@
 
                         }
                     }
-                }
+                }*/
                 console.log(data);
                 html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
@@ -373,7 +360,7 @@
                 for(var i = 0; i < data.length; i += 1){
                 var da = data[i];
                 var uid = da['user'];
-                var name;
+                /*var name;
                 if ('name' in da){
                     name = da['name'];
                     if(name == 'unknown'){
@@ -382,27 +369,20 @@
                 }
                 else{
                     name = '未知';
-                }
+                }*/
                 var mid = da['_id'];
-                var retweeted_mid = da['retweeted_mid'];
-                var retweeted_uid = da['retweeted_uid'];
-                var ip = da['geo'];
-                var loc = ip;
                 var text = da['text'];
                 var reposts_count = da['reposts_count'];
                 var comments_count = da['comments_count'];
-                var timestamp = da['timestamp'];
-                var weibo_link = da['weibo_link'];
+                var timestamp = da['time'];
                 var user_link = 'http://weibo.com/u/' + uid;
-                var user_image_link = da['profile_image_url'];
-                if (user_image_link == 'unknown'){
-                    user_image_link = '/static/img/unknown_profile_image.gif';
-                }
+                var    user_image_link = '/static/img/unknown_profile_image.gif';
+                
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
                 html += '</a></div>';
                 html += '<div class="weibo_detail">';
-                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uid + '</a>&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
                 html += '<div class="weibo_info">';
                 html += '<div class="weibo_pz">';
                 html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -410,7 +390,6 @@
                 html += '<div class="m">';
                 html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
                 html += '</div>';
                 html += '</div>';
