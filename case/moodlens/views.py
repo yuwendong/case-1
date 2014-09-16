@@ -305,8 +305,8 @@ def getPeaks():
     if not search_func:
         return json.dumps('search function undefined')
 
-    title_text = {'happy': [], 'angry': [], 'sad': []}
-    title = {'happy': 'A', 'angry': 'B', 'sad': 'C'}
+    title_text = {'happy': [], 'angry': [], 'sad': [], 'news': []}
+    title = {'happy': 'A', 'angry': 'B', 'sad': 'C', 'news': 'D'}
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
