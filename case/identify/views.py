@@ -59,14 +59,16 @@ def network():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts+900)/Day
+    windowsize = (end_ts - start_ts)/Day
     windowsize = int(windowsize)
     end = ts2datetime(end_ts)
-  
+    module = 'identify'
+    print 'topic, end_ts, windowsize:', topic.encode('utf-8'), end, windowsize  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
-
+    print 'graph_status:', topic_status
     if topic_status == COMPLETED_STATUS:  
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize)
+        print 'key:', query_key.encode('utf-8')
         key = str(query_key)
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
