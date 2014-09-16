@@ -6,7 +6,7 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', 'PropagateKeywords', \
         'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
-          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
+          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew']
 
 
 class Topics(db.Model):
@@ -396,6 +396,31 @@ class OpinionTestWeibos(db.Model):
         self.topic = topic
         self.child_topic = child_topic
         self.weibos = weibos
+
+class OpinionWeibosNew(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    child_topic = db.Column(db.String(20))
+    weight = db.Column(db.Float)
+    mid = db.Column(db.String(20))
+    uid = db.Column(db.String(20))
+    weibos = db.Column(db.Text)
+    time = db.Column(db.String(20))    
+    r_count = db.Column(db.Integer)
+    c_count = db.Column(db.Integer)
+    repeat = db.Column(db.Integer)
+
+    def __init__(self, topic, child_topic, weight, mid, uid, weibos, time, r_count, c_count, repeat):
+        self.topic = topic
+        self.child_topic = child_topic
+        self.weight = weight
+        self.mid = mid
+        self.uid = uid
+        self.weibos = weibos
+        self.time = time        
+        self.r_count = r_count
+        self.c_count = c_count
+        self.repeat = repeat
 
 # Quota_system Module
 class QuotaAttention(db.Model):
