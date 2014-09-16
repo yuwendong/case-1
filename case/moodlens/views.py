@@ -312,14 +312,13 @@ def getPeaks():
     for idx, point_idx in enumerate(new_zeros):
         print idx, point_idx
         ts = ts_lis[point_idx]
-        begin_ts = ts - during
         end_ts = ts
 
         v = emotions_kv[emotion]
 
         time_lis[idx] = {
             'ts': end_ts * 1000,
-            'title': title[emotion] + str(idx+1),
+            'title': title[emotion] + str(idx),
         }
 
     return json.dumps(time_lis)
