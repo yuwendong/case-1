@@ -83,10 +83,10 @@
             border-bottom: 2px solid #6e87d7;
         }
         .sigma-expand {
-            position: relative;
+            position: absolute;
             margin: 0px auto;
             height: 500px;
-            width: 750px;
+            width: 686px;
             float: left;
         }
         .label-important, .badge-important {
@@ -212,9 +212,10 @@
             display: inline;
         }
         #control-pane-rightdown {
-            position: relative;
+            right: 2px;
+            position: absolute;
             float: left;
-            width: 250px;
+            width: 304px;
             background-color: rgb(249, 247, 237);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
@@ -373,8 +374,8 @@
         </div>
         <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
-    <div class="well" style="width:1033px; position: relative;height: 609px;">
-        <div class="titlBar" style="padding-bottom:15px;">
+    <div class="well" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
             <h4><b>网络呈现</b></h4>
             <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
@@ -495,10 +496,12 @@
             </div>
         </div>
 
-        <div id="network" class="collapse out" style="position: absolute;top: 89px;">
-            <label>
-                <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
-            </label>
+        <div id="network" class="collapse out" style="position: relative;">
+            <!--
+                <label>
+                    <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
+                </label>
+            -->
             <div class="sigma-expand" id="sigma-graph"></div>
             <div id="control-pane-rightdown">
                 <h4 class="underline">节点信息</h4>
