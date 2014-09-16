@@ -30,7 +30,6 @@ def province_color_map(city_count):
         for index, x in enumerate(city_sorted):
             city, count = x
             if count:
-                #city, count = x
                 city_color[city] =  "%s" % color[index]
                 percent = str(int(count*1000/total_count)/10.0)+'%'
                 rank = index+1
