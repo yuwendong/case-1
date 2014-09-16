@@ -273,11 +273,10 @@ function change_slowdown(){
 }
 
 function network_request_callback(data) {
-    $("#network_progress").removeClass("active");
-    $("#network_progress").removeClass("progress-striped");
     networkUpdated = 1;
 
     if (data) {
+        $("#graph-container").height(610);
         $("#loading_network_data").text("计算完成!");
         $("#sigma-graph").show();
 
@@ -569,7 +568,7 @@ function request_callback(data) {
     }
 
 function filter_node_in_network(node_uid){
-    console.log(node_uid);
+    console.log(typeof(node_uid));
 }
     
 function create_current_table(data, start_row, end_row) {
@@ -589,7 +588,7 @@ function create_current_table(data, start_row, end_row) {
           var td = '<td style="display:none">'+data[i][j]+'</td>';
       }
       else if(j == 2){
-          var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+          var td = '<td><a target=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
       }
       else{
           var td = '<td>'+data[i][j]+'</td>';
