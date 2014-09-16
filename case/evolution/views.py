@@ -12,6 +12,8 @@ from city_color import province_color_map
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 from city_map import partition_count, map_circle_data, map_line_data, statistics_data
 
+from dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
+
 mod = Blueprint('evolution', __name__, url_prefix='/evolution')
 
 #mtype_kv={'original': 1, 'forward': 2, 'comment': 3,'sum':4}
@@ -41,7 +43,7 @@ def geo2city(geo):
     return city
 
 
-def info2map(infos):
+def info2map(infos): # infos = {end_ts:map_data}, map_data={'count':{}, 'color':{}, 'summary':{}}
     count = {}
     rank = {}
     ratio = {}
@@ -67,12 +69,13 @@ def info2map(infos):
             try:
                 total_count[province_list[p]] += pcount
             except:
-                total_count[province_list[p]] = pcount
+                total_count[province_list[p]] = pcount  # total_count = {city:count}
 
         top10[info] = map_dict['summary']
 
     total_count_list_reverse = []
-    total_count_list_reverse = topSelect(total_count)
+    total_count_list_reverse = topSelect(total_count) # 整体所有数据的排序
+    #print 'total_count_list_reverse:', total_count_list_reverse
 
     province_data = {}
     for p in province_list:
@@ -84,11 +87,40 @@ def info2map(infos):
         ts_list.append(ts)
         for idx, d in enumerate(pdata):
             province_data[province_list[idx]].append(d)
+            
+    top_city_weibo = get_city_weibo(total_count_list_reverse) # total_count_list_reverse=[(city1,count1),(city2,count2)...]
+    # top_city_weibo = {city:[weibo1,weibo2...],...}
 
     data = {'count':count, 'rank':rank, 'ratio':ratio, 'top10':top10, 'province_data': province_data, 'ts_list': ts_list, \
-            'total_count': total_count_list_reverse}
+            'total_count': total_count_list_reverse, 'top_city_weibo':top_city_weibo}
 
     return data
+
+RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'bmiddle_pic', 'geo', 'comments_count', 'sentiment']
+
+def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1,count1),(city2,count2)...]
+    topic = u'东盟,博览会'
+    search_city_weibo = getXapianWeiboByTopic(topic)
+    count, results = search_city_weibo.search(fields=RESP_ITER_KEYS, sort_by=['reposts_count'])
+    city_dict = {} # city_count = {city:[weibos]}    
+    k = 0
+    print 'type(results):', type(results)
+    for result in results():
+        k += 1
+        if k>500:
+            break
+        city = geo2city(result['geo']).split('\t')[1]
+        #print 'city:', city
+        if city in province_list:
+            try:
+                city_dict[city].append(result)
+            except:
+                city_dict[city] = [result]            
+        
+    
+    return city_dict
+
+
 
 def topSelect(total_count):
     total_count_list_reverse = []
@@ -141,7 +173,7 @@ def ajax_spatial():
                 global_first_city = geo2city(first_item['geo'])
         except KeyError:
             pass
-        spatial_dict[str(end_ts)] = topic_spatial_info
+        spatial_dict[str(end_ts)] = topic_spatial_info # spatial_dict = {end_ts:map_data}
 
     map_data = info2map(spatial_dict)
     map_data['max_count'] = global_max_count

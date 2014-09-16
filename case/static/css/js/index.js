@@ -1,4 +1,4 @@
- var topic = QUERY; 
+ var topic = "中国"; 
  var attention_value = [];
  var quickness_value = [];
  var attention_all = 0;
@@ -137,7 +137,7 @@ function json_data(data){
     var sentiment_weight = data['quota_weight']['sentiment'];
     var human_mmedia ={};
 
-    human_mmedia["name"] = "人物重要度"
+    human_mmedia["name"] = "人物重要度"+'['+ data["duration"].toExponential(2).toString()+"/"+sensitivity_weight.toExponential(2).toString()+"]";
     json_data["name"] = root ;
     content_data["name"] = "内容重要度"+'['+0.5.toExponential(2).toString()+"/"+0.5.toExponential(2).toString()+']';
     process_data["name"] = "传播重要度"+'['+0.5.toExponential(2).toString()+"/"+0.5.toExponential(2).toString()+']';;
