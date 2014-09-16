@@ -4,6 +4,8 @@ import json
 from get_result import get_opinion_time, get_opinion_ratio, get_opinion_keywords, get_opinion_weibos
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 import heapq
+import time
+import datetime
 
 mod = Blueprint('opinion', __name__, url_prefix='/opinion')
 
@@ -22,6 +24,9 @@ class TopkHeap(object):
  
     def TopK(self):
         return [x for x in reversed([heapq.heappop(self.data) for x in xrange(len(self.data))])]
+
+def ts2datetimestr(ts):
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
 
 @mod.route('/time/')
 def opinion_time():
@@ -91,7 +96,7 @@ def opinion_weibos():
             k = results[i][0][0].encode('utf-8')+'-'+results[i][0][1].encode('utf-8')
         else:
             k = results[i][0][0].encode('utf-8')
-        row = {'c_topic':k,'weight':results[i][1],'_id':results[i][2],'title':results[i][3],'content':results[i][4],'user':results[i][5],'time':results[i][6],'source':results[i][7],'c_source':results[i][8],'repeat':results[i][9]}
+        row = {'c_topic':k,'weight':results[i][1],'_id':results[i][2],'user':results[i][3],'text':results[i][4],'time':results[i][5],'reposts_count':results[i][6],'comments_count':results[i][7]}
         f_news.Push((results[i][1],row))
 
     data = f_news.TopK()

@@ -376,7 +376,7 @@
                 var comments_count = da['comments_count'];
                 var timestamp = da['time'];
                 var user_link = 'http://weibo.com/u/' + uid;
-                var    user_image_link = '/static/img/unknown_profile_image.gif';
+                var user_image_link = '/static/img/unknown_profile_image.gif';
                 
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
@@ -388,7 +388,7 @@
                 html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
                 html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
                 html += '<div class="m">';
-                html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a class="undlin" target="_blank" >' + timestamp + '</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
                 html += '</div>';
