@@ -38,8 +38,6 @@ def sum_pcount(item):
                 if term_list[0] == u'中国':
                     for province in provinces:
                         p = province.string
-                        #print '$'*10
-                        #print type(p)
                         if i.split('\t')[1] == p:
                             try:
                                 pcount[p] += rccount[i]
@@ -62,7 +60,6 @@ def first_select(item, end_ts):
     first_timestamp = end_ts
     for r in item:
         if r.first_item:
-            print 'rfirst_item', r.first_item
             rfirst_item = json.loads(r.first_item)
             try:
                 if (rfirst_item['timestamp'] <= first_timestamp):

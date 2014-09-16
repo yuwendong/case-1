@@ -4,12 +4,9 @@ $(document).ready(function(){   //网页加载时执行下面函数
         })
     var query =QUERY;
     var topic = query;
-    if(query=='中国'){
-        var start_ts = 1377997200 + 900;
-    }
-    else{
-        var start_ts = START_TS;
-    }
+
+        var start_ts = START_TS + 900;
+   
     var end_ts =  END_TS;
     var during = POINT_INTERVAL;
     function gettext_data() {

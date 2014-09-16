@@ -22,9 +22,6 @@ TOP_WEIBOS_LIMIT = 50
 expr = 100 # 经验值的计算
 domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 
-
-
-
 '''
 def Merge_Acount(item): # 计算指标值 
     results = {}
@@ -63,11 +60,11 @@ def Merge_Qcount(item):
 # domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 def Merge_propagate(items):
     results = {}
+    results['dcount'] = {'folk':0, 'media':0, 'opinion_leader':0, 'oversea':0, 'other':0}
     for item in items:
         results['topic'] = item.topic
         results['mtype'] = item.mtype
         results['end'] = item.end
-        results['dcount'] = {'folk':0, 'media':0, 'opinion_leader':0, 'oversea':0, 'other':0}
         for k in domain_list:
             #print '*'*10,json.loads(item.dcount)
             try:
@@ -102,14 +99,12 @@ def ReadPropagate(topic, end, during, mtype, unit=MinInterval):
         results = Merge_propagate(item)
     else:
         results = None
-    #print '====',results
+
     return results
 
 def ReadIncrement(topic, end, during, mtype, unit=MinInterval):
     items1 = ReadPropagate(topic, end, during, mtype)
     items2 = ReadPropagate(topic, end-during, during, mtype) # attent the exist of the end-during and end-during*2
-    print 'items1:', items1
-    print 'items2:', items2
     results = {}
     results['topic'] = topic
     results['end'] = end
@@ -126,7 +121,10 @@ def ReadIncrement(topic, end, during, mtype, unit=MinInterval):
         except:
             results['dincrement'][k] = None
 
-    results['dincrement']['total'] = float(total1) / float(total2) -1
+    if total2 == 0:
+        results['dincrement']['total'] = None
+    else:
+        results['dincrement']['total'] = float(total1) / float(total2) -1
     return results
 
 
