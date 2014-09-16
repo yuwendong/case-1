@@ -367,7 +367,7 @@ class OpinionTestRatio(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     #ts = db.clumns(db.BigInteger(10),unsigned=True)
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     ratio = db.Column(db.Float)
 
     def __init__(self, topic, child_topic, ratio):
@@ -378,7 +378,7 @@ class OpinionTestRatio(db.Model):
 class OpinionTestKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     keywords = db.Column(db.Text)
 
     def __init__(self, topic, child_topic, keywords):
@@ -389,7 +389,7 @@ class OpinionTestKeywords(db.Model):
 class OpinionTestWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     weibos = db.Column(db.Text)
 
     def __init__(self, topic, child_topic, weibos):
@@ -400,7 +400,7 @@ class OpinionTestWeibos(db.Model):
 class OpinionWeibosNew(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     weight = db.Column(db.Float)
     mid = db.Column(db.String(20))
     uid = db.Column(db.String(20))
