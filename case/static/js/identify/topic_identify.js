@@ -688,18 +688,21 @@ function closeness_centrality_rank(){
   }) ;
 
 }
-function getnetwork_line(indegree_x,indegree_y){
     var indegree_x = [];
     var indegree_y = [];
     var outdegree_x = [];
     var outdegree_y = [];
+    var shortest_path_x = [];
+    var shortest_path_y = [];
+function getnetwork_line(){
+
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + 'indegree_histogram',
         dataType : "json",
         type : 'GET',
         async: false,
         success: function(data){
-          alert("dwsqdw");
+          // alert("dwsqdw");
             for (var key in data){
               if(key == '0'){
                 continue;
@@ -712,8 +715,8 @@ function getnetwork_line(indegree_x,indegree_y){
             }  
    
     }) ;
-            console.log(indegree_x);
-            console.log(indegree_y); 
+            // console.log(indegree_x);
+            // console.log(indegree_y); 
            
   $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=outdegree_histogram' ,
@@ -721,9 +724,19 @@ function getnetwork_line(indegree_x,indegree_y){
       type : 'GET',
       async: false,
       success: function(data){
-            // console.log(data);
+            for (var key in data){
+              if(key == '0'){
+                continue;
+              }
+              else {
+            outdegree_x.push(key);
+            outdegree_y.push(data[key]);
+          }
+        }
       }
   }) ; 
+              // outdegree_x.push(key);
+              // outdegree_y.push(data[key]);
 
     $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=shortest_path_length_histogram' ,
@@ -732,9 +745,15 @@ function getnetwork_line(indegree_x,indegree_y){
       async: false,
       success: function(data){
           console.log(data);
+            for (var key in data){         
+            shortest_path_x.push(key);
+            shortest_path_y.push(data[key]/2);
+
+        }
       }
+
   }) ;
-         
+  console.log(shortest_path_x);       
 }
 
 
@@ -745,6 +764,9 @@ function drawpicture() {
   betweeness_centrality_rank();
   closeness_centrality_rank();
     $('#line').highcharts({
+      chart: {
+                type: 'spline',
+            },
         title: {
             text: '',
             fontSize:'10px',
@@ -765,7 +787,7 @@ function drawpicture() {
         },
         xAxis: {
           title: {
-            text: '最短路径长度',
+            
         style: {
                     color: '#666',
                     fontWeight: 'bold',
@@ -773,7 +795,7 @@ function drawpicture() {
                     fontFamily: 'Microsoft YaHei'
                 }
         },
-            categories:index,
+            categories:shortest_path_x,
           labels: {
                 step: 20
             }
@@ -808,7 +830,9 @@ function drawpicture() {
             }
         },
         tooltip: {
-            valueSuffix: ''
+            valueSuffix: '',
+            headerFormat: '<b>{series.name}</b><br>',
+
         },
             legend: {
             layout: 'vertical',
@@ -823,19 +847,18 @@ function drawpicture() {
               }
         },
         series: [{
-            name: '最短路径长度曲线',
-            data: value
+            name: '最短路径长度',
+            data: shortest_path_y
         }]
 
     });
 }
-function drawpicture_ln(indegree_x,indegree_y) {
+function drawpicture_ln() {
 
     $('#line').highcharts({
-        
-        chart: {
-        },
-        
+     chart: {
+                type: 'spline',
+            },
         title: {
             text: ''
         },
@@ -886,7 +909,7 @@ function drawpicture_ln(indegree_x,indegree_y) {
             pointStart: 1
         },{
             name:'入度',
-            data: [1, 2, 4,8, 16, 32, 64, 128, 256, 512],
+            data: outdegree_y,
             pointStart: 1
           }
         ]
