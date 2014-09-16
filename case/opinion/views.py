@@ -88,7 +88,7 @@ def opinion_weibos():
     if not results:
         return 'no data in mysql'
 
-    f_news = TopkHeap(20)
+    data = dict()
     for i in range(0,len(results)):
         if len(results[i][0])>=3:
             k = results[i][0][0].encode('utf-8')+'-'+results[i][0][1].encode('utf-8')+'-'+results[i][0][2].encode('utf-8')
@@ -96,9 +96,16 @@ def opinion_weibos():
             k = results[i][0][0].encode('utf-8')+'-'+results[i][0][1].encode('utf-8')
         else:
             k = results[i][0][0].encode('utf-8')
-        row = {'c_topic':k,'weight':results[i][1],'_id':results[i][2],'user':results[i][3],'text':results[i][4],'time':results[i][5],'reposts_count':results[i][6],'comments_count':results[i][7]}
-        f_news.Push((results[i][1],row))
-
-    data = f_news.TopK()
+        row = {'weight':results[i][1],'_id':results[i][2],'user':results[i][3],'text':results[i][4],'time':results[i][5],'reposts_count':results[i][6],'comments_count':results[i][7]}
+        if data.has_key(k):
+            item = data[k]
+            if len(item)<=10:
+                item.append(row)
+            data[k] = item
+        else:
+            item = []
+            item.append(row)
+            data[k] = item
+    print data
     return json.dumps(data)
     
