@@ -21,7 +21,7 @@ def get_default_timerange():
     return u'20130902-20130907'
 
 def get_default_topic():
-    return u'东盟,博览'
+    return u'东盟,博览会'
 
 def get_default_pointInterval():
     return {'zh': u'1小时', 'en': 3600}

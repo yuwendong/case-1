@@ -1,4 +1,4 @@
- var topic = "中国"; 
+ var topic = QUERY; 
  var attention_value = [];
  var quickness_value = [];
  var attention_all = 0;
