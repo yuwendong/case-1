@@ -304,26 +304,22 @@
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile" style="height:250px">
+    <div class="blkUnit grpUnit" id="trendProfile" style="height:130px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabConts"></div>
-            <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
-            <table class="mtable" id="mstable"></table>
-            <h5 style="margin-left:30px"><b>无向图</b></h5>
-            <table class="mtable" id="mstable1"></table>
-            <h5 style="margin-left:30px"><b>无向图-最大连通子图</b></h5>
-            <table class="mtable" id="mstable2"></table>
+            <h5 style="padding-left:30px;padding-top:5px"><b>有向图(极大弱联通子图)</b></h5>
+            <table class="mtable" id="mstable"></table>            
         </div>
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
         <div class="titlBar" style="padding-bottom:10px;">
             <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>最短路径长度曲线</button>
         <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
@@ -338,7 +334,7 @@
     <div class="well" style="width:1033px;margin-top:25px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键用户</b></h4>
-            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">Pagerank值排名</button>
@@ -380,7 +376,7 @@
     <div class="well" style="width:1033px; position: relative;height: 609px;">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>网络呈现</b></h4>
-            <i id="display_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
         <div style="position: relative; height: 40px;">
             <div class="control-pane">

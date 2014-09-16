@@ -1,3 +1,5 @@
+var rubbish_words = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '地址', '转发', '一个'];
+
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 
@@ -77,7 +79,7 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
         'happy': '积极',
         'angry': '愤怒',
         'sad': '悲伤',
-        'news': '新闻',
+        'news': '新闻'
     }
 
     this.trend_count_obj = {
@@ -128,7 +130,7 @@ TrendsLine.prototype.initPullDrawPie = function(){
 function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id) {
     var option = {
         backgroundColor: '#FFF',
-        color: ['#11c897', '#fa7256', '#6e87d7'],
+        color: ['#11c897', '#fa7256', '#6e87d7', '#b172c5'],
         title : {
             text: '', // pie_title,
             x: 'center',
@@ -532,8 +534,8 @@ TrendsLine.prototype.pullDrawTrend = function(){
             shape : 'circlepin',
             width : 2,
             color: '#b172c5',
-            visible: false, // 默认显示绝对
-            showInLegend: false
+            visible: true, // 默认显示绝对
+            showInLegend: true
         }]
 
     var that = this;
@@ -702,8 +704,8 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
                     var idx = 0;
                     for(var name in names){
                         count_series[name] = this.series[idx];
-                        relative_peak_series[name] = this.series[idx+3];
-                        absolute_peak_series[name] = this.series[idx+6];
+                        relative_peak_series[name] = this.series[idx+4];
+                        absolute_peak_series[name] = this.series[idx+8];
                         idx += 1;
                     }
                     pull_emotion_count(that, query, 'global', total_nodes, times_init, begin_ts, during, count_series, relative_peak_series, absolute_peak_series);

@@ -54,12 +54,11 @@ def get_topic_status(topic, start, end, module):
 @mod.route("/graph/")
 def network():
     topic = request.args.get('topic', '')
-  
     start_ts = request.args.get('start_ts', '')
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts+900)/Day
+    windowsize = (end_ts - start_ts)/Day
     windowsize = int(windowsize)
     end = ts2datetime(end_ts)
   
