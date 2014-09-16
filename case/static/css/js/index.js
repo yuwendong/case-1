@@ -1,4 +1,4 @@
- var topic = "中国"; 
+ var topic = QUERY; 
  var attention_value = [];
  var quickness_value = [];
  var attention_all = 0;
@@ -12,6 +12,9 @@
  var sensitivity;
  var sensitivity_value = [];
  var sensitivity_all = 0;
+ var sensitivity_average = 0;
+ var attention_average = 0;
+ var quickness_average = 0;
 $(document).ready(function(){
     getindex_data();
     draw_index();
@@ -27,7 +30,7 @@ $(document).ready(function(){
         async:false,  //最好用回调函数
         success :function(data){
             quota = data;
-            json_data(data); 
+            
             console.log(data);          
         }       
     });
@@ -38,14 +41,32 @@ $(document).ready(function(){
     //  sensitivity = quota['sensitivity'];
     for (var key in attention){
         attention_value.push(attention[key]);
-        attention_index.push(key);
+        // console.log(key);
+        var key_index = '';
+        if (key == 'folk'){
+             key_index = '民众';
+        }
+        console.log(key_index);
+        if (key == 'opinion_leader'){
+           key_index = '名人';
+        }
+        if (key == 'media'){
+          key_index = '媒体';
+        }
+        if (key == 'other'){
+          key_index = '其他';
+        }
+        if (key == 'oversea'){
+          key_index = '海外';
+        }
+        attention_index.push(key_index);
     }
-    console.log(attention_index);
-    console.log(attention_value);
+    // console.log(attention_index);
+    // console.log(attention_value);
 
 
     for (var i=0 ;i<attention_value.length;i++){
-         console.log(attention_value[0]);
+         // console.log(attention_value[0]);
         attention_all += attention_value[i];
     }
             attention_average = attention_all/5;
@@ -71,7 +92,7 @@ $(document).ready(function(){
         sensitivity_all += sensitivity_value[i];
     }
         sensitivity_average = sensitivity_all/3;
-
+        json_data(quota); 
  }
 
 function json_data(data){
@@ -85,7 +106,8 @@ function json_data(data){
     var sentiment_data = {};
     var media_importance_data ={};
     var duration_data = {};
-    var root = "总量度";
+    var area = {};
+    var root = "舆情总度";
     var duration = data["duration"];
     var media_importance = data["media_importance"];
     var attention_folk = data["attention"]["folk"];
@@ -101,38 +123,50 @@ function json_data(data){
     var sensitivity_1 = data["sensitivity"]["1"];
     var sensitivity_2 = data["sensitivity"]["2"];
     var sensitivity_3 = data["sensitivity"]["3"];
-    //var  = data["geo_penetration"];
+    var area_data= data["geo_penetration"];
     var score = data["importance"]["score"];
     var weight = data["importance"]["weight"];
     var negative = data['sentiment']['negative'];
+    var positive = data["sentiment"]['positive'];
     
-    json_data["name"] = root ;
-    content_data["name"] = "面向内容";
-    process_data["name"] = "面向对象";
-    sensitivity_data["name"] = "sensitivity";
-    attention_data["name"] = "attention";
-    quickness_data["name"] = "quickness";
-    sentiment_data["name"] = "sentiment";
-    importance_data["name"] = "importance";
-    media_importance_data["name"] = "media_importance";
-    duration_data["name"] = "duration:"+ data["duration"].toString();
+    var attention_weight = data['quota_weight']['attention'];
+    var duration_weight = data['quota_weight']['duration'];
+    var geo_penteration_weight = data['quota_weight']['geo_penetration'];
+    var media_importance_weight = data['quota_weight']['media_importance'];
+    var sensitivity_weight = data['quota_weight']['sensitivity'];
+    var sentiment_weight = data['quota_weight']['sentiment'];
+    var human_mmedia ={};
 
-    quickness_data["children"] = [{"name":"folk", "size":quickness_folk},{"name":"media", "size":quickness_media},{"name":"opinion_leader", "size":quickness_opinion_leader},{"name":"other", "size":quickness_other},{"name":"oversea", "size":quickness_oversea}];
-    attention_data["children"] = [{"name":"folk", "size":attention_folk},{"name":"media", "size":attention_media},{"name":"opinion_leader", "size":attention_opinion_leader},{"name":"other", "size":attention_other},{"name":"oversea", "size":attention_oversea}];
-    sensitivity_data["children"] = [{"name":"类型" ,"size":sensitivity_1},{"name":"词汇" ,"size":sensitivity_2},{"name":"地域" ,"size":sensitivity_3}];
-    sentiment_data["children"] = [{"name": "negative","size":negative}];
-    importance_data["children"] = [{"name":"权" ,"size":score},{"name":"权重" ,"size":weight}];
+    human_mmedia["name"] = "人物重要度"
+    json_data["name"] = root ;
+    content_data["name"] = "内容重要度"+'['+0.5.toExponential(2).toString()+"/"+0.5.toExponential(2).toString()+']';
+    process_data["name"] = "传播重要度"+'['+0.5.toExponential(2).toString()+"/"+0.5.toExponential(2).toString()+']';;
+    sensitivity_data["name"] = "敏感度: "+'['+sensitivity_average.toExponential(2).toString()+"/"+sensitivity_weight.toExponential(2).toString()+"]";
+    attention_data["name"] = "关注度: "+'['+attention_average.toExponential(2).toString()+"/"+attention_weight.toExponential(2).toString()+"]";
+    quickness_data["name"] = "爆发度: "+'['+quickness_average.toExponential(2).toString()+"/ 0.0e+0"+"]";
+    sentiment_data["name"] = "情绪度："+"[0.50e-1/0.00e+0]";          
+    importance_data["name"] = "专家重视度"+"[0.0e+0/0.0e+0]";
+    media_importance_data["name"] = "重要媒体参与度: "+'['+data["media_importance"].toExponential(2).toString()+"/"+media_importance_weight.toExponential(2).toString()+"]";
+    duration_data["name"] = "持续度: "+'['+ data["duration"].toExponential(2).toString()+"/"+duration_weight.toExponential(2).toString()+"]";
+    area["name"] = "地域渗透度"+'['+area_data.toExponential(2).toString() +"/"+geo_penteration_weight.toExponential(2).toString()+"]";
+
+    human_mmedia['children'] = [{"name":"重要媒体参与度"+'['+data["media_importance"].toExponential(2)+'/'+media_importance_weight.toExponential(2).toString()+']', "size":data["media_importance"]},{"name":"敏感人物参与度"+'['+data["media_importance"].toExponential(2).toString()+'/'+media_importance_weight.toExponential(2).toString()+']' ,"size":data["media_importance"]}]
+    area["size"] = area_data;
+    quickness_data["size"] =0.8 //[{"name":"民众"+quickness_folk.toExponential(2), "size":quickness_folk},{"name":"媒体"+quickness_media.toExponential(1), "size":quickness_media},{"name":"名人"+quickness_opinion_leader.toExponential(1), "size":quickness_opinion_leader},{"name":"海外"+quickness_oversea.toExponential(1), "size":quickness_oversea},{"name":"其他"+quickness_other.toExponential(1), "size":quickness_other}];
+    attention_data["size"] =0.4 //[{"name":"民众"+attention_folk.toExponential(2), "size":attention_folk},{"name":"媒体"+attention_media.toExponential(1), "size":attention_media},{"name":"名人"+attention_opinion_leader.toExponential(1), "size":attention_opinion_leader},{"name":"海外"+attention_oversea.toExponential(1), "size":attention_oversea},{"name":"其他"+attention_other.toExponential(1), "size":attention_other}];
+    sensitivity_data["children"] = [{"name":"类型敏感度" +'['+sensitivity_1.toExponential(2).toString()+'/'+sensitivity_1.toExponential(2).toString()+']',"size":sensitivity_1},{"name":"词汇敏感度"+'['+sensitivity_2.toExponential(2).toString()+'/'+sensitivity_2.toExponential(2).toString()+']' ,"size":sensitivity_2},{"name":"地域敏感度"+'['+sensitivity_3.toExponential(2).toString()+'/'+sensitivity_3.toExponential(2).toString()+']' ,"size":sensitivity_3}];
+    sentiment_data["children"] = [{"name": "消极情绪度: "+'['+data['sentiment']['negative'].toExponential(2)+'/'+0.5.toExponential(2).toString()+']',"size":negative},{"name": "积极情绪度: "+'['+data['sentiment']['positive'].toExponential(2)+'/'+0.5.toExponential(2).toString()+']',"size":positive}];
+    //importance_data["children"] = [{"name":"值" ,"size":score},{"name":"权重" ,"size":weight}];
+    importance_data["size"] = '0';
     media_importance_data["size"] = media_importance;
     duration_data["size"] = data["duration"];
-    content_data["children"] = [importance_data, sensitivity_data, sentiment_data];
-    process_data["children"] = [duration_data, media_importance_data, quickness_data, attention_data];
-    json_data["children"] = [content_data, process_data];
+    content_data["children"] = [sensitivity_data, sentiment_data];
+    process_data["children"] = [duration_data, quickness_data,attention_data,area, human_mmedia];
+    json_data["children"] = [importance_data, content_data, process_data];
     drawtree(json_data);
-
 }
-
 var m = [20, 120, 20, 120],
-    w = 1280 - m[1] - m[3],
+    w = 1000 - m[1] - m[3],
     h = 800 - m[0] - m[2],
     i = 0,
     root;
@@ -194,8 +228,8 @@ function update(source) {
 
   nodeEnter.append("svg:circle")
       .attr("r", 1e-6)
-      .attr("data-toggle", function(d) {if(d.name =="sensitivity" ||  "quickness" || "attention") return "modal" ; })
-      .attr("data-target", function(d) {if(d.name =="sensitivity") return "#sensitivity_1" ; else if (d.name =="quickness") return "#quickness_1";else if (d.name =="attention") return "#attention_1";})
+      .attr("data-toggle", function(d) {if(d.name =="敏感度: "+sensitivity_average.toExponential(3).toString() ||  "爆发度: "+quickness_average.toExponential(3).toString() || "关注度: "+attention_average.toExponential(3).toString() ) return "modal" ; })
+      .attr("data-target", function(d) {if(d.name =="敏感度: "+sensitivity_average.toExponential(3).toString()) return "#sensitivity_1" ; else if (d.name =="爆发度: "+quickness_average.toExponential(3).toString()) return "#quickness_1";else if (d.name == "关注度: "+attention_average.toExponential(3).toString()) return "#attention_1";})
       // .attr("data-toggle", function(d) {if(d.name =="quickness") return "modal" ; })
       // .attr("data-target", function(d) {if(d.name =="quickness") return "#quickness_1" ; })
       // .attr("data-toggle", function(d) {if(d.name =="attention") return "modal" ; })
@@ -205,16 +239,12 @@ function update(source) {
   nodeEnter.append("svg:text")
       .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
       .attr("dy", ".35em")
+      .attr("id",function(d){if(d.name =="舆情总度") return "total"})
       .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
   
-  nodeEnter.append("svg:text")
-      .attr("x", function(d) { return d.children || d._children ? -40 : 10; })
-      .attr("dy", "15")
-      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-      .text(function() { if(d.children) {return ;} else{return d.size;} })
-      .style("fill-opacity", 1);
+
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
@@ -284,6 +314,7 @@ function toggle(d) {
     d.children = d._children;
     d._children = null;
   }
+
   // if(d.name = "sensitivity"){
   //      draw_sensitivity();
   // }
@@ -616,7 +647,7 @@ function draw_quickness(){
         trigger: 'axis'
     },
     legend: {
-        data:['attention', 'quickness']
+        data:['关注度', '爆发度']
     },
     toolbox: {
          x:"left",
@@ -629,7 +660,7 @@ function draw_quickness(){
     },
     calculable : true,
     xAxis : [
-        {   splitNumber: 0.5,
+        {   splitNumber: 1,
             type : 'value',
             boundaryGap : [0, 0.01]
         }
@@ -642,12 +673,12 @@ function draw_quickness(){
     ],
     series : [
         {
-            name:'attention',
+            name:'关注度',
             type:'bar',
             data:attention_value
         },
         {
-            name:'quickness',
+            name:'爆发度',
             type:'bar',
             data:quickness_value
         }
@@ -666,7 +697,7 @@ var option = {
         trigger: 'axis'
     },
     legend: {
-        data:['attention', 'quickness']
+        data:['关注度', '爆发度']
     },
     toolbox: {
         x:"left",
@@ -679,7 +710,7 @@ var option = {
     },
     calculable : true,
     xAxis : [
-        {   splitNumber: 0.5,
+        {   splitNumber: 1,
             type : 'value',
             boundaryGap : [0, 0.01]
         }
@@ -692,12 +723,12 @@ var option = {
     ],
     series : [
         {
-            name:'attention',
+            name:'关注度',
             type:'bar',
             data:attention_value
         },
         {
-            name:'quickness',
+            name:'爆发度',
             type:'bar',
             data:quickness_value
         }

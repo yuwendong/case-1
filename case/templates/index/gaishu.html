@@ -187,7 +187,7 @@
         li.item {
             line-height: 18px;
             border-bottom: 1px solid #f5f5f5;
-            padding: 9px 10px 10px 0;
+            padding: 9px 10px 10px;
             min-height: 55px;
             _height: 55px;
         }
@@ -256,6 +256,8 @@
 {% endblock head_css %}
 
 {% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
     <script type="text/javascript" src="/static/index/js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="/static/index/js/jquery.masonry.min.js"></script>
@@ -277,17 +279,40 @@
             </div>
             <div class="tabConts">
                 <div style="width:1033px;">
-                    <div id="text" style="
-                        clear:left;float:left;position:relative;">
-                        <div id="keywords_text"></div>
+
+                    <div id="keywords_text"></div>
+<!--                     <div id = 'content'>
+                        <image src="/static/css/images/attention.gif" style="width:30px;height:30px;margin-left:10px"><span>关注度：</sapn>
+                        <image src="/static/css/images/quickness.jpg" style="width:30px;height:30px"><span>爆发度：</sapn>
+                        <image src="/static/css/images/sensitive.png" style="width:30px;height:30px"><span>敏感度：</sapn>
+                        </div> -->
+                    <div id= "column" style='height:120px;width:400px'>
                     </div>
+                  
                 </div>
             </div>
         </div>
+
     </div>
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
-                <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+            <h4><b>消极与微博总数走势图</b></h4>
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div style="width:1033px;">
+                    <div id='line'></div>
+                </div>
+            </div> 
+        </div>
+    </div> 
+
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
             <h4><b>代表性媒体报道</b></h4>
         <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体报道"></i>&nbsp;&nbsp;
         </div>
@@ -382,6 +407,47 @@
             </div>
         </div>
     </div>
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px;">
+           <h4><b>地图</b></h4>
+        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="地图"></i>&nbsp;&nbsp; 
+        </div>
+        <div class="stmTabs tabUnit" style="width:1033px;">
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="Tableselect">
+                <a value='1' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">北京</div>
+                        <div class="hvTab">北京</div></a>
+                <a value='2' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">上海</div>
+                        <div class="hvTab">上海</div></a>
+                <a value='3' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">广州</div>
+                        <div class="hvTab">广州</div></a>
+                <a value='4' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">境外</div>
+                        <div class="hvTab">境外</div></a>
+                <a value='5' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">新疆</div>
+                        <div class="hvTab">新疆</div></a>
+                <a value='6' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
+                       <div class="nmTab">西藏</div>
+                        <div class="hvTab">西藏</div></a>
+
+                </div>
+            </div>
+            <div class="tabConts">
+                <div id="weibos_div" style="height:410px;float:left;">
+                    <div class="tabCon">
+                        <div class="cur" id="vertical-ticker" style="width:950px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">

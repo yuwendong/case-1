@@ -100,6 +100,36 @@
             color: #f367a7;
             border-color: #f367a7
         }
+        .label-important, .badge-important {
+            background-color: #b94a48;
+        }
+        .mainSplit {
+            top: 64px;
+            position: relative;
+            _overflow: visible;
+            padding: 0px 26px 20px 15px;
+            border-left: 2px solid #e1e1e1;
+        }
+        .icon-ok {
+            background-position: -312px 0;
+        }
+        .icon-ok{
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-top: 1px;
+            line-height: 14px;
+            vertical-align: text-top;
+            background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+            background-position: 14px 14px;
+            background-repeat: no-repeat;
+        }
+        .table {
+            width: 95%;
+            max-width: 100%;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
 
     </style>
 {% endblock head_css %}
@@ -149,6 +179,37 @@
                 </div>
             </div>
             </div>
+        </div>
+    </div>
+
+
+      <div class="blkUnit grpUnit" style="float:left;width:1033px;height:450px" id="cloudpie">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style = "margin-top:8px"><b>各省排名</b></h4>
+                <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+                <div id="source" style = "margin-top:8px">
+                </div>
+        </div>
+
+<!--         <div>
+            <p>
+                <a class="btn btn-small btn-success" href="#" id="out">
+                    <i class="icon-download-alt"></i> 导出
+                </a>
+                <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
+                    <i class="icon-file"></i> 加入知识库
+                </a>
+                <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
+                    <i class="icon-file"></i> 移出知识库
+                </a>
+                <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
+                    <i class="icon-ban-circle"></i> 加入垃圾名单
+                </a>
+            </p>
+        </div> -->
+        <div id="rank_table" style="margin-top:35px;margin-left:10px">
+            <table class="table table-bordered">
+            </table>
         </div>
     </div>
 
