@@ -64,7 +64,7 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
 
 $(document).ready(function(){
     get_network_infor();
-    getnetwork_frequency();
+    getnetwork_line();
     drawpicture(index,value);
     // switch_curr_add();
 })
@@ -150,8 +150,6 @@ var _ = {
     }
   }
 };
-
-
 function updatePane (graph, filter) {
   // get max degree
   var maxDegree = 0,
@@ -273,10 +271,11 @@ function change_slowdown(){
 }
 
 function network_request_callback(data) {
+    $("#network_progress").removeClass("active");
+    $("#network_progress").removeClass("progress-striped");
     networkUpdated = 1;
 
     if (data) {
-        $("#graph-container").height(610);
         $("#loading_network_data").text("计算完成!");
         $("#sigma-graph").show();
 
@@ -568,7 +567,7 @@ function request_callback(data) {
     }
 
 function filter_node_in_network(node_uid){
-    console.log(typeof(node_uid));
+    console.log(node_uid);
 }
     
 function create_current_table(data, start_row, end_row) {
@@ -588,7 +587,7 @@ function create_current_table(data, start_row, end_row) {
           var td = '<td style="display:none">'+data[i][j]+'</td>';
       }
       else if(j == 2){
-          var td = '<td><a target=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+          var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
       }
       else{
           var td = '<td>'+data[i][j]+'</td>';
@@ -689,63 +688,52 @@ function closeness_centrality_rank(){
   }) ;
 
 }
-function getnetwork_frequency(){
-
+function getnetwork_line(indegree_x,indegree_y){
+    var indegree_x = [];
+    var indegree_y = [];
+    var outdegree_x = [];
+    var outdegree_y = [];
     $.ajax({
-        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=degree_histogram' ,
+        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + 'indegree_histogram',
         dataType : "json",
         type : 'GET',
         async: false,
         success: function(data){
-
-            for (var i = 0; i< data.length; i ++){
-              var s = i.toString();
-              index.push(s);
-              value.push(data[i]);
-            }
+          alert("dwsqdw");
+            for (var key in data){
+              if(key == '0'){
+                continue;
+              }
+              else {
+            indegree_x.push(key);
+            indegree_y.push(data[key]);
+          }
         }
+            }  
+   
     }) ;
+            console.log(indegree_x);
+            console.log(indegree_y); 
+           
+  $.ajax({
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=outdegree_histogram' ,
+      dataType : "json",
+      type : 'GET',
+      async: false,
+      success: function(data){
+            // console.log(data);
+      }
+  }) ; 
+
     $.ajax({
-      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lnx' ,
+      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=shortest_path_length_histogram' ,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
-        
-      for (var i = 0; i< data.length; i ++){
-          var xdata = Number(data[i].toFixed(3));
-          x_data.push(xdata);
-        }
+          console.log(data);
       }
-  }) ; 
-  $.ajax({
-      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=xydict_lny' ,
-      dataType : "json",
-      type : 'GET',
-      async: false,
-      success: function(data){
-     
-      for (var i = 0; i< data.length; i ++){
-          var ydata = Number(data[i].toFixed(3));
-          y_data.push(ydata);
-        }
-      }  
-  }) ; 
-
-
-
-
-            
-  $.ajax({
-      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=result_linalg' ,
-      dataType : "json",
-      type : 'GET',
-      async: false,
-      success: function(data){
-        var result_r = Number(data[0].toFixed(3));
-        var result_c = Number(data[1].toFixed(3));
-      }
-  }) ; 
+  }) ;
          
 }
 
@@ -753,9 +741,9 @@ function getnetwork_frequency(){
 
 function drawpicture() {
  
-  // get_centrelity();
-  // betweeness_centrality_rank();
-  // closeness_centrality_rank();
+  get_centrelity();
+  betweeness_centrality_rank();
+  closeness_centrality_rank();
     $('#line').highcharts({
         title: {
             text: '',
@@ -777,7 +765,7 @@ function drawpicture() {
         },
         xAxis: {
           title: {
-            text: '度数',
+            text: '最短路径长度',
         style: {
                     color: '#666',
                     fontWeight: 'bold',
@@ -792,7 +780,7 @@ function drawpicture() {
           },
         yAxis: {
             title: {
-                text: '出现频数',
+                text: '节点数量',
                 style: {
                     color: '#666',
                     fontWeight: 'bold',
@@ -806,6 +794,19 @@ function drawpicture() {
                 color: '#808080'
             }]
         },
+         plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
         tooltip: {
             valueSuffix: ''
         },
@@ -813,7 +814,13 @@ function drawpicture() {
             layout: 'vertical',
             align: 'center',
             verticalAlign: 'bottom',
-            borderWidth: 0
+            borderWidth: 0,
+            itemStyle: {
+              color: '#666',
+              fontWeight: 'bold',
+              fontSize: '12px',
+              fontFamily: 'Microsoft YaHei'
+              }
         },
         series: [{
             name: '最短路径长度曲线',
@@ -822,7 +829,7 @@ function drawpicture() {
 
     });
 }
-function drawpicture_ln() {
+function drawpicture_ln(indegree_x,indegree_y) {
 
     $('#line').highcharts({
         
@@ -841,10 +848,29 @@ function drawpicture_ln() {
             exportButtonTitle: "导出图片"
             },
         xAxis: {
-            tickInterval: 1
+           title: {
+                text: '度数',
+                style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+                }
+              },
+            type: 'logarithmic',
+            tickInterval: 0.1
         },
         
         yAxis: {
+            title: {
+                text: '节点数量',
+                style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+                }
+                },
             type: 'logarithmic',
             minorTickInterval: 0.1
         },
@@ -854,11 +880,13 @@ function drawpicture_ln() {
             pointFormat: 'x = {point.x}, y = {point.y}'
         },
         
-        series: [{            
-            data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+        series: [{
+            name:'出度',          
+            data: indegree_y,
             pointStart: 1
         },{
-            data: [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
+            name:'入度',
+            data: [1, 2, 4,8, 16, 32, 64, 128, 256, 512],
             pointStart: 1
           }
         ]
