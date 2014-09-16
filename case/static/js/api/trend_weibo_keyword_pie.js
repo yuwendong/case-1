@@ -1,5 +1,3 @@
-var rubbish_words = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '地址', '转发', '一个'];
-
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 
@@ -249,6 +247,10 @@ function refreshDrawKeywords(min_keywords_size, max_keywords_size, keywords_data
     else{
         var min_count, max_count = 0, words_count_obj = {};
         for (var keyword in keywords_data){
+            // 垃圾过滤
+            if(keyword in rubbish_words){
+                continue;
+            }
             var count = keywords_data[keyword];
             if(count > max_count){
                 max_count = count;
