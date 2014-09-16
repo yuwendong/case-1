@@ -2,7 +2,7 @@
 
 import json
 import case.model
-from case.model import OpinionTestTime, OpinionTestRatio, OpinionTestKeywords, OpinionTestWeibos
+from case.model import OpinionTestTime, OpinionTestRatio, OpinionTestKeywords, OpinionWeibosNew
 from case.extensions import db
 
 def get_opinion_time(topic):
@@ -46,7 +46,7 @@ def get_opinion_keywords(topic):
     return results
 
 def get_opinion_weibos(topic):
-    items = db.session.query(OpinionTestWeibos).filter(OpinionTestWeibos.topic==topic).all()
+    items = db.session.query(OpinionWeibosNew).filter(OpinionWeibosNew.topic==topic).all()
     if not items:
         return None
     results = []
