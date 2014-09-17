@@ -68,7 +68,7 @@ def prpagate_keywords():
     limit = int(limit)
 
     results_dict = {}
-    if mtype == 4:
+    if mtype == 4 or mtype == 5:
         for k, v in mtype_kv.iteritems():
             results = ReadPropagateKeywords(topic, end_ts, during, v, limit)
             for keyword, count in results.iteritems():
@@ -95,9 +95,15 @@ def propagate_weibos():
 
     results_dict = {}
 
-    if mtype == 4:
+    if mtype == 4 or mtype == 5:
+        weibos = []
         for k, v in mtype_kv.iteritems():
             results_dict[k] = ReadPropagateWeibos(topic, end_ts, during, v, limit)
+            weibos.extend(results_dict[k])
+        sorted_weibos = sorted(weibos, key=lambda k:k['reposts_count'], reverse=False)
+        sorted_weibos = sorted_weibos[len(sorted_weibos)-10:]
+        sorted_weibos.reverse()
+        results_dict['total'] = sorted_weibos
     else:
         results_dict[mtype] = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
     return json.dumps(results_dict)
@@ -127,7 +133,7 @@ def PropagatePeak():
     new_zeros = detect_peaks(lis)
 
     title_text = {'origin': [], 'forward': [], 'comment': [], 'total': []}
-    title = {'1': 'A', '2': 'B', '3': 'C', '4': 'D'}
+    title = {'1': 'A', '2': 'B', '3': 'C', '5': 'D'}
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
