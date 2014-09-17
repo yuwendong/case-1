@@ -203,15 +203,25 @@
             <span class="compInfo">2014-08-07 至 2014-08-13</span>
             <span class="compInfo">全国</span>-->
         </div>
-        <div class="tabUnit">  
-            <div style="margin-left:20px;margin-top:10px;margin-right:20px;">
+        <div class="tabUnit"> 
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='index()' style="float: left;">舆情指数</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='getindex_data()' style="float: left;">指标体系</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">热度走势</button>
+            </div> 
+<!--             <div style="margin-left:20px;margin-top:10px;margin-right:20px;">
             专家重视度：值: <input type=text name="txtname" value= '0' size=12 maxlength=6>权重：<input type=text name="txtname" value= '0' size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定" onclick = "showtotal()">
             <span style="float:right;color: #666 ;padding-left:5px">[0/1] 0:表示的是元素的值 1：表示的是元素的权重</span><p>
-            </div>
+            </div> -->
             <table class="mstable" id="mstable1" style="margin-top:10px">
             </table>
             <div id="body" style ="margin-left:25px">
-              <div id="footer">
+                <div id ='index'style ='height:400px;width:400px'></div>
+              <div id ="footer">
               </div>
             </div>
             <div class="modal fade" id="sensitivity_1" tabindex="-1" role="dialog" 
