@@ -6,7 +6,7 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', 'PropagateKeywords', \
         'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
-          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew']
+          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
 
 
 class Topics(db.Model):
@@ -367,7 +367,7 @@ class OpinionTestRatio(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     #ts = db.clumns(db.BigInteger(10),unsigned=True)
-    child_topic = db.Column(db.Text)
+    child_topic = db.Column(db.String(20))
     ratio = db.Column(db.Float)
 
     def __init__(self, topic, child_topic, ratio):
@@ -378,7 +378,7 @@ class OpinionTestRatio(db.Model):
 class OpinionTestKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.Text)
+    child_topic = db.Column(db.String(20))
     keywords = db.Column(db.Text)
 
     def __init__(self, topic, child_topic, keywords):
@@ -389,38 +389,13 @@ class OpinionTestKeywords(db.Model):
 class OpinionTestWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.Text)
+    child_topic = db.Column(db.String(20))
     weibos = db.Column(db.Text)
 
     def __init__(self, topic, child_topic, weibos):
         self.topic = topic
         self.child_topic = child_topic
         self.weibos = weibos
-
-class OpinionWeibosNew(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    topic = db.Column(db.String(20))
-    child_topic = db.Column(db.Text)
-    weight = db.Column(db.Float)
-    mid = db.Column(db.String(20))
-    uid = db.Column(db.String(20))
-    weibos = db.Column(db.Text)
-    time = db.Column(db.String(20))    
-    r_count = db.Column(db.Integer)
-    c_count = db.Column(db.Integer)
-    repeat = db.Column(db.Integer)
-
-    def __init__(self, topic, child_topic, weight, mid, uid, weibos, time, r_count, c_count, repeat):
-        self.topic = topic
-        self.child_topic = child_topic
-        self.weight = weight
-        self.mid = mid
-        self.uid = uid
-        self.weibos = weibos
-        self.time = time        
-        self.r_count = r_count
-        self.c_count = c_count
-        self.repeat = repeat
 
 # Quota_system Module
 class QuotaAttention(db.Model):
@@ -534,6 +509,37 @@ class QuotaDuration(db.Model):
 '''
 # 持续度经验值QuotaDurationExp
 '''
+class QuotaPersonSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    pr = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, pr):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.pr = pr
+
+
+
+
+class PersonSensitivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    person = db.Column(db.Text)
+    
+    def __init__(self, topic, start_ts, end_ts, person):
+        self.topic = topic
+        self.start_ts = start_ts
+        self_end_ts = end_ts
+        self.person = person
+
+
+
 class QuotaDurationExp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -629,6 +635,100 @@ class QuotaWeight(db.Model):
 
     def __init__(self, weight_dict):
         self.weight_dict = weight_dict
+
+class CoverageExp(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts= db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    coverage_exp = db.Column(db.Integer)
+
+    def __init__(self, topic, start_ts, end_ts, coverage_exp):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.coverage_exp = coverage_exp
+
+class QuotaCoverage(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    coverage = db.Column(db.Float)
+    def __init__(self, topic, start_ts, end_ts, coverage):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.coverage = coverage
+
+
+
+class QuotaFSensitivity(db.Model):
+     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+     topic = db.Column(db.String(20))
+     start_ts = db.Column(db.BigInteger(10, unsigned=True))
+     end_ts = db.Column(db.BigInteger(10, unsigned=True))
+     f_sensitivity = db.Column(db.Float)
+     
+     def __init__(self, topic, start_ts, end_ts, f_sensitivity):
+         self.topic = topic
+         self.start_ts = start_ts
+         self.end_ts = end_ts
+         self.f_sensitivity = f_sensitivity
+
+
+class QuotaFSentiment(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    f_sentiment = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, f_sentiment):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.f_sentiment = f_sentiment
+
+
+class QuotaFTransmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts =db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    f_transmission = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, f_transmission):
+        self.topic = topic
+        self.start_ts =start_ts
+        self.end_td = end_ts
+        self.f_transmission = f_transmission
+
+class QuotaFInvolved(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    f_involved = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, f_involved):
+        self.topic = topic
+        self,start_ts = start_ts
+        self.end_ts = end_ts
+        self.f_involved = f_involved
+
+class QuotaIndex(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    index = db.Column(db.Float)
+
+    def __init__(self, topic, start_ts, end_ts, index):
+        self.topic = topic
+        self.start_ts =start_ts
+        self.end_ts = end_ts
+        self.index = index
 
 
 #以下是语义模块（李文文看）
