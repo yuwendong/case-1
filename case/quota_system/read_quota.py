@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 from case.extensions import db
-from case.model import  Topics, QuotaAttention, QuotaGeoPenetration, QuotaMediaImportance, \
-                        QuotaQuickness, QuotaImportance ,QuotaWeight ,GeoWeight ,\
-                        QuotaDuration, QuotaSentiment, QuotaSensitivity # 需要查询的表
+from case.model import  Topics, QuotaIndex, QuotaFSensitivity, QuotaFSentiment, QuotaFTransmission ,\
+                        QuotaFInvolved, QuotaSensitivity, QuotaSentiment, QuotaDuration, QuotaCoverage ,\
+                        QuotaQuickness, QuotaMediaImportance, QuotaPersonSensitivity
 
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -25,146 +25,214 @@ province_dict = {'34':'安徽','11':'北京', '50':'重庆', '35':'福建', '62'
                  '400':'海外', '100':'其他'}
 
 def ReadTopic(topic):
-    item = db.session.query(Topics).filter(Topics.topic==topic).first()
-    if not item:
+    items = db.session.query(Topics).filter(Topics.topic==topic).all()
+    if not items:
         return None
-    else:
+    all_end = 0
+
+    for item in items:
         start_ts = item.start_ts
         end_ts = item.end_ts
-        #print 'item:',item.topic, item.start_ts, item.end_ts
-        attention_dict = ReadAttention(topic, start_ts, end_ts)
-        geo_penetration_dict = ReadGeoPenetration(topic, start_ts, end_ts)
-        media_importance_dict = ReadMediaImportance(topic, start_ts, end_ts)
-        quickness_dict = ReadQuickness(topic, start_ts, end_ts)
-        duration_dict = ReadDuration(topic, start_ts, end_ts)
-        sensitivity_dict = ReadSensitivity(topic, start_ts, end_ts)
-        sentiment_dict = ReadSentiment(topic, start_ts, end_ts)
-        importance_dict = ReadImportance(topic, start_ts, end_ts)
-        quota_weight_dict = ReadQuotaWeight()
-        # geo_weight_dict = ReadGeoWeight()
-        quota_system_dict= {'attention': attention_dict, \
-                            'geo_penetration': geo_penetration_dict, \
-                            'media_importance': media_importance_dict ,\
-                            'quickness': quickness_dict, \
-                            'duration': duration_dict, \
-                            'sensitivity': sensitivity_dict, \
-                            'sentiment': sentiment_dict, \
-                            'importance': importance_dict ,\
-                            'quota_weight': quota_weight_dict ,\
-                            }
-        return quota_system_dict
+        if all_end < end_ts:
+            all_end = end_ts
 
-def ReadGeoWeight():
-    item = db.session.query(GeoWeight).first()
-    weight_dict = json.loads(item.weight_dict)
-    print 'geo_weight_dict:', weight_dict
+    compute_day = (all_end - start_ts) / Day + 1
+    index_evolution = {'end_ts':[], 'index':[]}
+    f_quota_evolution = {'end_ts':[], 'f_sensitivity':[], 'f_sentiment':[], 'f_transmission':[], 'f_involved':[]}
+    for i in range(compute_day-1):
+        end_ts = start_ts + (i+1) * Day
+        print 'item:',item.topic.encode('utf-8'), item.start_ts, item.end_ts
+        f_sensitivity = ReadFSensitivity(topic, start_ts, end_ts)
+        f_sentiment = ReadFSentiment(topic, start_ts, end_ts)
+        f_transmission = ReadFTransmission(topic, start_ts, end_ts)
+        f_involved = ReadFInvolved(topic, start_ts, end_ts)
+        index = ReadIndex(topic, start_ts, end_ts)
+        index_evolution['end_ts'].append(end_ts) # index_evolution={'end_ts':[], 'index':[],...}
+        index_evolution['index'].append(index)
+        f_quota_evolution['end_ts'].append(end_ts)
+        f_quota_evolution['f_sensitivity'].append(f_sensitivity)
+        f_quota_evolution['f_sentiment'].append(f_sentiment)
+        f_quota_evolution['f_transmission'].append(f_transmission)
+        f_quota_evolution['f_involved'].append(f_involved)  # f_quota_evolution = {end_ts:[], quota1:[],.....}
+    
+    last_index = index  # float
+    system_dict = {} 
+    class_sensitivity, word_sensitivity = ReadQuotaSensitivity(topic, start_ts ,end_ts)
+    sentiment_sad ,sentiment_angry = ReadQuotaSentiment(topic, start_ts ,end_ts)
+    duration = ReadQuotaDuration(topic, start_ts ,end_ts)
+    quickness = ReadQuotaQuickness(topic, start_ts, end_ts)
+    coverage = ReadQuotaCoverage(topic, start_ts, end_ts)
+    person_involved = ReadQuotaPerson(topic, start_ts, end_ts)
+    media_involved = ReadQuotaMedia(topic, start_ts, end_ts)
 
-    return weight_dict
+    system_dict['index'] = ['low', last_index] # system_dict = {quota1:[weight, value],...}
+    system_dict['f_sensitivity'] = [0.25, f_sensitivity]
+    system_dict['f_sentiment'] = [0.25, f_sentiment]
+    system_dict['f_transmission'] = [0.25, f_transmission]
+    system_dict['f_invovled'] = [0.25, f_transmission]
+    system_dict['class_sensitivity'] = [0.5, 0.2]
+    system_dict['word_sensitivity'] = [0.5, 0.4]
+    system_dict['sentiment_sad'] = [0.5, sentiment_sad]
+    system_dict['sentiment_angry'] = [0.5, sentiment_angry]
+    system_dict['duration'] = [(1.0 / 3.0) , duration]
+    system_dict['quickness'] = [(1.0 / 3.0), quickness]
+    system_dict['coverage'] = [(1.0 / 3.0), coverage]
+    system_dict['person_involved'] = [0.5, person_involved]
+    system_dict['media_involved'] = [0.5, media_involved]
 
-def ReadQuotaWeight():
-    item = db.session.query(QuotaWeight).first()
-    weight_dict = json.loads(item.weight_dict)
-    print 'quota_weight_dict:', weight_dict
+    quota_system_dict= {'last_index': last_index,\
+                        'now_system': system_dict,\
+                        'index_evolution': index_evolution ,\
+                        'f_quota_evolution': f_quota_evolution}
 
-    return weight_dict
+    return quota_system_dict
 
-def ReadAttention(topic, start_ts, end_ts):
-    items = db.session.query(QuotaAttention).filter(QuotaAttention.topic==topic, \
-                                                    QuotaAttention.start_ts==start_ts, \
-                                                    QuotaAttention.end_ts==end_ts).all()
-    attention_dict = {}
-    for item in items:
-        domain = item.domain
-        attention = item.attention
-        attention_dict[domain] = attention
-    print 'attention:', attention_dict
-    return attention_dict
+def ReadIndex(topic, start_ts, end_ts):
+    item = db.session.query(QuotaIndex).filter(QuotaIndex.topic==topic ,\
+                                               QuotaIndex.start_ts==start_ts ,\
+                                               QuotaIndex.end_ts==end_ts).first()
+    if item:
+        index = item.index
+    else:
+        index = 'None'
 
-def ReadGeoPenetration(topic, start_ts, end_ts):
-    item = db.session.query(QuotaGeoPenetration).filter(QuotaGeoPenetration.topic==topic, \
-                                                      QuotaGeoPenetration.start_ts==start_ts, \
-                                                      QuotaGeoPenetration.end_ts==end_ts).first()
-    pcount_dict = json.loads(item.pcount)
-    print 'pcount_dict:', pcount_dict
+    return index
 
-    weight_dict = ReadGeoWeight()
-    geo_weight_dict = {}
-    s = 0
-    for province in province_dict:
-        if pcount_dict[province] >= weight_dict[province]:
-            geo_weight_dict[province] = 1
-        else:
-            geo_weight_dict[province] = 0
-        s =s + geo_weight_dict[province]
-    avg_s = float(s) / float(36)
-    print 's:', s
-    print 'avg_s:', avg_s
+def ReadFSensitivity(topic, start_ts, end_ts):
+    item = db.session.query(QuotaFSensitivity).filter(QuotaFSensitivity.topic==topic ,\
+                                                      QuotaFSensitivity.start_ts==start_ts ,\
+                                                      QuotaFSensitivity.end_ts==end_ts).first()
+    if item:
+        f_sensitivity = item.f_sensitivity
+    else:
+        f_sensitivity = 'None'
 
-    return avg_s
+    return f_sensitivity
 
-def ReadMediaImportance(topic, start_ts, end_ts):
+def ReadFSentiment(topic, start_ts, end_ts):
+    item = db.session.query(QuotaFSentiment).filter(QuotaFSentiment.topic==topic ,\
+                                                    QuotaFSentiment.start_ts==start_ts ,\
+                                                    QuotaFSentiment.end_ts==end_ts).first()
+    if item:
+        f_sentiment = item.f_sentiment
+    else:
+        f_sentiment = 'None'
+
+    return f_sentiment
+
+def ReadFTransmission(topic, start_ts, end_ts):
+    item = db.session.query(QuotaFTransmission).filter(QuotaFTransmission.topic==topic ,\
+                                                       QuotaFTransmission.start_ts==start_ts ,\
+                                                       QuotaFTransmission.end_ts==end_ts).first()
+    if item:
+        f_transmission = item.f_transmission
+    else:
+        f_transmission = 'None'
+
+    return f_transmission
+
+def ReadFInvolved(topic, start_ts, end_ts):
+    item = db.session.query(QuotaFInvolved).filter(QuotaFInvolved.topic==topic ,\
+                                                   QuotaFInvolved.start_ts==start_ts ,\
+                                                   QuotaFInvolved.end_ts==end_ts).first()
+    if item:
+        f_involved = item.f_involved
+    else:
+        f_involved = 'None'
+
+    return f_involved
+
+def ReadQuotaSensitivity(topic, start_ts, end_ts):
+    item_class = db.session.query(QuotaSensitivity).filter(QuotaSensitivity.topic==topic, \
+                                                           QuotaSensitivity.start_ts==start_ts, \
+                                                           QuotaSensitivity.end_ts==end_ts ,\
+                                                           QuotaSensitivity.classfication==1).first()
+    item_word = db.session.query(QuotaSensitivity).filter(QuotaSensitivity.topic==topic, \
+                                                          QuotaSensitivity.start_ts==start_ts, \
+                                                          QuotaSensitivity.end_ts==end_ts ,\
+                                                          QuotaSensitivity.classfication==2).first()
+    if item_class:
+        class_sensitivity = item_class.score
+    else:
+        class_sensitivity = 'None'
+    if item_word:
+        word_sensitivity = item_word.score
+    else:
+        word_sensitivity = 'None'
+    
+    return class_sensitivity, word_sensitivity
+
+
+def ReadQuotaCoverage(topic, start_ts, end_ts):
+    item = db.session.query(QuotaCoverage).filter(QuotaCoverage.topic==topic, \
+                                                  QuotaCoverage.start_ts==start_ts, \
+                                                  QuotaCoverage.end_ts==end_ts).first()
+    if item:
+        coverage = item.coverage
+    else:
+        coverage = 'None'
+    
+    return coverage
+
+def ReadQuotaMedia(topic, start_ts, end_ts):
     item = db.session.query(QuotaMediaImportance).filter(QuotaMediaImportance.topic==topic ,\
                                                          QuotaMediaImportance.start_ts==start_ts ,\
                                                          QuotaMediaImportance.end_ts==end_ts).first()
-    media_importance_dict = item.media_importance
-    print 'media_importance:', media_importance_dict
-    return media_importance_dict
+    if item:
+        media_involved = item.media_importance
+    else:
+        media_involves = 'None'
 
-def ReadQuickness(topic, start_ts, end_ts):
-    items = db.session.query(QuotaQuickness).filter(QuotaQuickness.topic==topic, \
-                                                    QuotaQuickness.start_ts==start_ts, \
-                                                    QuotaQuickness.end_ts==end_ts).all()
-    quickness_dict = {}
-    for item in items:
-        domain = item.domain
+    return media_involved
+
+
+
+def ReadQuotaQuickness(topic, start_ts, end_ts):
+    item = db.session.query(QuotaQuickness).filter(QuotaQuickness.topic==topic, \
+                                                   QuotaQuickness.start_ts==start_ts, \
+                                                   QuotaQuickness.end_ts==end_ts ,\
+                                                   QuotaQuickness.domain=='all').first()
+    if item:
         quickness = item.quickness
-        quickness_dict[domain] = quickness
-    
-    print 'quickness:', quickness_dict
-    return quickness_dict
+    else:
+        quickness = 'None'
 
-def ReadDuration(topic, start_ts, end_ts):
+    return quickness
+
+def ReadQuotaDuration(topic, start_ts, end_ts):
     item = db.session.query(QuotaDuration).filter(QuotaDuration.topic==topic, \
-                                                 QuotaDuration.start_ts==start_ts, \
-                                                 QuotaDuration.end_ts==end_ts).first()
-    duration_dict = item.duration
-    print 'duration:', duration_dict
-    return duration_dict
+                                                  QuotaDuration.start_ts==start_ts, \
+                                                  QuotaDuration.end_ts==end_ts).first()
+    if item:
+        duration = item.duration
+    else:
+        duration = 'None'
 
-def ReadSensitivity(topic, start_ts, end_ts):
-    items = db.session.query(QuotaSensitivity).filter(QuotaSensitivity.topic==topic, \
-                                                     QuotaSensitivity.start_ts==start_ts, \
-                                                     QuotaSensitivity.end_ts==end_ts).all()
-    sensitivity_dict = {}
-    for item in items:
-        classfication = item.classfication
-        score = item.score
-        sensitivity_dict[classfication] = score
-    print 'sensitivity_dict:', sensitivity_dict
-    return sensitivity_dict
+    return duration
 
-def ReadSentiment(topic, start_ts, end_ts):
+def ReadQuotaSentiment(topic, start_ts, end_ts):
     item = db.session.query(QuotaSentiment).filter(QuotaSentiment.topic==topic, \
-                                                  QuotaSentiment.start_ts==start_ts, \
-                                                  QuotaSentiment.end_ts==end_ts).first()
-    sentiment_dict = {}
-    sentiment_dict = json.loads(item.sratio)
-    print 'sentiment_dict:', sentiment_dict
+                                                   QuotaSentiment.start_ts==start_ts, \
+                                                   QuotaSentiment.end_ts==end_ts).first()
+    if item:
+        sentiment_dict = json.loads(item.sratio)
+        sentiment_sad = sentiment_dict['sad']
+        sentiment_angry = sentiment_dict['angry']
+    else:
+        sentiment_sad = 'None'
+        sentiment_angry = 'None'
 
-    return sentiment_dict
+    return sentiment_sad, sentiment_angry
 
-def ReadImportance(topic, start_ts, end_ts):
-    item = db.session.query(QuotaImportance).filter(QuotaImportance.topic==topic, \
-                                                  QuotaImportance.start_ts==start_ts, \
-                                                  QuotaImportance.end_ts==end_ts).first()
-    importance_dict = {}
-    importance_dict['score'] = item.score
-    importance_dict['weight'] = item.weight
-    print 'importance_dict:', importance_dict
+def ReadQuotaPerson(topic, start_ts, end_ts):
+    item = db.session.query(QuotaPersonSensitivity).filter(QuotaPersonSensitivity.topic==topic, \
+                                                           QuotaPersonSensitivity.start_ts==start_ts, \
+                                                           QuotaPersonSensitivity.end_ts==end_ts).first()
+    if item:
+        person_involved = item.pr
+    else:
+        person_involved = 'None'
 
-    return importance_dict
-    
-        
-
+    return person_involved
 
 
