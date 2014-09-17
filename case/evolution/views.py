@@ -3,6 +3,7 @@
 import os
 import IP
 import json
+import time
 from city_count import Pcount
 from BeautifulSoup import BeautifulSoup
 from case.extensions import db
@@ -13,6 +14,7 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, se
 from city_map import partition_count, map_circle_data, map_line_data, statistics_data
 
 from dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
+from xapian_case.xapian_backend import XapianSearch
 
 mod = Blueprint('evolution', __name__, url_prefix='/evolution')
 
@@ -29,6 +31,22 @@ province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东
                  u'河北', u'黑龙江', u'河南', u'湖北', u'湖南', u'内蒙古', u'江苏', u'江西', u'吉林', \
                  u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
                  u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门', u'海外', u'其他']
+
+def acquire_user_by_id(uid):
+    XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
+    user_search = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
+    result = user_search.search_by_id(int(uid), fields=['name', 'location', 'followers_count', 'friends_count'])
+    user = {}
+    if result:
+        user['name'] = result['name']
+        user['location'] = result['location']
+        user['count1'] = result['followers_count']
+        user['count2'] = result['friends_count']
+    
+    return user
+
+
+
 
 def geo2city(geo):
     try:
@@ -98,6 +116,9 @@ def info2map(infos): # infos = {end_ts:map_data}, map_data={'count':{}, 'color':
 
 RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'bmiddle_pic', 'geo', 'comments_count', 'sentiment']
 
+def ts2date(ts):
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
+
 def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1,count1),(city2,count2)...]
     topic = u'东盟,博览会'
     search_city_weibo = getXapianWeiboByTopic(topic)
@@ -109,6 +130,14 @@ def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1
         k += 1
         if k>500:
             break
+        uid = result['user']
+        user_info = acquire_user_by_id(uid)
+        if user_info:
+            result['username'] = user_info['name']
+        else:
+            result['username'] = '未知'
+        time = ts2date(result['timestamp'])
+        result['time'] = time
         city = geo2city(result['geo']).split('\t')[1]
         #print 'city:', city
         if city in province_list:
