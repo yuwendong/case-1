@@ -36,6 +36,7 @@ def opinion_time():
         return 'no data in mysql'
     
     time_list = []
+    k_list = []
     for i in range(0,len(results)):
         if len(results[i][0])>=3:
             k = results[i][0][0].encode('utf-8')+'-'+results[i][0][1].encode('utf-8')+'-'+results[i][0][2].encode('utf-8')
@@ -43,7 +44,10 @@ def opinion_time():
             k = results[i][0][0].encode('utf-8')+'-'+results[i][0][1].encode('utf-8')
         else:
             k = results[i][0][0].encode('utf-8')
-        time_list.append([k,results[i][1],results[i][2]])
+        if k not in k_list:
+            time_list.append([k,results[i][1],results[i][2]])
+            k_list.append(k)
+        
     return json.dumps(time_list)
 
 @mod.route('/ratio/')
@@ -61,6 +65,7 @@ def opinion_ratio():
         else:
             k = results[i][0][0].encode('utf-8')
         ratio[k] = results[i][1]
+
     return json.dumps(ratio)
 
 @mod.route('/keywords/')
@@ -106,6 +111,5 @@ def opinion_weibos():
             item = []
             item.append(row)
             data[k] = item
-    print data
     return json.dumps(data)
     
