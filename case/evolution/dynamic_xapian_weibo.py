@@ -19,7 +19,7 @@ def getXapianWeiboByDate(datestr):
     	return None
     
 def getXapianWeiboByTopic(topic):
-    stub_file = '/home/ubuntu4/ljh/csv/stub/master_timeline_weibo_topic'
+    stub_file = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_topic'
     print stub_file
     if os.path.exists(stub_file):
         print 'stub exist'
