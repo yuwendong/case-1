@@ -47,12 +47,12 @@
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
+                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0 curr" style=\"width:85px\" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                     else{
-                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0" href="javascript:;" style=\"width:85px\" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
@@ -308,7 +308,7 @@
                     for (var i = 0 ;i< data[topic_child].length; i++){
                          dataselect.push(data[topic_child][i]);
                     }
-                console.log(dataselect);
+                // console.log(dataselect);
                 chg_weibos(dataselect);
             }
         });
@@ -350,10 +350,10 @@
                     }
                 }*/
                 
-                html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+                html += '<div class="tang-scrollpanel-wrapper" >';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
-                for(var i = 0; i < data.length; i += 1){
+                for(var i = 0; i < 5; i += 1){
                 var da = data[i];
                 var uid = da['user'];
                 /*var name;
@@ -415,41 +415,49 @@
         function drawtable(data){
             var topic_child = {};
             var html = '';
+            var html1 = '';
+            var number_topic =0;
             for(var key in data){
                 topic_child[key] = [];
                 for (var i = 0 ; i < data[key].length; i++){
                     topic_child[key].push(data[key][i][0]);
                 }
             }
-            console.log("123");
-            console.log(topic_child);
             for(var topic in topic_child){
-                console.log(topic);
-                console.log(result2[0]);
                 if (topic == result2[0]){
-                    html += '<tr topic='+topic+' class="tablecurrent">'; 
+                    html += '<tr topic='+topic+' class="tablecurrent">';
+                    html1 += '<tr topic='+topic+' class="tablecurrent">'; 
                 }
                 else{
                     html += '<tr topic='+topic+'>'; 
+                    html1 += '<tr topic='+topic+'>';
                 }
-                html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
-                
-                if(topic_child[topic].length > 5){
-                    for(var j = 0; j < 5; j++){
+                html += "<td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                html1 += "<td><b style =\"width:20px\">"+topic+"</b></td>"; 
+                if(topic_child[topic].length > 4){
+                    for(var j = 0; j < 4; j++){
                         html += '<td>'+topic_child[topic][j]+'</td>';
+                    }
+                    for(var i = 4; i < 8; i++){
+                        html1 += '<td>'+topic_child[topic][i]+'</td>';
                     }
                 }
                 
                 else{
-                    for(var m = 0;m < topic_child[topic].length; m++){
-                        html += '<td>'+topic_child[topic][m]+'</td>';
+                    for(var m = 0;m < 4; m++){
+                        if( m < topic_child[topic].length){
+                            html += '<td>'+topic_child[topic][m]+'</td>';
+                        }
+                        else {
+                           html += '<td>'+' '+'</td>' 
+                        }
+
                     }
                 }
 
             }
-
+            $("#alternate").append(html1);
             $("#alternatecolor").append(html);
-                 // $("#alternate").append(html1);
         }
        
         function connect(data){

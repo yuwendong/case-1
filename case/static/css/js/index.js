@@ -16,10 +16,11 @@
  var attention_average = 0;
  var quickness_average = 0;
 $(document).ready(function(){
-    getindex_data();
+    // getindex_data();
     draw_index();
-    draw_quickness();
-    draw_attention();
+    // draw_quickness();
+    // draw_attention();
+    // index();
 
  })
  function getindex_data(){
@@ -326,7 +327,7 @@ function toggle(d) {
 // }
 
 function draw_index(){
-        console.log("index");
+        // console.log("index");
         var labelTop = {
         normal : {
             label : {
@@ -360,7 +361,7 @@ function draw_index(){
             color: 'rgba(0,0,0,0)'
         }
     };
-    var radius = [55, 70];
+    var radius = [150, 200];
     var option = {
         tooltip: {
             formatter: "{a} <br/>{b} : {c}%"
@@ -380,9 +381,9 @@ function draw_index(){
         },
         series : [
             {
-                name:'类型敏感度',
+                name:'舆情指数',
                 type:'gauge',
-                center : ['20%', '30%'],    // 默认全局居中
+                center : ['50%', '50%'],    // 默认全局居中
                 radius : radius,
                 startAngle: 140,
                 endAngle : -140,
@@ -461,390 +462,298 @@ function draw_index(){
                         fontWeight: 'bolder'
                     }
                 },
-                data:[{value: 0, name: '类型敏感度'}]
-            },
-            {
-                name:'地域敏感度',
-                type:'gauge',
-                center : ['50%', '30%'],    // 默认全局居中
-                radius : radius,
-                startAngle: 140,
-                endAngle : -140,
-                min: 0,                     // 最小值
-                max: 100,                   // 最大值
-                precision: 0,               // 小数精度，默认为0，无小数点
-                splitNumber: 10,             // 分割段数，默认为5
-                axisLine: {            // 坐标轴线
-                    show: true,        // 默认显示，属性show控制显示与否
-                    lineStyle: {       // 属性lineStyle控制线条样式
-                        color: [[0.2, 'lightgreen'],[0.4, 'orange'],[0.8, 'skyblue'],[1, '#ff4500']], //划分区域，对不同的指标可以修改预警的数值范围
-                        width: 15
-                    }
-                },
-                axisTick: {            // 坐标轴小标记
-                    show: true,        // 属性show控制显示与否，默认不显示
-                    splitNumber: 5,    // 每份split细分多少段
-                    length :5,         // 属性length控制线长
-                    lineStyle: {       // 属性lineStyle控制线条样式
-                        color: '#eee',
-                        width: 1,
-                        type: 'solid'
-                    }
-                },
-                axisLabel: {           // 坐标轴文本标签，详见axis.axisLabel
-                    show: true,
-                    formatter: function(v){
-                        switch (v+''){
-                            case '10': return '弱';
-                            case '30': return '低';
-                            case '60': return '中';
-                            case '90': return '高';
-                            default: return '';
-                        }
-                    },
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: '#320',
-                        fontSize : 10
-                    }
-                },
-                splitLine: {           // 分隔线
-                    show: true,        // 默认显示，属性show控制显示与否
-                    length :10,         // 属性length控制线长
-                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                        color: '#eee',
-                        width: 2,
-                        type: 'solid'
-                    }
-                },
-                pointer : {
-                    length : '80%',
-                    width : 8,
-                    color : 'auto'
-                },
-                title : {
-                    show : true,
-                    offsetCenter: ['-80%', -5],       // x, y，单位px
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: '#333',
-                        fontSize : 15,
-                        fontWeight: 'bolder'
-                    }
-                },
-                detail : {
-                    show : true,
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    borderWidth: 0,
-                    borderColor: '#ccc',
-                    width: 100,
-                    height: 40,
-                    offsetCenter: ['-80%', -2],       // x, y，单位px
-                    formatter:'{value}%',
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: 'red',
-                        fontSize : 15,
-                        fontWeight: 'bolder'
-                    }
-                },
-                data:[{value: 0, name: '地域敏感度'}]
-            },
-            {
-                name:'词汇敏感度',
-                type:'gauge',
-                center : ['80%', '30%'],    // 默认全局居中
-                radius : radius,
-                startAngle: 140,
-                endAngle : -140,
-                min: 0,                     // 最小值
-                max: 100,                   // 最大值
-                precision: 0,               // 小数精度，默认为0，无小数点
-                splitNumber: 10,             // 分割段数，默认为5
-                axisLine: {            // 坐标轴线
-                    show: true,        // 默认显示，属性show控制显示与否
-                    lineStyle: {       // 属性lineStyle控制线条样式
-                        color: [[0.2, 'lightgreen'],[0.4, 'orange'],[0.8, 'skyblue'],[1, '#ff4500']], //划分区域，对不同的指标可以修改预警的数值范围
-                        width: 15
-                    }
-                },
-                axisTick: {            // 坐标轴小标记
-                    show: true,        // 属性show控制显示与否，默认不显示
-                    splitNumber: 5,    // 每份split细分多少段
-                    length :5,         // 属性length控制线长
-                    lineStyle: {       // 属性lineStyle控制线条样式
-                        color: '#eee',
-                        width: 1,
-                        type: 'solid'
-                    }
-                },
-                axisLabel: {           // 坐标轴文本标签，详见axis.axisLabel
-                    show: true,
-                    formatter: function(v){
-                        switch (v+''){
-                            case '10': return '弱';
-                            case '30': return '低';
-                            case '60': return '中';
-                            case '90': return '高';
-                            default: return '';
-                        }
-                    },
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: '#320',
-                        fontSize : 10
-                    }
-                },
-                splitLine: {           // 分隔线
-                    show: true,        // 默认显示，属性show控制显示与否
-                    length :10,         // 属性length控制线长
-                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                        color: '#eee',
-                        width: 2,
-                        type: 'solid'
-                    }
-                },
-                pointer : {
-                    length : '80%',
-                    width : 8,
-                    color : 'auto'
-                },
-                title : {
-                    show : true,
-                    offsetCenter: ['-80%', -5],       // x, y，单位px
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: '#333',
-                        fontSize : 15,
-                        fontWeight: 'bolder'
-                    }
-                },
-                detail : {
-                    show : true,
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    borderWidth: 0,
-                    borderColor: '#ccc',
-                    width: 100,
-                    height: 40,
-                    offsetCenter: ['-80%', -2],       // x, y，单位px
-                    formatter:'{value}%',
-                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                        color: 'red',
-                        fontSize : 15,
-                        fontWeight: 'bolder'
-                    }
-                },
-                data:[{value: 0, name: '词汇敏感度'}]
+                data:[{value: 0, name: '舆情指数'}]
             },
  
         ]
     };
-    var myChart = echarts.init(document.getElementById('sensivity'));
+    var myChart = echarts.init(document.getElementById('index'));
     myChart.setOption(option);
 }
 
-function draw_quickness(){
- var option = {
-    title : {
-        text: '',
-    },
-    tooltip : {
-        trigger: 'axis'
-    },
-    legend: {
-        data:['关注度', '爆发度']
-    },
-    toolbox: {
-         x:"left",
-        show : true,
-        feature : {
-            dataView : {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            saveAsImage : {show: true}
-        }
-    },
-    calculable : true,
-    xAxis : [
-        {   splitNumber: 1,
-            type : 'value',
-            boundaryGap : [0, 0.01]
-        }
-    ],
-    yAxis : [
-        {
-            type : 'category',
-            data : attention_index
-        }
-    ],
-    series : [
-        {
-            name:'关注度',
-            type:'bar',
-            data:attention_value
-        },
-        {
-            name:'爆发度',
-            type:'bar',
-            data:quickness_value
-        }
-    ]
-};
-    var myChart = echarts.init(document.getElementById('quickness'));
-    myChart.setOption(option);                
-}
+// function draw_quickness(){
+//  var option = {
+//     title : {
+//         text: '',
+//     },
+//     tooltip : {
+//         trigger: 'axis'
+//     },
+//     legend: {
+//         data:['关注度', '爆发度']
+//     },
+//     toolbox: {
+//          x:"left",
+//         show : true,
+//         feature : {
+//             dataView : {show: true, readOnly: false},
+//             magicType: {show: true, type: ['line', 'bar']},
+//             saveAsImage : {show: true}
+//         }
+//     },
+//     calculable : true,
+//     xAxis : [
+//         {   splitNumber: 1,
+//             type : 'value',
+//             boundaryGap : [0, 0.01]
+//         }
+//     ],
+//     yAxis : [
+//         {
+//             type : 'category',
+//             data : attention_index
+//         }
+//     ],
+//     series : [
+//         {
+//             name:'关注度',
+//             type:'bar',
+//             data:attention_value
+//         },
+//         {
+//             name:'爆发度',
+//             type:'bar',
+//             data:quickness_value
+//         }
+//     ]
+// };
+//     var myChart = echarts.init(document.getElementById('quickness'));
+//     myChart.setOption(option);                
+// }
 
-function draw_attention(){
-var option = {
-    title : {
-        text: '',
-    },
-    tooltip : {
-        trigger: 'axis'
-    },
-    legend: {
-        data:['关注度', '爆发度']
-    },
-    toolbox: {
-        x:"left",
-        show : true,
-        feature : {
-            dataView : {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            saveAsImage : {show: true}
-        }
-    },
-    calculable : true,
-    xAxis : [
-        {   splitNumber: 1,
-            type : 'value',
-            boundaryGap : [0, 0.01]
-        }
-    ],
-    yAxis : [
-        {
-            type : 'category',
-            data : attention_index
-        }
-    ],
-    series : [
-        {
-            name:'关注度',
-            type:'bar',
-            data:attention_value
-        },
-        {
-            name:'爆发度',
-            type:'bar',
-            data:quickness_value
-        }
-    ]
-};
+// function draw_attention(){
+// var option = {
+//     title : {
+//         text: '',
+//     },
+//     tooltip : {
+//         trigger: 'axis'
+//     },
+//     legend: {
+//         data:['关注度', '爆发度']
+//     },
+//     toolbox: {
+//         x:"left",
+//         show : true,
+//         feature : {
+//             dataView : {show: true, readOnly: false},
+//             magicType: {show: true, type: ['line', 'bar']},
+//             saveAsImage : {show: true}
+//         }
+//     },
+//     calculable : true,
+//     xAxis : [
+//         {   splitNumber: 1,
+//             type : 'value',
+//             boundaryGap : [0, 0.01]
+//         }
+//     ],
+//     yAxis : [
+//         {
+//             type : 'category',
+//             data : attention_index
+//         }
+//     ],
+//     series : [
+//         {
+//             name:'关注度',
+//             type:'bar',
+//             data:attention_value
+//         },
+//         {
+//             name:'爆发度',
+//             type:'bar',
+//             data:quickness_value
+//         }
+//     ]
+// };
                     
-    var myChart = echarts.init(document.getElementById('attention'));
-    myChart.setOption(option);                
+//     var myChart = echarts.init(document.getElementById('attention'));
+//     myChart.setOption(option);                
+// }
+
+
+function draw_line(){
+      
+    $('#index').highcharts({
+        title: {
+            text: '',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: 'Temperature (°C)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '°C'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: 'New York',
+            data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+        }, {
+            name: 'Berlin',
+            data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+        }, {
+            name: 'London',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }],
+
+         title: {
+            text: '',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: 'Temperature (°C)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '°C'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: 'New York',
+            data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+        }, {
+            name: 'Berlin',
+            data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+        }, {
+            name: 'London',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }]
+    });
 }
+// function draw_line2(){
+//     $('#index_line2').highcharts({
+//         title: {
+//             text: '',
+//             x: -20 //center
+//         },
+//         subtitle: {
+//             text: '',
+//             x: -20
+//         },
+//         xAxis: {
+//             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+//         },
+//         yAxis: {
+//             title: {
+//                 text: 'Temperature (°C)'
+//             },
+//             plotLines: [{
+//                 value: 0,
+//                 width: 1,
+//                 color: '#808080'
+//             }]
+//         },
+//         tooltip: {
+//             valueSuffix: '°C'
+//         },
+//         legend: {
+//             layout: 'vertical',
+//             align: 'right',
+//             verticalAlign: 'middle',
+//             borderWidth: 0
+//         },
+//         series: [{
+//             name: 'Tokyo',
+//             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+//         }, {
+//             name: 'New York',
+//             data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+//         }, {
+//             name: 'Berlin',
+//             data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+//         }, {
+//             name: 'London',
+//             data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+//         }],
 
-function index(){
-option = {
-    tooltip : {
-        formatter: "{a} <br/>{b} : {c}%"
-    },
-    toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
-    series : [
-        {
-            name:'个性化仪表盘',
-            type:'gauge',
-            center : ['50%', '50%'],    // 默认全局居中
-            radius : [0, '75%'],
-            startAngle: 140,
-            endAngle : -140,
-            min: 0,                     // 最小值
-            max: 100,                   // 最大值
-            precision: 0,               // 小数精度，默认为0，无小数点
-            splitNumber: 10,             // 分割段数，默认为5
-            axisLine: {            // 坐标轴线
-                show: true,        // 默认显示，属性show控制显示与否
-                lineStyle: {       // 属性lineStyle控制线条样式
-                    color: [[0.2, 'lightgreen'],[0.4, 'orange'],[0.8, 'skyblue'],[1, '#ff4500']], 
-                    width: 30
-                }
-            },
-            axisTick: {            // 坐标轴小标记
-                show: true,        // 属性show控制显示与否，默认不显示
-                splitNumber: 5,    // 每份split细分多少段
-                length :8,         // 属性length控制线长
-                lineStyle: {       // 属性lineStyle控制线条样式
-                    color: '#eee',
-                    width: 1,
-                    type: 'solid'
-                }
-            },
-            axisLabel: {           // 坐标轴文本标签，详见axis.axisLabel
-                show: true,
-                formatter: function(v){
-                    switch (v+''){
-                        case '10': return '弱';
-                        case '30': return '低';
-                        case '60': return '中';
-                        case '90': return '高';
-                        default: return '';
-                    }
-                },
-                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                    color: '#333'
-                }
-            },
-            splitLine: {           // 分隔线
-                show: true,        // 默认显示，属性show控制显示与否
-                length :30,         // 属性length控制线长
-                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                    color: '#eee',
-                    width: 2,
-                    type: 'solid'
-                }
-            },
-            pointer : {
-                length : '80%',
-                width : 8,
-                color : 'auto'
-            },
-            title : {
-                show : true,
-                offsetCenter: ['-65%', -10],       // x, y，单位px
-                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                    color: '#333',
-                    fontSize : 15
-                }
-            },
-            detail : {
-                show : true,
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderWidth: 0,
-                borderColor: '#ccc',
-                width: 100,
-                height: 40,
-                offsetCenter: ['-60%', 10],       // x, y，单位px
-                formatter:'{value}%',
-                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-                    color: 'auto',
-                    fontSize : 30
-                }
-            },
-            data:[{value: 50, name: '仪表盘'}]
-        }
-    ]
-};
-
-clearInterval(timeTicket);
-timeTicket = setInterval(function (){
-    option.series[0].data[0].value = (Math.random()*100).toFixed(2) - 0;
-    myChart.setOption(option, true);
-},2000)
-    var myChart = echarts.init(document.getElementById('index'));
-    myChart.setOption(option);                
-}
-                   
-
+//          title: {
+//             text: '',
+//             x: -20 //center
+//         },
+//         subtitle: {
+//             text: '',
+//             x: -20
+//         },
+//         xAxis: {
+//             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+//         },
+//         yAxis: {
+//             title: {
+//                 text: 'Temperature (°C)'
+//             },
+//             plotLines: [{
+//                 value: 0,
+//                 width: 1,
+//                 color: '#808080'
+//             }]
+//         },
+//         tooltip: {
+//             valueSuffix: '°C'
+//         },
+//         legend: {
+//             layout: 'vertical',
+//             align: 'right',
+//             verticalAlign: 'middle',
+//             borderWidth: 0
+//         },
+//         series: [{
+//             name: 'Tokyo',
+//             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+//         }, {
+//             name: 'New York',
+//             data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+//         }, {
+//             name: 'Berlin',
+//             data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+//         }, {
+//             name: 'London',
+//             data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+//         }]
+//     });
+// }             
 

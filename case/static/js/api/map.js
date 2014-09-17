@@ -4,6 +4,7 @@ var END_TS = END_TS;
 var DURING_INTERGER = POINT_INTERVAL;
 var total_count = [];
 var first_city = [];
+var curr_data = [];
 
 // Date format
 Date.prototype.format = function(format) { 
@@ -169,57 +170,218 @@ CaseMap.prototype.initPullDrawMap = function(sta){
     var that = this;
     this.call_async_ajax_request(ajax_url, this.ajax_method, callback);
 
-    function callback(data){
+function callback(data){
         myChart.hideLoading();
+        // console.log(data);
+        var rank_city = [];
         var data_count = data["count"];
         var max_count = data["max_count"];
             total_count = data["total_count"];
-            first_city = data["first_city"]
-        console.log(total_count);
-        console.log(first_city);
-        console.log(total_count[0][0]);
+            first_city = data["first_city"];
+        for(var j = 0; j < 10; j++ ) {
+            rank_city.push(total_count[j][0]);
+        }
+        curr_data = data['top_city_weibo']
+        // console.log(rank_city);
         var format_data = that.dataFormatter(data_count);
-        // console.log("first_city" + first_city);
-        // console.log("total_count" + total_count);
         drawWholeMap(that, format_data, max_count, myChart);
         drawtable(total_count);
         source_data(first_city);
+        drawtab(data,rank_city);
     }
 }
 
-    function drawtable(total_count){
-     var cellCount = 2;
-      var table = '<table class="table table-bordered">';
-      var thead = '<thead><tr><th>排名</th><th>省份</th><th>微博数量</th></tr></thead>';
-      var tbody = '<tbody>';
-      for (var i = 0;i < 10;i++) {
-                 var tr = '<tr>';
-                 var s = i + 1;
-        //   if (total_count[i][3].match("海外")) {
-        // tr = '<tr class="success">';
-        //   }
-            var td = '<td><span class="label label-important">'+ s +'</span></td>';
-              tr += td;
-
-        for(var j = 0;j < cellCount;j++) {
-         if(j == 0){
-             td = '<td>'+total_count[i][j]+'</td>';
-        }
-        else{
-             td = '<td>'+total_count[i][j]+'</td>';
-        }
-        tr += td;
+function drawtab(data,rank_city){
+    var flag = 0;
+    var html = '';
+    $("#Tableselect").empty();
+    // console.log("beigin tab" ,data['top_city_weibo']);
+    // for (var city in data['top_city_weibo']){
+        for(var m = 0; m < rank_city.length; m++){
+            // if(city == rank_city[m]){
+               console.log(rank_city); 
+                if(flag == 0){
+                    html += '<a topic='+ rank_city[m] + ' ' +'class=\"tabLi gColor0 curr\" href="javascript:;" style="display: block;">';
+                    html += '<div class="nmTab">'+rank_city[m]+ '</div>';
+                    html += '<div class="hvTab">'+rank_city[m]+'</div></a>';
+                    weibo_page(rank_city[m],data['top_city_weibo']);
                 }
-          tr += '</tr>';
-          tbody += tr;
+                else{
+                    html += '<a topic='+rank_city[m] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                    html += '<div class="nmTab">'+ rank_city[m] + '</div>';
+                    html += '<div class="hvTab">'+ rank_city[m] +'</div></a>';
+                }
+                flag++;
+            }
+        // }
+    // }   
+    $("#Tableselect").append(html);
+    bindTabClick(rank_city,data['top_city_weibo']);
+}
+function bindTabClick(rank_city,data){
+    var topic;
+    $("#Tablebselect").children("a").unbind();
+    $("#Tableselect").children("a").click(function() {        
+        var select_a = $(this);
+        var unselect_a = $(this).siblings('a');
+        if(!select_a.hasClass('curr')) {
+            select_a.addClass('curr');
+            unselect_a.removeClass('curr');
+            topic = select_a.attr('topic');
+            weibo_page(topic,data);
+            console.log(data);
+            console.log(topic);
+        }
+    });
+}
+
+function weibo_page(topic,data){          //关键微博翻页函数
+        // console.log(data);
+        // console.log(topic);
+        console.log(data[topic]);
+        var current_data = data;
+        var page_num = 10;
+        if (current_data[topic].length) {
+
+            console.log(current_data[topic].length);
+
+            if (current_data[topic].length < page_num) {
+                  console.log(current_data[topic]);
+                page_num = current_data[topic].length;
+                show_weibo(topic, current_data, 0 ,page_num);     
+            }
+            else {
+                show_weibo(topic,current_data, 0, page_num);
+                var total_pages = 0;
+                if (current_data[topic].length % page_num == 0) {
+                    total_pages = current_data[topic].length / page_num;
+                }
+                else {
+                    total_pages = current_data[topic].length / page_num + 1;
+                }
+                $('#rank_page_selection').bootpag({
+                  total: total_pages,
+                  page: 1,
+                  maxVisible: 30
+                }).on("page", function(event, num){
+                  var start_row = (num - 1)* page_num;
+                  var end_row = start_row + page_num;
+                  if (end_row > current_data[topic].length){
+                      end_row = current_data[topic].length;
+                  }
+                  show_weibo(topic, current_data, start_row, end_row);
+                });
+            }
+        }
+
+    } 
+
+function show_weibo(topic, data, begin, end){
+    $("#vertical-ticker").empty();
+    var html = '';
+    var child_topic = topic;
+    var weibo_data = data[child_topic];
+    // console.log(weibo_data);
+    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+    html += '<div class="tang-scrollpanel-content">';
+    html += '<ul id="weibo_ul">';
+    for (var op = begin ; op <= end ; op++){
+    // for(var i = 0; i < weibo_data.length; i += 1){
+        var da = weibo_data[op];
+        console.log(da['text']);
+        // var name;
+        // if ('name' in da){
+        //     name = da['name'];
+        //     if(name == 'unknown'){
+        //         name = '未知';
+        //     }
+        // }
+        // else{
+        //     name = '未知';
+        // }
+        var text = da['text'];
+        var user = da['user'];
+        var _id = da['_id'];
+        var reposts_count = da['reposts_count'];
+        var comments_count = da['comments_count'];
+        var timestamp = da['timestamp'];
+        var data = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
+        var user_link = 'http://weibo.com/u/' + user;
+        var user_image_link = '/static/img/unknown_profile_image.gif';
+        var ip = da['geo'];
+        
+        html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
+        html += '<img src="' + user_image_link + '">';
+        html += '</a></div>';
+        html += '<div class="weibo_detail">';
+        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + user + '</a>&nbsp;&nbsp;UID:&nbsp;&nbsp;'  + _id + '&nbsp;&nbsp;于' + ip +'发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<div class="weibo_info">';
+        html += '<div class="weibo_pz">';
+        html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+        html += '<div class="m">';
+        html += '<a class="undlin">' + data + '</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+    $("#vertical-ticker").append(html);
+}
+function drawtable(total_count){
+    var cellCount = 2;
+    var table = '<table class="table table-bordered">';
+    var thead = '<thead><tr><th>排名</th><th>省份</th><th>微博数量</th></tr></thead>';
+    var tbody = '<tbody>';
+      for (var i = 0;i < 10;i++) {
+        var tr = '<tr>';
+        var t = i;
+        var v = t+1;
+        var s = v.toString();
+        var td = '<td><span class="label label-important">'+ s +'</span></td>';
+        tr += td;
+        for(var j = 0;j < cellCount;j++) {
+            if(j == 0 ){
+                 td = '<td><u onclick = \"connect(\''+total_count[i][j]+'\')\">'+total_count[i][j]+'</u></td>';
+            }
+            else{
+                 td = '<td>'+total_count[i][j]+'</td>';
+            }
+            tr += td;
+        }
+        tr += '</tr>';
+        tbody += tr;
       }
               
       tbody += '</tbody>';
       table += thead + tbody;
       table += '</table>'
       $("#rank_table").html(table); 
-    }
-  function source_data(first_city){
+}
+
+function connect(topic){
+    // console.log(topic);
+    var value_data = topic;
+    // console.log(curr_data);
+    // console.log("123");
+    $("#Tablebselect").children("a").unbind();
+    $("#Tableselect").children("a").each(function(){        
+        var select_a = $(this);
+        var unselect_a = $(this).siblings('a');
+        if(select_a.attr('topic') == value_data){
+            if(!select_a.hasClass('curr')){
+                select_a.addClass('curr');
+                unselect_a.removeClass('curr');
+                weibo_page(value_data,curr_data);
+            }
+        }
+    });
+}
+function source_data(first_city){
     html = '';
     $("#source").empty();
     html += '传播源头:' + first_city;
