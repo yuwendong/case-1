@@ -688,26 +688,24 @@ function closeness_centrality_rank(){
   }) ;
 
 }
-function getnetwork_line(indegree_x,indegree_y){
     var indegree_x = [];
     var indegree_y = [];
     var outdegree_x = [];
     var outdegree_y = [];
+    var shortest_path_x = [];
+    var shortest_path_y = [];
+function getnetwork_line(){
+
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + 'indegree_histogram',
         dataType : "json",
         type : 'GET',
         async: false,
         success: function(data){
-          alert("dwsqdw");
+          // alert("dwsqdw");
             for (var key in data){
-              if(key == '0'){
-                continue;
-              }
-              else {
             indegree_x.push(key);
             indegree_y.push(data[key]);
-          }
         }
             }  
    
@@ -721,9 +719,14 @@ function getnetwork_line(indegree_x,indegree_y){
       type : 'GET',
       async: false,
       success: function(data){
-            // console.log(data);
+            for (var key in data){
+            outdegree_x.push(key);
+            outdegree_y.push(data[key]);
+        }
       }
   }) ; 
+        console.log(outdegree_x);
+        console.log(outdegree_y);
 
     $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=shortest_path_length_histogram' ,
@@ -731,25 +734,35 @@ function getnetwork_line(indegree_x,indegree_y){
       type : 'GET',
       async: false,
       success: function(data){
-          console.log(data);
+          // console.log(data);
+            for (var key in data){         
+            shortest_path_x.push(key);
+            shortest_path_y.push(data[key]/2);
+
+        }
       }
+
   }) ;
-         
+  // console.log(shortest_path_x);       
 }
 
 
 
 function drawpicture() {
- 
+ // console.log(shortest_path_x);
   get_centrelity();
   betweeness_centrality_rank();
   closeness_centrality_rank();
+
+
+ 
     $('#line').highcharts({
+      chart: {
+                type: 'spline',
+            },
         title: {
             text: '',
-            fontSize:'10px',
-            align:'right',
-            x : -70
+            x: -20 //center
         },
         lang: {
             printButtonTitle: "打印",
@@ -764,7 +777,7 @@ function drawpicture() {
             x: -20
         },
         xAxis: {
-          title: {
+            title: {
             text: '最短路径长度',
         style: {
                     color: '#666',
@@ -773,11 +786,8 @@ function drawpicture() {
                     fontFamily: 'Microsoft YaHei'
                 }
         },
-            categories:index,
-          labels: {
-                step: 20
-            }
-          },
+            categories:shortest_path_x
+        },
         yAxis: {
             title: {
                 text: '节点数量',
@@ -810,7 +820,7 @@ function drawpicture() {
         tooltip: {
             valueSuffix: ''
         },
-            legend: {
+        legend: {
             layout: 'vertical',
             align: 'center',
             verticalAlign: 'bottom',
@@ -823,19 +833,99 @@ function drawpicture() {
               }
         },
         series: [{
-            name: '最短路径长度曲线',
-            data: value
+            name: '节点数量',
+            data: shortest_path_y
         }]
-
     });
 }
-function drawpicture_ln(indegree_x,indegree_y) {
+//     $('#line').highcharts({
+//       chart: {
+//                 type: 'spline',
+//             },
+//         title: {
+//             text: '',
+//             fontSize:'10px',
+//             align:'right',
+//             x : -70
+//         },
+//         lang: {
+//             printButtonTitle: "打印",
+//             downloadJPEG: "下载JPEG 图片",
+//             downloadPDF: "下载PDF文档",
+//             downloadPNG: "下载PNG 图片",
+//             downloadSVG: "下载SVG 矢量图",
+//             exportButtonTitle: "导出图片"
+//             },
+//         subtitle: {
+//             text: '',
+//             x: -20
+//         },
+//         xAxis: {
+
+//             categories:shortest_path_x,
+//           labels: {
+//                 step: 20
+//             }
+//           },
+//         yAxis: {
+//             title: {
+//                 text: '节点数量',
+//                 style: {
+//                     color: '#666',
+//                     fontWeight: 'bold',
+//                     fontSize: '12px',
+//                     fontFamily: 'Microsoft YaHei'
+//                 }
+//             },
+//             plotLines: [{
+//                 value: 0,
+//                 width: 1,
+//                 color: '#808080'
+//             }]
+//         },
+//          plotOptions: {
+//           spline: {
+//               lineWidth: 2,
+//               states: {
+//                   hover: {
+//                       lineWidth: 3
+//                   }
+//               },
+//               marker: {
+//                   enabled: false
+//               },
+//             }
+//         },
+//         tooltip: {
+//             valueSuffix: '',
+//             headerFormat: '<b>{series.name}</b><br>',
+
+//         },
+//             legend: {
+//             layout: 'vertical',
+//             align: 'center',
+//             verticalAlign: 'bottom',
+//             borderWidth: 0,
+//             itemStyle: {
+//               color: '#666',
+//               fontWeight: 'bold',
+//               fontSize: '12px',
+//               fontFamily: 'Microsoft YaHei'
+//               }
+//         },
+//         series: [{
+//             name: '最短路径长度',
+//             data: shortest_path_y
+//         }]
+
+//     });
+// }
+function drawpicture_ln() {
 
     $('#line').highcharts({
-        
-        chart: {
-        },
-        
+     chart: {
+                type: 'spline',
+            },
         title: {
             text: ''
         },
@@ -881,14 +971,14 @@ function drawpicture_ln(indegree_x,indegree_y) {
         },
         
         series: [{
+            name:'入度',
+            data: outdegree_y,
+            pointStart: 1
+          },{
             name:'出度',          
             data: indegree_y,
             pointStart: 1
-        },{
-            name:'入度',
-            data: [1, 2, 4,8, 16, 32, 64, 128, 256, 512],
-            pointStart: 1
-          }
+        }
         ]
     });
 }

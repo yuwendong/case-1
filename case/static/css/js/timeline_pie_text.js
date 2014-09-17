@@ -18,18 +18,18 @@
     }
 
     var timeline;
-        var data;
+        // var data;
         // Called when the Visualization API is loaded.
-        $(document).ready(function(){   //网页加载时执行下面函数
-        var style = '0';
+    $(document).ready(function(){   //网页加载时执行下面函数
         gettimeline_data();
-        getweibos_data(style);
-   })
-        var result = [];
-        var result1 = [];
-        var result2 = [];
-        var result3 = [];
-        var topic = '东盟,博览会';
+        console.log('abc');
+
+    })
+    var result = [];
+    var result1 = [];
+    var result2 = [];
+    var result3 = [];
+    var topic = '东盟,博览会';
 
     function gettimeline_data() {
         var html ="";
@@ -47,12 +47,12 @@
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<a value='+ s + ' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
+                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                     else{
-                        html += '<a value='+ s + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
@@ -62,13 +62,14 @@
 
                drawVisualization(); 
                getkeywords_data();
+               getweibos_data(result2[1]);
                              
             }
 
        
-    });
+        });
 
-}
+    }
 
 
 
@@ -83,7 +84,7 @@
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                style = select_a.attr('value');
+                style = select_a.attr('topic');
               
                 getweibos_data(style);
 
@@ -102,8 +103,6 @@
                 data[i] = new Date(parseInt(result[i]) * 1000);
               
             }
-            console.log(tem1);
-            console.log(data1);
 
             data = [
                 {
@@ -297,31 +296,28 @@
     //     });
     // }
 
-        function getweibos_data(style){   
-                var selects = style;
-                //console.log(selects);
-                var dataselect = [];
-                $.ajax({
-                    url: "/opinion/weibos/?&topic=" + topic,
-                    type: "GET",
-                    dataType:"json",
-                    success: function(data){
-                        
-
-                        for (var i = 0 ;i< data.length; i++){
-                             var s = i.toString();
-                             dataselect.push(data[i][1])
-
-                        }
-                      
-                        chg_weibos(dataselect);
+    function getweibos_data(data){   
+            var topic_child = data;
+            var dataselect = [];
+            $.ajax({
+                url: "/opinion/weibos/?&topic=" + topic,
+                type: "GET",
+                dataType:"json",
+                success: function(data){
+                    
+                    for (var i = 0 ;i< data[topic_child].length; i++){
+                         dataselect.push(data[topic_child][i]);
                     }
+                console.log(dataselect);
+                chg_weibos(dataselect);
+            }
         });
     }
 
 
             function chg_weibos(data){  
                 $("#vertical-ticker").empty();
+                console.log(data);
                 var html = "";
                 var temporary
                 var data_af = [];
@@ -353,7 +349,7 @@
                         }
                     }
                 }*/
-                console.log(data);
+                
                 html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
@@ -376,7 +372,7 @@
                 var comments_count = da['comments_count'];
                 var timestamp = da['time'];
                 var user_link = 'http://weibo.com/u/' + uid;
-                var user_image_link = '/static/img/unknown_profile_image.gif';
+                var    user_image_link = '/static/img/unknown_profile_image.gif';
                 
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
@@ -388,7 +384,7 @@
                 html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
                 html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
                 html += '<div class="m">';
-                html += '<a class="undlin" target="_blank" >' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a class="undlin">' + timestamp + '</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
                 html += '</div>';
@@ -410,73 +406,59 @@
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                            drawtable(data);
+                        console.log(data);                            
+                        drawtable(data);
                     }
                 });
             }
 
         function drawtable(data){
-            
-            var tagout ;
-            var tagin;
+            var topic_child = {};
             var html = '';
-            for (var i =0 ;i<data.length; i++){
-                var html = '';
-                var html1 = '';
-                var m = i+1;
-                var keyword = [];
-                var s = i.toString();
-                tagout = data[s];
-                 for (var k in tagout){
-                    tagin = k;
-                 } 
-                 if(tagout[tagin].length != 5){
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
-                    }
-                    for (var k = tagout[tagin].length; k < 5; k++){
-                        keyword[k] = " ";
-                    }
-
-                 }  
-                 else{ 
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
-                        
-                    }
-             
-                } 
-
-                var tindex = Number(tagin);
-                if(tindex == 0){
-                    html += '<tr value='+tagin+' class="tablecurrent">';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
+            for(var key in data){
+                topic_child[key] = [];
+                for (var i = 0 ; i < data[key].length; i++){
+                    topic_child[key].push(data[key][i][0]);
                 }
-                
-                    
-                              
-                else{
-                    html += '<tr value='+tagin+'>';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
-
-                    html1 += '<tr>';
-                    html1 += '<td><b>'+m+'</b></td><td><b style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html1 += '</tr>';
-                }
-                 $("#alternatecolor").append(html);
-                 $("#alternate").append(html1);
             }
+            console.log("123");
+            console.log(topic_child);
+            for(var topic in topic_child){
+                console.log(topic);
+                console.log(result2[0]);
+                if (topic == result2[0]){
+                    html += '<tr topic='+topic+' class="tablecurrent">'; 
+                }
+                else{
+                    html += '<tr topic='+topic+'>'; 
+                }
+                html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                
+                if(topic_child[topic].length > 5){
+                    for(var j = 0; j < 5; j++){
+                        html += '<td>'+topic_child[topic][j]+'</td>';
+                    }
+                }
+                
+                else{
+                    for(var m = 0;m < topic_child[topic].length; m++){
+                        html += '<td>'+topic_child[topic][m]+'</td>';
+                    }
+                }
+
+            }
+
+            $("#alternatecolor").append(html);
+                 // $("#alternate").append(html1);
         }
+       
         function connect(data){
             var value_data = data;
+            console.log(data);
 
             $("#alternatecolor tr").each(function() {
                 var select_all =$(this);
-                if(select_all.attr('value') == value_data){
+                if(select_all.attr('topic') == value_data){
                     if(!select_all.hasClass("tablecurrent")){
                         select_all.addClass("tablecurrent");
                     }
@@ -495,7 +477,7 @@
             var curr_data = data;
              $("#Tableselect a").each(function() {
                 var select_a = $(this);
-                var select_a_sentiment = select_a.attr('value');
+                var select_a_sentiment = select_a.attr('topic');
                 if (select_a_sentiment == curr_data){
                     if(!select_a.hasClass('curr')) {
                         select_a.addClass('curr');
@@ -507,5 +489,6 @@
                     }
                 }
             });
+             console.log("curr"+curr_data);
             getweibos_data(curr_data);
         }

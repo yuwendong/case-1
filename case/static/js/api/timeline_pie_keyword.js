@@ -29,7 +29,8 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
         'origin': '1',
         'forward': '2',
         'comment': '3',
-        'all': '4'
+        'all': '4',
+        'total': '5'
     }
     this.pie_ajax_url = function(query, end_ts, during){
         return "/propagate/total/?end_ts=" + end_ts + "&style=" + this.statusEng2Int['all'] +"&during="+ during + "&topic=" + query;
@@ -82,6 +83,7 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
         'origin': '原创',
         'forward': '转发',
         'comment': '评论',
+        'total': '全量'
     }
 
     this.trend_count_obj = {
@@ -94,7 +96,6 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
         this.trend_count_obj['count'][name] = [];
         //this.trend_count_obj['incre'][name] = [];
     }
-    this.trend_count_obj['count']['total'] = [];
 }
 
 // instance method, 初始化时获取整个时间段的饼图数据并绘制
@@ -301,9 +302,16 @@ TrendsLine.prototype.initPullWeibos = function(){
 
     function range_weibos_callback(data){
         for(var name in names){
-            var id = that.statusEng2Int[name];
-            if(id in data){
-                that.range_weibos_data[name] = data[id];
+            if(name == 'total'){
+                if (name in data){
+                    that.range_weibos_data[name] = data[name];
+                } 
+            }
+            else{
+                var id = that.statusEng2Int[name];
+                if(id in data){
+                    that.range_weibos_data[name] = data[id];
+                }
             }
         }
     }
@@ -316,7 +324,7 @@ function refreshDrawWeibos(select_name, weibos_obj){
         $("#weibo_list").append('<li class="item">关键微博为空！</li>');
         return;
     }
-
+    
     var data = weibos_obj[select_name];
 
     var html = "";
@@ -394,6 +402,7 @@ function refreshDrawWeibos(select_name, weibos_obj){
 TrendsLine.prototype.initDrawWeibos = function(){
     var weibos_obj = this.range_weibos_data;
     var select_name = 'origin';
+
     refreshDrawWeibos(select_name, weibos_obj);
     bindSentimentTabClick(weibos_obj);
 }
@@ -635,44 +644,41 @@ function pull_emotion_count(that, query, emotion_type, total_days, times, begin_
         type: "GET",
         dataType:"json",
         success: function(data){
-            if (data != null){
-                var isShift = false;
-                var total_count = 0;
-                var count_obj = {};
-                //var incre_obj = {};
-                for(var name in names){
-                    if(name in data['count']){
-                        count_obj[name] = data['count'][name];
-                    }
-                    /*
-                    if(name in data['incre']){
-                        incre_obj[name] = data['incre'][name];
-                    }
-                    */
+            var isShift = false;
+            var total_count = 0;
+            var count_obj = {};
+            //var incre_obj = {};
+            for(var name in names){
+                if(name in data['count']){
+                    count_obj[name] = data['count'][name];
                 }
-
-                that.trend_count_obj['ts'].push(ts);
-                var total_count = 0;
-                for(var name in count_obj){
-                    var count = count_obj[name];
-                    if(count == null){
-                        count = 0;
-                    }
-                    total_count += count;
-                    count_series[name].addPoint([ts * 1000, count], true, isShift);
-                    that.trend_count_obj['count'][name].push([ts * 1000, count]);
+                else{
+                    count_obj[name] = 0;
                 }
-                count_series['total'].addPoint([ts * 1000, total_count], true, isShift);
-                that.trend_count_obj['count']['total'].push([ts * 1000, total_count]);
                 /*
-                for(var name in incre_obj){
-                    var count = incre_obj[name];
-                    if(count == null){
-                        count = 0.0;
-                    }
-                    that.trend_count_obj['incre'][name].push([ts * 1000, count]);
-                }*/
+                if(name in data['incre']){
+                    incre_obj[name] = data['incre'][name];
+                }
+                */
             }
+            
+            that.trend_count_obj['ts'].push(ts);
+            for(var name in count_obj){
+                var count = count_obj[name];
+                if(count == null){
+                    count = 0;
+                }
+                count_series[name].addPoint([ts * 1000, count], true, isShift);
+                that.trend_count_obj['count'][name].push([ts * 1000, count]);
+            }
+            /*
+            for(var name in incre_obj){
+                var count = incre_obj[name];
+                if(count == null){
+                    count = 0.0;
+                }
+                that.trend_count_obj['incre'][name].push([ts * 1000, count]);
+            }*/
             times++;
             pull_emotion_count(that, query, emotion_type, total_days, times, begin_ts, during, count_series, count_peak_series, incre_peak_series);
         }
@@ -712,9 +718,7 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
                         //incre_peak_series[name] = this.series[idx+6];
                         idx += 1;
                     }
-                    count_series['total'] = this.series[3];
-                    count_peak_series['total'] = this.series[7];
-                    pull_emotion_count(that, query, 'all', total_nodes, times_init, begin_ts, during, count_series, count_peak_series, incre_peak_series);
+                    pull_emotion_count(that, query, 'total', total_nodes, times_init, begin_ts, during, count_series, count_peak_series, incre_peak_series);
                 }
             }
         },
