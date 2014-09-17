@@ -95,77 +95,22 @@
 
         function drawVisualization() {
             var data = [];
-            var data1 = [];
-            var tem =[];
-            var tem1 =[];
+            var data_start = [];
+            var data_end = [];
             for (var i =0 ; i< result.length; i++){
-                data1[i] = new Date(parseInt(result1[i]) * 1000);
-                data[i] = new Date(parseInt(result[i]) * 1000);
+                data_end[i] = new Date(parseInt(result1[i]) * 1000);
+                data_start[i] = new Date(parseInt(result[i]) * 1000);
+                data[i] = {'start':data_start[i],'end':data_end[i],'content':result2[i]};
               
             }
-
-            data = [
-                {
-                    'start': data[0],
-                    'end': data1[0],
-                    'content': result2[0],
-                },
-                {
-                    'start': data[1],
-                    'end': data1[1],
-                    'content': result2[1]
-                },
-                {
-                    'start': data[2],
-                    'end': data1[2],
-                    'content': result2[2]
-                },
-                {
-                    'start': data[3],
-                    'end': data1[3],
-                    'content': result2[3]
-                },
-                {
-                    'start': data[4],
-                    'end': data1[4],
-                    'content': result2[4]
-                },
-                {
-                    'start': data[5],
-                    'end': data1[5],
-                    'content': result2[5]
-                },
-                {
-                    'start': data[6],
-                    'end': data1[6],
-                    'content': result2[6]
-                },
-                {
-                    'start': data[7],
-                    'end': data1[7],
-                    'content': result2[7]
-                },
-                {
-                    'start': data[8],
-                    'end': data1[8],
-                    'content': result2[8]
-                },
-                {
-                    'start': data[9],
-                    'end': data1[9],
-                    'content': result2[9]
-                },                
-                {
-                    'start': data[10],
-                    'end': data1[10],
-                    'content': result2[10],
-                }
-            ];
+						var height_str = 40*result2.length;
+						height_str += 'px'; 
+            
 
             // specify options
             var options = {
                 'width':  '100%',
-                'height': '300px',
+                'height': height_str,
                 'editable': true,   // enable dragging and editing events
                 'style': 'box'
             };
@@ -413,7 +358,7 @@
             }
 
         function drawtable(data){
-            var topic_child = {};
+            /*var topic_child = {};
             var html = '';
             for(var key in data){
                 topic_child[key] = [];
@@ -449,7 +394,59 @@
             }
 
             $("#alternatecolor").append(html);
-                 // $("#alternate").append(html1);
+                 // $("#alternate").append(html1);*/
+            		var topic_child_keywords = {};
+                var html = '';
+                var target_html = '';
+                var m = 0;
+                var number;               
+                for (var key in data){
+                    topic_child_keywords[key] = [];
+                    for (var i = 0; i < data[key].length; i++){
+                        topic_child_keywords[key].push(data[key][i][0]);
+                    }
+                }
+                for (var topic in topic_child_keywords){
+                	
+                    m++;
+                    if( m > 10) {break;}
+                    if (topic == result2[0]){
+                    	html += '<tr topic='+topic+' class="tablecurrent" style="height:25px">'; 
+                		}
+                		else{
+                    	html += '<tr topic='+topic+'>'; 
+                		}                  
+                    html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                    if (topic_child_keywords[topic].length>=5){
+                    	total = 5;
+                    }
+                    else{
+                    	total = topic_child_keywords[topic].length;
+                    }
+                    for (var n = 0 ;n < total; n++){
+                        html += '<td>'+topic_child_keywords[topic][n]+'</td>'
+                    }
+                    html += "</tr>";
+                }
+                
+                $("#alternatecolor").append(html);
+                
+                for (var topic in topic_child_keywords){
+                    target_html += '<tr style="height:25px">';                    
+                    target_html += '<td><b style =\"width:20px\">'+topic+'</b></td>';
+                    if (topic_child_keywords[topic].length>=10){
+                    	total = 10;
+                    }
+                    else{
+                    	total = topic_child_keywords[topic].length;
+                    }
+                    for (var n = 0 ;n < total; n++){
+                        target_html += '<td>'+topic_child_keywords[topic][n]+'</td>'
+                    }
+                    target_html += "</tr>";
+                }
+                
+                $("#alternate").append(target_html);
         }
        
         function connect(data){
