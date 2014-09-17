@@ -22,7 +22,7 @@ def acquire_user_by_id(uid):
 def get_origin_user(topic, end_date, windowsize):
     s = getXapianWeiboByTopic(topic)
     counts, results = s.search(fields=['user', 'retweeted_uid', 'reposts_count'], sort_by=['reposts_count'], reverse=False)
-    k = 1
+    k = 0
     origin_user_list = []
     for result in results():
         if k > 10:
