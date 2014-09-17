@@ -32,14 +32,17 @@
     var topic = '东盟,博览会';
 
     function gettimeline_data() {
-        var html ="";
+        var html ="<table>";
         $.ajax({
             url: "/opinion/time/?topic=" + topic,
             type: "GET",
             dataType:"json",
             async: false,
             success: function(data){
-               
+
+               var n = data.length;
+               var si = 100.0/n;
+               var si_str = si + '%';
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][1];
                     result1[i] = data[i][2];
@@ -47,16 +50,17 @@
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
+                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
                     else{
-                        html += '<a topic='+ result2[i] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
                 };
+                html += '</tr></table>';
                 $("#Tableselect").append(html);
                 bindSentimentTabClick();
 
@@ -75,12 +79,14 @@
 
     function bindSentimentTabClick(){
         
-        $("#Tablebselect").children("a").unbind();
+        /*$("#Tablebselect").children("a").unbind();
+        console.log('yuan');
+        console.log($("#Tablebselect").children("a"));*/
 
-        $("#Tableselect").children("a").click(function() {
+        $("[name='c_topic']").click(function() {
             
             var select_a = $(this);
-            var unselect_a = $(this).siblings('a');
+            var unselect_a = $("[name='c_topic']");//$(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
