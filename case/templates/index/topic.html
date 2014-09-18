@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
 
     <style type="text/css">
+        .block {
+            color: #666;
+        }
+        .block: hover {
+            color: #666;
+        }
         #trend_div {
             height: 270px;
             width: 100%;
@@ -85,7 +91,7 @@
         .sigma-expand {
             position: absolute;
             margin: 0px auto;
-            height: 500px;
+            height: 620px;
             width: 686px;
             float: left;
         }
@@ -224,7 +230,21 @@
         }
         #control-pane-rightdown > div {
             margin: 10px;
-            overflow-x: scroll;
+        }
+        #cluster_panel {
+            top: 389px;
+            right: 2px;
+            position: absolute;
+            float: left;
+            width: 304px;
+            background-color: rgb(249, 247, 237);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        #cluster_panel a:hover{
+            color: #428bca;
+        }
+        #cluster_panel > div {
+            margin: 10px;
         }
         .line {
             clear: both;
@@ -322,8 +342,10 @@
             <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
         <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
-        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>最短路径长度曲线</button>
+        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>转发链条长度分布曲线</button>
+        <!--
         <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
+        -->
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
             <div class="tabConts">
@@ -338,7 +360,7 @@
             <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
             <div class="control-pane">
-                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">Pagerank值排名</button>
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
             </div>
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
@@ -379,6 +401,7 @@
             <h4><b>网络呈现</b></h4>
             <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
         </div>
+        <input type="hidden" id="filter_node">
         <div style="position: relative; height: 40px;">
             <div class="control-pane">
                 <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
@@ -462,7 +485,7 @@
                         指标类别
                         <select id="zhibiao-category">
                             <option value="degree" selected>度</option>
-                            <option value="pagerank">Pagerank</option>
+                            <option value="pagerank">PR值</option>
                         </select>
                     </div>
                     <div id="min_degree_container">
@@ -470,7 +493,7 @@
                       <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
                     </div>
                     <div id="min_pagerank_container" class="hidden">
-                      最小Pagerank&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
+                      最小PR值&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
                       <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
                     </div>
                     <div>
@@ -506,21 +529,59 @@
             <div id="control-pane-rightdown">
                 <h4 class="underline">节点信息</h4>
                 <div>
-                用户昵称: <span id="nickname"></span>
+                    用户昵称: <span id="nickname"></span>&nbsp;&nbsp;
                 </div>
                 <div>
                 用户所在地: <span id="location"></span>
                 </div>
                 <div>
-                用户微博链接: <span id="user_link"></span>
+                用户PR值: <span id="pagerank"></span>
                 </div>
                 <div>
-                用户Pagerank值: <span id="pagerank"></span>
+                用户微博信息: <span id="user_weibo"></span>
+                </div>
+                <!--
+                <div>
+                微博发布时间: <span id="weibo_created_at"></span>
                 </div>
                 <div>
-                用户所属社区: <span id="community"></span>
+                微博文本内容: <p id="weibo_text"></p>
+                </div>
+                <div>
+                微博转发数: <span id="weibo_reposts_count"></span>
+                </div>
+                <div>
+                微博评论数: <span id="weibo_comments_count"></span>
+                </div>
+                -->
+                <div>
+                    用户所属社团: 
+                    <span id="community"></span>
+                    <span><a id="community_detail_a" class="block" href="#network">查看社团详情</a></span>
+                    <span><a id="neighbourhood_detail_a" class="block" href="#network">查看邻居详情</a></span>
+                </div>
+                <div>
+                    用户所属领域: 
+                    <span id="area_value">财经</span>
+                    <span><a href="#network" class="block">查看领域详情</a></span>
+                </div>
+                <div>
+                    用户深度分析：
+                    <span id="user_profile_link">
+                        <a href="##network" class="block">查看用户深度分析结果</a>
+                    </span>
                 </div>
             </div>
+            <!--
+            <div id="cluster_panel">
+                <h4 class="underline">群组信息</h4>
+                <div>
+                    关键用户: 
+                    <div id="group_user_list">
+                    </div>
+                </div>
+            </div>
+            -->
         </div>
     </div>
 {% endblock content %}
