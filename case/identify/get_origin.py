@@ -62,6 +62,7 @@ def get_origin_user(topic, end_date, windowsize):
         #print 'retweeted_uid:', retweeted_uid
         count = s.search(query={'user': retweeted_uid}, count_only=True)
         #print 'count:', count
+
         if count:
             rank += 1
             origin_user = {}
@@ -96,8 +97,7 @@ def get_origin_user(topic, end_date, windowsize):
                     origin_user_dict[str(retweeted_uid)] = origin_user
                     origin_user_x.append((str(retweeted_uid), origin_user, origin_user['count1']))
                 else:
-                    retweeted_uid = retweeted_uid - 1
-
+                    rank = rank -1
         user_list = sorted(origin_user_x, key=lambda x:x[2], reverse=True) 
     return user_list[:10]
             
