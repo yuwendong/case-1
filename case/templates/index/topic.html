@@ -43,7 +43,7 @@
             z-index: 4;
             position: relative;
             height: 16px;
-            padding: 5px;
+            padding: 20px;
             background-color: #f6f6f6;
         }
         .titlBar h4 {
@@ -65,28 +65,67 @@
             margin-bottom: 12px;
             border-bottom: 1px solid #f0f0f0;
         }
-        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
-            max-width: 110px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
-            height: 23px;
-            padding: 0 14px;
-            _float: left;
-        }
         .stmTabs .tabLi {
             display: block;
             float: left;
             text-decoration: none;
-            color: #666;
+            color: #666
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float:left
         }
         .stmTabs .tabLi .hvTab {
             display: none;
             color: #6e87d7;
             height: 21px;
-            border-bottom: 2px solid #6e87d7;
+            border-bottom: 2px solid #6e87d7
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }.stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
         }
         .sigma-expand {
             position: absolute;
@@ -328,26 +367,51 @@
     <div class="blkUnit grpUnit" id="trendProfile" style="height:170px">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
+        <div class="tabTitle" style="padding-top:1px;">
+            <div class="tabUI" id="zhibiaoTabDiv">
+                <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                    <div class="nmTab">有向图</div>
+                    <div class="hvTab">有向图</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="tabConts">
+            <table class="mtable" id="mstable"></table>
+        </div>
+        
+        <!--
         <div class="tabUnit">
             <div class="tabConts"></div>
             <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
             <table class="mtable" id="mstable"></table>            
         </div>
+        -->
     </div>
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
-        <div class="titlBar" style="padding-bottom:10px;">
+        <div class="titlBar" style="padding-bottom:15px;">
             <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
-        <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
-        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>转发链条长度分布曲线</button>
-        <!--
-        <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
-        -->
         <div class="tabUnit">
-            <div class="tabTitle" style="padding-top:1px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="fenbuTabDiv">
+                    <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">转发链条长度分布曲线</div>
+                        <div class="hvTab">转发链条长度分布曲线</div>
+                        <!--
+                        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>转发链条长度分布曲线</button>
+                        -->
+                        <!--
+                        <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
+                        -->
+                    </a>
+                </div>
+            </div>
+        
             <div class="tabConts">
                 <div id="line" style="height:300px"></div>
             </div>
@@ -355,10 +419,25 @@
     </div>
 
     <div class="well" style="width:1033px;margin-top:25px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4><b>关键用户</b></h4>
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键传播用户</b></h4>
             <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
         </div>
+
+        <div class="stmTabs tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="guanjianproTabDiv">
+                    <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键传播用户</div>
+                        <div class="hvTab">关键传播用户</div>
+                    </a>
+                    <!--
+                    <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键源头用户</div>
+                        <div class="hvTab">关键源头用户</div>
+                    </a>-->
+                </div>
+            </div>
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
             </div>
@@ -372,30 +451,94 @@
                 <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
             </div>
             <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
-        
-        <!--
-        <div>
-            <p>
-                <a class="btn btn-small btn-success" href="#" id="out">
-                    <i class="icon-download-alt"></i> 导出
-                </a>
-                <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
-                    <i class="icon-file"></i> 加入知识库
-                </a>
-                <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
-                    <i class="icon-file"></i> 移出知识库
-                </a>
-                <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
-                    <i class="icon-ban-circle"></i> 加入垃圾名单
-                </a>
-            </p>
+                <!--
+                <div>
+                    <p>
+                        <a class="btn btn-small btn-success" href="#" id="out">
+                            <i class="icon-download-alt"></i> 导出
+                        </a>
+                        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
+                            <i class="icon-file"></i> 加入知识库
+                        </a>
+                        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
+                            <i class="icon-file"></i> 移出知识库
+                        </a>
+                        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
+                            <i class="icon-ban-circle"></i> 加入垃圾名单
+                        </a>
+                    </p>
+                </div>
+                -->
+            <div class="tabConts">
+                <div id="rank_table" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
         </div>
-        -->
-        <div id="rank_table" style="margin-top:5px">
-            <table class="table table-bordered"></table>
-        </div>
-        <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
     </div>
+
+    <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键源头用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="stmTabs tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="guanjiansourceTabDiv">
+                    <!--
+                    <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键传播用户</div>
+                        <div class="hvTab">关键传播用户</div>
+                    </a>
+                    -->
+                    <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键源头用户</div>
+                        <div class="hvTab">关键源头用户</div>
+                    </a>
+                </div>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
+            </div>
+            <span id="loading_current_data_source" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+                <!--
+                <div>
+                    <p>
+                        <a class="btn btn-small btn-success" href="#" id="out">
+                            <i class="icon-download-alt"></i> 导出
+                        </a>
+                        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
+                            <i class="icon-file"></i> 加入知识库
+                        </a>
+                        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
+                            <i class="icon-file"></i> 移出知识库
+                        </a>
+                        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
+                            <i class="icon-ban-circle"></i> 加入垃圾名单
+                        </a>
+                    </p>
+                </div>
+                -->
+            <div class="tabConts">
+                <div id="rank_table_source" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection_source" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="well" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
         <div class="titlBar" style="padding-bottom:15px; position: relative;">
             <h4><b>网络呈现</b></h4>

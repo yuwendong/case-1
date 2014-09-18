@@ -170,8 +170,13 @@ def origin_user():
     windowsize = (end_ts - start_ts ) / Day
     
     results = get_origin_user(topic, date, windowsize)
+    results_list = []
+    for result in results:
+        results_list.append([result['rank'], result['uid'], result['name'], \
+                           result['location'], result['count1'], result['count2'], \
+                           result['pr'], result['dc'], result['bc'], result['cc']])
 
-    return json.dumps(results)
+    return json.dumps(results_list)
     
 
 @mod.route("/quota/")
