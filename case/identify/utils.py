@@ -74,10 +74,10 @@ def read_topic_rank_results(topic, top_n, method, date, window):
                                                                        ClosenessCentralityUser.userid==uid).first()
             cc = item_cc.cc
             if not user:
-                name = 'Unknown'
-                location = 'Unknown'
-                count1 = 'Unknown'
-                count2 = 'Unknown'
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
             else:
                 name = user['name']
                 location = user['location']
@@ -110,10 +110,10 @@ def read_degree_centrality_rank(topic, top_n, date, window):
                                                                        ClosenessCentralityUser.userid==uid).first()
             cc = item_cc.cc
             if not user:
-                name = 'Unknown'
-                location = 'Unknown'
-                count1 = 'Unknown'
-                count2 = 'Unknown'
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
             else:
                 name = user['name']
                 location = user['location']
@@ -146,10 +146,10 @@ def read_betweeness_centrality_rank(topic, top_n, date, windowsize):
                                                                        ClosenessCentralityUser.userid==uid).first()
             cc = item_cc.cc
             if not user:
-                name = 'Unknown'
-                location = 'Unknown'
-                count1 = 'Unknown'
-                count2 = 'Unknown'
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
             else:
                 name = user['name']
                 location = user['location']
@@ -182,10 +182,10 @@ def read_closeness_centrality_rank(topic, top_n, date, windowsize):
                                                                         BetweenessCentralityUser.userid==uid).first()
             bc = item_bc.bc
             if not user:
-                name = 'Unknown'
-                location = 'Unknown'
-                count1 = 'Unknown'
-                count2 = 'Unknown'
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
             else:
                 name = user['name']
                 location = user['location']
