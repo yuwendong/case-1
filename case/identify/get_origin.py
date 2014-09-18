@@ -35,9 +35,12 @@ def acquire_user_by_id(uid):
 
 def get_origin_user(topic, end_date, windowsize):
     s = getXapianWeiboByTopic(topic)
+    query_dict = {
+        '$or': [{'message_type': 1}, {'message_type': 3}]
+    }
     weibos = []
-    get_results = s.iter_all_docs(fields=['_id', 'user', 'retweeted_uid', 'reposts_count', 'comments_count'])
-    for r in get_results:
+    count, get_results = s.search(query=query_dict, fields=['_id', 'user', 'retweeted_uid', 'reposts_count', 'comments_count'])
+    for r in get_results():
         w = dict()
         w['_id'] = r['_id']
         w['user'] = r['user']
@@ -50,18 +53,14 @@ def get_origin_user(topic, end_date, windowsize):
         weibos.append((r['reposts_count'],w))
 
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=False)
-    #sorted_weibos = sorted_weibos[:]
     sorted_weibos.reverse()
-    #print 'sorted_weibos:', sorted_weibos
     rank = 0
     origin_user_dict = {}
     origin_user_x = []
     user_list = []
-    for weibo in sorted_weibos:
+    for weibo in sorted_weibos[:150]:
         retweeted_uid = weibo[1]['retweeted_uid']
-        #print 'retweeted_uid:', retweeted_uid
         count = s.search(query={'user': retweeted_uid}, count_only=True)
-        #print 'count:', count
 
         if count:
             rank += 1

@@ -172,7 +172,6 @@ CaseMap.prototype.initPullDrawMap = function(sta){
 
 function callback(data){
         myChart.hideLoading();
-        // console.log(data);
         var rank_city = [];
         var data_count = data["count"];
         var max_count = data["max_count"];
@@ -181,8 +180,8 @@ function callback(data){
         for(var j = 0; j < 10; j++ ) {
             rank_city.push(total_count[j][0]);
         }
-        curr_data = data['top_city_weibo']
-        // console.log(rank_city);
+        curr_data = data['top_city_weibo'];
+
         var format_data = that.dataFormatter(data_count);
         drawWholeMap(that, format_data, max_count, myChart);
         drawtable(total_count);
@@ -195,11 +194,9 @@ function drawtab(data,rank_city){
     var flag = 0;
     var html = '';
     $("#Tableselect").empty();
-    // console.log("beigin tab" ,data['top_city_weibo']);
     // for (var city in data['top_city_weibo']){
         for(var m = 0; m < rank_city.length; m++){
             // if(city == rank_city[m]){
-               console.log(rank_city); 
                 if(flag == 0){
                     html += '<a topic='+ rank_city[m] + ' ' +'class=\"tabLi gColor0 curr\" href="javascript:;" style="display: block;">';
                     html += '<div class="nmTab">'+rank_city[m]+ '</div>';
@@ -229,8 +226,6 @@ function bindTabClick(rank_city,data){
             unselect_a.removeClass('curr');
             topic = select_a.attr('topic');
             show_weibo(topic,data);
-            // console.log(data);
-            // console.log(topic);
         }
     });
 }
@@ -260,6 +255,7 @@ function show_weibo(topic, data){
         // }
         var text = da['text'];
         var user = da['user'];
+        var name = da['username'];
         var _id = da['_id'];
         var reposts_count = da['reposts_count'];
         var comments_count = da['comments_count'];
@@ -273,7 +269,7 @@ function show_weibo(topic, data){
         html += '<img src="' + user_image_link + '">';
         html += '</a></div>';
         html += '<div class="weibo_detail">';
-        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + user + '</a>&nbsp;&nbsp;UID:&nbsp;&nbsp;'  + _id + '&nbsp;&nbsp;于' + ip +'发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:&nbsp;&nbsp;'  + user + '&nbsp;&nbsp;于' + ip +'发布&nbsp;&nbsp;' + text + '</p>';
         html += '<div class="weibo_info">';
         html += '<div class="weibo_pz">';
         html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -305,7 +301,7 @@ function drawtable(total_count){
         tr += td;
         for(var j = 0;j < cellCount;j++) {
             if(j == 0 ){
-                 td = '<td><u onclick = \"connect(\''+total_count[i][j]+'\')\">'+total_count[i][j]+'</u></td>';
+                 td = '<td><u style="cursor: pointer;" onclick = \"connect(\''+total_count[i][j]+'\')\">'+total_count[i][j]+'</u></td>';
             }
             else{
                  td = '<td>'+total_count[i][j]+'</td>';
@@ -323,10 +319,7 @@ function drawtable(total_count){
 }
 
 function connect(topic){
-    // console.log(topic);
     var value_data = topic;
-    // console.log(curr_data);
-    // console.log("123");
     $("#Tablebselect").children("a").unbind();
     $("#Tableselect").children("a").each(function(){        
         var select_a = $(this);

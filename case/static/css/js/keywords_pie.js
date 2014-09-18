@@ -77,7 +77,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
         // var begin = new Date(parseInt(data['begin']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
         // var end = new Date(parseInt(data['end']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
         content += ' <p style="padding-top:25px ;text-indent:2em">该事件发生于' + '<b style="background:#ACD6FF  ">'+'2013-9-2'+'</b>' + '，事件发生地点为' +'<b style="background:#ACD6FF  ">广西南宁</b>'  + '。' ;
-        content += '该事件的舆情信息起始于' + '<b style="background:#ACD6FF  ">'+'2013-9-2'+'</b>' + '，终止于' + '<b style="background:#ACD6FF  ">'+'2013-9-6'+'</b>';
+        content += '该事件的舆情信息起始于' + '<b style="background:#ACD6FF  ">'+'2013-9-2'+'</b>' + '，终止于' + '<b style="background:#ACD6FF  ">'+'2013-9-7'+'</b>';
         content += '，共' +'3000' + '人参与信息发布与传播，' + '舆情信息累计' + '200'+ '条。';
         content += '参与人群集中于' + '<b style="background:#ACD6FF  ">'+'北京，上海，广州，广西，山东，浙江，江苏， 河南， 湖北， 湖南' +'</b>'+ '。';
         content += ' 前' + '<b style="background:#ACD6FF  ">10</b>个关键词是：东盟，总理，高科技，中国，博览会，力量，李克强，国际，十年，合作';
@@ -135,9 +135,6 @@ $(document).ready(function(){   //网页加载时执行下面函数
             return
         }
     }
-
-
-
     function create_current_table(data, start_row, end_row, type) {
     if(type == 'pro'){
       $("#rank_table").empty();
@@ -148,8 +145,15 @@ $(document).ready(function(){   //网页加载时执行下面函数
 
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    if (type == 'pro'){
+     var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID<th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值  <b>↓</b></th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';   
+    }
+    else{
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID<th>博主昵称</th><th>博主地域</th><th>粉丝数  <b>↓</b></th><th>关注数</th><th>PR值 </th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';    
+    }
+    
     var tbody = '<tbody>';
+    console.log(data);
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
       for(var j = 0;j < cellCount;j++) {
@@ -161,10 +165,20 @@ $(document).ready(function(){   //网页加载时执行下面函数
             var td = '<td style="display:none">'+data[i][j]+'</td>';
         }
         else if(j == 2){
-            var td = '<td><a href=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+            var t = j-1;
+            var td = '<td><a href=\"http://weibo.com/u/' + data[i][t] + '\" >' + data[i][j] + '</a></td>';
+        }
+        else if(j == 3){
+            var td = '<td>' + data[i][j] + '</a></td>';
+        }
+        else if(j == 4){
+            var td = '<td>' + data[i][j] + '</a></td>';
+        }
+        else if(j == 5){
+            var td = '<td>' + data[i][j] + '</a></td>';
         }
         else{
-            var td = '<td>'+data[i][j]+'</td>';
+            var td = '<td>'+data[i][j].toFixed(3)+'</td>';
         }
         tr += td;
       }
@@ -591,7 +605,8 @@ identify_origin_request();
 
     //     }
     //微博读取结束
- function draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved){                                                              
+ function draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved){  
+ console.log();                                                            
     $('#bar_div').highcharts({                                           
         chart: {                                                           
             type: 'bar'                                                    
@@ -603,7 +618,7 @@ identify_origin_request();
             text: ''                                  
         },                                                                 
         xAxis: {                                                           
-            categories: ['舆情指数', '事件敏感指数', '负面情绪指数','传播强度指数','参与主体指数'],
+            categories: ['舆情指数', '事件敏感指数', '负面情绪指数','传播强度指数','主体敏感指数'],
             title: {                                                       
                 text: null                                                 
             }                                                              
@@ -624,7 +639,7 @@ identify_origin_request();
         plotOptions: {
             series: {
                 pointWidth: 10,
-                pointPadding: 0.1,
+                pointPadding: 1,
                 groupPadding: 0,
                 borderWidth: 0,
                 shadow: false
@@ -646,9 +661,14 @@ identify_origin_request();
             enabled: false                                                 
         },                                                                 
         series: [{                                                         
-            name: '事件指标',                                             
+            name: '事件指标', 
+            // {'color':'blue','y':ast_index}, 
+            // {'color':'#FF2D2D','y':f_sensitivity}, 
+            // {'color':'#FF2D2D','y':f_sentiment}, 
+            // {'color':'#FF2D2D','y':f_transmission}, 
+            // {'color':'#FF2D2D','y':f_involved},                            
             data: [last_index,f_sensitivity,f_sentiment,f_transmission,f_involved],
-            color: '#FF2D2D'                                   
+            color: '#FF2D2D'                               
         }]                                                                 
     });                                                                    
 }
