@@ -170,8 +170,9 @@ def origin_user():
     windowsize = (end_ts - start_ts ) / Day
     
     results = get_origin_user(topic, date, windowsize)
+    results = sorted(results, key=lambda k: k[1]['pr'], reverse=True)
     results_list = []
-    for result in results:
+    for uid, result, reposts_count in results:
         results_list.append([result['rank'], result['uid'], result['name'], \
                            result['location'], result['count1'], result['count2'], \
                            result['pr'], result['dc'], result['bc'], result['cc']])

@@ -636,7 +636,6 @@ function create_current_table(data, start_row, end_row, type) {
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
-      console.log(data[i]);
       for(var j = 0;j < cellCount;j++) {
         if(j == 0) {
           // rank status

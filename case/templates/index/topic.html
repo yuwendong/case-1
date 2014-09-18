@@ -369,6 +369,7 @@
             <h4 style="margin-left:15px"><b>网络概况</b></h4>
             <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
+        <!--
         <div class="tabTitle" style="padding-top:1px;">
             <div class="tabUI" id="zhibiaoTabDiv">
                 <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
@@ -377,6 +378,7 @@
                 </a>
             </div>
         </div>
+        -->
 
         <div class="tabConts">
             <table class="mtable" id="mstable"></table>
@@ -393,24 +395,25 @@
 
     <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
         <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>网络曲线图</b></h4>
+            <h4 style="margin-left:15px"><b>网络曲线图-转发链条长度分布</b></h4>
             <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
+            <!--
             <div class="tabTitle" style="padding-top:1px;">
                 <div class="tabUI" id="fenbuTabDiv">
                     <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
                         <div class="nmTab">转发链条长度分布曲线</div>
-                        <div class="hvTab">转发链条长度分布曲线</div>
+                        <div class="hvTab">转发链条长度分布曲线</div>-->
                         <!--
                         <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>转发链条长度分布曲线</button>
                         -->
                         <!--
                         <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
-                        -->
+                        --><!--
                     </a>
                 </div>
-            </div>
+            </div>-->
         
             <div class="tabConts">
                 <div id="line" style="height:300px"></div>
@@ -425,19 +428,21 @@
         </div>
 
         <div class="stmTabs tabUnit">
+            <!--
             <div class="tabTitle" style="padding-top:1px;">
                 <div class="tabUI" id="guanjianproTabDiv">
                     <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
                         <div class="nmTab">关键传播用户</div>
                         <div class="hvTab">关键传播用户</div>
                     </a>
+            -->
                     <!--
                     <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
                         <div class="nmTab">关键源头用户</div>
                         <div class="hvTab">关键源头用户</div>
                     </a>-->
-                </div>
-            </div>
+            <!--    </div>
+            </div>-->
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
             </div>
@@ -450,6 +455,7 @@
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
             </div>
+
             <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
                 <!--
                 <div>
@@ -485,14 +491,15 @@
         </div>
 
         <div class="stmTabs tabUnit">
+            <!--
             <div class="tabTitle" style="padding-top:1px;">
-                <div class="tabUI" id="guanjiansourceTabDiv">
+                <div class="tabUI" id="guanjiansourceTabDiv">-->
                     <!--
                     <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
                         <div class="nmTab">关键传播用户</div>
                         <div class="hvTab">关键传播用户</div>
                     </a>
-                    -->
+                    --><!--
                     <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
                         <div class="nmTab">关键源头用户</div>
                         <div class="hvTab">关键源头用户</div>
@@ -511,6 +518,7 @@
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
             </div>
+            -->
             <span id="loading_current_data_source" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
                 <!--
                 <div>

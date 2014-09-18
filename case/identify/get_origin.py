@@ -30,9 +30,7 @@ def get_origin_user(topic, end_date, windowsize):
         if k == 10:
             break
         uid = result['retweeted_uid']
-        print 'uid', uid
         count = s.search(query={'user': uid}, count_only=True)
-        print 'count:',count
         if count != 0:
             origin_user = {}
             #print 'exist:uid', uid
