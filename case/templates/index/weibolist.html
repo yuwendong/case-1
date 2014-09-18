@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% from "macros/_page.html" import paginate %}
+{% block head_css %}
+<style type="text/css">
+     /* keywords tag cloud */
+        #keywords_cloud_div {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0px auto 0
+        }
+
+        #keywords_cloud_div a {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-family: Microsoft YaHei;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 3px 6px;
+        }
+
+        #keywords_cloud_div a:hover {
+            border: 1px solid #eee;
+            background-color: #FFF;
+        }
+        #keywords_cloud_div .blue {
+            color: blue;
+        }
+        #keywords_cloud_div .red {
+            color: red;
+        }
+        #keywords_cloud_div .yellow {
+            color: yellow;
+        }
+
+        #trend_div {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 25px;
+            margin-bottom: 0px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs {
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float:left
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }
+        .stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .weibo_list_height {
+            max-height: 670px;
+        }
+        .scrolls {
+            overflow: hidden;
+        }
+        .tang-scrollpanel {
+            overflow: hidden;
+        }
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-scrollpanel-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-slider {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0;
+        }
+        .tang-scrollpanel .tang-slider-vtl {
+            height: 100%;
+        }
+        .weibo_list li.item {
+            line-height: 18px;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 9px 10px 10px 0;
+            min-height: 55px;
+            _height: 55px;
+        }
+        .weibo_face {
+            position: relative;
+            float: left;
+            width: 50px;
+            margin-top: 3px;
+        }
+        .weibo_list a {
+            text-decoration: none;
+        }
+        .weibo_face img {
+            width: 50px;
+            height: 50px;
+        }
+        .weibo_detail {
+            margin-left: 65px;
+        }
+        .weibo_list a.undlin {
+            text-decoration: underline;
+        }
+        .weibo_info {
+            margin-top: 7px;
+            color: #666;
+        }
+        .weibo_info .weibo_pz {
+            float: right;
+            color: #858585;
+            height: 18px;
+            line-height: 18px;
+        }
+        .weibo_info .m a {
+            color: #666;
+        }
+</style>
+{% endblock head_css %}
+
+{% block content %}
+    <div class="blkUnit grpUnit" style="width:1033px; float:left;" id="weiboarea">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4>用户微博列表</h4>
+            <i id="weibo_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="用户微博列表"></i>&nbsp;&nbsp;
+            {%- if tar_location %}
+                <p>
+                <img src="{{ tar_profile_image_url }}" /></img>
+                昵称：<a href="{{ tar_user_url }}">{{ tar_name }}</a>&nbsp;&nbsp;
+                注册地址：<span>{{ tar_location }}</span>&nbsp;&nbsp;
+                粉丝数：<span>{{ tar_followers_count }}</span>&nbsp;&nbsp;
+                关注数：<span>{{ tar_friends_count }}</span>
+                </p>
+            {%- endif %}
+        </div>
+
+        <div class="stmTabs tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div id="weibos_div" style="float:left;width:100%;">
+                    <div class="tabCon">
+                        <div class="tabCont gColor4" style="zoom:1;">
+                            <div id="weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+                                <div class="tang-scrollpanel-wrapper" style="height: 660px;"><div class="tang-scrollpanel-content">
+                                    <ul id="weibo_ul">
+                                    {%- if statuses %}
+                                      {%- for item in statuses %}
+                                        <li class="item">
+                                            <div class="weibo_detail">
+                                                <p>
+                                                    IP: {{ item['geo'] }}&nbsp;&nbsp;发布&nbsp;&nbsp;{{ item['text'] }}
+                                                </p>
+                                                <div class="weibo_info">
+                                                    <div class="weibo_pz">
+                                                        <a class="undlin" href="javascript:;" target="_blank">转发({{ item['reposts_count'] }})</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                        <a class="undlin" href="javascript:;" target="_blank">评论({{ item['comments_count'] }})</a>
+                                                    </div>
+                                                    <div class="m">
+                                                        <a class="undlin" target="_blank" href="{{ item['weibo_url'] }}">{{ item['created_at'] }}</a>&nbsp;-&nbsp;
+                                                        <a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;<a target="_blank" href="{{ item['weibo_url'] }}">微博页面</a>&nbsp;-&nbsp;
+                                                        <a target="_blank" href="{{ item['user_url'] }}">用户页面</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    {%- endif %}
+                                    </ul>
+                                </div>
+                                <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;"><div id="TANGRAM_56__view" class="tang-view" style="width: 6px;"><div class="tang-content"><div id="TANGRAM_56__inner" class="tang-inner"><div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div></div></div><a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a></div><div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div><div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="p_nav">
+        <!--{{ paginate(has_prev, has_next, page, page_url) }}-->
+    </div>
+{% endblock %}

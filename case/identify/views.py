@@ -16,6 +16,8 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, ma
 from utils import read_topic_rank_results, read_degree_centrality_rank ,\
                   read_betweeness_centrality_rank, read_closeness_centrality_rank
 
+from get_origin import get_origin_user
+
 TOPK = 1000
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -155,6 +157,28 @@ def _utf8_unicode(s):
         return s
     else:
         return unicode(s, 'utf-8')
+
+@mod.route('/origin/')
+def origin_user():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts','')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts','')
+    end_ts = int(end_ts)
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts ) / Day
+    
+    results = get_origin_user(topic, date, windowsize)
+    results = sorted(results, key=lambda k: k[1]['pr'], reverse=True)
+    results_list = []
+    for uid, result, reposts_count in results:
+        results_list.append([result['rank'], result['uid'], result['name'], \
+                           result['location'], result['count1'], result['count2'], \
+                           result['pr'], result['dc'], result['bc'], result['cc']])
+
+    return json.dumps(results_list)
+    
 
 @mod.route("/quota/")
 def network_quota():

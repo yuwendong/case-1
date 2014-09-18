@@ -88,49 +88,203 @@ $(document).ready(function(){   //网页加载时执行下面函数
         identify_request() ;
         //draw_line()画曲线的
     }
-    function identify_request() {
-      var topn = 10;
-      $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
-    }
-    
+
     function request_callback(data) {
-                console.log(data);
-        $("#rank_table").empty();
-        var cellCount = 10;
-        var table = '<table class="table table-bordered">';
-        var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
-        var tbody = '<tbody>';
-        console.log("123");
-        for (var i = 0;i < data.length;i++) {
-            var tr = '<tr>';
-                  for(var j = 0;j < cellCount;j++) {
-            if(j == 0) {
-              // rank status
-              var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
-          }
-          else if(j == 1){
-              var td = '<td style="display:none">'+data[i][j]+'</td>';
-          }
-          else if(j == 2){
-            // if(name == 'unknown'){
-            //     name = '未知';
-            // }
-       
-              var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
-          }
-          else{
-              var td = '<td>'+data[i][j]+'</td>';
-          }
-          tr += td;
-                  }
-            tr += '</tr>';
-            tbody += tr;
+        rankdata = data;
+        var status = 'current finished';
+        var page_num = 10 ;
+        if (status == 'current finished') {
+            $("#current_process_bar").css('width', "100%")
+            $("#current_process").removeClass("active");
+            $("#current_process").removeClass("progress-striped");
+            current_data = data;
+            if (current_data.length) {
+                $("#loading_current_data").text("计算完成!");
+                if (current_data.length < page_num) {
+                    page_num = current_data.length
+                    create_current_table(current_data, 0, page_num, 'pro');
+                }
+                else {
+                    create_current_table(current_data, 0, page_num, 'pro');
+                    var total_pages = 0;
+                    if (current_data.length % page_num == 0) {
+                        total_pages = current_data.length / page_num;
+                    }
+                    else {
+                        total_pages = current_data.length / page_num + 1;
+                    }
+            
+                    $('#rank_page_selection').bootpag({
+                        total: total_pages,
+                        page: 1,
+                        maxVisible: 30
+                    }).on("page", function(event, num){
+                        start_row = (num - 1)* page_num;
+                        end_row = start_row + page_num;
+                        if (end_row > current_data.length)
+                            end_row = current_data.length;
+                            create_current_table(current_data, start_row, end_row, 'pro');
+                    });
+                }
+            }
+            else {
+                $("#loading_current_data").text("很抱歉，本期计算结果为空!");
+            }
         }
-        tbody += '</tbody>';
-        table += thead + tbody;
-        table += '</table>'
-        $("#rank_table").html(table);
+        else{
+            return
+        }
     }
+
+
+
+    function create_current_table(data, start_row, end_row, type) {
+    if(type == 'pro'){
+      $("#rank_table").empty();
+    }
+    else{
+      $("#rank_table_source").empty();
+    }
+
+    var cellCount = 10;
+    var table = '<table class="table table-bordered">';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var tbody = '<tbody>';
+    for (var i = start_row;i < end_row;i++) {
+      var tr = '<tr>';
+      for(var j = 0;j < cellCount;j++) {
+        if(j == 0) {
+          // rank status
+          var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
+        }
+        else if(j == 1){
+            var td = '<td style="display:none">'+data[i][j]+'</td>';
+        }
+        else if(j == 2){
+            var td = '<td><a href=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+        }
+        else{
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+        tr += td;
+      }
+      tr += '</tr>';
+      tbody += tr;
+    }
+    tbody += '</tbody>';
+    table += thead + tbody;
+    table += '</table>';
+
+    if(type == 'pro'){
+      $("#rank_table").html(table);
+    }
+    else{
+      console.log(table);
+      $("#rank_table_source").html(table);
+    }
+}
+
+function identify_request() {
+  var topn = 100;
+  $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
+}
+
+function identify_origin_request(){
+  $.get("/identify/origin/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts}, origin_request_callback, "json");
+}
+
+function origin_request_callback(data) {
+    rankdata = data;
+    var status = 'current finished';
+    var page_num = 10 ;
+    if (status == 'current finished') {
+        $("#current_process_bar").css('width', "100%")
+        $("#current_process").removeClass("active");
+        $("#current_process").removeClass("progress-striped");
+        current_data = data;
+        if (current_data.length) {
+            $("#loading_current_data_source").text("计算完成!");
+            if (current_data.length < page_num) {
+                page_num = current_data.length
+                create_current_table(current_data, 0, page_num, 'source');
+            }
+            else {
+                create_current_table(current_data, 0, page_num, 'source');
+                var total_pages = 0;
+                if (current_data.length % page_num == 0) {
+                    total_pages = current_data.length / page_num;
+                }
+                else {
+                    total_pages = current_data.length / page_num + 1;
+                }
+        
+                $('#rank_page_selection_source').bootpag({
+                    total: total_pages,
+                    page: 1,
+                    maxVisible: 30
+                }).on("page", function(event, num){
+                    start_row = (num - 1)* page_num;
+                    end_row = start_row + page_num;
+                    if (end_row > current_data.length)
+                        end_row = current_data.length;
+                        create_current_table(current_data, start_row, end_row, 'source');
+                });
+            }
+        }
+        else {
+            $("#loading_current_data_source").text("很抱歉，本期计算结果为空!");
+        }
+    }
+    else{
+        return
+    }
+}
+
+identify_request();
+identify_origin_request();
+    // function identify_request() {
+    //   var topn = 10;
+    //   $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
+    // }
+    
+    // function request_callback(data) {
+    //             console.log(data);
+    //     $("#rank_table").empty();
+    //     var cellCount = 10;
+    //     var table = '<table class="table table-bordered">';
+    //     var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    //     var tbody = '<tbody>';
+    //     console.log("123");
+    //     for (var i = 0;i < data.length;i++) {
+    //         var tr = '<tr>';
+    //               for(var j = 0;j < cellCount;j++) {
+    //         if(j == 0) {
+    //           // rank status
+    //           var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
+    //       }
+    //       else if(j == 1){
+    //           var td = '<td style="display:none">'+data[i][j]+'</td>';
+    //       }
+    //       else if(j == 2){
+    //         // if(name == 'unknown'){
+    //         //     name = '未知';
+    //         // }
+       
+    //           var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+    //       }
+    //       else{
+    //           var td = '<td>'+data[i][j]+'</td>';
+    //       }
+    //       tr += td;
+    //               }
+    //         tr += '</tr>';
+    //         tbody += tr;
+    //     }
+    //     tbody += '</tbody>';
+    //     table += thead + tbody;
+    //     table += '</table>'
+    //     $("#rank_table").html(table);
+    // }
 
     //开始画总量和消极情绪的曲线
 //             var happy_count = [];
