@@ -74,13 +74,15 @@ def network():
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
             results = ssdb.request('get', [key])
+            print 'results.code:', results.code
             if results.code == 'ok' and results.data:
+                print 'result_code ok'
                 response = make_response(results.data)
                 response.headers['Content-Type'] = 'text/xml'
                 return response
             return None
         except Exception, e:
-            print e
+            print 'error',e
             return None
     elif topic_status == IN_CALC_STATUS or topic_status == IN_CALC_STATUS:
         print 'The Topic is being computed......Just Waiting'
@@ -170,12 +172,14 @@ def origin_user():
     windowsize = (end_ts - start_ts ) / Day
     
     results = get_origin_user(topic, date, windowsize)
-    results = sorted(results, key=lambda k: k[1]['pr'], reverse=True)
+    rank = 0
     results_list = []
-    for uid, result, reposts_count in results:
-        results_list.append([result['rank'], result['uid'], result['name'], \
+    for uid, result, reposts_count in results[:10]:
+        rank += 1
+        results_list.append([rank, result['uid'], result['name'], \
                            result['location'], result['count1'], result['count2'], \
                            result['pr'], result['dc'], result['bc'], result['cc']])
+    
 
     return json.dumps(results_list)
     

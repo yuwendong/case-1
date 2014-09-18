@@ -647,8 +647,17 @@ function create_current_table(data, start_row, end_row, type) {
         else if(j == 2){
             var td = '<td><a href=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
         }
-        else{
+        else if(j == 3){
             var td = '<td>'+data[i][j]+'</td>';
+        }
+        else if(j == 4){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+        else if(j == 5){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+        else{
+            var td = '<td>'+data[i][j].toFixed(3)+'</td>';
         }
         tr += td;
       }
@@ -663,7 +672,6 @@ function create_current_table(data, start_row, end_row, type) {
       $("#rank_table").html(table);
     }
     else{
-      console.log(table);
       $("#rank_table_source").html(table);
     }
 }

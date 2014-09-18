@@ -4,6 +4,7 @@ import os
 import IP
 import json
 import time
+import pymongo
 from city_count import Pcount
 from BeautifulSoup import BeautifulSoup
 from case.extensions import db
@@ -27,6 +28,18 @@ SixHour = Hour * 6
 Day = Hour * 24
 MinInterval = Fifteenminutes
 
+DB_NAME = '54api_weibo_v2' 
+TB_NAME = 'master_timeline_weibo' 
+
+mongoclient =  pymongo.MongoClient('219.224.135.46')
+mongodb = mongoclient[DB_NAME] 
+mongotable = mongodb[TB_NAME]
+
+SORT_FIELD = ['reposts_count']
+
+RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', \
+'bmiddle_pic', 'geo', 'comments_count', 'sentiment']
+
 province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东', u'广西', u'贵州', u'海南', \
                  u'河北', u'黑龙江', u'河南', u'湖北', u'湖南', u'内蒙古', u'江苏', u'江西', u'吉林', \
                  u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
@@ -44,8 +57,6 @@ def acquire_user_by_id(uid):
         user['count2'] = result['friends_count']
     
     return user
-
-
 
 
 def geo2city(geo):
@@ -114,22 +125,37 @@ def info2map(infos): # infos = {end_ts:map_data}, map_data={'count':{}, 'color':
 
     return data
 
-RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'bmiddle_pic', 'geo', 'comments_count', 'sentiment']
 
 def ts2date(ts):
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
 
+
 def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1,count1),(city2,count2)...]
     topic = u'东盟,博览会'
+    weibos = []
+    query_dict = {
+        '$or': [{'message_type': 1}, {'message_type': 3}]
+    }
     search_city_weibo = getXapianWeiboByTopic(topic)
-    count, results = search_city_weibo.search(fields=RESP_ITER_KEYS, sort_by=['reposts_count'])
-    city_dict = {} # city_count = {city:[weibos]}    
+    count, get_results = search_city_weibo.search(query=query_dict, fields=RESP_ITER_KEYS)
+    for r in get_results():
+        weibo = mongotable.find_one({'_id': int(r['_id'])})
+        if weibo:
+            r['reposts_count'] = int(weibo['reposts_count'])
+            r['comments_count'] = int(weibo['comments_count'])
+
+        weibos.append((r['reposts_count'], r))
+
+    sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=False)
+    sorted_weibos.reverse()
+
+    city_dict = {}  
     k = 0
-    print 'type(results):', type(results)
-    for result in results():
+    for reposts_count, result in sorted_weibos:
         k += 1
         if k>500:
             break
+
         uid = result['user']
         user_info = acquire_user_by_id(uid)
         if user_info:
@@ -139,22 +165,22 @@ def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1
         time = ts2date(result['timestamp'])
         result['time'] = time
         city = geo2city(result['geo']).split('\t')[1]
-        #print 'city:', city
+
         if city in province_list:
             try:
                 city_dict[city].append(result)
             except:
                 city_dict[city] = [result]            
         
-    
     return city_dict
-
 
 
 def topSelect(total_count):
     total_count_list_reverse = []
     total_count_list_reverse = sorted(total_count.iteritems(), key = lambda (k, v):v, reverse = True)
     return total_count_list_reverse
+
+
 def readPropagateSpatial(stylenum, topic, end_ts , during):
     """将从数据库中读取的数据转化为map_data
     """
