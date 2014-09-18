@@ -15,6 +15,7 @@ from city_map import partition_count, map_circle_data, map_line_data, statistics
 
 from dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
 from xapian_case.xapian_backend import XapianSearch
+from utils import weiboinfo2url
 
 mod = Blueprint('evolution', __name__, url_prefix='/evolution')
 
@@ -139,6 +140,7 @@ def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1
         time = ts2date(result['timestamp'])
         result['time'] = time
         city = geo2city(result['geo']).split('\t')[1]
+        result['weibo_link'] = weiboinfo2url(result['user'], result['_id'])
         #print 'city:', city
         if city in province_list:
             try:
