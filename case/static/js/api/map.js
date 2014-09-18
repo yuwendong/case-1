@@ -204,7 +204,7 @@ function drawtab(data,rank_city){
                     html += '<a topic='+ rank_city[m] + ' ' +'class=\"tabLi gColor0 curr\" href="javascript:;" style="display: block;">';
                     html += '<div class="nmTab">'+rank_city[m]+ '</div>';
                     html += '<div class="hvTab">'+rank_city[m]+'</div></a>';
-                    weibo_page(rank_city[m],data['top_city_weibo']);
+                    show_weibo(rank_city[m],data['top_city_weibo']);
                 }
                 else{
                     html += '<a topic='+rank_city[m] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
@@ -228,67 +228,26 @@ function bindTabClick(rank_city,data){
             select_a.addClass('curr');
             unselect_a.removeClass('curr');
             topic = select_a.attr('topic');
-            weibo_page(topic,data);
-            console.log(data);
-            console.log(topic);
+            show_weibo(topic,data);
+            // console.log(data);
+            // console.log(topic);
         }
     });
 }
 
-function weibo_page(topic,data){          //关键微博翻页函数
-        // console.log(data);
-        // console.log(topic);
-        console.log(data[topic]);
-        var current_data = data;
-        var page_num = 10;
-        if (current_data[topic].length) {
 
-            console.log(current_data[topic].length);
 
-            if (current_data[topic].length < page_num) {
-                  console.log(current_data[topic]);
-                page_num = current_data[topic].length;
-                show_weibo(topic, current_data, 0 ,page_num);     
-            }
-            else {
-                show_weibo(topic,current_data, 0, page_num);
-                var total_pages = 0;
-                if (current_data[topic].length % page_num == 0) {
-                    total_pages = current_data[topic].length / page_num;
-                }
-                else {
-                    total_pages = current_data[topic].length / page_num + 1;
-                }
-                $('#rank_page_selection').bootpag({
-                  total: total_pages,
-                  page: 1,
-                  maxVisible: 30
-                }).on("page", function(event, num){
-                  var start_row = (num - 1)* page_num;
-                  var end_row = start_row + page_num;
-                  if (end_row > current_data[topic].length){
-                      end_row = current_data[topic].length;
-                  }
-                  show_weibo(topic, current_data, start_row, end_row);
-                });
-            }
-        }
-
-    } 
-
-function show_weibo(topic, data, begin, end){
+function show_weibo(topic, data){
     $("#vertical-ticker").empty();
     var html = '';
     var child_topic = topic;
     var weibo_data = data[child_topic];
-    // console.log(weibo_data);
     html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
     html += '<div class="tang-scrollpanel-content">';
     html += '<ul id="weibo_ul">';
-    for (var op = begin ; op <= end ; op++){
-    // for(var i = 0; i < weibo_data.length; i += 1){
-        var da = weibo_data[op];
-        console.log(da['text']);
+
+    for(var i = 0; i < weibo_data.length; i += 1){
+        var da = weibo_data[i];
         // var name;
         // if ('name' in da){
         //     name = da['name'];
@@ -376,7 +335,7 @@ function connect(topic){
             if(!select_a.hasClass('curr')){
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                weibo_page(value_data,curr_data);
+                show_weibo(value_data,curr_data);
             }
         }
     });

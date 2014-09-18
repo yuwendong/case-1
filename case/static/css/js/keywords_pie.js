@@ -2,6 +2,9 @@
 $(document).ready(function(){   //网页加载时执行下面函数
            // gettext_data();
             writ_text();
+            getindex_data();
+
+
         })
     // var query =QUERY;
     // var topic = query;
@@ -56,6 +59,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
         //data['tag']表示的是事件的标签
         html += '<h4><b>事件标签:'+'东盟,博览会'+'</b></h4><br/>';
         html += '<h4 style="padding-top:10px"><b>事件摘要</b></h4>';
+        html += '<i id=\"media_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"事件总体概述\"></i>&nbsp;&nbsp;'
         // html += '<span class="pull-right" style="margin: -10px auto -10px auto;">';
         // html += '<input type="checkbox" name="abs_rel_switch" checked></span>';
         $('#title_text').append(html);
@@ -108,6 +112,10 @@ $(document).ready(function(){   //网页加载时执行下面函数
               var td = '<td style="display:none">'+data[i][j]+'</td>';
           }
           else if(j == 2){
+            // if(name == 'unknown'){
+            //     name = '未知';
+            // }
+       
               var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
           }
           else{
@@ -429,7 +437,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
 
     //     }
     //微博读取结束
-$(function () {                                                                
+ function draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved){                                                              
     $('#bar_div').highcharts({                                           
         chart: {                                                           
             type: 'bar'                                                    
@@ -458,14 +466,17 @@ $(function () {
         },                                                                 
         tooltip: {                                                         
             valueSuffix: ' millions'                                       
-        },                                                                 
-        plotOptions: {                                                     
-            bar: {                                                         
-                dataLabels: {                                              
-                    enabled: true                                          
-                }                                                          
-            }                                                              
-        },                                                                 
+        },        
+        plotOptions: {
+            series: {
+                pointWidth: 10,
+                pointPadding: 0.1,
+                groupPadding: 0,
+                borderWidth: 0,
+                shadow: false
+            }
+        },
+                                                                 
         legend: {                                                          
             layout: 'vertical',                                            
             align: 'right',                                                
@@ -482,8 +493,28 @@ $(function () {
         },                                                                 
         series: [{                                                         
             name: '事件指标',                                             
-            data: [0.3, 0.5, 0.4, 0.6, 0.8]                                   
+            data: [last_index,f_sensitivity,f_sentiment,f_transmission,f_involved],
+            color: '#FF2D2D'                                   
         }]                                                                 
     });                                                                    
-}); 
+}
    
+
+
+     function getindex_data(){
+        $.ajax({
+        url:"/quota_system/topic/?topic="+topic,
+        dataType: "json",
+        type: "GET",
+        success :function(data){            
+            console.log(data);
+             var last_index = data["last_index"]; 
+             var f_quota_evolution = data['f_quota_evolution'];           
+             var f_involved = f_quota_evolution['f_involved'][0];
+             var f_sensitivity = f_quota_evolution['f_sensitivity'][0];
+             var f_sentiment = f_quota_evolution['f_sentiment'][0];
+             var f_transmission = f_quota_evolution['f_transmission'][0];
+             draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved);   
+        }       
+    });
+}

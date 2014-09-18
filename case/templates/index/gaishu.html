@@ -5,6 +5,10 @@
         /* keywords tag cloud */
     <style type="text/css">
         /* keywords tag cloud */
+        hr {
+            margin-top: 0px;
+            margin-bottom: 0px}
+
         #keywords_cloud_div {
             position: relative;
             width: 100%;
@@ -191,6 +195,7 @@
             min-height: 55px;
             _height: 55px;
         }
+
         .weibo_face {
             position: relative;
             float: left;
@@ -206,6 +211,7 @@
         }
         .weibo_detail {
             margin-left: 65px;
+            height:71px;
         }
         .weibo_list a.undlin {
             text-decoration: underline;
@@ -219,6 +225,10 @@
             color: #858585;
             height: 18px;
             line-height: 18px;
+        }
+         a:hover {
+
+            color: #428bca
         }
         .weibo_info .m a {
             color: #666;
@@ -292,6 +302,7 @@
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">
             <h4><b>事件指标</b></h4>
+            <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体指标"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
@@ -308,7 +319,7 @@
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">
             <h4><b>事件媒体报道</b></h4>
-        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体报道"></i>&nbsp;&nbsp;
+        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体相关报道"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
@@ -332,62 +343,62 @@
                                 <div class="item" >
                                   <div class="inner">
                                     <span class="title">2013-09-03 10:34:17 2056573851：【南宁博览会首批展览品顺利通关】</span>
-                                    <hr />
+                                    <hr>
                                     <span>8月24日上午，参加第十届中国—东盟博览会的首批展览品运抵南宁国际会展中心，首批展览品来自印尼、泰国等国家，共计5个货柜1852件展览品，价值约21.2986万美元，总重约35.268吨，展品种类主要有食品、化妆品和木质工艺品等。</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title">2013-09-03 15:20:07 2954906817：【南宁当选为中国“魅力之城”】</span>
-                                    <hr />
+                                    <hr>
                                     <span>中国—东盟博览会10周年之际，博览会的举办地南宁市当选为第十届博览会中国“魅力之城”。8月17日，中国—东盟博览会秘书处和南宁市人民政府举行新闻发布会，介绍中国—东盟博览会及其举办地南宁市10年来取得的显著成就，通报第十届博览会“魅力之城”专题展筹备进展。</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title">2013-09-03 05:59:08 1640601392：  【李克强出席中国东盟博览会发表演讲视频回顾】</span>
-                                    <hr />
+                                    <hr>
                                     <span>第十届中国—东盟博览会和中国—东盟商务与投资峰会3日上午在广西南宁开幕，李克强出席开幕式并发表主旨演讲，强调双方应排除干扰，加强和深化合作，“中国东盟有能力打造合作的黄金十年，就有能力创造合作的钻石十年！”</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner">
                                     <span class="title">2013-09-03 13:54:08  3085216761：【李克强东盟博览会讲话：对于南海争议 中国是有担当的】</span>
-                                    <hr />
+                                    <hr>
                                     <span>李克强就进一步加强中国与东盟的合作提出五项倡议。一是打造中国—东盟自贸区升级版。双方应进一步降低关税，削减非关税措施，积极开展新一批服务贸易承诺谈判，推动投资领域的实质性开放，力争 </span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title"> 2013-09-04 11:56:06 3702913543 ：【菲总统称中国撤销其访华邀请 中方否认曾邀请】</span>
-                                    <hr />
+                                    <hr>
                                     <span>菲外交部对外宣称，中国8月28日晚撤销对菲总统的访华邀请。美联社称，中国此举是明显冷落菲律宾。不过，路透社昨日引述中国外交部的回应称，中国从未对菲总统发出访华邀请。专家称，菲总统所谓被中国拒绝参加东盟博览会更像是一场秀。</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title">2013-09-04 16:47:133517164684：【“台湾精品”展现高科技】</span>
-                                    <hr />
+                                    <hr>
                                     <span>9月3日下午，第十届中国-东盟博览会“台湾精品”开展仪式在南宁国际会展中心举行，各类高科技产品让观众心动。据了解，此次“台湾精品”展不仅推介高科技的产品，更希望利用广西作为东盟门户的优势，将台湾优质产品推向东盟这个大市场，不断增强台湾对外经贸文化合作力量。</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title">2013-09-05 03:43:16  3735998501：【李克强:铺就面向东盟的海上丝绸之路】</span>
-                                    <hr />
+                                    <hr>
                                     <span>李克强在参观中国－东盟博览会展馆时强调铺就面向东盟的海上丝绸之路 打造带动腹地发展的战略支点新华网南宁</span>
                                   </div>
                                 </div>
                                 <div class="item" >
                                   <div class="inner" >
                                     <span class="title">2013-09-05 08:35:07 3602721791 ：【李克强:铺就面向东盟的海上丝绸之路】</span>
-                                    <hr />
+                                    <hr>
                                     <span>8月20日消息，第十届中国—东盟博览会、中国—东盟商务投资峰会将于9月3日在南宁开幕，南宁安检站将面临巨大的航空安全保障工作压力，为全面动员各级人员、激昂精神、奋发斗志，南宁机场安检站于8月19日举行了航空安全保障工作誓师大会。</span></div>
                                   </div>
                                   <div class="item" >
                                     <div class="inner" >
                                       <span class="title">2013-09-07 07:13:00 1726660120：【公众开放日 市民淘宝忙】</span>
-                                      <hr />
+                                      <hr>
                                       <span>公众开放日 市民淘宝忙本报南宁讯 （记者/苏必庆）9月6日，第十届中国-东盟博览会迎来公众开放日。当日，中国-东盟博览会的展区向公众全面开放，数以万计的观展者纷纷涌向主场馆南宁国际会展中心。</span>
                                     </div>
                                   </div>
@@ -405,17 +416,18 @@
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
            <h4><b>事件关键用户</b></h4>
-        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="地图"></i>&nbsp;&nbsp; 
+        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="重要用户"></i>&nbsp;&nbsp; 
         </div>
         <div class="stmTabs tabUnit" style="width:1033px;">
             <div class="tabTitle" style="padding-top:1px;">
                 <div class="tabUI" id="Tableselect">
                 <a value='1' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">
-                       <div class="nmTab">关键源头用户</div>
-                        <div class="hvTab">关键源头用户</div></a>
-                <a value='2' class="tabLi gColor0 " href="javascript:;" style="display: block;">
-                       <div class="nmTab">关键传播用户</div>
+                        <div class="nmTab">关键传播用户</div>
                         <div class="hvTab">关键传播用户</div></a>
+                
+                <a value='2' class="tabLi gColor0 " href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键源头用户</div>
+                        <div class="hvTab">关键源头用户</div></a>
                 </div>
             </div>
             <div class="tabConts">
@@ -433,7 +445,7 @@
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">
             <h4><b>事件重要微博</b></h4>
-        <i id="folk_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="网民代表性观点"></i>&nbsp;&nbsp;
+        <i id="folk_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="相关事件中的重要微博"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
@@ -443,9 +455,9 @@
                     <div id="opinion" style="  
                         clear:left;float:left;position:relative">
                         <div id="opinion_text">
-                            <div class="tang-scrollpanel-wrapper" style="height:500px">
+                            <div class="tang-scrollpanel-wrapper">
                             <div class="tang-scrollpanel-content">
-                            <ul id="weibo_ul">';
+                            <ul id="weibo_ul">
                                 <li class="item">
                                     <div class="weibo_face">
                                         <a target="_blank" href="#">
@@ -461,7 +473,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论5</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-02 23:37:16</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>
@@ -484,7 +496,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论1</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-02 17:19:19</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>
@@ -507,7 +519,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论0</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-02 23:41:08</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>
@@ -530,7 +542,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论1</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-03 12:20:52</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>
@@ -553,7 +565,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论0</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-04 03:07:32 </a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>
@@ -576,7 +588,7 @@
                                             &nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a class="undlin" href="javascript:;" target="_blank">评论0</a>
                                         </div>
-                                        <div class="m">';
+                                        <div class="m">
                                             <a class="undlin">2013-09-04 05:17:57</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
                                             <a target="_blank" href="#">用户页面</a>

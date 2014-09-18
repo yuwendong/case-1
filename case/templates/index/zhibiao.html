@@ -3,10 +3,6 @@
 
 {% block head_css %}
 
-<!--     <link rel="stylesheet" href="/static/css/css/csshide1.css">
-    <link rel="stylesheet" href="/static/css/css/csshide2.css">
-    <link rel="stylesheet" href="/static/css/css/csshide3.css">
-    <link rel="stylesheet" href="/static/css/css/csshide4.css">  --> 
     <style type="text/css">
         /* keywords tag cloud */
         .node circle {
@@ -201,93 +197,23 @@
             <span id="peak_trend_tooltip"></span>
             <span class="pull-right" style="margin: -14px -9px -10px auto;" data-animated="false">
             </span>
-            <!--<span class="compInfo" style="display: none;"> </span>
-            <span class="compInfo">2014-08-07 至 2014-08-13</span>
-            <span class="compInfo">全国</span>-->
         </div>
         <div class="tabUnit"> 
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='draw_index()' style="float: left;">舆情指数</button>
             </div>
             <div class="control-pane">
-                <button class="btn btn-danger" onclick='getindex_data()' style="float: left;">指标体系</button>
+                <button class="btn btn-danger" onclick='json_data()'   style="float: left;">指标体系</button>
             </div>
             <div class="control-pane">
                 <button class="btn btn-danger" onclick='draw_line()' style="float: left;">热度走势</button>
             </div> 
-<!--             <div style="margin-left:20px;margin-top:10px;margin-right:20px;">
-            专家重视度：值: <input type=text name="txtname" value= '0' size=12 maxlength=6>权重：<input type=text name="txtname" value= '0' size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定" onclick = "showtotal()">
-            <span style="float:right;color: #666 ;padding-left:5px">[0/1] 0:表示的是元素的值 1：表示的是元素的权重</span><p>
-            </div> -->
-            <table class="mstable" id="mstable1" style="margin-top:10px">
-            </table>
-            <div id="body" style ="margin-left:25px">
-                <div id = 'index'style='height:400px'>
-                    <!-- <div id = 'index_line'style='height:200px;width:800px'></div> -->
-                  <!--   <div id = 'index_line2'style='height:200px;width:800px'></div> -->
+         <!--    <table class="mstable" id="mstable1" style="margin-top:10px">
+            </table> -->
+            <div id ='textarea'style="float:right"><textarea cols = 50 rows = 4>舆情指标体系：</textarea></div>
+                <div id = 'index' style='height:450px;' align="center">
                 </div>
-                
-             
-            </div>
-            <div class="modal fade" id="sensitivity_1" tabindex="-1" role="dialog" 
-               aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        </div>
-                        <div class="modal-body" style ="width:590px; height: 250px" >
-                            <div id = "sensivity" style ="width:590px; height: 250px"></div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" 
-                               data-dismiss="modal">关闭
-                            </button>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
-            </div>
-            <div class="modal fade" id="quickness_1" tabindex="-1" role="dialog" 
-               aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        </div>
-                        <div class="modal-body" style ="width:590px; height: 250px" >
-                            <div id = "quickness" style ="width:590px; height: 250px"></div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" 
-                               data-dismiss="modal">关闭
-                            </button>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
-            </div>
-
-            <div class="modal fade" id="attention_1" tabindex="-1" role="dialog" 
-               aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        </div>
-                        <div class="modal-body" style ="width:590px; height: 250px" >
-                            <div id = "attention" style ="width:590px; height: 250px"></div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" 
-                               data-dismiss="modal">关闭
-                            </button>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
-            </div>
-
-
         </div>
-
     </div>
 
 {% endblock content %}
