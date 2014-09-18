@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from case.extensions import db
 from xapian_case.xapian_backend import XapianSearch
@@ -23,9 +24,10 @@ def get_origin_user(topic, end_date, windowsize):
     s = getXapianWeiboByTopic(topic)
     counts, results = s.search(fields=['user', 'retweeted_uid', 'reposts_count'], sort_by=['reposts_count'], reverse=False)
     k = 0
-    origin_user_list = []
+    origin_user_dict = {}
+    origin_user_x = []
     for result in results():
-        if k > 10:
+        if k == 10:
             break
         uid = result['retweeted_uid']
         print 'uid', uid
@@ -56,11 +58,22 @@ def get_origin_user(topic, end_date, windowsize):
             origin_user['bc'] = b_centrality
             origin_user['cc'] = c_centrality
             origin_user['rank'] = k
+            try:
+                if origin_user_dict[str(uid)]:
+                    k = k - 1
+                    continue
+            except KeyError:
+                if origin_user['count1'] != u'未知':
+                    origin_user_dict[str(uid)] = origin_user
+                    origin_user_x.append((str(uid), origin_user, origin_user['count1']))
+                else:
+                    k = k - 1
+            
+            #origin_user_list.add(origin_user)
+        results = sorted(origin_user_x, key=lambda x:x[2], reverse=True) 
 
-            origin_user_list.append(origin_user)
 
-
-    return origin_user_list
+    return results
             
 def get_user_pagerank(topic, uid, end_date, windowsize):
     item = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topic ,\
