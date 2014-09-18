@@ -49,50 +49,17 @@ function exp_data(data){
 }
 
 function draw_index(){
-      $("#index").height(450);
+      $("#index").height(600);
       $('#index').empty();
       $('#textarea').empty();
-      $('#textarea').append('<textarea cols = 50 rows = 4>舆情指标体系：</textarea>');
+      $('#textarea').append('<textarea cols = 50 rows = 2>当前舆情指数:30.2%，属于:中等偏下。</textarea>');
       
-        var value = curr["last_index"].toFixed(2);
+        var value = curr["last_index"].toFixed(3)*100;
         var index_data = [{value: value, name: '舆情指数'}];
-    //     var labelTop = {
-    //     normal : {
-    //         label : {
-    //             show : true,
-    //             position : 'center',
-    //             textStyle: {
-    //                 baseline : 'bottom'
-    //             }
-    //         },
-    //         labelLine : {
-    //             show : false
-    //         }
-    //     }
-    // };
-    // var labelBottom = {
-    //     normal : {
-    //         color: '#ccc',
-    //         label : {
-    //             show : true,
-    //             position : 'center',
-    //             formatter : function (a,b,c){return 100 - c},
-    //             textStyle: {
-    //                 baseline : 'top'
-    //             }
-    //         },
-    //         labelLine : {
-    //             show : false
-    //         }
-    //     },
-    //     emphasis: {
-    //         color: 'rgba(0,0,0,0)'
-    //     }
-    // };
-    // var radius = [50, 170];
+
     var option = {
         tooltip: {
-            formatter: "{a} <br/>{b} : {c}"
+            formatter: "{a} <br/>{b} : {c}%"
         },
         title : {
             text: '',
@@ -111,8 +78,8 @@ function draw_index(){
             {
                 name:'舆情指数',
                 type:'gauge',
-                center : ['50%', '40%'],    // 默认全局居中
-                radius : ['50%','75%'],
+                center : ['50%', '39%'],    // 默认全局居中
+                radius : ['50%','74%'],
                 startAngle: 140,
                 endAngle : -140,
                 min: 0,                     // 最小值
@@ -183,7 +150,7 @@ function draw_index(){
                     width: 100,
                     height: 40,
                     offsetCenter: ['-80%', -2],       // x, y，单位px
-                    formatter:'{value}',
+                    formatter:'{value}%',
                     textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
                         color: 'red',
                         fontSize : 15,
@@ -200,9 +167,9 @@ function draw_index(){
 }
 
 function json_data(){
-    $("#index").height(900);
+    $("#index").height(800);
     $('#index').empty();
-    $('#textarea').empty();
+     $('#textarea').empty();
     var curr_data = curr['now_system'];
     var json_data = {};
     var f_involved = {};
@@ -220,21 +187,21 @@ function json_data(){
     var sentiment_sad = {};
     var word_sensitivity = {};
 
-    json_data["name"] = "舆情指数";
-    f_transmission["name"] ='传播强度指数';
-    f_sentiment["name"] = '负面情绪指数';
-    f_involved["name"] = "参与主体指数";
-    f_sensitivity["name"] = '时间敏感指数';
+    json_data["name"] = "舆情指数[ " + curr_data['index'][0] +"/"+curr_data['index'][1].toFixed(2).toString()+" ]" ;
+    f_transmission["name"] ='传播强度指数['+ curr_data['f_transmission'][0] +"/"+curr_data['f_transmission'][1].toFixed(2).toString()+" ]" ;
+    f_sentiment["name"] = '负面情绪指数['+ curr_data['f_sentiment'][0] +"/"+curr_data['f_sentiment'][1].toFixed(2).toString()+" ]" ;
+    f_involved["name"] = "主体敏感指数["+ curr_data['f_invovled'][0] +"/"+curr_data['f_invovled'][1].toFixed(2).toString()+" ]" ;
+    f_sensitivity["name"] = '事件敏感指数['+ curr_data['f_sensitivity'][0] +"/"+curr_data['f_sensitivity'][1].toFixed(2).toString()+" ]" ;
 
-    class_sensitivity['name'] = '类型敏感度';
-    coverage['name'] = "传播覆盖度";
-    duration["name"] = '传播持续度';
-    media_involved["name"] = '总要媒体参与度';
-    person_involved["name"] = '敏感人物参与度';
-    quickness["name"] = '传播爆发度';
-    sentiment_angry["name"] = '愤怒情绪度';
-    sentiment_sad["name"] = '悲伤情绪度';
-    word_sensitivity["name"] = '内容敏感度';
+    class_sensitivity['name'] = '类型敏感度['+ curr_data['class_sensitivity'][0] +"/"+curr_data['class_sensitivity'][1].toFixed(2).toString()+" ]" ;
+    coverage['name'] = "传播覆盖度["+ curr_data['coverage'][0].toFixed(2).toString() +"/"+curr_data['coverage'][1].toFixed(2).toString()+" ]" ;
+    duration["name"] = '传播持续度['+ curr_data['duration'][0].toFixed(2).toString() +"/"+curr_data['duration'][1].toFixed(2).toString()+" ]";
+    media_involved["name"] = '总要媒体参与度['+ curr_data['media_involved'][0] +"/"+curr_data['media_involved'][1].toFixed(2).toString()+" ]";
+    person_involved["name"] = '敏感人物参与度['+ curr_data['person_involved'][0] +"/"+curr_data['person_involved'][1].toFixed(2).toString()+" ]";
+    quickness["name"] = '传播爆发度['+ curr_data['quickness'][0].toFixed(2).toString() +"/"+curr_data['quickness'][1].toFixed(2).toString()+" ]";
+    sentiment_angry["name"] = '愤怒情绪度['+ curr_data['sentiment_angry'][0] +"/"+curr_data['sentiment_angry'][1].toFixed(2).toString()+" ]";
+    sentiment_sad["name"] = '悲伤情绪度['+ curr_data['sentiment_sad'][0] +"/"+curr_data['sentiment_sad'][1].toFixed(2).toString()+" ]";
+    word_sensitivity["name"] = '内容敏感度['+ curr_data['word_sensitivity'][0] +"/"+curr_data['word_sensitivity'][1].toFixed(2).toString()+" ]";
 
     class_sensitivity['size'] = 0.3;
     duration['size'] = 0.3;
@@ -263,7 +230,7 @@ function json_data(){
 
     var vis = d3.select("#index").append("svg:svg")
         .attr("width", w + m[1] + m[3])
-        .attr("height", h + m[0] + m[0])
+        .attr("height", h + m[0] + m[2])
       .append("svg:g")
         .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
@@ -456,6 +423,10 @@ function draw_line(){
             borderWidth: 0
         },
         series: [{
+            name: '舆情指数',
+            data: curr["index_evolution"]["index"]
+        },
+        {
             name: '事件敏感指数',
             data: quota["f_sensitivity"] 
         }, {
@@ -465,7 +436,7 @@ function draw_line(){
             name: '传播强度指数',
             data: quota['f_transmission'] 
         }, {
-            name: '参与主体指数',
+            name: '主体敏感指数',
             data: quota["f_involved"]
         }],
       })
