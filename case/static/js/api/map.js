@@ -263,8 +263,9 @@ function show_weibo(topic, data){
         var timestamp = da['timestamp'];
         var data = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
         var user_link = 'http://weibo.com/u/' + user;
-        var user_image_link = '/static/img/unknown_profile_image.gif';
+        var user_image_link = da['bmiddle_pic'];
         var ip = da['geo'];
+        var weibo_link = da['weibo_link'];
         
         html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
         html += '<img src="' + user_image_link + '">';
@@ -276,10 +277,10 @@ function show_weibo(topic, data){
         html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
         html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
         html += '<div class="m">';
-        html += '<a class="undlin" target="_blank" href="' + user_link + '">' + data + '</a>&nbsp;-&nbsp;';
+        html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + data + '</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + user_link + '">微博页面</a>&nbsp;&nbsp;';
+        html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;&nbsp;';
         html += '</div>';
         html += '</div>';
         html += '</div>';
