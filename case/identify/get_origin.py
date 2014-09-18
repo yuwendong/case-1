@@ -47,20 +47,21 @@ def get_origin_user(topic, end_date, windowsize):
             w['reposts_count'] = int(weibo['reposts_count'])
             w['comments_count'] = int(weibo['comments_count'])
 
-        weibos.append(w)
+        weibos.append((r['reposts_count'],w))
 
-    sorted_weibos = sorted(weibos, key=lambda k: k[SORT_FIELD], reverse=False)
-    sorted_weibos = sorted_weibos[len(sorted_weibos)-top_weibos_limit:]
+    sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=False)
+    #sorted_weibos = sorted_weibos[:]
     sorted_weibos.reverse()
-
+    #print 'sorted_weibos:', sorted_weibos
     rank = 0
     origin_user_dict = {}
     origin_user_x = []
     user_list = []
     for weibo in sorted_weibos:
-        retweeted_uid = weibo['retweeted_uid']
+        retweeted_uid = weibo[1]['retweeted_uid']
+        print 'retweeted_uid:', retweeted_uid
         count = s.search(query={'user': retweeted_uid}, count_only=True)
- 
+        print 'count:', count
         if count:
             rank += 1
             origin_user = {}
@@ -96,9 +97,9 @@ def get_origin_user(topic, end_date, windowsize):
                     origin_user_x.append((str(retweeted_uid), origin_user, origin_user['count1']))
                 else:
                     retweeted_uid = retweeted_uid - 1
-            
+            #print 'origin_user_x:', origin_user_x
         user_list = sorted(origin_user_x, key=lambda x:x[2], reverse=True) 
-
+        #print 'user_list:', user_list
     return user_list
             
 def get_user_pagerank(topic, uid, end_date, windowsize):
