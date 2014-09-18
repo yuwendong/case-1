@@ -233,6 +233,7 @@ function bindTabClick(rank_city,data){
 
 
 function show_weibo(topic, data){
+    console.log(data);
     $("#vertical-ticker").empty();
     var html = '';
     var child_topic = topic;
@@ -275,9 +276,10 @@ function show_weibo(topic, data){
         html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
         html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
         html += '<div class="m">';
-        html += '<a class="undlin">' + data + '</a>&nbsp;-&nbsp;';
+        html += '<a class="undlin" target="_blank" href="' + user_link + '">' + data + '</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+        html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + user_link + '">微博页面</a>&nbsp;&nbsp;';
         html += '</div>';
         html += '</div>';
         html += '</div>';

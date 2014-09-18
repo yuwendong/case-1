@@ -30,7 +30,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
             dataType:"json",
             success: function(data){
                 writ_text();
-                 bindTabClick();
+                bindTabClick();
                 $("#summary_tooltip").tooltip();
             }
         });       
@@ -135,6 +135,17 @@ $(document).ready(function(){   //网页加载时执行下面函数
             return
         }
     }
+
+function filter_node_in_network(node_uid){
+    show_network();
+    filter
+      .undo('filter_node')
+      .nodesBy(function(n) {
+        return n.label == String(node_uid);
+      }, 'filter_node')
+      .apply();
+}
+    
     function create_current_table(data, start_row, end_row, type) {
     if(type == 'pro'){
       $("#rank_table").empty();
@@ -198,6 +209,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
     }
 }
 
+
 function identify_request() {
   var topn = 100;
   $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
@@ -256,6 +268,8 @@ function origin_request_callback(data) {
 
 identify_request();
 identify_origin_request();
+
+
     // function identify_request() {
     //   var topn = 10;
     //   $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
@@ -634,7 +648,7 @@ identify_origin_request();
             }                                                              
         },                                                                 
         tooltip: {                                                         
-            valueSuffix: ' millions'                                       
+            valueSuffix: ' '                                       
         },        
         plotOptions: {
             series: {

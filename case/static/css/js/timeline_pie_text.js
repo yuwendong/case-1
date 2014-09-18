@@ -305,6 +305,7 @@
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
                 for(var i = 0; i < data.length; i += 1){
+                    console.log(data);
                 var da = data[i];
                 var uid = da['user'];
                 /*var name;
@@ -322,8 +323,9 @@
                 var reposts_count = da['reposts_count'];
                 var comments_count = da['comments_count'];
                 var timestamp = da['time'];
+                var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
                 var user_link = 'http://weibo.com/u/' + uid;
-                var    user_image_link = '/static/img/unknown_profile_image.gif';
+                var user_image_link = '/static/img/unknown_profile_image.gif';
                 
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
@@ -335,7 +337,7 @@
                 html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
                 html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
                 html += '<div class="m">';
-                html += '<a class="undlin">' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a class="undlin">' + date + '</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
                 html += '</div>';
