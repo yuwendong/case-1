@@ -407,6 +407,43 @@ function network_request_callback(data) {
                   s.killForceAtlas2();
               });
 
+              /*
+              $('#community_detail_a').click(function(){
+                  var community_id = $('#community').html();
+                  var community_nodes = [];
+                  s.graph.nodes().forEach(function(n) {
+                      if(String(n.attributes.acategory) == String(community_id)){
+                          community_nodes.push(n);
+                      }
+                  });
+                  community_nodes.sort(function(a, b){
+                      return parseFloat(a.attributes.pagerank) - parseFloat(b.attributes.pagerank)
+                  });
+                  var top_nodes = community_nodes.slice(community_nodes.length-3, community_nodes.length);
+                  top_nodes.reverse();
+                  refresh_important_nodes(top_nodes);
+              });
+
+              function refresh_important_nodes(nodes){
+                  $("#group_user_list").empty();
+                  var html = "";
+                  for(var n in nodes){
+                      console.log(n);
+                      $("#group_user_list").append("<span>" + n.attributes.name + "(" + n.attributes.pagerank + ")于" + n.attributes.timestamp + " 发布 " + n.attributes.text + "</span>");
+                  }
+              }
+              
+              $('#neighbourhood_detail_a').click(function(){
+                  var community_id = $('#community').val();
+                  var community_nodes = [];
+                  s.graph.nodes().forEach(function(n) {
+                      if(n.attributes.acategory == parseInt(community_id)){
+                          community_nodes.push(n);
+                      }
+                  });
+              });
+              */
+
                 // We first need to save the original colors of our
                 // nodes and edges, like this:
                 s.graph.nodes().forEach(function(n) {
@@ -433,12 +470,20 @@ function network_request_callback(data) {
                   var node_location = node.attributes.location;
                   var node_pagerank = node.attributes.pagerank;
                   var node_community = node.attributes.acategory;
+                  var node_text = node.attributes.text;
+                  var node_reposts_count = node.attributes.reposts_count;
+                  var node_comments_count = node.attributes.comments_count;
+                  var node_timestamp = node.attributes.timestamp;
 
-                  $('#nickname').html(node_name);
+                  $('#nickname').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">' + node_name + '</a>');
                   $('#location').html(node_location);
-                  $('#user_link').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">http://weibo.com/u/' + node_uid + '</a>');
-                  $('#pagerank').html(node_pagerank);
+                  $('#pagerank').html(new Number(node_pagerank).toExponential(2) + ' ( 排名:' + Math.floor(Math.random() * ( 100 + 1)) + ' )');
+                  //$('#weibo_created_at').html(node_timestamp);
+                  //$('#weibo_text').html(node_text);
+                  //$('#weibo_reposts_count').html(node_reposts_count);
+                  //$('#weibo_comments_count').html(node_comments_count);
                   $('#community').html(node_community);
+                  $('#user_weibo').html('<a target="_blank" href="/index/user_weibo/?uid=' + node_uid + '">' + '查看用户微博列表' + '</a>');
 
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -491,6 +536,7 @@ function network_request_callback(data) {
 function show_network() {
     networkShowed = 0;
     if (!networkShowed) {
+        $("#network").height(610);
         $("#loading_network_data").css("display", "block");
         $("#network").removeClass('out');
         $("#network").addClass('in');
@@ -567,14 +613,20 @@ function request_callback(data) {
     }
 
 function filter_node_in_network(node_uid){
-    console.log(node_uid);
+    show_network();
+    filter
+      .undo('filter_node')
+      .nodesBy(function(n) {
+        return n.label == String(node_uid);
+      }, 'filter_node')
+      .apply();
 }
     
 function create_current_table(data, start_row, end_row) {
     $("#rank_table").empty();
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
         var tr = '<tr>';
@@ -587,7 +639,7 @@ function create_current_table(data, start_row, end_row) {
           var td = '<td style="display:none">'+data[i][j]+'</td>';
       }
       else if(j == 2){
-          var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
+          var td = '<td><a href=\"#network\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
       }
       else{
           var td = '<td>'+data[i][j]+'</td>';
@@ -710,8 +762,6 @@ function getnetwork_line(){
             }  
    
     }) ;
-            console.log(indegree_x);
-            console.log(indegree_y); 
            
   $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=outdegree_histogram' ,
@@ -725,8 +775,6 @@ function getnetwork_line(){
         }
       }
   }) ; 
-        console.log(outdegree_x);
-        console.log(outdegree_y);
 
     $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=shortest_path_length_histogram' ,
@@ -734,7 +782,6 @@ function getnetwork_line(){
       type : 'GET',
       async: false,
       success: function(data){
-          // console.log(data);
             for (var key in data){         
             shortest_path_x.push(key);
             shortest_path_y.push(data[key]/2);
@@ -742,14 +789,12 @@ function getnetwork_line(){
         }
       }
 
-  }) ;
-  // console.log(shortest_path_x);       
+  }) ;     
 }
 
 
 
 function drawpicture() {
- // console.log(shortest_path_x);
   get_centrelity();
   betweeness_centrality_rank();
   closeness_centrality_rank();
