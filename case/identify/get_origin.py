@@ -54,15 +54,16 @@ def get_origin_user(topic, end_date, windowsize):
 
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=False)
     sorted_weibos.reverse()
-
+    rank = 0
     origin_user_dict = {}
     origin_user_x = []
     user_list = []
-    for weibo in sorted_weibos[:50]:
+    for weibo in sorted_weibos[:150]:
         retweeted_uid = weibo[1]['retweeted_uid']
         count = s.search(query={'user': retweeted_uid}, count_only=True)
+
         if count:
-            #rank += 1
+            rank += 1
             origin_user = {}
             user_info = acquire_user_by_id(retweeted_uid)
             origin_user['uid'] = retweeted_uid
@@ -85,20 +86,20 @@ def get_origin_user(topic, end_date, windowsize):
             origin_user['dc'] = d_centrality
             origin_user['bc'] = b_centrality
             origin_user['cc'] = c_centrality
-            #origin_user['rank'] = rank
+            origin_user['rank'] = rank
             try:
                 if origin_user_dict[str(retweeted_uid)]:
-                    #rank = rank - 1
+                    rank = rank - 1
                     continue
             except KeyError:
                 if origin_user['count1'] != u'未知':
                     origin_user_dict[str(retweeted_uid)] = origin_user
                     origin_user_x.append((str(retweeted_uid), origin_user, origin_user['count1']))
                 else:
-                    retweeted_uid = retweeted_uid - 1
+                    rank = rank -1
         user_list = sorted(origin_user_x, key=lambda x:x[2], reverse=True) 
-    return user_list
-
+    return user_list[:10]
+            
 def get_user_pagerank(topic, uid, end_date, windowsize):
     item = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topic ,\
                                                      TopicIdentification.identifyDate==end_date ,\
