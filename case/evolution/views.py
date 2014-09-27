@@ -32,9 +32,9 @@ MinInterval = Fifteenminutes
 DB_NAME = '54api_weibo_v2' 
 TB_NAME = 'master_timeline_weibo' 
 
-mongoclient =  pymongo.MongoClient('219.224.135.46')
-mongodb = mongoclient[DB_NAME] 
-mongotable = mongodb[TB_NAME]
+#mongoclient =  pymongo.MongoClient('219.224.135.46')
+#mongodb = mongoclient[DB_NAME] 
+#mongotable = mongodb[TB_NAME]
 
 SORT_FIELD = ['reposts_count']
 
@@ -140,7 +140,8 @@ def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1
     search_city_weibo = getXapianWeiboByTopic(topic)
     count, get_results = search_city_weibo.search(query=query_dict, fields=RESP_ITER_KEYS)
     for r in get_results():
-        weibo = mongotable.find_one({'_id': int(r['_id'])})
+        #weibo = mongotable.find_one({'_id': int(r['_id'])})
+        weibo = None
         if weibo:
             r['reposts_count'] = int(weibo['reposts_count'])
             r['comments_count'] = int(weibo['comments_count'])

@@ -12,9 +12,9 @@ from case.model import TopicIdentification, DegreeCentralityUser, BetweenessCent
 DB_NAME = '54api_weibo_v2' 
 TB_NAME = 'master_timeline_weibo' 
 
-mongoclient =  pymongo.MongoClient('219.224.135.46')
-mongodb = mongoclient[DB_NAME] 
-mongotable = mongodb[TB_NAME]
+# mongoclient =  pymongo.MongoClient('219.224.135.46')
+# mongodb = mongoclient[DB_NAME] 
+# mongotable = mongodb[TB_NAME]
 
 SORT_FIELD = ['reposts_count']
 
@@ -45,7 +45,8 @@ def get_origin_user(topic, end_date, windowsize):
         w['_id'] = r['_id']
         w['user'] = r['user']
         w['retweeted_uid'] = r['retweeted_uid']
-        weibo = mongotable.find_one({'_id': int(r['_id'])})
+        # weibo = mongotable.find_one({'_id': int(r['_id'])})
+        weibo = None
         if weibo:
             w['reposts_count'] = int(weibo['reposts_count'])
             w['comments_count'] = int(weibo['comments_count'])
