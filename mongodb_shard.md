@@ -89,7 +89,7 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 在46,47,48config server上分别执行：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
-./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log
+./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
 ```
 
 3.5 shard cluster
@@ -111,7 +111,7 @@ mongo --port 27019 --host 219.224.135.46
 ```
 查看数据库分片是否成功：
 ```
-db.status();
+sh.status();
 ```
 查看对应的database对应的partitioned是否为'true'
 3.6 collection
@@ -122,7 +122,7 @@ db.status();
 ```
 查看配置情况：
 ```
-db.stats();
+sh.stats();
 ```
 查看'raw'是否有'rs0','rs1'的相关信息
 
