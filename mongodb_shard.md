@@ -44,8 +44,9 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ```
 创建replication set:rs0
 ```
-numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
+numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest
 ```
+--rest表示可以通过host:28019在浏览器中管理mongodb实例
 创建成功会有如下说明：
 ```
 child process started successfully, parent existing
@@ -82,7 +83,7 @@ rs.status();
 分别在46,47,48上作如下配置：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
-./mongod --configsvr --dbpath /var/lib/mongodb_config_server --port 27018 --logpath /var/log/mongodb/config.log --logappend --fork
+./mongod --configsvr --dbpath /var/lib/mongodb_config --port 27018 --logpath /var/log/mongodb/config.log --logappend --fork
 ```
 
 3.4 mongos
