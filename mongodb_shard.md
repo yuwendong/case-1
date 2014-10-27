@@ -44,9 +44,10 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ```
 创建replication set:rs0
 ```
-numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest
+numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest --auth
 ```
---rest表示可以通过host:28019在浏览器中管理mongodb实例
+--rest表示可以通过host:28017在浏览器中管理mongodb实例
+--auth表示连接时的安全性验证
 创建成功会有如下说明：
 ```
 child process started successfully, parent existing
@@ -68,7 +69,7 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ```
 创建replication set：rs1
 ```
-numactl --interleave=all ./mongod --port=27017 --replSet=rs1 --dbpath=/var/lib/mongodb_rs1 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
+numactl --interleave=all ./mongod --port=27017 --replSet=rs1 --dbpath=/var/lib/mongodb_rs1 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest --auth
 ```
 初始化replication set2：rs1
 使用mongo进入一个primary mongod
