@@ -134,3 +134,10 @@ export LC_ALL='C'
 ```
 2)在添加shard后一定要启动对应数据库的shard，即enablesharding。
 否则在此后的collection中，不能成功给collection分片
+
+3)/var/log/mongodb/config.log
+accept() returns -1 errno:24 Too many open files
+
+solution: vim /etc/bash.bashrc
+ulimit -n 65536
+source /etc/bash.bashrc
