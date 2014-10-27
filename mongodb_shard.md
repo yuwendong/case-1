@@ -143,6 +143,8 @@ solution: vim /etc/bash.bashrc
 ulimit -n 65536
 source /etc/bash.bashrc
 
+mongodb修改最大连接数参考http://blog.163.com/ji_1006/blog/static/1061234120121120114047464/
+
 4)重要：MongoDB要求文件系统对目录支持fsync()。所以例如HGFS和Virtual Box的共享目录不支持这个操作。
 　　
 　推荐配置
@@ -158,3 +160,5 @@ source /etc/bash.bashrc
 　e. 确保存放数据文件的块设备的readahead配置合理。对随机访问模式，设置较低的readahead值。readahead 32(或16kb)通常工作良好。
 　　
 　f. 使用网络时间协议(NTP)保证服务器间的时间同步。这对于分片集群来说尤其重要。
+　
+
