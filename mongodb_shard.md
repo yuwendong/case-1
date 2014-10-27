@@ -146,14 +146,14 @@ source /etc/bash.bashrc
 　　
 　推荐配置
 　
-　　●在包含数据文件的卷关闭atime配置。
+　a. 在包含数据文件的卷关闭atime配置。
 　
-　　●按照UNIX ulimit设置的推荐，设置描述符限制，-n及其他用户进程限制(ulimit)，-u到多于20000。较低的ulimit配置在大压力情况下会影响MongoDB，并且可能产生错误及导致连接到MongoDB失败和服务不可用。
+　b. 按照UNIX ulimit设置的推荐，设置描述符限制，-n及其他用户进程限制(ulimit)，-u到多于20000。较低的ulimit配置在大压力情况下会影响MongoDB，并且可能产生错误及导致连接到MongoDB失败和服务不可用。
 　
-　　●不要使用hugepages虚拟内存页，因为MongoDB在正常虚拟内存页中表现更好。
+　c. 不要使用hugepages虚拟内存页，因为MongoDB在正常虚拟内存页中表现更好。
 　
-　　●在BIOS中禁用NUMA。如果做不到，请参考MongoDB和NUMA硬件章节。
+　d. 在BIOS中禁用NUMA。如果做不到，请参考MongoDB和NUMA硬件章节。
 　
-　　●确保存放数据文件的块设备的readahead配置合理。对随机访问模式，设置较低的readahead值。readahead 32(或16kb)通常工作良好。
+　e. 确保存放数据文件的块设备的readahead配置合理。对随机访问模式，设置较低的readahead值。readahead 32(或16kb)通常工作良好。
 　　
-　　●使用网络时间协议(NTP)保证服务器间的时间同步。这对于分片集群来说尤其重要。
+　f. 使用网络时间协议(NTP)保证服务器间的时间同步。这对于分片集群来说尤其重要。
