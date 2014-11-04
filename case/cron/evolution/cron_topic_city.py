@@ -4,7 +4,7 @@ import json
 import datetime
 from topics import _all_topics
 from time_utils import datetime2ts, ts2HourlyTime
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration #获取一定时间段内的微博
+from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic #获取一定时间段内的微博
 from config import mtype_kv, db
 from model import CityTopicCount
 
@@ -85,10 +85,8 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                 first_item = {}
                 query_dict['message_type'] = v
                 count,weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list)# weibo_results是在指定时间段、topic、message_type的微博匹配集
-                print 'count:',count
                 #for r in weibo_results():
                 #    print r['_id']
-                print 'v', v
                 for weibo_result in weibo_results():
                     if (weibo_result['timestamp'] <= first_timestamp ):
                         first_timestamp = weibo_result['timestamp']
@@ -105,28 +103,29 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                 mtype_ccount[v] = [end_ts, ccount]
                 #print mtype_ccount[v]
                 #print '%s %s saved message_type city_count' % (begin_ts, end_ts)
-                print first_item
                 save_rt_results(topic,v, mtype_ccount, during, first_item)
 
 
 
-def cal_topic_citycount_by_date(topic, datestr, duration):
-    start_ts = datetime2ts(datestr)
-    end_ts = start_ts + Day
-    datestr = datestr.replace('-', '')
-    xapian_search_weibo = getXapianWeiboByDate(datestr)
+def cal_topic_citycount_by_date(topic, datestr_list, duration):
+    start_ts = datetime2ts(datestr_list[0])
+    end_ts = datetime2ts(datestr_list[-1]) + Day
+    datestrlist = []
+    xapian_search_weibo = getXapianWeiboByTopic(topic)
     print 'step2----'
     if xapian_search_weibo:
         cityCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration)
    
 
-def worker(topic, datestr):
-    print 'topic: ', topic.encode('utf8'), 'datestr:', datestr, 'Fifteenminutes: '
-    cal_topic_citycount_by_date(topic, datestr, Fifteenminutes)
+def worker(topic, datestr_list):
+    print 'topic: ', topic.encode('utf8'), 'datestr:', datestr_list, 'Fifteenminutes: '
+    cal_topic_citycount_by_date(topic, datestr_list, Fifteenminutes)
 
 
 if __name__ == '__main__':
     datestr = '2013-09-01'
+    datestr_list = ['2013-09-02', '2013-09-03', '2013-09-04',\
+                    '2013-09-05', '2013-09-06', '2013-09-07']
     # xapian_search_weibo = getXapianWeiboByDate(datestr)
-    topic = u"中国"
-    worker(topic,datestr)
+    topic = u"东盟,博览会"
+    worker(topic,datestr_list)

@@ -34,7 +34,7 @@ else:
     SSDB_PORT = 8888
     SSDB_HOST = '219.224.135.47' # SSDB服务器在47
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
-    XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
+    XAPIAN_USER_DATA_PATH = '/home/ubuntu4/huxiaoqian/mcase/data/user-datapath/'
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 

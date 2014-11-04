@@ -3,6 +3,7 @@
 import math
 import time
 import datetime
+import types
 from case.extensions import db
 from case.model import CityRepost
 
@@ -14,10 +15,42 @@ HOUR = 3600
 SIXHOURS = 6 * HOUR
 DAY = 24 * HOUR
 
-INTERVAL = TENSECONDS
+INTERVAL = DAY
 
 BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 0, 0).timetuple())
 END_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 1, 0).timetuple())
+
+def partition_time(ts_arr, data, interval = INTERVAL):
+    ts_series = []
+    ts_start = ts_arr[0]
+    ts_end = ts_arr[-1]
+    each_step = interval
+    ts_current = ts_start
+    # index = 0
+    data_cursor = -1
+    groups = []
+    while ts_current  < ts_end:
+
+        s_ts = ts_current
+        f_ts = ts_current + each_step
+        ts_series.append([s_ts, f_ts])
+        group = []
+        for d in data[data_cursor + 1:]:
+            ts = d['ts']
+            if ts >= f_ts:
+                break
+            data_cursor += 1
+            group.append(d)
+        if len(group):
+            groups.append(group)
+        ts_current += each_step
+
+    while data_cursor < len(data) - 1: # 有剩余
+        groups[-1].append(data[data_cursor + 1])
+        data_cursor += 1
+
+    print 'groups', len(groups)
+    return ts_series, groups
 
 def partition_count(ts_arr, data, interval = INTERVAL):
     ts_series = []
@@ -64,7 +97,7 @@ def map_circle_data(groups, incremental = True):
                 if incremental == True:
                     j = index
                     while j > 0:
-                        previous_data = draw_circle_data[index-1]
+                        previous_data = draw_circle_data[j-1]
                         if release_latlng in previous_data:
                             repost_num = previous_data[release_latlng][0]
                             origin_num = previous_data[release_latlng][1]
@@ -92,7 +125,8 @@ def map_circle_data(groups, incremental = True):
 
 
 
-def map_line_data(groups):
+def map_line_data(groups, incremental = True):
+    raw_line_data = []
     draw_line_data = []
     max_repost_num = 0
     for index, group in enumerate(groups):
@@ -104,7 +138,26 @@ def map_line_data(groups):
                 key = '%s-%s' % (t_province_latlng, f_province_latlng)
                 if key not in province_repost_count:
                     province_repost_count[key] = {'count': 0, 'rank': 0}
+                    if incremental == True:
+                        j = index
+                        while j > 0:
+                            previous_data = raw_line_data[j-1]
+                            if key in previous_data:
+                                province_repost_count[key] = previous_data[key]
+                                break
+                            else:
+                                j -=1
                 province_repost_count[key]['count'] += 1
+
+        if incremental == True:
+            if index > 0:
+                previous_data = raw_line_data[index-1]
+                for key in previous_data:
+                    try:
+                        province_repost_count[key]
+                    except KeyError:
+                        province_repost_count[key] = previous_data[key]
+                        continue
 
         visited = set()
         new_dict = {}
@@ -131,15 +184,76 @@ def map_line_data(groups):
                 new_dict[key] = {'count': count,'rank': 0}
                 max_repost_num = max(max_repost_num, count)
             visited.add(key)
-        province_repost_count = new_dict
-        draw_line_data.append(province_repost_count)
+        raw_line_data.append(province_repost_count)
+        draw_line_data.append(new_dict)
     for province_repost_count in draw_line_data:
         for key in province_repost_count:
             count = province_repost_count[key]['count']
             province_repost_count[key]['rank'] = repost_level(count, max_repost_num)
+    print 'line', len(draw_line_data)
     return max_repost_num, draw_line_data
 
-def statistics_data(groups):
+def work_total_data(draw_line_data):
+    draw_total_data = []
+    history_data = []
+
+    for index, group in enumerate(draw_line_data):
+        latlng_count_dict= {}
+        for key in group:
+            city = key.split('-')[0]
+            if city not in latlng_count_dict:
+                latlng_count_dict[city] = 0
+            latlng_count_dict[city] += group[key]['count']
+
+        total_data_dict = {}
+        for latlng in latlng_count_dict:
+            cur = latlng_count_dict[latlng]
+            pre = 0
+            j = index
+            while j > 0:
+                pre_data = history_data[index-1]
+                if latlng in pre_data:
+                    pre = pre_data[latlng]
+                    break
+                else:
+                    j -= 1
+
+            status = -1
+            if pre != 0:
+                delta = repr(int((cur - pre)*10000/pre)/100.0) + '%'
+                if ((cur - pre) > 0):
+                    delta= '+' + delta
+                    status = 1
+            else:
+                delta = repr(cur - pre)
+                if ((cur - pre) > 0):
+                    delta= '+' + delta
+                    status = 1
+            total_data_dict[latlng] = [cur, delta, repr(status)]
+
+        history_data.append(latlng_count_dict)
+        total_data_dict = sorted(total_data_dict.iteritems(),key=lambda(k, v): v[0], reverse=True)
+        draw_total_data.append(total_data_dict)
+    return draw_total_data
+
+
+    '''
+    for group in draw_line_data:
+        total_data_dict = {}
+        for key in group:
+            cities = key.split('-')
+            city = cities[0]
+            cur = group[key]['count']
+            try:
+                total_data_dict[city][0] += cur
+            except KeyError:
+                total_data_dict[city] = [cur, 0, repr(-1)]
+        total_data_dict = sorted(total_data_dict.iteritems(),key=lambda(k, v): v[0], reverse=True)
+        draw_total_data.append(total_data_dict)
+    return draw_total_data
+    '''
+
+def statistics_data(groups, draw_line_data):
     statistics_data = []
     origin_series = []
     repost_series = []
@@ -239,11 +353,18 @@ def statistics_data(groups):
         repost_series.append(all_repost)
         origin_series.append(all_origin)
         post_series.append(all_post)
+
+    draw_total_data = work_total_data(draw_line_data)
+    i = 0
+    for sta in statistics_data:
+        sta.append(draw_total_data[i])
+        i += 1
+
     return repost_series, origin_series, post_series, statistics_data
 
 def repost_level(count, max_repost_num):
     step = int(max_repost_num / 3)
-    if not count or count <= 0:
+    if not count or count <= step:
         rank = 1
     elif step < count <= 2 * step:
         rank = 2

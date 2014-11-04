@@ -38,13 +38,13 @@
 启动
 ```
     cd /home/ubuntu3/huxiaoqian/ssdb-master/
-    
+
     # start master
     ./ssdb-server ssdb.conf
 
     # or start as daemon
     ./ssdb-server -d ssdb.conf
-    
+
     # 停止 ssdb-server
     kill `cat ./var/ssdb.pid`
 ```
