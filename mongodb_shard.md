@@ -44,8 +44,10 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ```
 创建replication set:rs0
 ```
-numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
+numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest --auth
 ```
+--rest表示可以通过host:28017在浏览器中管理mongodb实例
+--auth表示连接时的安全性验证
 创建成功会有如下说明：
 ```
 child process started successfully, parent existing
@@ -67,7 +69,7 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ```
 创建replication set：rs1
 ```
-numactl --interleave=all ./mongod --port=27017 --replSet=rs1 --dbpath=/var/lib/mongodb_rs1 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
+numactl --interleave=all ./mongod --port=27017 --replSet=rs1 --dbpath=/var/lib/mongodb_rs1 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles --rest --auth
 ```
 初始化replication set2：rs1
 使用mongo进入一个primary mongod
@@ -82,14 +84,14 @@ rs.status();
 分别在46,47,48上作如下配置：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
-./mongod --configsvr --dbpath /var/lib/mongodb_config_server --port 27018 --logpath /var/log/mongodb/config.log --logappend --fork
+./mongod --configsvr --dbpath /var/lib/mongodb_config --port 27018 --logpath /var/log/mongodb/config.log --logappend --fork
 ```
 
 3.4 mongos
 在46,47,48config server上分别执行：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
-./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log
+./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
 ```
 
 3.5 shard cluster
@@ -111,7 +113,7 @@ mongo --port 27019 --host 219.224.135.46
 ```
 查看数据库分片是否成功：
 ```
-db.status();
+sh.status();
 ```
 查看对应的database对应的partitioned是否为'true'
 3.6 collection
@@ -122,7 +124,7 @@ db.status();
 ```
 查看配置情况：
 ```
-db.stats();
+sh.stats();
 ```
 查看'raw'是否有'rs0','rs1'的相关信息
 
@@ -133,3 +135,31 @@ export LC_ALL='C'
 ```
 2)在添加shard后一定要启动对应数据库的shard，即enablesharding。
 否则在此后的collection中，不能成功给collection分片
+
+3)/var/log/mongodb/config.log
+accept() returns -1 errno:24 Too many open files
+
+solution: vim /etc/bash.bashrc
+ulimit -n 65536
+source /etc/bash.bashrc
+
+mongodb修改最大连接数参考http://blog.163.com/ji_1006/blog/static/1061234120121120114047464/
+
+4)重要：MongoDB要求文件系统对目录支持fsync()。所以例如HGFS和Virtual Box的共享目录不支持这个操作。
+　　
+　推荐配置
+　
+　a. 在包含数据文件的卷关闭atime配置。
+　
+　b. 按照UNIX ulimit设置的推荐，设置描述符限制，-n及其他用户进程限制(ulimit)，-u到多于20000。较低的ulimit配置在大压力情况下会影响MongoDB，并且可能产生错误及导致连接到MongoDB失败和服务不可用。
+　
+　c. 不要使用hugepages虚拟内存页，因为MongoDB在正常虚拟内存页中表现更好。
+　
+　d. 在BIOS中禁用NUMA。如果做不到，请参考MongoDB和NUMA硬件章节。
+　
+　e. 确保存放数据文件的块设备的readahead配置合理。对随机访问模式，设置较低的readahead值。readahead 32(或16kb)通常工作良好。
+　　
+　f. 使用网络时间协议(NTP)保证服务器间的时间同步。这对于分片集群来说尤其重要。
+　
+
+
