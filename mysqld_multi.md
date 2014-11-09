@@ -1,5 +1,7 @@
 1.ssh root@219.224.135.60 
+
 cd /etc/mysql;
+
 vim mysqld_multi.cnf
 ```
 [mysqld_multi]
