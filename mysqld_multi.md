@@ -37,6 +37,8 @@ server-id 	= 110
 bind_address	= 0.0.0.0
 ```
 
-2.
+2.mysqld_multi --defaults-extra-file=/etc/mysql/mysqld_multi.cnf report
+
+
 
 
