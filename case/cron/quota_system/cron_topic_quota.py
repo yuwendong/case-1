@@ -8,19 +8,23 @@ import random
 from config import db, emotions_kv #, REDIS_HOST, REDIS_PORT
 from config import xapian_search_user as user_search
 from time_utils import datetime2ts, ts2HourlyTime, ts2datetime
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration
+from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
 from model import TopicStatus, QuotaAttention, QuotaAttentionExp, QuotaGeoPenetration,\
                   QuotaQuickness, QuotaSentiment, QuotaDurationExp,\
                   QuotaDuration, QuotaSensitivity, QuotaMediaImportance,\
-                  QuotaImportance, ClassSensitivity, WordSensitivity, PlaceSensitivity
+                  QuotaImportance, ClassSensitivity, WordSensitivity, PlaceSensitivity, CoverageExp, PersonSensitivity, QuotaIndex
 # QuotaTotal该表未建，计算未知
 from save_quota import save_attention_quota, save_duration_quota, save_sensitivity_quota, \
                        save_importance_quota, save_sentiment_quota, save_quickness_quota, \
-                       save_geo_penetration, save_media_importance_quota
+                       save_geo_penetration, save_media_importance_quota, save_coverage_quota, save_person_sensitivity_quota
 from quotaexp import save_exp # quotaexp 初始化经验值两张表
 from sensitivity_word_origin import save_sensitivity
 from getkeywords import get_keywords
 from quota_importance_origin import origin_quota_importance
+from compute_fquota import ComputeIndex
+import sys
+sys.path.append('../libsvm-3.17/python/')
+from sta_ad import start as ystart
 
 '''
 考虑到可能会出现一个话题会针对不同时间区间进行分析。这种情况在TopicStatus中设置为不同的topic， 所以此处在每一张表中也有start_ts,end_ts
@@ -60,6 +64,11 @@ def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
 
 r = _default_redis()
 
+def get_nad(rlist):
+    flag = '1234'
+    data = start(rlist, flag)
+    return len(data),data
+
 
 def uid2domain(user): 
     """将用户转化为对应的领域
@@ -93,19 +102,38 @@ def get_province(uid):
     
     return province
 
+def get_nad(rlist):
+    flag = '1234'
+    data = ystart(rlist, flag)
+    return len(data),data
+
+
+
 def quota_attention(topic, xapian_search_weibo, start_ts, end_ts, save_field=fields_list):
+    print 'topic:', topic.encode('utf8')
     if topic and topic != '':
         topics = topic.strip().split(',')
     query_dict = {
         'timestamp': {'$gt':start_ts, '$lt':end_ts},
-        '$or': []
+        '$and': []
         }
-    for topic in topics:
-        query_dict['$or'].append({'text': topic}) # 'text' just be used to test---'topic' 
+    for ctopic in topics:
+        query_dict['$and'].append({'topics': ctopic}) # 'text' just be used to test---'topic' 
+    print 'type(ctopic):', type(ctopic)
     print 'query_dict:', query_dict
     domaincount = {} # domaincount = {domain1:count, domain2,count,......}
 
     counts, weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list) # 返回字段要进行精简
+    print 'counts:', counts
+    results_list = []
+    if counts:
+        for weibo_result in weibo_results():
+            results_list.append([weibo_result['_id'], weibo_result['text'].encode('utf-8')])
+        scount, data_wid = get_nad(results_list)
+    else:
+        data_wid = []
+        scount = 0
+    print 'scount_new:', scount
     domain_ts = {} # domain_ts = {domain1:{ts1:frequence1,ts2:frequence2,......},domain2:{...}}
 
     domain_uid = set() # domain_uid = set(uid1,uid2,...) 存放参与讨论的媒体集合 
@@ -113,42 +141,46 @@ def quota_attention(topic, xapian_search_weibo, start_ts, end_ts, save_field=fie
     for province in province_dict:
         pset[province] = set()
     
-    print 'pset:',pset
+    #print 'pset:',pset
 
     for domain in domain_list:
         domain_ts[domain] = {}
         #domain_uid[domain] = set()
     # 以上，给domain_ts,domain_uid做初始化    
     #print 'weibo_results:', weibo_results
+    domain_all_count = 0
+    domain_all_ts = {}
     for weibo in weibo_results():
-        uiddomain = uid2domain(weibo['user'])
-        ts = weibo['timestamp']
-
-        # uid>>province>>ccount
-        province = get_province(weibo['user'])
+        if str(weibo['_id']) in data_wid:
+            uiddomain = uid2domain(weibo['user'])
+            ts = weibo['timestamp']
+            # uid>>province>>ccount
+            province = get_province(weibo['user'])
         
-        if province:
-            pset[province].add(weibo['user'])
-
-
-
-        
-        if uiddomain:
+            if province:
+                pset[province].add(weibo['user'])
+            if uiddomain:
+                try:
+                    domaincount[uiddomain] += 1
+                except KeyError:
+                    domaincount[uiddomain] = 1
+                try:
+                    domain_ts[uiddomain][ts] += 1
+                except:
+                    domain_ts[uiddomain][ts] = 1
+            domain_all_count += 1
             try:
-                domaincount[uiddomain] += 1
-            except KeyError:
-                domaincount[uiddomain] = 1
-            try:
-                domain_ts[uiddomain][ts] += 1
+                domain_all_ts[ts] += 1
             except:
-                domain_ts[uiddomain][ts] = 1
-            '''
-            domain_uid[uiddomain].add(weibo['user'])
-            '''
-            if uiddomain=='media':
-                domain_uid.add(str(weibo['user'])) # 统计参与讨论的媒体组成的集合set类型
-        else:
-            continue
+                domain_all_ts[ts] = 1
+                '''
+                domain_uid[uiddomain].add(weibo['user'])
+                '''
+                if uiddomain=='media':
+                    domain_uid.add(str(weibo['user'])) # 统计参与讨论的媒体组成的集合set类型
+            else:
+                continue
+    '''
     exp_list = get_attentionexp(topic, start_ts, end_ts) # 获取经验值字典exp_list={domain:exp}
     for domain in domain_list:
         count = domaincount[domain]
@@ -156,20 +188,21 @@ def quota_attention(topic, xapian_search_weibo, start_ts, end_ts, save_field=fie
         attention = float(count) / float(expr)
         if attention > 1:
             attention = 1
-            
-        save_attention_quota(topic, start_ts, end_ts, domain, attention)
-        print 'save attention success'
+    '''        
+        #save_attention_quota(topic, start_ts, end_ts, domain, attention)
+        #print 'save attention success'
         # 考虑如何利用attention部分的检索结果，计算其他指标，减少检索次数，提高速度
-        quota_quickness(topic, start_ts, end_ts, domain_ts, domaincount)
-        print 'save quickness success'
+    
+    quota_quickness(topic, start_ts, end_ts, domain_all_ts, domain_all_count)
+    print 'save quickness success'
         # 将quickness,penetration部分的检索和attention部分的检索结合
         #quota_penetration(topic, start_ts, end_ts, domain_uid)
         #print 'save penetration success'
     quota_media_importance(topic, start_ts, end_ts, domain_uid)
     print 'save media_attention success'
        
-    quota_geo_penetration(topic, start_ts, end_ts, pset) # 地域渗透度的计算
-    print 'save geo_penetration success'
+    #quota_geo_penetration(topic, start_ts, end_ts, pset) # 地域渗透度的计算
+    #print 'save geo_penetration success'
 
 def get_domain_set():
     domain_set = {} # domain_set = {domain1:set(id1,id2,.....), domain2:set(id1,id2,....),......}
@@ -245,7 +278,8 @@ def quota_media_importance(topic, start_ts, end_ts, domain_uid): # 计算重要�
     save_media_importance_quota(topic, start_ts, end_ts, media_importance) # 在save_quota中进行补充
     
 
-def quota_quickness(topic, start_ts, end_ts, domain_ts, domaincount):
+def quota_quickness(topic, start_ts, end_ts, domain_all_ts, domain_all_count):
+    '''
     for domain in domain_list:
         domain_allcount = domaincount[domain] # domain:allcount
         ts_dict = domain_ts[domain]
@@ -255,28 +289,50 @@ def quota_quickness(topic, start_ts, end_ts, domain_ts, domaincount):
         quickness = float(topnum) / float(domain_allcount)
 
         save_quickness_quota(topic, start_ts, end_ts, domain, quickness) 
-
+    '''
+    ts_dict = domain_all_ts
+    sort_ts = sorted(ts_dict.iteritems(), key=lambda a:a[1], reverse=False)
+    windowsize = (end_ts - start_ts) / Day
+    rank = 10 * windowsize
+    results =sort_ts[: rank]
+    topnum = sum([count for ts,count in results])
+    quickness_l = float(topnum) / float(domain_all_count)
+    print 'quickness_l:', quickness_l
+    quickness_exp = 0.0115 # waiting to recorrect
+    quickness_quota = quickness_l / quickness_exp
+    print 'quickness_quota:', quickness_quota
+    if quickness_quota > 1:
+        quickness_quota = 1
+    save_quickness_quota(topic, start_ts, end_ts, 'all', quickness_quota)
+    
 
 def quota_sentiment(topic, xapian_search_weibo, start_ts, end_ts):
     if topic and topic != '':
         topics = topic.strip().split(',')
     query_dict = {
         'timestamp': {'$gt':start_ts, '$lt':end_ts},
-        '$or':[],
+        '$and':[],
         }
-    for topic in topics:
-        query_dict['$or'].append({'text': topic}) # just test ---topics
+    for ctopic in topics:
+        query_dict['$and'].append({'topics': ctopic}) # just test ---topics
     sentiment_count_dict = {}
     allcount = 0
     for k, v in emotions_kv.iteritems(): 
         query_dict['sentiment'] = v
         scount, weibo_results = xapian_search_weibo.search(query=query_dict, fields=fields_list)
-        sentiment_count_dict[v] = scount
-        allcount += scount
+        results_list = []
+        if scount:
+            for weibo_result in weibo_results():
+                results_list.append([weibo_result['_id'], weibo_result['text'].encode('utf-8')])
+            scount_new, data_wid = get_nad(results_list)
+        else:
+            scount_new = 0
+        sentiment_count_dict[v] = scount_new
+        allcount += scount_new
     print 'sentiment_count_dict:', sentiment_count_dict
     emotion_ratio_dict = {}
-    emotion_ratio_dict['negative'] = float(sentiment_count_dict[2]+sentiment_count_dict[3])/float(allcount)
-    emotion_ratio_dict['positive'] = float(sentiment_count_dict[1]) / float(allcount)
+    emotion_ratio_dict['sad'] = float(sentiment_count_dict[3])/float(allcount)
+    emotion_ratio_dict['angry'] = float(sentiment_count_dict[2]) / float(allcount)
 
     save_sentiment_quota(topic, start_ts, end_ts, emotion_ratio_dict) # 需要修改sentiment_quota表结构
 
@@ -347,25 +403,57 @@ def quota_importance(topic, start_ts, end_ts): # 此处仅为给表进行初始�
     
     origin_quota_importance(topic, start_ts, end_ts)
 
+def quota_coverage(topic, xapian_search_topic, start_ts, end_ts):
+    counts, results = xapian_search_topic.search(fields=['user'])
+    user_set = set()
+    for result in results():
+        uid = result['user']
+        user_set.add(uid)
+    L = len(user_set)
+    exp_item = db.session.query(CoverageExp).filter(CoverageExp.topic==topic ,\
+                                               CoverageExp.start_ts==start_ts ,\
+                                               CoverageExp.end_ts==end_ts).first()
+    exp = exp_item.coverage_exp
+    quota_coverage = float(L) / float(exp)
+    if quota_coverage > 1:
+        quota_coverage = 1
+    save_coverage_quota(topic, start_ts, end_ts, quota_coverage)
 
+def quota_person_sensitivity(topic, xapian_search_topic, start_ts, end_ts):
+    person_result = db.session.query(PersonSensitivity).filter(PersonSensitivity.topic==topic ,\
+                                                               PersonSensitivity.start_ts==start_ts ,\
+                                                               PersonSensitivity.end_ts==end_ts).first()
+    if person_result:
+        sensitivity_person_set =set(json.loads(person_result.person))
+    else:
+        sensitivity_person_set = set()
+    counts, results = xapian_search_topic.search(fields=['user'])
+    user_set = set()
+    for result in results():
+        uid = result['user']
+        user_set.add(uid)
+    L = len(user_set & sensitivity_person_set)
+    N = len(user_set)
+    ps = float(L) / float(N)
+    save_person_sensitivity_quota(topic, start_ts, end_ts, ps)
 
 def cal_topic_quotasystem_count_by_date(topic, start, end):
     #确定要查询Weibo的时间段
     start_date = ts2datetime(start)
-    end_date = ts2datetime(end -1) # 若结束时间戳为2014:09:02 00:00:00,实际上还是算在9.1那一天中
+    end_date = ts2datetime(end) # 若结束时间戳为2014:09:02 00:00:00,实际上还是算在9.1那一天中
     print 'start, end:', start_date, end_date
     windowsize = (end - start) / Day
     print 'windowsize:', windowsize
-    if not start_date==end_date:
-        windowsize += 1
     datestr_list = []
-    for i in range(windowsize+1):
+    for i in range(windowsize):
         time = start + i * Day
         time_date = ts2datetime(time)
         datestr_list.append(time_date.replace('-', ''))
     print 'datestr_list:', datestr_list
     xapian_search_weibo = getXapianWeiboByDuration(datestr_list) # 这里是根据时间段进行查询的
+    xapian_search_topic = getXapianWeiboByTopic(topic) # 直接查topic建立的索引
     if xapian_search_weibo:
+        print '******start_compute'
         quota_attention(topic, xapian_search_weibo, start_ts=start, end_ts=end)
         quota_duration(topic, start_ts=start, end_ts=end)
         print 'save duration success'
@@ -375,6 +463,10 @@ def cal_topic_quotasystem_count_by_date(topic, start, end):
         print 'save importance success'
         quota_sentiment(topic, xapian_search_weibo, start_ts=start, end_ts=end)
         print 'save sentiment success'
+        quota_coverage(topic, xapian_search_topic, start_ts=start, end_ts=end) # 覆盖度计算
+        print 'save coverage success'
+        quota_person_sensitivity(topic, xapian_search_topic, start_ts=start, end_ts=end) # 敏感人物参与度
+        print 'save person_sensitivity success'
 # 考虑怎么把使用数据相似性很高的合并在一起，减少检索的次数
 
 def worker(topic, start, end):
@@ -385,15 +477,19 @@ def worker(topic, start, end):
 if __name__=='__main__':
     module = 'quota_sysytem'
     status = -1
-    topic = u'中国'
-    start = 1377965700
-    end = 1378051200
-    #db_date = int(time.time()) # 入库时间
-    #save_item = TopicStatus(module, status, topic, start, end, db_date)
-    #db.session.add(save_item)
-    #db.session.commit()
-    #attention_exp = {'folk':100, 'media':100, 'other':100, 'opinion_leader':100, 'oversea':100} # 此处仅对经验值进行初始化，需要管理员根据具体情况进行修改
-    #duration_exp = 5 * Day
-    #save_exp(topic, start, end, attention_exp, duration_exp) # 给关注度经验值和持续度经验值默认值
-    #save_sensitivity(topic, start, end) # 给类型敏感词表、词汇敏感词表、地点敏感词表进行初始化----三张表中均为每个话题一条记录
+    topic = u'东盟,博览会'
+    start = datetime2ts('2013-09-02')
+    end = datetime2ts('2013-09-05') + Day
+    db_date = int(time.time()) # 入库时间
+    
+    save_item = TopicStatus(module, status, topic, start, end, db_date)
+    db.session.add(save_item)
+    db.session.commit()
+    attention_exp = {'folk':100, 'media':100, 'other':100, 'opinion_leader':100, 'oversea':100} # 此处仅对经验值进行初始化，需要管理员根据具体情况进行修改
+    duration_exp = 5 * Day
+    coverage_exp = 3000
+    save_exp(topic, start, end, attention_exp, duration_exp, coverage_exp) # 给关注度经验值和持续度经验值默认值
+    save_sensitivity(topic, start, end) # 给类型敏感词表、词汇敏感词表、地点敏感词表进行初始化----三张表中均为每个话题一条记录
     worker(topic, start, end)
+    
+    ComputeIndex(topic, start, end)
