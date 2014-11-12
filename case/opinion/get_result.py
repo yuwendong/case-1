@@ -2,7 +2,7 @@
 
 import json
 import case.model
-from case.model import OpinionTestTime, OpinionTestRatio, OpinionTestKeywords, OpinionTestWeibos
+from case.model import OpinionTestTime, OpinionTestRatio, OpinionTestKeywords, OpinionWeibosNew
 from case.extensions import db
 
 def get_opinion_time(topic):
@@ -12,30 +12,26 @@ def get_opinion_time(topic):
     results = []
     for item in items:
         topic_term = json.loads(item.child_topic)
-        child_topic = topic_term.keys()[0]
-        term_list = topic_term[child_topic]
         start_ts = item.start_ts
         end_ts = item.end_ts
-        # 缺少子话题名称--name
-        results.append({child_topic:[start_ts, end_ts, term_list[:2]]})
+        results.append([topic_term,start_ts,end_ts])
     
     return results
 
 def get_opinion_ratio(topic):
-    items = db.session.query(OpinionTestRatio).filter(OpinionTestRatio.topic==topic).all()
+    items = db.session.query(OpinionTestRatio).filter((OpinionTestRatio.id>=11)&(OpinionTestRatio.id<=20)).all()#ratio表有问题，话题存不进去
     if not items:
         return None
-    sort_list = []
-    results = {}
+##    items = db.session.query(OpinionTestRatio).filter(OpinionTestRatio.topic==topic).all()
+##    if not items:
+##        return None
+    results = []
     for item in items:
-        child_topic = item.child_topic
+        child_topic = json.loads(item.child_topic)
         ratio = item.ratio
-        results[child_topic] = ratio
-    for i in range(len(results)):
-        child_topic = str(i)
-        ratio = results[child_topic]
-        sort_list.append({child_topic:ratio})
-    return sort_list
+        results.append([child_topic,ratio])
+
+    return results
 
 def get_opinion_keywords(topic):
     items = db.session.query(OpinionTestKeywords).filter(OpinionTestKeywords.topic==topic).all()
@@ -43,21 +39,28 @@ def get_opinion_keywords(topic):
         return None
     results = []
     for item in items:
-        child_topic = item.child_topic
+        child_topic = json.loads(item.child_topic)
         keywords_weight = json.loads(item.keywords)
-        results.append({child_topic:keywords_weight})
+        results.append([child_topic,keywords_weight])
     
     return results
 
 def get_opinion_weibos(topic):
-    items = db.session.query(OpinionTestWeibos).filter(OpinionTestWeibos.topic==topic).all()
+    items = db.session.query(OpinionWeibosNew).filter(OpinionWeibosNew.topic==topic).all()
     if not items:
         return None
     results = []
     for item in items:
-        child_topic = item.child_topic
-        weibos_weight = json.loads(item.weibos)
-        results.append({child_topic:weibos_weight})
+        child_topic = json.loads(item.child_topic)
+        weight = item.weight
+        mid = item.mid
+        uid = item.uid
+        weibos = item.weibos
+        time = item.time
+        r_count = item.r_count
+        c_count = item.c_count
+        repeat = item.repeat
+        results.append([child_topic,weight,mid,uid,weibos,time,r_count,c_count,repeat])
     return results
 
 

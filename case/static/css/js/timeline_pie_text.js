@@ -18,76 +18,79 @@
     }
 
     var timeline;
-        var data;
+        // var data;
         // Called when the Visualization API is loaded.
-        $(document).ready(function(){   //网页加载时执行下面函数
-        var style = '0';
+    $(document).ready(function(){   //网页加载时执行下面函数
         gettimeline_data();
-        getweibos_data(style);
-   })
-        var result = [];
-        var result1 = [];
-        var result2 = [];
+        console.log('abc');
+
+    })
+    var result = [];
+    var result1 = [];
+    var result2 = [];
+    var result3 = [];
+    var topic = '东盟,博览会';
 
     function gettimeline_data() {
-        var topic = '博鳌';
-        var html ="";
+        var html ="<table>";
         $.ajax({
             url: "/opinion/time/?topic=" + topic,
             type: "GET",
             dataType:"json",
             async: false,
             success: function(data){
-               
+
+               var n = data.length;
+               var si = 100.0/n;
+               var si_str = si + '%';
                for (var i = 0;i < data.length;i++) {
-                    result[i] = data[i][i][0];
-                };
-                for (var i = 0;i < data.length;i++) {
-                    result1[i] = data[i][i][1]; 
-                };
-                for (var i = 0;i < data.length;i++) {
-                    result2[i] = data[i][i][2][0]+'-'+data[i][i][2][1]; 
+                    result[i] = data[i][1];
+                    result1[i] = data[i][2];
+                    result2[i] = data[i][0]; 
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<a value='+ s + ' class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
+                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
                     else{
-                        html += '<a value='+ s + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
-                    
                 };
+                html += '</tr></table>';
                 $("#Tableselect").append(html);
                 bindSentimentTabClick();
 
                drawVisualization(); 
                getkeywords_data();
+               getweibos_data(result2[1]);
                              
             }
 
        
-    });
+        });
 
-}
+    }
 
 
 
     function bindSentimentTabClick(){
         
-        $("#Tablebselect").children("a").unbind();
+        /*$("#Tablebselect").children("a").unbind();
+        console.log('yuan');
+        console.log($("#Tablebselect").children("a"));*/
 
-        $("#Tableselect").children("a").click(function() {
+        $("[name='c_topic']").click(function() {
             
             var select_a = $(this);
-            var unselect_a = $(this).siblings('a');
+            var unselect_a = $("[name='c_topic']");//$(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                style = select_a.attr('value');
+                style = select_a.attr('topic');
               
                 getweibos_data(style);
 
@@ -98,79 +101,22 @@
 
         function drawVisualization() {
             var data = [];
-            var data1 = [];
-            var tem =[];
-            var tem1 =[];
+            var data_start = [];
+            var data_end = [];
             for (var i =0 ; i< result.length; i++){
-                data1[i] = new Date(parseInt(result1[i]) * 1000);
-                data[i] = new Date(parseInt(result[i]) * 1000);
+                data_end[i] = new Date(parseInt(result1[i]) * 1000);
+                data_start[i] = new Date(parseInt(result[i]) * 1000);
+                data[i] = {'start':data_start[i],'end':data_end[i],'content':result2[i]};
               
             }
-            console.log(tem1);
-            console.log(data1);
-
-            data = [
-                {
-                    'start': data[0],
-                    'end': data1[0],
-                    'content': result2[0],
-                },
-                {
-                    'start': data[1],
-                    'end': data1[1],
-                    'content': result2[1]
-                },
-                {
-                    'start': data[2],
-                    'end': data1[2],
-                    'content': result2[2]
-                },
-                {
-                    'start': data[3],
-                    'end': data1[3],
-                    'content': result2[3]
-                },
-                {
-                    'start': data[4],
-                    'end': data1[4],
-                    'content': result2[4]
-                },
-                {
-                    'start': data[5],
-                    'end': data1[5],
-                    'content': result2[5]
-                },
-                {
-                    'start': data[6],
-                    'end': data1[6],
-                    'content': result2[6]
-                },
-                {
-                    'start': data[7],
-                    'end': data1[7],
-                    'content': result2[7]
-                },
-                {
-                    'start': data[8],
-                    'end': data1[8],
-                    'content': result2[8]
-                },
-                {
-                    'start': data[9],
-                    'end': data1[9],
-                    'content': result2[9]
-                },                
-                {
-                    'start': data[10],
-                    'end': data1[10],
-                    'content': result2[10],
-                }
-            ];
+						var height_str = 40*result2.length;
+						height_str += 'px'; 
+            
 
             // specify options
             var options = {
                 'width':  '100%',
-                'height': '300px',
+                'height': height_str,
                 'editable': true,   // enable dragging and editing events
                 'style': 'box'
             };
@@ -186,11 +132,8 @@
             
 
         }
-    var query = "中国";
-    var ts = 1378035900;
-    var START_TS = 1377965700
-    var during = ts-START_TS;
-    var result3 = [];
+
+
 
 
     $(document).ready(function(){   //网页加载时执行下面函数
@@ -199,24 +142,15 @@
 
     function getpie_data() {
         var result = [];
-        var topic = '博鳌';
         $.ajax({
             url: "/opinion/ratio/?topic=" + topic,
             type: "GET",
             dataType:"json",
             async:false,
             success: function(data){
-                result3[0]=data['10']['10'];
-                result3[1]=data['0']['0'];
-                result3[10]=data['1']['1'];
-                result3[3]=data['2']['2'];
-                result3[2]=data['3']['3'];
-                result3[5]=data['4']['4'];
-                result3[4]=data['5']['5'];
-                result3[7]=data['6']['6'];
-                result3[6]=data['7']['7'];
-                result3[9]=data['8']['8'];
-                result3[8]=data['9']['9'];
+            	for (var i =0 ; i< result2.length; i++){
+            		result3[i] = data[result2[i]]
+            	}
 
                 on_update(result);
             }
@@ -274,7 +208,7 @@
         calculable : true,
         series : [
             {
-                name: '子话题比例',
+                name:'访问来源',
                 type:'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
@@ -313,40 +247,68 @@
     //     });
     // }
 
-        function getweibos_data(style){   
-                var topic = '博鳌';
-                var selects = style;
-                //console.log(selects);
-                var dataselect = [];
-                $.ajax({
-                    url: "/opinion/weibos/?&topic=" + topic,
-                    type: "GET",
-                    dataType:"json",
-                    success: function(data){
-                        
-
-                        for (var i = 0 ;i< data[selects][selects].length; i++){
-                             var s = i.toString();
-                             dataselect.push(data[selects][selects][s]['0'])
-
-                        }
-                      
-                        chg_weibos(dataselect);
+    function getweibos_data(data){   
+            var topic_child = data;
+            var dataselect = [];
+            $.ajax({
+                url: "/opinion/weibos/?&topic=" + topic,
+                type: "GET",
+                dataType:"json",
+                success: function(data){
+                    
+                    for (var i = 0 ;i< data[topic_child].length; i++){
+                         dataselect.push(data[topic_child][i]);
                     }
+                console.log(dataselect);
+                chg_weibos(dataselect);
+            }
         });
     }
 
 
             function chg_weibos(data){  
                 $("#vertical-ticker").empty();
+                console.log(data);
                 var html = "";
+                var temporary
+                var data_af = [];
+                var time;
+                // for (var j =0 ; j < data.length; j++){
+                //     rank_count.push(data[j]['reposts_count']);
+                // }
+                // rank_count_af = rank_count.sort(function(a,b){return b-a});
+                
+                // for (var m = 0; m < rank_count_af.length; m++){
+                //     time = 0;
+                //     for (var k = 0; k < data.length; k++){
+                //         if(data[k]['reposts_count'] == rank_count_af[m]){ 
+                //             time++;                           
+                //             if(time == 1){
+                //                 date_af.push(data[k]);
+                //             }
+                                                                                          
+                //         }
+                //     }
+                // }
+               /* for(var m = 0; m< data.length; m++){
+                    for(var n = m+1; n< data.length; n++){
+                        if(data[m]['reposts_count'] < data[n]['reposts_count']){
+                            temporary = data[n];
+                            data[n] = data[m];
+                            data[m] = temporary;
+
+                        }
+                    }
+                }*/
+                
                 html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
                 for(var i = 0; i < data.length; i += 1){
+                    console.log(data);
                 var da = data[i];
                 var uid = da['user'];
-                var name;
+                /*var name;
                 if ('name' in da){
                     name = da['name'];
                     if(name == 'unknown'){
@@ -355,35 +317,28 @@
                 }
                 else{
                     name = '未知';
-                }
+                }*/
                 var mid = da['_id'];
-                var retweeted_mid = da['retweeted_mid'];
-                var retweeted_uid = da['retweeted_uid'];
-                var ip = da['geo'];
-                var loc = ip;
                 var text = da['text'];
                 var reposts_count = da['reposts_count'];
                 var comments_count = da['comments_count'];
-                var timestamp = da['timestamp'];
-                var weibo_link = da['weibo_link'];
+                var timestamp = da['time'];
+                var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
                 var user_link = 'http://weibo.com/u/' + uid;
-                var user_image_link = da['profile_image_url'];
-                if (user_image_link == 'unknown'){
-                    user_image_link = '/static/img/unknown_profile_image.gif';
-                }
+                var user_image_link = '/static/img/unknown_profile_image.gif';
+                
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
                 html += '</a></div>';
                 html += '<div class="weibo_detail">';
-                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uid + '</a>&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
                 html += '<div class="weibo_info">';
                 html += '<div class="weibo_pz">';
                 html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
                 html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
                 html += '<div class="m">';
-                html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
+                html += '<a class="undlin">' + date + '</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
                 html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
                 html += '</div>';
                 html += '</div>';
@@ -399,73 +354,116 @@
 
 
         function getkeywords_data(){   
-                var topic = '博鳌';
                 $.ajax({
                     url: "/opinion/keywords/?&topic=" + topic,
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                            drawtable(data);
+                        console.log(data);                            
+                        drawtable(data);
                     }
                 });
             }
 
         function drawtable(data){
-            
-            var tagout ;
-            var tagin;
+            /*var topic_child = {};
             var html = '';
-            for (var i =0 ;i<data.length; i++){
-                var html = '';
-                var m = i+1;
-                var keyword = [];
-                var s = i.toString();
-                tagout = data[s];
-                 for (var k in tagout){
-                    tagin = k;
-                 } 
-                 if(tagout[tagin].length != 5){
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
-                    }
-                    for (var k = tagout[tagin].length; k < 5; k++){
-                        keyword[k] = " ";
-                    }
-
-                 }  
-                 else{ 
-                    for (var k1 in tagout[tagin]){
-                
-                        keyword.push(tagout[tagin][k1]['0']);
-                        
-                    }
-             
-                } 
-
-                var tindex = Number(tagin);
-                if(tindex == 0){
-                    html += '<tr value='+tagin+' class="tablecurrent">';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
+            for(var key in data){
+                topic_child[key] = [];
+                for (var i = 0 ; i < data[key].length; i++){
+                    topic_child[key].push(data[key][i][0]);
+                }
+            }
+            console.log("123");
+            console.log(topic_child);
+            for(var topic in topic_child){
+                console.log(topic);
+                console.log(result2[0]);
+                if (topic == result2[0]){
+                    html += '<tr topic='+topic+' class="tablecurrent">'; 
                 }
                 else{
-                    html += '<tr value='+tagin+'>';
-                    html += '<td><b>'+m+'</b></td><td><b onclick = \"connect('+tagin+')\" style =\"width:20px\">'+result2[tindex]+'</b></td><td>'+keyword[0]+'</td><td>'+keyword[1]+'</td><td>'+keyword[2]+'</td><td>'+keyword[3]+'</td><td>'+keyword[4]+'</td>';
-                    html += '</tr>';
+                    html += '<tr topic='+topic+'>'; 
+                }
+                html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                
+                if(topic_child[topic].length > 5){
+                    for(var j = 0; j < 5; j++){
+                        html += '<td>'+topic_child[topic][j]+'</td>';
+                    }
+                }
+                
+                else{
+                    for(var m = 0;m < topic_child[topic].length; m++){
+                        html += '<td>'+topic_child[topic][m]+'</td>';
+                    }
                 }
 
-                 $("#alternatecolor").append(html);
             }
-           
-           
+
+            $("#alternatecolor").append(html);
+                 // $("#alternate").append(html1);*/
+            		var topic_child_keywords = {};
+                var html = '';
+                var target_html = '';
+                var m = 0;
+                var number;               
+                for (var key in data){
+                    topic_child_keywords[key] = [];
+                    for (var i = 0; i < data[key].length; i++){
+                        topic_child_keywords[key].push(data[key][i][0]);
+                    }
+                }
+                for (var topic in topic_child_keywords){
+                	
+                    m++;
+                    if( m > 10) {break;}
+                    if (topic == result2[0]){
+                    	html += '<tr topic='+topic+' class="tablecurrent" style="height:25px">'; 
+                		}
+                		else{
+                    	html += '<tr topic='+topic+'>'; 
+                		}                  
+                    html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                    if (topic_child_keywords[topic].length>=5){
+                    	total = 5;
+                    }
+                    else{
+                    	total = topic_child_keywords[topic].length;
+                    }
+                    for (var n = 0 ;n < total; n++){
+                        html += '<td>'+topic_child_keywords[topic][n]+'</td>'
+                    }
+                    html += "</tr>";
+                }
+                
+                $("#alternatecolor").append(html);
+                
+                for (var topic in topic_child_keywords){
+                    target_html += '<tr style="height:25px">';                    
+                    target_html += '<td><b style =\"width:20px\">'+topic+'</b></td>';
+                    if (topic_child_keywords[topic].length>=10){
+                    	total = 10;
+                    }
+                    else{
+                    	total = topic_child_keywords[topic].length;
+                    }
+                    for (var n = 0 ;n < total; n++){
+                        target_html += '<td>'+topic_child_keywords[topic][n]+'</td>'
+                    }
+                    target_html += "</tr>";
+                }
+                
+                $("#alternate").append(target_html);
         }
+       
         function connect(data){
             var value_data = data;
+            console.log(data);
 
             $("#alternatecolor tr").each(function() {
                 var select_all =$(this);
-                if(select_all.attr('value') == value_data){
+                if(select_all.attr('topic') == value_data){
                     if(!select_all.hasClass("tablecurrent")){
                         select_all.addClass("tablecurrent");
                     }
@@ -484,7 +482,7 @@
             var curr_data = data;
              $("#Tableselect a").each(function() {
                 var select_a = $(this);
-                var select_a_sentiment = select_a.attr('value');
+                var select_a_sentiment = select_a.attr('topic');
                 if (select_a_sentiment == curr_data){
                     if(!select_a.hasClass('curr')) {
                         select_a.addClass('curr');
@@ -496,5 +494,6 @@
                     }
                 }
             });
+             console.log("curr"+curr_data);
             getweibos_data(curr_data);
         }

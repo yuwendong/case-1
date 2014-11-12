@@ -169,12 +169,19 @@ def pie():
     begin_ts = ts - during
     end_ts = ts
 
+    emotion = request.args.get('emotion', 'global') # 情绪类型
+
     results = {}
+
     search_method = 'topic'
     area = None
-    search_func = getattr(pieModule, 'search_%s_pie' % search_method, None)
+    search_func = getattr(countsModule, 'search_%s_counts' % search_method, None)
     if search_func:
-        results= search_func(end_ts, during, query=query)
+        if emotion == 'global':
+            for k, v in emotions_kv.iteritems():
+                results[k] = search_func(end_ts, during, v, query=query, domain=area)[1]
+        else:
+            results[emotion] = search_func(end_ts, during, emotions_kv[emotion], query=query, domain=area)[1]
     else:
         return json.dumps('search function undefined')
 
@@ -298,21 +305,20 @@ def getPeaks():
     if not search_func:
         return json.dumps('search function undefined')
 
-    title_text = {'happy': [], 'angry': [], 'sad': []}
-    title = {'happy': 'A', 'angry': 'B', 'sad': 'C'}
+    title_text = {'happy': [], 'angry': [], 'sad': [], 'news': []}
+    title = {'happy': 'A', 'angry': 'B', 'sad': 'C', 'news': 'D'}
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
         print idx, point_idx
         ts = ts_lis[point_idx]
-        begin_ts = ts - during
         end_ts = ts
 
         v = emotions_kv[emotion]
 
         time_lis[idx] = {
             'ts': end_ts * 1000,
-            'title': title[emotion] + str(idx+1),
+            'title': title[emotion] + str(idx),
         }
 
     return json.dumps(time_lis)

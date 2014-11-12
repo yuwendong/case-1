@@ -2,8 +2,25 @@
 {% block module_title %}指数分析{% endblock %}
 
 {% block head_css %}
+
     <style type="text/css">
         /* keywords tag cloud */
+        .node circle {
+          cursor: pointer;
+          fill: #fff;
+          stroke: steelblue;
+          stroke-width: 1.5px;
+        }
+
+        .node text {
+          font-size: 11px;
+        }
+
+        path.link {
+          fill: none;
+          stroke: #ccc;
+          stroke-width: 1.5px;
+        }
         #keywords_cloud_div {
             position: relative;
             width: 100%;
@@ -117,7 +134,7 @@
         }
         .lrRadius .lrRc {
             float: left;
-            width: 150px;
+            width: 180px;
             height: 18px;
             padding-top: 2px;
             background-color: #e2e2e2;
@@ -140,50 +157,92 @@
             font-weight: bold;
         }
 
+        .node circle {
+          cursor: pointer;
+          fill: #fff;
+          stroke: steelblue;
+          stroke-width: 1.5px;
+        }
+
+        .node text {
+          font-size: 11px;
+        }
+
+        path.link {
+          fill: none;
+          stroke: #ccc;
+          stroke-width: 1.5px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1px 12px;
+            font-size : 10px;
+            margin-bottom: 0;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+        }
+
     </style>
 {% endblock head_css %}
 
 {% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/static/css/js/d3.js"></script>
+    <script type="text/javascript" src="/static/css/js/d3.layout.js"></script>
 
 {% endblock head_js %}
 
 {% block content %}
 
-    <div class="blkUnit grpUnit" id="trendProfile"style="height:300px">
+    <div class="blkUnit grpUnit" id="trendProfile">
 
-        <div class="titlBar">
-            <div><h4><b>社会舆情指标体系</b><h4></div>
-            <div><h4 style="margin-left:15px"><b>面向内容</b></h4>
-        <i id="" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="待补充"></i>&nbsp;&nbsp;</div>
-        
+        <div class="titlBar" style="padding-bottom:0px;">
+            <br>
+            <h4>社会舆情指标体系</h4>
+            <i id="trend_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="社会舆情的各类信息"></i>&nbsp;&nbsp;
+            <span id="peak_trend_tooltip"></span>
+            <span class="pull-right" style="margin: -14px -9px -10px auto;" data-animated="false">
+            </span>
         </div>
-        <div class="tabUnit">  
-                <div style="margin-left:85px">
-                重视度：值<input type=text name="txtname" size=12 maxlength=6>权重：<input type=text name="txtname" size=12 maxlength=6 data-toggle="tooltip" data-placement="right" title="(输入范围0-1)"><input type=submit name="提交按钮" value="确定"><p></div>
-                <table class="mstable" id="mstable1" style="margin-top:10px">
-                </table>
-        <h5 style="margin-left:105px;margin-top:10px">敏感度指标<h5>
-            <div id="index" style="width:900px;height:300px"></div>
-        </div>
-
-    </div>
-
-
-
-    <div class="blkUnit grpUnit" id="trendProfile"style="height:320px">
-        <div class="titlBar" style="padding-bottom:15px;">
-            <h4 style="margin-left:15px"><b>面向传播过程</b></h4>
-        <i id="" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="待补充"></i>&nbsp;&nbsp;
-        </div>
-        <div class="tabUnit">
-                <table class="mstable" id="mstable" style="margin-top:15px">
-                </table>
-                <h5 style="margin-left:105px;margin-top:10px">关注度爆发度各领域指标<h5>
-                <div id="main" style="width:900px;height:230px"></div>
+        <div class="tabUnit" style = "padding-top:5px;"> 
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='draw_index()' style="float: left;">舆情指数</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='json_data()'   style="float: left;">指标体系</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='draw_line()' style="float: left;">热度走势</button>
+            </div> 
+         <!--    <table class="mstable" id="mstable1" style="margin-top:10px">
+            </table> -->
+            <div id ='textarea'style="float:right"><textarea cols = 50 rows = 4>舆情指标体系：</textarea></div>
+                <div id = 'index'  align="center">
+                </div>
         </div>
     </div>
+
 {% endblock content %}
 {% block tail_js %}
-   <script src="/static/css/js/index.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            var currentAmount = 25;
+            function showtotal(){
+               var obj = document.getElementById("total");
+               console.log(obj.innerHTML);
+               obj.innerHTML = "总量度"+'['+Math.random().toExponential(2).toString()+"/"+Math.random().toExponential(2).toString()+']';
+
+            }
+            $("#trend_tooltip").tooltip();
+        </script>
+        <script src="/static/css/js/index.js" type="text/javascript"></script>
+
 {% endblock tail_js %}

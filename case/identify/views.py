@@ -19,6 +19,8 @@ from utils import read_ds_topic_rank_results, read_tr_rank_results, read_ds_degr
                   read_ds_betweeness_centrality_rank, read_ds_closeness_centrality_rank
 from first_user import time_top_user, time_domain_top_user
 
+from get_origin import get_origin_user
+
 TOPK = 1000
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -57,7 +59,6 @@ def get_topic_status(topic, start, end, module):
 @mod.route("/graph/")
 def network():
     topic = request.args.get('topic', '')
-  
     start_ts = request.args.get('start_ts', '')
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
@@ -77,13 +78,15 @@ def network():
         try:
             ssdb = SSDB(SSDB_HOST, SSDB_PORT)
             results = ssdb.request('get', [key])
+            print 'results.code:', results.code
             if results.code == 'ok' and results.data:
+                print 'result_code ok'
                 response = make_response(results.data)
                 response.headers['Content-Type'] = 'text/xml'
                 return response
             return None
         except Exception, e:
-            print e
+            print 'error',e
             return None
     elif topic_status == IN_CALC_STATUS or topic_status == IN_CALC_STATUS:
         print 'The Topic is being computed......Just Waiting'
@@ -232,6 +235,30 @@ def _utf8_unicode(s):
         return s
     else:
         return unicode(s, 'utf-8')
+
+@mod.route('/origin/')
+def origin_user():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts','')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts','')
+    end_ts = int(end_ts)
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts ) / Day
+    
+    results = get_origin_user(topic, date, windowsize)
+    rank = 0
+    results_list = []
+    for uid, result, reposts_count in results[:10]:
+        rank += 1
+        results_list.append([rank, result['uid'], result['name'], \
+                           result['location'], result['count1'], result['count2'], \
+                           result['pr'], result['dc'], result['bc'], result['cc']])
+    
+
+    return json.dumps(results_list)
+    
 
 @mod.route("/quota/")
 def network_quota():

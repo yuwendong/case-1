@@ -74,9 +74,10 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.trend_chart;
 
     this.names = {
-        'happy': '高兴',
+        'happy': '积极',
         'angry': '愤怒',
-        'sad': '悲伤'
+        'sad': '悲伤',
+        'news': '新闻'
     }
 
     this.trend_count_obj = {
@@ -127,7 +128,7 @@ TrendsLine.prototype.initPullDrawPie = function(){
 function refreshDrawPie(pie_data, pie_title, pie_series_title, legend_data, pie_div_id) {
     var option = {
         backgroundColor: '#FFF',
-        color: ['#11c897', '#fa7256', '#6e87d7'],
+        color: ['#11c897', '#fa7256', '#6e87d7', '#b172c5'],
         title : {
             text: '', // pie_title,
             x: 'center',
@@ -246,6 +247,10 @@ function refreshDrawKeywords(min_keywords_size, max_keywords_size, keywords_data
     else{
         var min_count, max_count = 0, words_count_obj = {};
         for (var keyword in keywords_data){
+            // 垃圾过滤
+            if(keyword in rubbish_words){
+                continue;
+            }
             var count = keywords_data[keyword];
             if(count > max_count){
                 max_count = count;
@@ -263,7 +268,8 @@ function refreshDrawKeywords(min_keywords_size, max_keywords_size, keywords_data
             'global': '#666',
             'happy': '#11c897',
             'angry': '#fa7256',
-            'sad': '#6e87d7'
+            'sad': '#6e87d7',
+            'news': '#b172c5'
         }
         var color = colors[emotion];
 
@@ -413,7 +419,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
     var xAxisTitleText = '时间';
     var yAxisTitleText = '数量';
     var series_data = [{
-            name: '高兴',
+            name: '积极',
             data: [],
             id: 'happy',
             color: '#11c897',
@@ -437,7 +443,15 @@ TrendsLine.prototype.pullDrawTrend = function(){
                 enabled : false,
             }
         },{
-            name: '拐点-高兴',
+            name: '新闻',
+            data: [],
+            id: 'news',
+            color: '#b172c5',
+            marker : {
+                enabled : false,
+            }
+        },{
+            name: '拐点-积极',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -470,7 +484,18 @@ TrendsLine.prototype.pullDrawTrend = function(){
             visible: false, // 默认显示绝对
             showInLegend: false
         },{
-            name: '拐点-高兴',
+            name: '拐点-新闻',
+            type : 'flags',
+            data : [],
+            cursor: 'pointer',
+            onSeries : 'news',
+            shape : 'circlepin',
+            width : 2,
+            color: '#b172c5',
+            visible: false, // 默认显示绝对
+            showInLegend: false
+        },{
+            name: '拐点-积极',
             type : 'flags',
             data : [],
             cursor: 'pointer',
@@ -502,6 +527,17 @@ TrendsLine.prototype.pullDrawTrend = function(){
             color: '#6e87d7',
             visible:true, // 默认显示绝对
             showInLegend: true
+        },{
+            name: '拐点-新闻',
+            type : 'flags',
+            data : [],
+            cursor: 'pointer',
+            onSeries : 'news',
+            shape : 'circlepin',
+            width : 2,
+            color: '#b172c5',
+            visible: true, // 默认显示绝对
+            showInLegend: true
         }]
 
     var that = this;
@@ -517,7 +553,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             });
             for (var i in chart.series){
                 var series = chart.series[i];
-                if(i == 0 || i == 1 || i == 2){
+                if(i == 0 || i == 1 || i == 2 || i == 3){
                     var name;
                     if (i == 0){
                         name = 'happy';
@@ -528,17 +564,20 @@ TrendsLine.prototype.pullDrawTrend = function(){
                     else if(i == 2){
                         name = 'sad';
                     }
+                    else if(i == 3){
+                        name = 'news';
+                    }
                     series.update({
                         data: that.trend_count_obj['ratio'][name]
                     });
                 }
-                else if (i == 3 || i == 4 || i == 5){
+                else if (i == 4 || i == 5 || i == 6 || i == 7){
                     series.update({
                         showInLegend: true
                     });
                     series.show();
                 }
-                else if (i == 6 || i == 7 || i == 8){
+                else if (i == 8 || i == 9 || i == 10 || i == 11){
                     series.update({
                         showInLegend: false
                     })
@@ -552,7 +591,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
             });
             for (var i in chart.series){
                 var series = chart.series[i];
-                if(i == 0 || i == 1 || i == 2){
+                if(i == 0 || i == 1 || i == 2 || i == 3){
                     var name;
                     if (i == 0){
                         name = 'happy';
@@ -563,17 +602,20 @@ TrendsLine.prototype.pullDrawTrend = function(){
                     else if(i == 2){
                         name = 'sad';
                     }
+                    else if(i == 3){
+                        name = 'news';
+                    }
                     series.update({
                         data: that.trend_count_obj['count'][name]
                     });
                 }
-                else if (i == 3 || i == 4 || i == 5){
+                else if (i == 4 || i == 5 || i == 6 || i == 7){
                     series.update({
                         showInLegend: false
                     });
                     series.hide();
                 }
-                else if (i == 6 || i == 7 || i == 8){
+                else if (i == 8 || i == 9 || i == 10 || i == 11){
                     series.update({
                         showInLegend: true
                     })
@@ -664,8 +706,8 @@ function display_trend(that, trend_div_id, query, during, begin_ts, end_ts, tren
                     var idx = 0;
                     for(var name in names){
                         count_series[name] = this.series[idx];
-                        relative_peak_series[name] = this.series[idx+3];
-                        absolute_peak_series[name] = this.series[idx+6];
+                        relative_peak_series[name] = this.series[idx+4];
+                        absolute_peak_series[name] = this.series[idx+8];
                         idx += 1;
                     }
                     pull_emotion_count(that, query, 'global', total_nodes, times_init, begin_ts, during, count_series, relative_peak_series, absolute_peak_series);

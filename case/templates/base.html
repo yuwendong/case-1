@@ -43,7 +43,7 @@
         .open a, a, a:hover {
             text-decoration: None;
         }
-        a:hover {
+        i.iOK, a.compOK:hover {
             color: #FFF;
         }
 
@@ -260,6 +260,12 @@
             _overflow: visible;
             padding: 20px 26px 20px 15px;
         }
+        a:hover{
+            color: #428bca;
+        }
+        i {
+            color:#2894FF
+        }
     </style>
     {% block head_css %}
     {% endblock head_css %}
@@ -307,6 +313,7 @@
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a class="source" href="#">配置</a></li>
                         <li><a class="source" href="#">关于</a></li>
                         <li><a class="source" href="#">帮助</a></li>
                     </ul>
@@ -406,7 +413,7 @@
                     <input id="yaosu_input" name="all_dur" type="hidden" value="{{ yaosu }}">
                 </div>
 
-                <span id="submit_request"><a class="compOK" ><i class="glyphicon glyphicon-ok icons"></i>搜索</a></span>
+                <span id="submit_request"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>搜索</a></span>
             </div>
         </div>
 

@@ -6,7 +6,7 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', 'PropagateKeywords', \
         'PropagateWeibos', 'AttentionCount', 'QuicknessCount', \
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
-          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic']
+          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew']
 
 
 class Topics(db.Model):
@@ -312,7 +312,7 @@ class DsTopicIdentification(db.Model):
     identifyMethod = db.Column(db.String(20), default='pagerank')
     pr = db.Column(db.String(20), default='pagerank')
 
-    def __init__(self, topic, userId, identifyDate, identifyWindow, identifyMethod, pr):
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod, pr):
         self.topic = topic
         self.rank = rank
         self.userId = userId
@@ -320,6 +320,7 @@ class DsTopicIdentification(db.Model):
         self.identifyWindow = identifyWindow
         self.identifyMethod = identifyMethod
         self.pr = pr
+
 
 class TsRank(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -337,6 +338,25 @@ class TsRank(db.Model):
         self.date = date
         self.windowsize = windowsize
         self.tr = tr
+
+
+class DegreeCentralityUser(db.Model): 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    dc = db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank, userid, dc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.dc = dc
+        
 
 class DegreeCentralityUser(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -404,7 +424,8 @@ class DsBetweenessCentralityUser(db.Model):
         self.windowsize = windowsize
         self.rank = rank
         self.userid = userid
-        self.bc =bc
+        self.bc = bc
+
 
 class ClosenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -558,7 +579,7 @@ class OpinionTestRatio(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     #ts = db.clumns(db.BigInteger(10),unsigned=True)
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     ratio = db.Column(db.Float)
 
     def __init__(self, topic, child_topic, ratio):
@@ -569,7 +590,7 @@ class OpinionTestRatio(db.Model):
 class OpinionTestKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
-    child_topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
     keywords = db.Column(db.Text)
 
     def __init__(self, topic, child_topic, keywords):
@@ -587,6 +608,31 @@ class OpinionTestWeibos(db.Model):
         self.topic = topic
         self.child_topic = child_topic
         self.weibos = weibos
+
+class OpinionWeibosNew(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    child_topic = db.Column(db.Text)
+    weight = db.Column(db.Float)
+    mid = db.Column(db.String(20))
+    uid = db.Column(db.String(20))
+    weibos = db.Column(db.Text)
+    time = db.Column(db.String(20))    
+    r_count = db.Column(db.Integer)
+    c_count = db.Column(db.Integer)
+    repeat = db.Column(db.Integer)
+
+    def __init__(self, topic, child_topic, weight, mid, uid, weibos, time, r_count, c_count, repeat):
+        self.topic = topic
+        self.child_topic = child_topic
+        self.weight = weight
+        self.mid = mid
+        self.uid = uid
+        self.weibos = weibos
+        self.time = time        
+        self.r_count = r_count
+        self.c_count = c_count
+        self.repeat = repeat
 
 # Quota_system Module
 class QuotaAttention(db.Model):

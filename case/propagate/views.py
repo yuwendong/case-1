@@ -5,7 +5,7 @@ import json
 from peak_detection import detect_peaks
 from read_quota import ReadPropagate, ReadIncrement, ReadPropagateKeywords, ReadPropagateWeibos  # ,ReadAttention, ReadPenetration, ReadQuickness 
 
-mtype_kv = {'origin':1, 'forward':2, 'comment':3}
+mtype_kv = {'origin': 1, 'forward': 2, 'comment': 3}
 
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
@@ -19,9 +19,29 @@ def ajax_propagate():
     during = int(during)
     end = request.args.get('end_ts', '')
     end = int(end)
-    results = ReadPropagate(topic, end, during, mtype)
 
-    return json.dumps(results)
+    results_dict = {}
+    incre_results_dict = {}
+    if mtype == 5:
+        count = 0
+        for k, v in mtype_kv.iteritems():
+            results = ReadPropagate(topic, end, during, v)
+            # incr_results = ReadIncrement(topic, end, during, v)
+            if results:
+                results_dict[k] = sum(results['dcount'].values())
+                count +=  results_dict[k]
+        results_dict['total'] = count
+
+    if mtype == 4:
+        for k, v in mtype_kv.iteritems():
+            results = ReadPropagate(topic, end, during, v)
+            # incr_results = ReadIncrement(topic, end, during, v)
+            if results:
+                results_dict[k] = sum(results['dcount'].values())
+            # if incr_results:
+            #    incre_results_dict[k] = incr_results['dincrement']['total']
+
+    return json.dumps({'count': results_dict, 'incre': incre_results_dict})
 
 @mod.route('/increment/')
 def increment():
@@ -46,10 +66,20 @@ def prpagate_keywords():
     end_ts = int(end_ts)
     limit = request.args.get('limit', 50)
     limit = int(limit)
-    results = ReadPropagateKeywords(topic, end_ts, during, mtype, limit)
-    
 
-    return json.dumps(results)
+    results_dict = {}
+    if mtype == 4 or mtype == 5:
+        for k, v in mtype_kv.iteritems():
+            results = ReadPropagateKeywords(topic, end_ts, during, v, limit)
+            for keyword, count in results.iteritems():
+                try:
+                    results_dict[keyword] += count
+                except KeyError:
+                    results_dict[keyword] = count
+    else:
+        results_dict = ReadPropagateKeywords(topic, end_ts, during, mtype, limit)
+
+    return json.dumps(results_dict)
 
 @mod.route('/weibos/') 
 def propagate_weibos():
@@ -62,9 +92,21 @@ def propagate_weibos():
     end_ts = int(end_ts)
     limit = request.args.get('limit', 50)
     limit = int(limit)
-    results = {}
-    results[mtype] = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
-    return json.dumps(results)
+
+    results_dict = {}
+
+    if mtype == 4 or mtype == 5:
+        weibos = []
+        for k, v in mtype_kv.iteritems():
+            results_dict[k] = ReadPropagateWeibos(topic, end_ts, during, v, limit)
+            weibos.extend(results_dict[k])
+        sorted_weibos = sorted(weibos, key=lambda k:k['reposts_count'], reverse=False)
+        sorted_weibos = sorted_weibos[len(sorted_weibos)-10:]
+        sorted_weibos.reverse()
+        results_dict['total'] = sorted_weibos
+    else:
+        results_dict[mtype] = ReadPropagateWeibos(topic, end_ts, during, mtype, limit)
+    return json.dumps(results_dict)
 
 @mod.route('/propagatepeak/')
 def PropagatePeak():
@@ -90,21 +132,20 @@ def PropagatePeak():
 
     new_zeros = detect_peaks(lis)
 
-    title_text = {'origin': [], 'forward': [], 'comment': []}
-    title = {'1': 'A', '2': 'B', '3': 'C'}
+    title_text = {'origin': [], 'forward': [], 'comment': [], 'total': []}
+    title = {'1': 'A', '2': 'B', '3': 'C', '5': 'D'}
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
         print idx, point_idx
         ts = ts_lis[point_idx]
-        begin_ts = ts - during
         end_ts = ts
 
-        v = mtype_kv[mtype]
+        v = mtype
 
         time_lis[idx] = {
             'ts': end_ts * 1000,
-            'title': title[str(mtype)] + str(idx+1),
+            'title': title[str(mtype)] + str(idx),
          }
 
     return json.dumps(time_lis)

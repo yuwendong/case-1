@@ -9,20 +9,41 @@ from case.extensions import db
 from case.moodlens import pie as pieModule
 from case.identify import utils as identifyModule
 import search as searchModule
-from time_utils import ts2datetime
+from time_utils import ts2datetime, ts2date
+from xapian_case.xapian_backend import XapianSearch
+from dynamic_xapian_weibo import getXapianWeiboByTopic
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
 
 mod = Blueprint('case', __name__, url_prefix='/index')
 
-#tag = ['九一八','钓鱼岛','历史',]
+topic = u'东盟,博览会'
+xapian_search_weibo = getXapianWeiboByTopic(topic)
+
+def acquire_user_by_id(uid):
+    XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
+    user_search = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
+    result = user_search.search_by_id(int(uid), fields=['name', 'location', 'followers_count', 'friends_count', 'profile_image_url'])
+    user = {}
+
+    if result:
+        user['name'] = result['name']
+        user['location'] = result['location']
+        user['followers_count'] = result['followers_count']
+        user['friends_count'] = result['friends_count']
+        user['profile_image_url'] = result['profile_image_url']
+    else:
+        return None
+    
+    return user
+
 comment = ['历史是不能改变的',]
 
 def get_default_timerange():
-    return u'20130901-20130901'
+    return u'20130902-20130907'
 
 def get_default_topic():
-    return u'中国'
+    return u'东盟,博览会'
 
 def get_default_pointInterval():
     return {'zh': u'1小时', 'en': 3600}
@@ -35,8 +56,8 @@ def get_gaishu_yaosus():
 
 def get_deep_yaosus():
     return {'yaosu': (('time', u'时间分析'), ('area', u'地域分析'), \
-                      ('moodlens', u'情绪分析'), ('network', u'网络分析'), \
-                      ('semantic', u'语义分析'))}
+                      ('moodlens', u'情绪分析'), ('network', u'网络分析'), \
+                      ('semantic', u'语义分析'))}
 
 default_timerange = get_default_timerange()
 default_topic = get_default_topic()
@@ -68,6 +89,64 @@ def eva():
     """案例评价页面
     """
     return render_template('index/eva.html')
+
+@mod.route('/user_weibo/')
+def user_weibo():
+    """微博列表页面
+    """
+    # 要素
+    yaosu = 'moodlens'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    weibos = []
+    tar_location = u'地域未知'
+    tar_nickname = u'昵称未知'
+    tar_profile_image_url = '#'
+    tar_followers_count = u'粉丝数未知'
+    tar_friends_count = u'关注数未知'
+    tar_user_url = '#'
+    uid = request.args.get('uid', None)
+
+    if uid:   
+        count, results = xapian_search_weibo.search(query={'user': int(uid)}, sort_by=['timestamp'], \
+            fields=['id', 'user', 'text', 'reposts_count', 'comments_count', 'geo', 'timestamp'])
+        
+        for r in results():
+            r['weibo_url'] = 'http://weibo.com/'
+            r['user_url'] = 'http://weibo.com/u/' + str(uid)
+            r['created_at'] = ts2date(r['timestamp'])
+            weibos.append(r)
+
+        user_info = acquire_user_by_id(uid)
+        if user_info:
+            tar_name = user_info['name']
+            tar_location = user_info['location']
+            tar_profile_image_url = user_info['profile_image_url']
+            tar_friends_count = user_info['friends_count']
+            tar_followers_count = user_info['followers_count']
+            tar_user_url = 'http://weibo.com/u/' + str(uid)
+
+    return render_template('index/weibolist.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus, tar_location=tar_location, \
+            tar_profile_image_url=tar_profile_image_url, \
+            statuses=weibos, tar_name=tar_name, tar_friends_count=tar_friends_count, \
+            tar_followers_count=tar_followers_count, tar_user_url=tar_user_url)
 
 @mod.route('/moodlens/')
 def moodlens():
@@ -169,6 +248,30 @@ def testarea():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
+@mod.route('/newarea/')
+def newarea():
+    # 要素
+    yaosu = 'area'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/newarea.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 @mod.route('/time/')
 def shijian():
         # 要素

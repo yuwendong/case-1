@@ -12,8 +12,6 @@
     <link type="text/css" rel="stylesheet" href="/static/css/css/table.css">
     <link rel="stylesheet" href="/static/css/css/tab.css" type="text/css" media="all">
 
-
-
         <style type="text/css">
         /* keywords tag cloud */
         #keywords_cloud_div {
@@ -233,7 +231,7 @@
             border-width: 1px;
             padding: 0px;
             height: 22px;
-            border-style: solid;
+ 
             border-color: #a9c6c9;
         }
         table.altrowstable th {
@@ -250,13 +248,12 @@
 {% endblock head_css %}
 
 {% block head_js %}
-    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
     <script src="/static/css/js/timeline.js"></script>
     <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
 {% endblock head_js %}
 
 {% block content %}
-    <div class="blkUnit grpUnit" id="trendProfile">
+    <div class="blkUnit grpUnit" id="trendProfile" style="width:1100px;">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>时间轴</b></h4>
             <i id="timeline_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="时间轴：可视化信息中子话题起止时间"></i>&nbsp;&nbsp;
@@ -272,7 +269,7 @@
         </div>
     </div>
 
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+    <div class="blkUnit grpUnit" style="float:left;width:1100px;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>子话题占比分析|关键词列表</b></h4>
              <i id="table_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="各类信息占比分析:子话题信息占比；各类子话题的关键词对"></i>&nbsp;&nbsp;
@@ -282,19 +279,55 @@
             </div>
             <div class="tabConts">
                 <div style="width:1033px;">
-                    <div id="main" style="clear:left;width:50%;float:left;height:280px;position:relative;">
+                    <div id="main" style="clear:left;width:50%;float:left;height:400px;position:relative;">
                     </div>
-                 <div id="list" style="width:50%;height:250px;float:right;margin-top:0px;"> 
+                 <div id="list" style="width:50%;height:400px;float:right;margin-top:20px;"> 
                 
-                    <table class="altrowstable" id="alternatecolor" style = "margin-left :15px;height : 250px;width:500px;">
-                        <td><b>标号</b></td><td><b>子话题</b></td><td>关键词对1</td><td>关键词对2</td><td>关键词对3</td><td>关键词对4</td><td>关键词对5</td>
-                    </table> 
+                    <table  rules=rows frame= hsides class="altrowstable" id="alternatecolor" style = "margin-left :15px;height : 250px;width:500px;">
+                        <tr style="height:30px"><td><b>序号</b></td><td><b>子话题</b></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+
+                    </table>
+
+
+
+                 <button style="margin-top:6px;margin-left:10px"data-toggle="modal" 
+                                           data-target="#myModal">显示更多关键词对</button> 
+                <!-- 模态框（Mod<al） -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+                   aria-labelledby="myModalLabel" aria-hidden="true">
+                   <div class="modal-dialog">
+                      <div class="modal-content">
+                         <div class="modal-header">
+                            <button type="button" class="close" 
+                               data-dismiss="modal" aria-hidden="true">
+                                  &times;
+                            </button>
+                            <h4>
+                               子话题关键词对
+                            </h4>
+                         </div>
+                         <div class="modal-body" >
+
+                                    <table  rules=rows frame= hsides class="altrowstable" id="alternate" style = "margin-left :15px;height : 250px;width:500px;">
+                                        <tr style="height:30px"><td><b>子话题</b></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+
+                                    </table>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" 
+                               data-dismiss="modal">关闭
+                            </button>
+                         </div>
+                      </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+                </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+    <div class="blkUnit grpUnit" style="float:left;width:1100px;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>重要微博</b></h4>
             <i id="weibo_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="重要微博:各类子话题的重要微博"></i>&nbsp;&nbsp;
@@ -305,9 +338,10 @@
                 </div>
             </div>
             <div class="tabConts">
-                <div id="weibos_div" style="height:410px;float:left;">
+
+                <div id="weibos_div" style="height:1000px;float:left;">
                     <div class="tabCon">
-                        <div class="cur" id="vertical-ticker" style="height:400px; width:950px;"></div>
+                        <div class="cur" id="vertical-ticker" style="width:950px;"></div>
                     </div>
                 </div>
             </div>
@@ -319,11 +353,13 @@
 {% block tail_js %}
     <script src="/static/css/js/tab.js" type="text/javascript"></script>
     <script src="/static/css/js/timeline_pie_text.js" type="text/javascript"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function(){
             $("#timeline_tooltip").tooltip();
             $("#table_pie_tooltip").tooltip();
-            $("#weibo_tooltip").tooltip();
+            $("#weibo_tooltip").tooltip();           
             //$(".timetab").tooltip({trigger : "click",}); 
         })
     </script>
