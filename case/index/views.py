@@ -248,6 +248,30 @@ def testarea():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
+@mod.route('/newarea/')
+def newarea():
+    # 要素
+    yaosu = 'area'
+
+    # 话题关键词
+    topic = request.args.get('query', default_topic)
+
+    # 时间范围: 20130901-20130901
+    time_range = request.args.get('time_range', default_timerange)
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/newarea.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 @mod.route('/time/')
 def shijian():
         # 要素

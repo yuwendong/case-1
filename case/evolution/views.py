@@ -12,7 +12,7 @@ from case.model import CityRepost
 # 根据count不同，给不同的城市不同的颜色
 from city_color import province_color_map
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
-from city_map import partition_count, map_circle_data, map_line_data, statistics_data
+from city_map import partition_time, partition_count, map_circle_data, map_line_data, statistics_data
 
 from dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
 from xapian_case.xapian_backend import XapianSearch
@@ -47,7 +47,7 @@ province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东
                  u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门', u'海外', u'其他']
 
 def acquire_user_by_id(uid):
-    XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
+    XAPIAN_USER_DATA_PATH = '/home/ubuntu4/huxiaoqian/mcase/data/user-datapath/'
     user_search = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
     result = user_search.search_by_id(int(uid), fields=['name', 'location', 'followers_count', 'friends_count'])
     user = {}
@@ -243,7 +243,7 @@ def ajax_spatial():
 
 @mod.route('/city_map_view/')
 def city_map_view():
-    topic = u'中国'
+    topic = u'东盟,博览会'
     ts_arr = []
     results = []
     items = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
@@ -260,13 +260,13 @@ def city_map_view():
             ts_arr.append(r['ts'])
             ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
-        ts_series, groups = partition_count(ts_arr, results)
+        ts_series, groups = partition_time(ts_arr, results)
         draw_circle_data = map_circle_data(groups)
-        max_repost_num, draw_line_data = map_line_data(groups)
-        repost_series, origin_series, post_series, statistic_data = statistics_data(groups)
-        print 'end'
+        max_repost_num, draw_line_data = map_line_data(groups, True)
+        repost_series, origin_series, post_series, statistic_data = statistics_data(groups, draw_line_data)
         return json.dumps({'ts_arr':ts_arr, 'results':results, 'ts_series':ts_series, 'groups': groups, \
                 'draw_circle_data':draw_circle_data, 'draw_line_data': draw_line_data, 'max_repost_num': max_repost_num, \
-                'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistic_data':statistic_data})
+                'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
     else:
         print 'no results'
+

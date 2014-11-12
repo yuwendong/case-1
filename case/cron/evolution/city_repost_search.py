@@ -7,7 +7,7 @@ import datetime
 import IP
 from config import db
 from model import CityRepost
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration
+from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
 
 RESP_ITER_KEYS = ['_id', 'retweeted_mid', 'timestamp', 'geo', 'message_type']
 SORT_FIELD = '-timestamp'
@@ -21,22 +21,25 @@ SIXHOURS = 6 * HOUR
 DAY = 24 * HOUR
 
 
-s = getXapianWeiboByDate('20130901')
-l = getXapianWeiboByDate('20130901')
+s = getXapianWeiboByTopic(u'东盟,博览会')
+l = getXapianWeiboByTopic(u'东盟,博览会')
 
 BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 0, 0).timetuple())
 END_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 1, 0).timetuple())
 
 
-def repost_search(topic, begin_ts, end_ts):
+def repost_search(topic):
     repost_list = []
     ts_arr = []
     if topic and topic != '':
-        topic = topic.strip()
+        topics = topic.strip().split(',')
+
         query_dict = {
-                'timestamp':{'$gt':begin_ts, '$lt':end_ts},
-                'topics':topic
+                # 'timestamp':{'$gt':BEGIN_TS, '$lt':END_TS},
+                '$or': [],
                 }
+        for topic_a in topics:
+            query_dict['$or'].append({'topics': topic_a})
 
         count,results = s.search(query = query_dict, sort_by = [SORT_FIELD], fields = RESP_ITER_KEYS)
         print 'count',count
@@ -46,16 +49,16 @@ def repost_search(topic, begin_ts, end_ts):
                 repost_list.append(location_dict)
                 ts_arr.append(r['timestamp'])
         print len(repost_list)
-        save_rt_results(repost_list)
+        save_rt_results(topic, repost_list)
     return sorted(list(set(ts_arr))), repost_list
 
 
-def save_rt_results(repost_list):
+def save_rt_results(topic, repost_list):
 
     for location in repost_list:
-        item = CityRepost(location['original'], location['topic'], location['mid'], location['ts'],\
+        item = CityRepost(location['original'], topic, location['mid'], location['ts'],\
                         location['origin_location'], location['repost_location'])
-        item_exist = db.session.query(CityRepost).filter(CityRepost.topic == location['topic'], CityRepost.mid == location['mid']).first()
+        item_exist = db.session.query(CityRepost).filter(CityRepost.topic == topic, CityRepost.mid == location['mid']).first()
 
         if item_exist:
             db.session.delete(item_exist)
@@ -105,7 +108,7 @@ def results_gen(r, topic):
     # {original:xx, mid:xx, topic:xx, ts:xx, origin_location:xx, repost_location:xx}
     location_dict = {}
     message_type = r['message_type']
-    if message_type != 1: # 转发或评论
+    if message_type == 3: # 转发
         # print 'retweeted_mid', r['retweeted_mid']
         repost_location = geo2city(r['geo'])
         if r['retweeted_mid']: # 过滤retweed_mid不完整的item
@@ -135,5 +138,5 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    topic = u'中国'
-    repost_search(topic, BEGIN_TS, END_TS)
+    topic = u'东盟,博览会'
+    repost_search(topic)
