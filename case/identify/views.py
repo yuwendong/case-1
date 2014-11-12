@@ -8,7 +8,8 @@ sys.setdefaultencoding('utf-8')
 
 from datetime import datetime
 from SSDB import SSDB 
-from case.global_config import SSDB_PORT, SSDB_HOST, db
+from case.global_config import SSDB_PORT, SSDB_HOST
+from case.extensions import db
 from case.model import TopicStatus
 from time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
@@ -68,7 +69,7 @@ def network():
     end = ts2datetime(end_ts)
     network_type = request.args.get('network_type', '')
     module = 'identify'
-    print 'topic, end_ts, windowsize:', topic.encode('utf-8'), end, windowsize  
+    print 'topic, end_ts, windowsize, network_type:', topic.encode('utf-8'), end, windowsize,network_type  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
     print 'graph_status:', topic_status
     if topic_status == COMPLETED_STATUS:  
@@ -263,6 +264,7 @@ def origin_user():
 @mod.route("/quota/")
 def network_quota():
     quota = request.args.get('quota','')
+    print 'quota:', quota
     topic = request.args.get('topic','')
     start_ts = request.args.get('start_ts','')
     start_ts = int(start_ts)
@@ -271,11 +273,15 @@ def network_quota():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts ) / Day
     network_type = request.args.get('network_type', '')
-    key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota+network_type
+    print 'network_type:', network_type
+    key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota+'_'+network_type
+    print 'key:', key
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)
         value = ssdb.request('get',[key])
+        print 'value.code:', value.code
         if value.code == 'ok' and value.data:
+            print 'ok'
             response = make_response(value.data)
             return response
         return None
@@ -300,7 +306,7 @@ def network_first_user():
 @mod.route('/domain_first_user/')
 def network_domain_first_user():
     topic = request.args.get('topic', '')
-    start_ts = request.arge.get('start_ts', '')
+    start_ts = request.args.get('start_ts', '')
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)

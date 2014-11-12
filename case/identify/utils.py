@@ -7,7 +7,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from SSDB import SSDB
-from case.global_config import db, SSDB_HOST, SSDB_PORT
+from case.extensions import db
+from case.global_config import SSDB_HOST, SSDB_PORT
 from case.model import TopicStatus, TopicIdentification, DegreeCentralityUser ,\
                        BetweenessCentralityUser, ClosenessCentralityUser ,\
                        DsTopicIdentification, TsRank, DsDegreeCentralityUser ,\
