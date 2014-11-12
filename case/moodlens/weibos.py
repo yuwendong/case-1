@@ -5,7 +5,7 @@ import math
 import operator
 from case.extensions import db
 from case.model import SentimentWeibos 
-from time_utils import datetime2ts,ts2date
+from case.time_utils import datetime2ts,ts2date
 from utils import weiboinfo2url
 from case.global_config import xapian_search_user as user_search
 

@@ -9,7 +9,7 @@ from case.extensions import db
 from case.moodlens import pie as pieModule
 from case.identify import utils as identifyModule
 import search as searchModule
-from time_utils import ts2datetime, ts2date
+from case.time_utils import ts2datetime, ts2date
 from xapian_case.xapian_backend import XapianSearch
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
@@ -368,7 +368,7 @@ def topic():
                 point_interval = pi
                 break
 
-    return render_template('index/topic.html', yaosu=yaosu, time_range=time_range, \
+    return render_template('index/network_direct_superior.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
@@ -466,28 +466,6 @@ def topic_search(item = 'count', topic = u'中国'):
     return results
 
 # 以下为原有内容
-
-@mod.route("/network_data/", methods=["POST"])
-def area_network():
-    request_method = request.method
-    if request_method == 'POST':
-        gexf = None
-        form = request.form
-
-        with open("data.txt","r+") as fh:
-            data=fh.readline().strip()
-            gexf=json.loads(data)
-
-        if not gexf:
-            gexf = ''
-
-        response = make_response(gexf)
-        response.headers['Content-Type'] = 'text/xml'
-        return response
-
-    else:
-        abort(404)
-
 @mod.route('/show_tag_data/')
 def show_tag():
     return json.dumps({'tag': tag})

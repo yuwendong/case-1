@@ -6,7 +6,7 @@ import math
 import operator
 from case.extensions import db
 from case.model import SentimentKeywords
-from time_utils import datetime2ts
+from case.time_utils import datetime2ts
 
 
 TOP_KEYWORDS_LIMIT = 50

@@ -4,7 +4,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from case.extensions import db
-from case.model import FirstUser
+from case.model import FirstUser, FirstDomainUser
 
 def time_top_user(topic, date, windowsize):
     results = []
@@ -38,7 +38,7 @@ def time_domain_top_user(topic, date, windowsize):
         weibo_info = item.weibo_info
         user_info = item.user_info
         rank = item.rank
-        row = (rank, timestamp, domain, user_info, webo_info)
+        row = (rank, timestamp, domain, user_info, weibo_info)
         results[domain].append(row)
     '''
     sort for each domain

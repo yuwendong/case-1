@@ -11,7 +11,7 @@ from SSDB import SSDB
 from case.global_config import SSDB_PORT, SSDB_HOST
 from case.extensions import db
 from case.model import TopicStatus
-from time_utils import datetimestr2ts, ts2datetime
+from case.time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
 
 from utils import read_topic_rank_results, read_degree_centrality_rank ,\

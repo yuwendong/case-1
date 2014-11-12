@@ -13,10 +13,8 @@ from case.model import TopicStatus, TopicIdentification, DegreeCentralityUser ,\
                        BetweenessCentralityUser, ClosenessCentralityUser ,\
                        DsTopicIdentification, TsRank, DsDegreeCentralityUser ,\
                        DsBetweenessCentralityUser, DsClosenessCentralityUser
-from time_utils import ts2datetime, datetime2ts, window2time
+from case.time_utils import ts2datetime, datetime2ts, window2time
 from case.global_config import xapian_search_user as user_search
-
-
 
 
 def acquire_topic_id(name, start_ts, end_ts, module="identify"):

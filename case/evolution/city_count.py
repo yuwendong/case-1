@@ -6,7 +6,7 @@ import math
 import operator
 from sqlalchemy import func
 from case.extensions import db
-from time_utils import datetime2ts
+from case.time_utils import datetime2ts
 from case.model import CityTopicCount   #需要查询的表
 from BeautifulSoup import BeautifulSoup
 from city_color import province_color_map

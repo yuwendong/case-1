@@ -5,7 +5,7 @@ from case.extensions import db
 from operator import itemgetter
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from xapian_case.xapian_backend import XapianSearch
-from time_utils import datetime2ts, ts2datetime
+from case.time_utils import datetime2ts, ts2datetime
 from case.model import TopicIdentification, DegreeCentralityUser, BetweenessCentralityUser, ClosenessCentralityUser
 
 

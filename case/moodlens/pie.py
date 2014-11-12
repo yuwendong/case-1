@@ -6,7 +6,7 @@ import math
 import operator
 from sqlalchemy import func
 from case.extensions import db
-from time_utils import datetime2ts
+from case.time_utils import datetime2ts
 from case.model import SentimentCountRatio
 from case.global_config import emotions_kv
 
