@@ -22,19 +22,7 @@ MONGODB_HOST = '219.224.135.46'
 MONGODB_PORT = 27019
 SSDB_PORT = 8888
 SSDB_HOST = '219.224.135.47' # SSDB服务器在47
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
 XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
 XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
-
-# Create application
-app = Flask('xxx')
-
-# Create dummy secrey key so we can use sessions
-app.config['SECRET_KEY'] = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
-
-# Create database
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_ECHO'] = False
-db = SQLAlchemy(app)

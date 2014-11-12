@@ -3,7 +3,7 @@ import json
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from case.global_config import db
+from case.extensions import db
 from case.model import FirstUser
 
 def time_top_user(topic, date, windowsize):
