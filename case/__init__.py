@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import model
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
-from extensions import db, admin
+from extensions import db, admin, mongo
+from global_config import MYSQL_HOST, MYSQL_USER, MYSQL_DB, MONGODB_HOST, MONGODB_PORT
 from model_view import SQLModelView
 from case.root.views import mod as rootModule
 from case.moodlens.views import mod as moodlensModule
@@ -15,7 +17,6 @@ from case.quota_system.views import mod as quota_systemModule
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('config')
 
     # Create modules
     app.register_blueprint(rootModule)
@@ -26,6 +27,21 @@ def create_app():
     app.register_blueprint(evolutionModule)
     app.register_blueprint(identifyModule)
     app.register_blueprint(quota_systemModule)
+
+    # the debug toolbar is only enabled in debug mode
+    app.config['DEBUG'] = True
+
+    app.config['ADMINS'] = frozenset(['youremail@yourdomain.com'])
+    app.config['SECRET_KEY'] = 'SecretKeyForSessionSigning'
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://%s:@%s/%s?charset=utf8' % (MYSQL_USER, MYSQL_HOST, MYSQL_DB)
+    app.config['SQLALCHEMY_ECHO'] = False
+    app.config['DATABASE_CONNECT_OPTIONS'] = {}
+
+    app.config['THREADS_PER_PAGE'] = 8
+
+    app.config['CSRF_ENABLED'] = True
+    app.config['CSRF_SESSION_KEY'] = 'somethingimpossibletoguess'
 
     # Enable the toolbar?
     app.config['DEBUG_TB_ENABLED'] = app.debug
@@ -38,16 +54,22 @@ def create_app():
     # debug toolbar
     # toolbar = DebugToolbarExtension(app)
 
-    # Create database
+    app.config['MONGO_HOST'] = MONGODB_HOST
+    app.config['MONGO_PORT'] = MONGODB_PORT
+
+    # Create mysql database
     db.init_app(app)
     with app.test_request_context():
         db.create_all()
 
-    # # Create admin
-    # admin.init_app(app)
-    # for m in model.__all__:
-    #     m = getattr(model, m)
-    #     n = m._name()
-    #     admin.add_view(SQLModelView(m, db.session, name=n))
+    # # Create mysql database admin, visit via url: http://HOST:PORT/admin/
+    admin.init_app(app)
+    for m in model.__all__:
+        m = getattr(model, m)
+        n = m._name()
+        admin.add_view(SQLModelView(m, db.session, name=n))
+    
+    # init mongo
+    mongo.init_app(app)
 
     return app
