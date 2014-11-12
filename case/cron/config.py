@@ -47,22 +47,21 @@ elif IS_PROD == 2:
     REDIS_PORT = 6379
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@localhost/weibo?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/mirage/dev/data/stub/master_timeline_weibo_'
-elif IS_PROD == 3:
-    XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140803/'
-    XAPIAN_USER_DATA_PATH = '/home/ubuntu4/huxiaoqian/mcase/data/user-datapath/'
-    XAPIAN_DOMAIN_DATA_PATH = '/opt/xapian_weibo/data/20131130/'  #无
-    MASTER_TIMELINE_STUB = '/home/mirage/dev/data/stub/master_timeline_weibo_stub' #无
-    LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/'  
-    REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
-    REDIS_PORT = 6379
-    SSDB_PORT = 8888
-    SSDB_HOST = '219.224.135.47' # SSDB服务器在47
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
-    DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu4/ljh/csv/stub/master_timeline_weibo_'
-    MONGODB_HOST = '219.224.135.47'
-    MONGODB_PORT = 27019
-    API_SERVER_HOST = '219.224.135.46'
-    API_SERVER_PORT = 9999
+XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140803/'
+XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
+XAPIAN_DOMAIN_DATA_PATH = '/opt/xapian_weibo/data/20131130/'  #无
+MASTER_TIMELINE_STUB = '/home/mirage/dev/data/stub/master_timeline_weibo_stub' #无
+LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/'  
+REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
+REDIS_PORT = 6379
+SSDB_PORT = 8888
+SSDB_HOST = '219.224.135.47' # SSDB服务器在47
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu4/ljh/csv/stub/master_timeline_weibo_'
+MONGODB_HOST = '219.224.135.47'
+MONGODB_PORT = 27019
+API_SERVER_HOST = '219.224.135.46'
+API_SERVER_PORT = 9999
     
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 
