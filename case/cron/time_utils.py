@@ -16,3 +16,9 @@ def datetime2ts(date):
 
 def window2time(window, size=24*60*60):
     return window*size
+
+def datetimestr2ts(date):
+    return time.mktime(time.strptime(date, '%Y%m%d'))
+
+def ts2datetimestr(ts):
+    return time.strftime('%Y%m%d', time.localtime(ts))
