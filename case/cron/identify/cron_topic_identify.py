@@ -3,6 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import networkx as nx
+sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
 from area import pagerank_rank, make_network, make_network_graph 
 from utils import acquire_topic_name, acquire_topic_id, save_rank_results, save_gexf_results, save_attribute_dict

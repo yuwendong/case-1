@@ -10,6 +10,7 @@ sys.setdefaultencoding('utf-8')
 from SSDB import SSDB
 from config import db, SSDB_HOST, SSDB_PORT
 from model import Topics, TsRank, TopicStatus, TopicIdentification, DsTopicIdentification
+sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts, window2time
 from config import xapian_search_user as user_search
 

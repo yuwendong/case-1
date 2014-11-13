@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+
+import sys
+sys.path.append('../')
 import networkx as nx
 from config import db
 from model import LocalBridge
 from time_utils import ts2datetime, datetime2ts
 
-    
 def GetLocalBridge(g, topic, windowsize, date):
     '''
     通过遍历边，对是否为捷径进行判断，将跨度最大的前10名存放在数据库中

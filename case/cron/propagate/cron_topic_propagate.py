@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import json
 import redis
 import datetime
 from xapian_case.utils import top_keywords, gen_mset_iter
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration # 获取一定时间段内的微博
 from config import mtype_kv, db
 from model import PropagateCount, PropagateKeywords, PropagateWeibos #, AttentionCount, QuicknessCount  一定时间、话题、信息类型对应的{domain:count}
-import sys
 sys.path.append('../libsvm-3.17/python/')
 from sta_ad import start
 

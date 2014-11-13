@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
+import sys
 import json
 from topics import _all_topics
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime
 from xapian_case.utils import top_keywords, gen_mset_iter
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic

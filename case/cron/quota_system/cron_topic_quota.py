@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import json
 import csv
 import redis
@@ -7,6 +8,7 @@ import time
 import random
 from config import db, emotions_kv #, REDIS_HOST, REDIS_PORT
 from config import xapian_search_user as user_search
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime, ts2datetime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
 from model import TopicStatus, QuotaAttention, QuotaAttentionExp, QuotaGeoPenetration,\

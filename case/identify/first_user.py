@@ -20,7 +20,7 @@ def time_top_user(topic, date, windowsize):
             result['timestamp'] = item.timestamp
             result['user_info'] = json.loads(item.user_info)
             result['weibo_info'] = json.loads(item.weibo_info)
-            result['user_domain'] = json.loads(item.user_domain)
+            result['user_domain'] = item.user_domain
             results.append(result)
     #print 'results:', results
     return results

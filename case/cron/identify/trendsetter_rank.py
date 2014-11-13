@@ -13,6 +13,7 @@ node(v)  In_node(v)=set{w|(w,v)} s1(v)  s2(u,v)
 4) TS-----{map,reduce}
 5）将TS value存入mysql
 '''
+import sys
 import json
 import tempfile
 import math
@@ -23,6 +24,7 @@ from TrendsetterRank import ts_rank
 from utils import read_attribute_dict, read_graph
 from model import TsRank
 from utils import acquire_user_by_id
+sys.path.append('../')
 from time_utils import datetime2ts, window2time, ts2datetimestr
 
 DEFAULT_INTERVAL = 3600
