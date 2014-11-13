@@ -8,8 +8,8 @@ sys.setdefaultencoding('utf-8')
 
 from datetime import datetime
 from SSDB import SSDB 
-from case.global_config import SSDB_PORT, SSDB_HOST
 from case.extensions import db
+from case.global_config import SSDB_PORT, SSDB_HOST
 from case.model import TopicStatus
 from case.time_utils import datetimestr2ts, ts2datetime
 from flask import Blueprint, url_for, render_template, request, abort, flash, make_response, session, redirect
@@ -310,7 +310,8 @@ def network_domain_first_user():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
+    domain = request.args.get('domain','')
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
-    results = time_domain_top_user(topic, date, windowsize)
+    results = time_domain_top_user(topic, date, windowsize, domain)
     return json.dumps(results)
