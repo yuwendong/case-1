@@ -20,7 +20,6 @@ from utils import read_ds_topic_rank_results, read_tr_rank_results, read_ds_degr
                   read_ds_betweeness_centrality_rank, read_ds_closeness_centrality_rank
 from first_user import time_top_user, time_domain_top_user
 
-from get_origin import get_origin_user
 
 TOPK = 1000
 Minute = 60
@@ -236,7 +235,7 @@ def _utf8_unicode(s):
         return s
     else:
         return unicode(s, 'utf-8')
-
+'''
 @mod.route('/origin/')
 def origin_user():
     topic = request.args.get('topic', '')
@@ -259,7 +258,7 @@ def origin_user():
     
 
     return json.dumps(results_list)
-    
+'''   
 
 @mod.route("/quota/")
 def network_quota():

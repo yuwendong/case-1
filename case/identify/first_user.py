@@ -15,24 +15,25 @@ def time_top_user(topic, date, windowsize):
     print 'len(items):', len(items)
     if items:
         for item in items:
-            result = []
             uid = item.uid
             timestamp = item.timestamp
-            user_info = item.user_info
+            user_info = json.loads(item.user_info)
             uname = user_info['name']
             location = user_info['location']
-            weibo_info = item.weibo_info
+            weibo_info = json.loads(item.weibo_info)
             text = weibo_info['text']
             user_domain = item.user_domain
             row = [uid, uname, location, user_domain, timestamp, text]
             results.append(row)
-    #print 'results:', results
-    results = sorted(results, key=lambda x:x[4])
+    print 'results:', results
+    sorted_results = sorted(results, key=lambda x:x[4])
+    print 'sorted_results',sorted_results
+    print 'sorted_results[0]:', sorted_results[0]
     new_results = []
     for i in range(len(items)):
         new_row = [i+1]
-        for j in len(results[0]):
-            new_row.append(results[i][j])
+        for j in range(len(sorted_results[0])):
+            new_row.append(sorted_results[i][j])
         new_results.append(new_row)
     return new_results
 
