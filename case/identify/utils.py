@@ -7,13 +7,14 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from SSDB import SSDB
-from case.global_config import db, SSDB_HOST, SSDB_PORT
+from case.extensions import db
+from case.global_config import SSDB_HOST, SSDB_PORT
 from case.model import TopicStatus, TopicIdentification, DegreeCentralityUser ,\
-                       BetweenessCentralityUser, ClosenessCentralityUser
-from time_utils import ts2datetime, datetime2ts, window2time
+                       BetweenessCentralityUser, ClosenessCentralityUser ,\
+                       DsTopicIdentification, TsRank, DsDegreeCentralityUser ,\
+                       DsBetweenessCentralityUser, DsClosenessCentralityUser
+from case.time_utils import ts2datetime, datetime2ts, window2time
 from case.global_config import xapian_search_user as user_search
-
-
 
 
 def acquire_topic_id(name, start_ts, end_ts, module="identify"):
@@ -89,6 +90,59 @@ def read_topic_rank_results(topic, top_n, method, date, window):
             data.append(row)
     return data
 
+
+def read_ds_topic_rank_results(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(DsTopicIdentification).filter_by(topic=topic, identifyWindow=windowsize ,\
+                                                              identifyDate=date).order_by(DsTopicIdentification.rank.asc()).limit(top_n)
+    print 'len(items):', items.count()
+    if not items.count():
+        return None
+    else:
+        for item in items:
+            rank = item.rank
+            uid = item.userId
+            user = acquire_user_by_id_v2(uid)
+            pr = item.pr
+            item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
+                                                      TsRank.uid==uid ,\
+                                                      TsRank.date==date ,\
+                                                      TsRank.windowsize==windowsize).first()
+            tr = item_tr.tr
+            item_dc = db.session.query(DsDegreeCentralityUser).filter(DsDegreeCentralityUser.topic==topic ,\
+                                                                      DsDegreeCentralityUser.date==date ,\
+                                                                      DsDegreeCentralityUser.windowsize==windowsize ,\
+                                                                      DsDegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+            item_bc = db.session.query(DsBetweenessCentralityUser).filter(DsBetweenessCentralityUser.topic==topic ,\
+                                                                          DsBetweenessCentralityUser.date==date ,\
+                                                                          DsBetweenessCentralityUser.windowsize==windowsize ,\
+                                                                          DsBetweenessCentralityUser.userid==uid).first()
+            bc = item_bc.bc
+            item_cc = db.session.query(DsClosenessCentralityUser).filter(DsClosenessCentralityUser.topic==topic ,\
+                                                                         DsClosenessCentralityUser.date==date ,\
+                                                                         DsClosenessCentralityUser.windowsize==windowsize ,\
+                                                                         DsClosenessCentralityUser.userid==uid).first()
+
+            cc = item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+            
+            row = (rank, uid, name, location, count1, count2, pr, tr, dc, bc, cc)
+            data.append(row)
+
+
+    return data
+
+
 def read_degree_centrality_rank(topic, top_n, date, window):
     data = []
     items = db.session.query(DegreeCentralityUser).filter_by(topic=topic,  \
@@ -108,6 +162,48 @@ def read_degree_centrality_rank(topic, top_n, date, window):
             bc = item_bc.bc
             item_cc = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
                                                                        ClosenessCentralityUser.userid==uid).first()
+
+            cc = item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+
+            #read from external knowledge database
+            status = user_status(uid)
+            row = (rank, uid, name, location, count1, count2, pr, dc, bc, cc, status)
+            data.append(row)
+
+    return data
+                
+
+def read_degree_centrality_rank(topic, top_n, date, window):
+    data = []
+    items = db.session.query(DegreeCentralityUser).filter_by(topic=topic,  \
+                                                            windowsize=window, date=date).order_by(DegreeCentralityUser.rank.asc()).limit(top_n)
+    print 'items_count:', items.count()  
+    if items.count():
+        for item in items:
+            rank = item.rank
+            uid = item.userid
+            user = acquire_user_by_id_v2(uid)
+
+            dc = item.dc
+            item_pr = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topic ,\
+                                                                   TopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_bc = db.session.query(BetweenessCentralityUser).filter(BetweenessCentralityUser.topic==topic ,\
+                                                                        BetweenessCentralityUser.userid==uid).first()
+            bc = item_bc.bc
+
+            item_cc = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
+                                                                       ClosenessCentralityUser.userid==uid).first()
             cc = item_cc.cc
             if not user:
                 name = u'未知'
@@ -123,6 +219,153 @@ def read_degree_centrality_rank(topic, top_n, date, window):
             status = user_status(uid)
             row = (rank, uid, name, location, count1, count2, pr, dc, bc, cc, status)
             data.append(row)
+
+    return data
+
+
+def read_betweeness_centrality_rank(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(BetweenessCentralityUser).filter_by(topic=topic,  \
+                                                            windowsize=windowsize, date=date).order_by(BetweenessCentralityUser.rank.asc()).limit(top_n)
+
+    print 'items_count:', items.count()  
+    if items.count():
+        for item in items:
+            rank = item.rank
+            uid = item.userid
+            user = acquire_user_by_id_v2(uid)
+
+            bc = item.bc
+            item_pr = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topic ,\
+                                                                   TopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_dc = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
+                                                                    DegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+
+            item_cc = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
+                                                                       ClosenessCentralityUser.userid==uid).first()
+            cc = item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+            #read from external knowledge database
+            status = user_status(uid)
+            row = (rank, uid, name, location, count1, count2, pr, dc, bc, cc, status)
+            data.append(row)
+    return data
+
+
+def read_ds_degree_centrality_rank(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(DsDegreeCentralityUser).filter_by(topic=topic, windowsize=windowsize ,\
+                                                               date=date).order_by(DsDegreeCentralityUser.rank.asc()).limit(top_n)
+    print 'len(items):', items.count()
+    if not items.count():
+        return None
+    else:
+        for item in items:
+            uid = item.userid
+            rank = item.rank
+            dc = item.dc
+            user = acquire_user_by_id_v2(uid)
+            item_pr = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topic ,\
+                                                                     DsTopicIdentification.identifyDate==date ,\
+                                                                     DsTopicIdentification.identifyWindow==windowsize ,\
+                                                                     DsTopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
+                                                       TsRank.date==date ,\
+                                                       TsRank.windowsize==windowsize ,\
+                                                       TsRank.uid==uid).first()
+            tr = item_tr.tr
+            item_dc = db.session.query(DsDegreeCentralityUser).filter(DsDegreeCentralityUser.topic==topic ,\
+                                                                      DsDegreeCentralityUser.date==date ,\
+                                                                      DsDegreeCentralityUser.windowsize==windowsize ,\
+                                                                      DsDegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+            item_bc = db.session.query(DsBetweenessCentralityUser).filter(DsBetweenessCentralityUser.topic==topic ,\
+                                                                          DsBetweenessCentralityUser.date==date ,\
+                                                                          DsBetweenessCentralityUser.windowsize==windowsize ,\
+                                                                          DsBetweenessCentralityUser.userid==uid).first()
+            bc = item_bc.bc
+            item_cc = db.session.query(DsClosenessCentralityUser).filter(DsClosenessCentralityUser.topic==topic ,\
+                                                                         DsClosenessCentralityUser.date==date ,\
+                                                                         DsClosenessCentralityUser.windowsize==windowsize ,\
+                                                                         DsClosenessCentralityUser.userid==uid).first()
+            cc =item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+
+            row = (rank, uid, name, location , count1, count2, pr, tr, dc, bc, cc)
+
+            data.append(row)
+
+    return data
+
+
+def read_tr_rank_results(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(TsRank). filter_by(topic=topic, windowsize=windowsize ,\
+                                               date=date).order_by(TsRank.rank.asc()).limit(top_n)
+    print 'len(items):', items.count()
+    if not items.count():
+        return None
+    else:
+        for item in items:
+            rank = item.rank
+            uid = item.uid
+            tr = item.tr
+            user = acquire_user_by_id_v2(uid)
+            item_pr = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topic ,\
+                                                                     DsTopicIdentification.identifyDate==date ,\
+                                                                     DsTopicIdentification.identifyWindow==windowsize ,\
+                                                                     DsTopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_dc = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
+                                                                    DegreeCentralityUser.date==date ,\
+                                                                    DegreeCentralityUser.windowsize==windowsize ,\
+                                                                    DegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+            item_bc = db.session.query(BetweenessCentralityUser).filter(BetweenessCentralityUser.topic==topic ,\
+                                                                        BetweenessCentralityUser.date==date ,\
+                                                                        BetweenessCentralityUser.windowsize==windowsize ,\
+                                                                        BetweenessCentralityUser.userid==uid).first()
+            bc = item_bc.bc
+            item_cc = db.session.query(ClosenessCentralityUser).filter(ClosenessCentralityUser.topic==topic ,\
+                                                                       ClosenessCentralityUser.date==date ,\
+                                                                       ClosenessCentralityUser.windowsize==windowsize ,\
+                                                                       ClosenessCentralityUser.userid==uid).first()
+            cc = item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+
+            row = (rank, uid, name, location, count1, count2, pr, tr, dc, bc, cc)
+            data.append(row)
+
     return data
 
 def read_betweeness_centrality_rank(topic, top_n, date, windowsize):
@@ -161,8 +404,58 @@ def read_betweeness_centrality_rank(topic, top_n, date, windowsize):
             data.append(row)
     return data
 
+def read_ds_betweeness_centrality_rank(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(DsBetweenessCentralityUser).filter_by(topic=topic, windowsize=windowsize ,\
+                                                                   date=date).order_by(DsBetweenessCentralityUser.rank.asc()).limit(top_n)
+    print 'items_count:', items.count()
+    if not items.count():
+        return None
+    else:
+        for item in items:
+            uid = item.userid
+            bc = item.bc
+            rank = item.rank
+            user = acquire_user_by_id_v2(uid)
+            item_pr = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topic ,\
+                                                                     DsTopicIdentification.identifyDate==date ,\
+                                                                     DsTopicIdentification.identifyWindow==windowsize ,\
+                                                                     DsTopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
+                                                      TsRank.date==date ,\
+                                                      TsRank.windowsize==windowsize ,\
+                                                      TsRank.uid==uid).first()
+            tr = item_tr.tr
+            item_dc = db.session.query(DsDegreeCentralityUser).filter(DsDegreeCentralityUser.topic==topic ,\
+                                                                      DsDegreeCentralityUser.date==date ,\
+                                                                      DsDegreeCentralityUser.windowsize==windowsize ,\
+                                                                      DsDegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+            item_cc = db.session.query(DsClosenessCentralityUser).filter(DsDegreeCentralityUser.topic==topic ,\
+                                                                         DsDegreeCentralityUser.date==date ,\
+                                                                         DsDegreeCentralityUser.windowsize==windowsize ,\
+                                                                         DsDegreeCentralityUser.userid==uid).first()
+            cc = item_cc.cc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+
+            row = (rank, uid, name, location, count1, count2, pr, tr, dc, bc, cc)
+            data.append(row)
+
+    return data
+
 def read_closeness_centrality_rank(topic, top_n, date, windowsize):
     data = []
+
     items = db.session.query(ClosenessCentralityUser).filter_by(topic=topic,  \
                                                             windowsize=windowsize, date=date).order_by(ClosenessCentralityUser.rank.asc()).limit(top_n)
     print 'items_count:', items.count()  
@@ -195,7 +488,58 @@ def read_closeness_centrality_rank(topic, top_n, date, windowsize):
             status = user_status(uid)
             row = (rank, uid, name, location, count1, count2, pr, dc, bc, cc, status)
             data.append(row)
+
     return data
+
+
+def read_ds_closeness_centrality_rank(topic, top_n, date, windowsize):
+    data = []
+    items = db.session.query(DsClosenessCentralityUser).filter_by(topic=topic, date=date,\
+                                                                  windowsize=windowsize).order_by(DsClosenessCentralityUser.rank.asc()).limit(top_n)
+    print 'len(items):', items.count()
+    if not items.count():
+        return None
+    else:
+        for item in items:
+            uid = item.userid
+            rank = item.rank
+            cc = item.cc
+            user = acquire_user_by_id_v2(uid)
+            item_pr = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topic ,\
+                                                                     DsTopicIdentification.identifyDate==date ,\
+                                                                     DsTopicIdentification.identifyWindow==windowsize ,\
+                                                                     DsTopicIdentification.userId==uid).first()
+            pr = item_pr.pr
+            item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
+                                                      TsRank.date==date ,\
+                                                      TsRank.windowsize==windowsize ,\
+                                                      TsRank.uid==uid).first()
+            tr = item_tr.tr
+            item_dc = db.session.query(DsDegreeCentralityUser).filter(DsDegreeCentralityUser.topic==topic ,\
+                                                                      DsDegreeCentralityUser.date==date ,\
+                                                                      DsDegreeCentralityUser.windowsize==windowsize ,\
+                                                                      DsDegreeCentralityUser.userid==uid).first()
+            dc = item_dc.dc
+            item_bc = db.session.query(DsBetweenessCentralityUser).filter(DsBetweenessCentralityUser.topic==topic ,\
+                                                                          DsBetweenessCentralityUser.date==date ,\
+                                                                          DsBetweenessCentralityUser.windowsize==windowsize ,\
+                                                                          DsBetweenessCentralityUser.userid==uid).first()
+            bc = item_bc.bc
+            if not user:
+                name = u'未知'
+                location = u'未知'
+                count1 = u'未知'
+                count2 = u'未知'
+            else:
+                name = user['name']
+                location = user['location']
+                count1 = user['count1']
+                count2 = user['count2']
+            row = (rank, uid, name, location, count1, count2, pr, tr, dc, bc, cc)
+            data.append(row)
+
+    return data
+                
 
 def acquire_user_by_id_v2(uid):
     result = user_search.search_by_id(int(uid), fields=['name', 'location', 'followers_count', 'friends_count'])

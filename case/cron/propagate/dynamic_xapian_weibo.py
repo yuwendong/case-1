@@ -38,7 +38,7 @@ def getXapianWeiboByDuration(datestr_list):
 	    stub_file_list.append(stub_file)
 
     if len(stub_file_list):
-        xapian_search_weibo = XapianSearch(stub=stub_file_list, include_remote=True)
+        xapian_search_weibo = XapianSearch(stub=stub_file_list, include_remote=True, schema_version='5')
         return xapian_search_weibo 
 
     else:

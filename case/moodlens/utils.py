@@ -7,7 +7,7 @@ import datetime
 import operator
 import numpy as np
 from sqlalchemy import func
-from time_utils import datetime2ts
+from case.time_utils import datetime2ts
 
 try:
     from case.extensions import db

@@ -1,11 +1,13 @@
 #-*- coding:utf-8 -*
 
+import sys
 import time
 import datetime
 import IP
 import json
 import redis
 from model import IndexTopic
+sys.path.append('../')
 from time_utils import ts2datetime_full
 from xapian_case.xapian_backend import XapianSearch
 from xapian_case.utils import top_keywords, gen_mset_iter

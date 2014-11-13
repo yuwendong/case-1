@@ -161,5 +161,17 @@ mongodb修改最大连接数参考http://blog.163.com/ji_1006/blog/static/106123
 　　
 　f. 使用网络时间协议(NTP)保证服务器间的时间同步。这对于分片集群来说尤其重要。
 　
+(5)服务器时间同步
+
+```
+ntpdate cn.pool.ntp.org
+date
+hwclock
+hwclock --localtime
+hwclock --utc
+hwclock -w 
+sudo apt-get install ntp
+```
+参考http://blog.sina.com.cn/s/blog_636a55070101u1mg.html，http://wiki.ubuntu.org.cn/NTP
 
 

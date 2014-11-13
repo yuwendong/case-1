@@ -5,14 +5,15 @@ try:
 except ImportError:
     print 'Hadoop module is not installed or configured.'
 
+import sys
 import time
 import tempfile
-
+sys.path.append('../')
 from time_utils import unix2hadoop_date
 
-def generate_job_id(ts, window_size, topic_id):
+def generate_job_id(ts, window_size, topic_id, network_type):
     date = unix2hadoop_date(ts)
-    job_id = '%s_%s_%s' % (date, window_size, topic_id)
+    job_id = '%s_%s_%s_%s' % (date, window_size, topic_id, network_type)
     return job_id
 
 def monitor(job_id):
@@ -46,14 +47,14 @@ def hadoop_results(job_id, top_n):
         outputs = outputs[-top_n:]
     outputs.reverse()
     sorted_uids = []
-    all_uid_pr = {}
+    all_uid_r = {}
     for line in all_outputs:
-        uid, pr = line.strip().split('\t')
-        all_uid_pr[uid] = pr
+        uid, r = line.strip().split('\t')
+        all_uid_r[uid] = r
     for line in outputs:
-        uid, pr = line.strip().split('\t')
+        uid, r = line.strip().split('\t')
         sorted_uids.append(uid)
-    return sorted_uids, all_uid_pr
+    return sorted_uids, all_uid_r
 
 def prepare_data(topic_id):
     tmp_file = tempfile.NamedTemporaryFile(delete=False)

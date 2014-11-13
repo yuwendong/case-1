@@ -74,35 +74,40 @@ class PageRankSorter(Hat):
             yield (value, key)
 
 def pagerank(job_id, iter_count, input_path, top_n):
+    #print 'step1'
     if not (job_id and iter_count and input_path and os.path.exists(input_path)):
+        print 'error'
         return []
-
+    #print 'step1 end'
+    print 'job_id:', job_id
+    print 'monitor(job_id):', monitor(job_id)
     if monitor(job_id) == 'finished':
+        print 'hadoop_results start'
         return hadoop_results(job_id, top_n)
-
+    #print 'step2'
     #set work dir and put input temp file into file system
     fs = HadoopFS()
     fs.rmr('%s' % job_id)
     fs.mkdir('%s' % job_id)
     fs.put(input_path, '%s/hat_init' % job_id)
-
+    #print 'step3'
     #init
     pr_iter = PageRankIter(input_path='%s/hat_init' % job_id, output_path='%s/hat_tmp1' % job_id)
     pr_iter.run()
-
+    #print 'step4'
     #iter
     for i in range(iter_count-1):
         pr_iter = PageRankIter(input_path='%s/hat_tmp%s' % (job_id, (i+1)), output_path='%s/hat_tmp%s' % (job_id, (i+2)))
         pr_iter.run()
-
+    #print 'step5'
     #sort
     pr_sorter = PageRankSorter(input_path='%s/hat_tmp%s' % (job_id, iter_count), output_path='%s/hat_results' % job_id)
     pr_sorter.run()
-
+    #print 'step6'
     #clean init and temp files
     fs.rmr('%s/hat_tmp*' % job_id)
     fs.rmr('%s/hat_init' % job_id)
-
+    #print 'step7'
     sorted_uids, all_uid_pr = hadoop_results(job_id, top_n)
 
     return sorted_uids, all_uid_pr # 返回uid排序组成的序列，所有uid的pr

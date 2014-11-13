@@ -19,6 +19,11 @@ class Topics(db.Model):
         self.topic = topic
         self.start_ts = start_ts
         self.end_ts = end_ts 
+
+    @classmethod
+    def _name(cls):
+        return u'Topics'
+
 #实际上这一部分是需要重新修改的，但是在此次测试中用不到，就先不动。
 #sentiment部分
 class SentimentKeywords(db.Model):#情绪关键词---已改
@@ -38,6 +43,10 @@ class SentimentKeywords(db.Model):#情绪关键词---已改
         self.sentiment = sentiment
         self.kcount = kcount
 
+    @classmethod
+    def _name(cls):
+        return u'SentimentKeywords'
+
 class SentimentWeibos(db.Model):#情绪微博--已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     query = db.Column(db.String(20))
@@ -55,6 +64,10 @@ class SentimentWeibos(db.Model):#情绪微博--已改
         self.sentiment = sentiment
         self.weibos = weibos
 
+    @classmethod
+    def _name(cls):
+        return u'SentimentWeibos'
+
 class SentimentPoint(db.Model):#情绪拐点
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(20))#话题名
@@ -65,6 +78,10 @@ class SentimentPoint(db.Model):#情绪拐点
         self.topic = topic
         self.stype = stype
         self.ts = ts
+
+    @classmethod
+    def _name(cls):
+        return u'SentimentPoint'
 
 class SentimentCount(db.Model):#情绪绝对数量曲线--已改
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -80,6 +97,10 @@ class SentimentCount(db.Model):#情绪绝对数量曲线--已改
         self.end = end
         self.sentiment = sentiment
         self.count = count
+
+    @classmethod
+    def _name(cls):
+        return u'SentimentCount'
 
 class SentimentCountRatio(db.Model):#情绪相对比例曲线--已改
     id = db.Column(db.Integer, primary_key=True)
@@ -98,8 +119,11 @@ class SentimentCountRatio(db.Model):#情绪相对比例曲线--已改
         self.allcount = allcount
         self.sentiment = sentiment
 
-# Index 模块
+    @classmethod
+    def _name(cls):
+        return u'SentimentCountRatio'
 
+# Index 模块
 class IndexTopic(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     topic = db.Column(db.Text)
@@ -123,6 +147,10 @@ class IndexTopic(db.Model):
         self.opinion = opinion
         self.media_opinion = media_opinion
 
+    @classmethod
+    def _name(cls):
+        return u'IndexTopic'
+
 #city模块
 class CityTopicCount(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -141,6 +169,10 @@ class CityTopicCount(db.Model):
         self.ccount = ccount
         self.first_item = first_item
 
+    @classmethod
+    def _name(cls):
+        return u'CityTopicCount'
+
 class CityRepost(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     original = db.Column(db.Integer(1,unsigned = True))
@@ -158,6 +190,9 @@ class CityRepost(db.Model):
         self.origin_location = origin_location
         self.repost_location = repost_location
 
+    @classmethod
+    def _name(cls):
+        return u'CityRepost'
 
 #时间分析模块
 class PropagateCount(db.Model):
@@ -174,6 +209,10 @@ class PropagateCount(db.Model):
         self.end = end
         self.mtype = mtype
         self.dcount = dcount
+
+    @classmethod
+    def _name(cls):
+        return u'PropagateCount'
 
 class AttentionCount(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -194,6 +233,10 @@ class AttentionCount(db.Model):
         self.covernum = covernum
         self.allnum = allnum
 
+    @classmethod
+    def _name(cls):
+        return u'AttentionCount'
+
 class QuicknessCount(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -212,6 +255,10 @@ class QuicknessCount(db.Model):
         self.domain = domain
         self.topnum = topnum
         self.allnum = allnum
+
+    @classmethod
+    def _name(cls):
+        return u'QuicknessCount'
     
 class PropagateKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -230,6 +277,10 @@ class PropagateKeywords(db.Model):
         self.mtype = mtype
         self.kcount = kcount
 
+    @classmethod
+    def _name(cls):
+        return u'PropagateKeywords'
+
 class PropagateWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -247,7 +298,9 @@ class PropagateWeibos(db.Model):
         self.limit = limit
         self.weibos = weibos
 
-
+    @classmethod
+    def _name(cls):
+        return u'PropagateWeibos'
 
 class TopicStatus(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -265,6 +318,31 @@ class TopicStatus(db.Model):
         self.start = start
         self.end = end
         self.db_date = db_date
+
+    @classmethod
+    def _name(cls):
+        return u'TopicStatus'
+
+class NewTopicStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    module = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    category = db.Column(db.String(20))
+    db_date = db.Column(db.Date)
+    status = db.Column(db.Integer)
+
+    def __init__(self, module, start_ts, end_ts, category, db_date, status):
+        self.module = module
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.category = category
+        self.db_date = db_date
+        self.status = status
+
+    @classmethod
+    def _name(cls):
+        return u'NewTopicStatus'
 
 #网络模块--存放pagerank的计算结果
 class TopicIdentification(db.Model):
@@ -286,6 +364,54 @@ class TopicIdentification(db.Model):
         self.identifyMethod = identifyMethod
         self.pr = pr
 
+    @classmethod
+    def _name(cls):
+        return u'TopicIdentification'
+
+class DsTopicIdentification(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    userId = db.Column(db.BigInteger(11, unsigned=True))
+    identifyDate = db.Column(db.Date)
+    identifyWindow = db.Column(db.Integer, default=1)
+    identifyMethod = db.Column(db.String(20), default='pagerank')
+    pr = db.Column(db.String(20), default='pagerank')
+
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod, pr):
+        self.topic = topic
+        self.rank = rank
+        self.userId = userId
+        self.identifyDate = identifyDate
+        self.identifyWindow = identifyWindow
+        self.identifyMethod = identifyMethod
+        self.pr = pr
+
+    @classmethod
+    def _name(cls):
+        return u'DsTopicIdentification'
+
+class TsRank(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    tr = db.Column(db.Float)
+
+    def __init__(self, topic, rank, uid, date, windowsize, tr):
+        self.topic = topic
+        self.rank = rank
+        self.uid = uid
+        self.date = date
+        self.windowsize = windowsize
+        self.tr = tr
+
+    @classmethod
+    def _name(cls):
+        return u'TsRank'
+
 class DegreeCentralityUser(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -302,6 +428,31 @@ class DegreeCentralityUser(db.Model):
         self.rank = rank
         self.userid = userid
         self.dc = dc
+
+    @classmethod
+    def _name(cls):
+        return u'DegreeCentralityUser'
+
+class DsDegreeCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    dc = db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank, userid, dc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.dc = dc
+
+    @classmethod
+    def _name(cls):
+        return u'DsDegreeCentralityUser'
 
 class BetweenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -320,11 +471,36 @@ class BetweenessCentralityUser(db.Model):
         self.userid = userid
         self.bc = bc
 
+    @classmethod
+    def _name(cls):
+        return u'BetweenessCentralityUser'
+
+class DsBetweenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    bc = db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank, userid, bc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.bc = bc
+
+    @classmethod
+    def _name(cls):
+        return u'DsBetweenessCentralityUser'
+
 class ClosenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
-    windowsize = db.Column(db.Integer, default=True)
+    windowsize = db.Column(db.Integer, default=1)
     rank  = db.Column(db.Integer)
     userid = db.Column(db.BigInteger(11, unsigned=True))
     cc = db.Column(db.Float)
@@ -337,6 +513,32 @@ class ClosenessCentralityUser(db.Model):
         self.userid = userid
         self.cc = cc
 
+    @classmethod
+    def _name(cls):
+        return u'ClosenessCentralityUser'
+
+class DsClosenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    cc= db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank , userid, cc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.cc = cc
+
+    @classmethod
+    def _name(cls):
+        return u'DsClosenessCentralityUser'
+        
+'''
 class NodeDegreeUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -349,6 +551,112 @@ class NodeDegreeUser(db.Model):
         self.date = date
         self.windowsize = windowsize
         self.sorted_dict = sorted_dict
+'''
+
+class LocalBridge(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    a_node = db.Column(db.BigInteger(11, unsigned=True))
+    b_node = db.Column(db.BigInteger(11, unsigned=True))
+    span_ab = db.Column(db.Integer)
+
+    def __init__(self, topic, date, windowsize, a_node, b_node, span_ab):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.a_node = a_node
+        self.b_node = b_node
+        self.span_ab = span_ab
+
+    @classmethod
+    def _name(cls):
+        return u'LocalBridge'
+
+class Source(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    userid = db.Column(db.BigInteger(20, unsigned=True))
+
+    def __init__(self, topic, date, windowsize, userid):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.userid = userid
+
+    @classmethod
+    def _name(cls):
+        return u'Source'
+
+class FirstUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    user_info = db.Column(db.Text)
+    weibo_info = db.Column(db.Text)
+    user_domain = db.Column(db.String(20))
+
+    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, user_domain):
+        self.topic =topic
+        self.date = date
+        self.windowsize = windowsize
+        self.uid = uid
+        self.timestamp = timestamp
+        self.user_info = user_info
+        self.weibo_info = weibo_info
+        self.user_domain = user_domain
+
+    @classmethod
+    def _name(cls):
+        return u'FirstUser'
+
+class FirstDomainUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    timestamp = db.Column(db.Text)
+    user_info = db.Column(db.Text)
+    weibo_info = db.Column(db.String(20))
+    user_domain = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+
+    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, user_domain, rank):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.uid = uid
+        self.timestamp = timestamp
+        self.user_info = user_info
+        self.weibo_info = weibo_info
+        self.user_domain = domain
+        self.rank = rank
+
+    @classmethod
+    def _name(cls):
+        return u'FirstDomainUser'
+
+class AllFrequentUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    db_time = db.Column(db.Date)
+    ffu_kind = db.Column(db.String(20))
+    user_frequent = db.Column(db.Text)
+
+    def __init__(self, db_time, ffu_kind, user_frequent):
+        self.db_time = db_time
+        self.ffu_kind = ffu_kind
+        self.user_frequent = user_frequent
+
+    @classmethod
+    def _name(cls):
+        return u'AllFrequentUser'
 
 # opinion module used in test
 class OpinionTestTime(db.Model):
@@ -364,6 +672,10 @@ class OpinionTestTime(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
 
+    @classmethod
+    def _name(cls):
+        return u'OpinionTestTime'
+
 class OpinionTestRatio(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -376,6 +688,10 @@ class OpinionTestRatio(db.Model):
         self.child_topic = child_topic
         self.ratio = ratio
 
+    @classmethod
+    def _name(cls):
+        return u'OpinionTestRatio'
+
 class OpinionTestKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -387,6 +703,10 @@ class OpinionTestKeywords(db.Model):
         self.child_topic = child_topic
         self.keywords = keywords
 
+    @classmethod
+    def _name(cls):
+        return u'OpinionTestKeywords'
+
 class OpinionTestWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -397,6 +717,10 @@ class OpinionTestWeibos(db.Model):
         self.topic = topic
         self.child_topic = child_topic
         self.weibos = weibos
+
+    @classmethod
+    def _name(cls):
+        return u'OpinionTestWeibos'
 
 class OpinionWeibosNew(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -423,6 +747,10 @@ class OpinionWeibosNew(db.Model):
         self.c_count = c_count
         self.repeat = repeat
 
+    @classmethod
+    def _name(cls):
+        return u'OpinionWeibosNew'
+
 # Quota_system Module
 class QuotaAttention(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -439,9 +767,11 @@ class QuotaAttention(db.Model):
         self.domain = domain
         self.attention = attention
 
-'''
+    @classmethod
+    def _name(cls):
+        return u'QuotaAttention'
+
 # 关注度经验值QuotaAttentionExp
-'''
 class QuotaAttentionExp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -454,11 +784,13 @@ class QuotaAttentionExp(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.exp = exp
-       
+
+    @classmethod
+    def _name(cls):
+        return u'QuotaAttentionExp'
 
 # QuotaPenetration 弃用
 # 分为两个：QuotaMediaImportance, QuotaGeoPenetration
-
 class QuotaMediaImportance(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -471,6 +803,10 @@ class QuotaMediaImportance(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.media_importance = media_importance
+
+    @classmethod
+    def _name(cls):
+        return u'QuotaMediaImportance'
 
 class QuotaGeoPenetration(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -485,12 +821,20 @@ class QuotaGeoPenetration(db.Model):
         self.end_ts = end_ts
         self.pcount = pcount
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaGeoPenetration'
+
 class GeoWeight(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     weight_dict = db.Column(db.Text)
 
     def __init__(self, weight_dict):
         self.weight_dict = weight_dict
+
+    @classmethod
+    def _name(cls):
+        return u'GeoWeight'
 
 class QuotaQuickness(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -507,6 +851,10 @@ class QuotaQuickness(db.Model):
         self.domain = domain
         self.quickness = quickness
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaQuickness'
+
 class QuotaSentiment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -520,6 +868,10 @@ class QuotaSentiment(db.Model):
         self.end_ts = end_ts
         self.sratio = sratio
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaSentiment'
+
 class QuotaDuration(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -532,9 +884,12 @@ class QuotaDuration(db.Model):
         self. start_ts = start_ts
         self.end_ts = end_ts
         self.duration = duration
-'''
+
+    @classmethod
+    def _name(cls):
+        return u'QuotaDuration'
+
 # 持续度经验值QuotaDurationExp
-'''
 class QuotaPersonSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -548,8 +903,9 @@ class QuotaPersonSensitivity(db.Model):
         self.end_ts = end_ts
         self.pr = pr
 
-
-
+    @classmethod
+    def _name(cls):
+        return u'QuotaPersonSensitivity'
 
 class PersonSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -563,8 +919,10 @@ class PersonSensitivity(db.Model):
         self.start_ts = start_ts
         self_end_ts = end_ts
         self.person = person
-
-
+    
+    @classmethod
+    def _name(cls):
+        return u'PersonSensitivity'
 
 class QuotaDurationExp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -579,8 +937,9 @@ class QuotaDurationExp(db.Model):
         self.end_ts = end_ts
         self.exp = exp
     
-
-
+    @classmethod
+    def _name(cls):
+        return u'QuotaDurationExp'
 
 class QuotaSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -597,9 +956,11 @@ class QuotaSensitivity(db.Model):
         self.classfication = classfication
         self.score = score
 
-'''
-类型敏感词表、词汇敏感词表、地点敏感词表
-'''
+    @classmethod
+    def _name(cls):
+        return u'QuotaSensitivity'
+
+# 类型敏感词表、词汇敏感词表、地点敏感词表
 class ClassSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -612,6 +973,10 @@ class ClassSensitivity(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.words = words
+
+    @classmethod
+    def _name(cls):
+        return u'ClassSensitivity'
 
 class WordSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -626,6 +991,10 @@ class WordSensitivity(db.Model):
         self.end_ts = end_ts
         self.words = words
 
+    @classmethod
+    def _name(cls):
+        return u'WordSensitivity'
+
 class PlaceSensitivity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -638,7 +1007,10 @@ class PlaceSensitivity(db.Model):
         self.start_ts = start_ts
         self.end_ts = end_ts
         self.words = words
-    
+
+    @classmethod
+    def _name(cls):
+        return u'PlaceSensitivity'
 
 class QuotaImportance(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -655,12 +1027,20 @@ class QuotaImportance(db.Model):
         self.score = score # 0<=score<1
         self.weight = weight
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaImportance'
+
 class QuotaWeight(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     weight_dict = db.Column(db.Text)
 
     def __init__(self, weight_dict):
         self.weight_dict = weight_dict
+
+    @classmethod
+    def _name(cls):
+        return u'QuotaWeight'
 
 class CoverageExp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -675,6 +1055,10 @@ class CoverageExp(db.Model):
         self.end_ts = end_ts
         self.coverage_exp = coverage_exp
 
+    @classmethod
+    def _name(cls):
+        return u'CoverageExp'
+
 class QuotaCoverage(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -687,21 +1071,26 @@ class QuotaCoverage(db.Model):
         self.end_ts = end_ts
         self.coverage = coverage
 
-
+    @classmethod
+    def _name(cls):
+        return u'QuotaCoverage'
 
 class QuotaFSensitivity(db.Model):
-     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-     topic = db.Column(db.String(20))
-     start_ts = db.Column(db.BigInteger(10, unsigned=True))
-     end_ts = db.Column(db.BigInteger(10, unsigned=True))
-     f_sensitivity = db.Column(db.Float)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    f_sensitivity = db.Column(db.Float)
      
-     def __init__(self, topic, start_ts, end_ts, f_sensitivity):
-         self.topic = topic
-         self.start_ts = start_ts
-         self.end_ts = end_ts
-         self.f_sensitivity = f_sensitivity
+    def __init__(self, topic, start_ts, end_ts, f_sensitivity):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.f_sensitivity = f_sensitivity
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaFSensitivity'
 
 class QuotaFSentiment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -716,6 +1105,9 @@ class QuotaFSentiment(db.Model):
         self.end_ts = end_ts
         self.f_sentiment = f_sentiment
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaFSentiment'
 
 class QuotaFTransmission(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -730,6 +1122,10 @@ class QuotaFTransmission(db.Model):
         self.end_td = end_ts
         self.f_transmission = f_transmission
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaFTransmission'
+
 class QuotaFInvolved(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -742,6 +1138,10 @@ class QuotaFInvolved(db.Model):
         self,start_ts = start_ts
         self.end_ts = end_ts
         self.f_involved = f_involved
+
+    @classmethod
+    def _name(cls):
+        return u'QuotaFInvolved'
 
 class QuotaIndex(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -756,9 +1156,12 @@ class QuotaIndex(db.Model):
         self.end_ts = end_ts
         self.index = index
 
+    @classmethod
+    def _name(cls):
+        return u'QuotaIndex'
 
-#以下是语义模块（李文文看）
-class OpinionTopic(db.Model):#话题、观点对应表
+#以下是语义模块（李文文看）#话题、观点对应表
+class OpinionTopic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(20))#话题
     opinion = db.Column(db.String(20))#观点
@@ -767,7 +1170,12 @@ class OpinionTopic(db.Model):#话题、观点对应表
         self.topic = topic
         self.opinion = opinion
 
-class OpinionWeibos(db.Model):#观点微博
+    @classmethod
+    def _name(cls):
+        return u'OpinionTopic'
+
+#观点微博
+class OpinionWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     opinionTopic = db.Column(db.Integer)#话题、观点对应表中id字段
     mid = db.Column(db.String(20))#微博id
@@ -792,7 +1200,12 @@ class OpinionWeibos(db.Model):#观点微博
         self.repost = repost
         self.stype = stype
 
-class Opinion(db.Model):#观点
+    @classmethod
+    def _name(cls):
+        return u'OpinionWeibos'
+
+#观点
+class Opinion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     opinionTopic = db.Column(db.Integer)#话题、观点对应表中id字段
     start = db.Column(db.BigInteger(20, unsigned=True))#开始时间
@@ -811,7 +1224,12 @@ class Opinion(db.Model):#观点
         self.positive = positive
         self.nagetive = nagetive
 
-class OpinionHot(db.Model):#观点热度值
+    @classmethod
+    def _name(cls):
+        return u'Opinion'
+
+#观点热度值
+class OpinionHot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     opinionTopic = db.Column(db.Integer)#话题、观点对应表中id字段
     ts = db.Column(db.BigInteger(20, unsigned=True))#时间
@@ -822,3 +1240,6 @@ class OpinionHot(db.Model):#观点热度值
         self.ts = ts
         self.count = count
 
+    @classmethod
+    def _name(cls):
+        return u'OpinionHot'

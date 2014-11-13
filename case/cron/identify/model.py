@@ -263,6 +263,25 @@ class TopicStatus(db.Model):
         self.end = end
         self.db_date = db_date
 
+class NewTopicStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    module = db.Column(db.String(10))
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(10, unsigned=True))
+    end_ts = db.Column(db.BigInteger(10, unsigned=True))
+    category = db.Column(db.String(20))
+    db_date = db.Column(db.Date)
+    status = db.Column(db.Integer)
+
+    def __init__(self, module, topic, start_ts, end_ts, category, db_date, status):
+        self.module = module
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.category = category
+        self.db_date = db_date
+        self.status = status
+
 #网络模块--存放pagerank的计算结果
 class TopicIdentification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -272,67 +291,241 @@ class TopicIdentification(db.Model):
     identifyDate = db.Column(db.Date)
     identifyWindow = db.Column(db.Integer, default=1)
     identifyMethod = db.Column(db.String(20), default='pagerank')
+    pr = db.Column(db.Float)
 
-    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod):
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod, pr):
         self.topic = topic
         self.rank = rank
         self.userId = userId
         self.identifyDate = identifyDate
         self.identifyWindow = identifyWindow
         self.identifyMethod = identifyMethod
+        self.pr = pr
 
-class DegreeCentralityUser(db.Model):
+class DsTopicIdentification(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    userId = db.Column(db.BigInteger(11, unsigned=True))
+    identifyDate = db.Column(db.Date)
+    identifyWindow = db.Column(db.Integer, default=1)
+    identifyMethod = db.Column(db.String(20), default='pagerank')
+    pr = db.Column(db.Float)
+
+    def __init__(self, topic, rank, userId, identifyDate, identifyWindow, identifyMethod, pr):
+        self.topic = topic
+        self.rank = rank
+        self.userId = userId
+        self.identifyDate = identifyDate
+        self.identifyWindow = identifyWindow
+        self.identifyMethod = identifyMethod
+        self.pr = pr
+
+class TsRank(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    tr = db.Column(db.Float)
+
+    def __init__(self, topic, rank, uid, date, windowsize, tr):
+        self.topic = topic
+        self.rank = rank
+        self.uid = uid
+        self.date = date
+        self.windowsize = windowsize
+        self.tr = tr
+
+class DegreeCentralityUser(db.Model): 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    dc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, dc):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.dc = dc
+
+class DsDegreeCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11,unsigned=True))
+    dc = db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank, userid, dc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.dc = dc
 
 class BetweenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    bc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, bc):
         self.topic =topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.bc = bc
+
+class DsBetweenessCentralityUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    bc = db.Column(db.Float)
+
+    def __init__(self, topic, date, windowsize, rank,userid, bc):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.rank = rank
+        self.userid = userid
+        self.bc = bc
 
 class ClosenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
-    windowsize = db.Column(db.Integer, default=True)
-    sorted_dict = db.Column(db.Text)
+    windowsize = db.Column(db.Integer, default=1)
+    rank  = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    cc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, cc):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.cc = cc
 
-class NodeDegreeUser(db.Model):
+class DsClosenessCentralityUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
-    sorted_dict = db.Column(db.Text)
+    rank = db.Column(db.Integer)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+    cc = db.Column(db.Float)
 
-    def __init__(self, topic, date, windowsize, sorted_dict):
+    def __init__(self, topic, date, windowsize, rank, userid, cc):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
-        self.sorted_dict = sorted_dict
+        self.rank = rank
+        self.userid = userid
+        self.cc = cc
         
+
+class LocalBridge(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    a_node = db.Column(db.BigInteger(11, unsigned=True))
+    b_node = db.Column(db.BigInteger(11, unsigned=True))
+    span_ab = db.Column(db.Integer)
+
+    def __init__(self, topic, date, windowsize, a_node, b_node, span_ab):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.a_node = a_node
+        self.b_node = b_node
+        self.span_ab = span_ab
+
+class Source(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    userid = db.Column(db.BigInteger(11, unsigned=True))
+
+    def __init__(self, topic, date, windowsize, userid):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.userid = userid
+
+class FirstUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    user_info = db.Column(db.Text)
+    weibo_info = db.Column(db.Text)
+    user_domain = db.Column(db.String(20))
+
+    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, user_domain):
+        self.topic = topic
+        self.date = date
+        self.windowsize = windowsize
+        self.uid =uid
+        self.timestamp = timestamp
+        self.user_info = user_info
+        self.weibo_info = weibo_info
+        self.user_domain = user_domain
+
+class FirstDomainUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    date = db.Column(db.Date)
+    windowsize = db.Column(db.Integer, default=1)
+    uid = db.Column(db.BigInteger(11, unsigned=True))
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    user_info = db.Column(db.Text)
+    weibo_info = db.Column(db.Text)
+    user_domain = db.Column(db.String(20))
+    rank = db.Column(db.Integer)
+
+    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, user_domain, rank):
+        self.topic = topic
+        self.date = date
+        self.uid = uid
+        self.windowsize = windowsize
+        self.timestamp = timestamp
+        self.user_info = user_info
+        self.weibo_info = weibo_info
+        self.user_domain = user_domain
+        self.rank = rank
+
+class AllFrequentUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    db_time = db.Column(db.Date)
+    ffu_kind = db.Column(db.String(20))
+    user_frequent = db.Column(db.Text)
+
+    def __init__(self, db_time, ffu_kind, user_frequent):
+        self.db_time = db_time
+        self.ffu_kind = ffu_kind
+        self.user_frequent = user_frequent
+
 
 # opinion module used in test
 class OpinionTestTime(db.Model):

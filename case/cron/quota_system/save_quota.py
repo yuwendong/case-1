@@ -3,7 +3,8 @@ import json
 import time
 from config import db
 from model import TopicStatus, Topics, QuotaAttention, QuotaMediaImportance, QuotaGeoPenetration,\
-                  QuotaQuickness, QuotaSentiment, QuotaDuration, QuotaSensitivity, QuotaImportance
+                  QuotaQuickness, QuotaSentiment, QuotaDuration, QuotaSensitivity, QuotaImportance, QuotaCoverage,\
+                  QuotaPersonSensitivity
 
 def save_attention_quota(topic, start_ts, end_ts, domain, attention):
     # being used to test, it's should be modified
@@ -57,7 +58,7 @@ def save_geo_penetration(topic, start_ts, end_ts, pcount): # 地域渗透度
     
 def save_quickness_quota(topic, start_ts, end_ts, domain, quickness):
     item = QuotaQuickness(topic, start_ts, end_ts, domain, quickness)
-    print 'topic:', topic
+    #print 'topic:', topic
     item_exist = db.session.query(QuotaQuickness).filter(QuotaQuickness.topic==topic, \
                                                    QuotaQuickness.start_ts==start_ts, \
                                                    QuotaQuickness.end_ts==end_ts, \
@@ -113,4 +114,29 @@ def save_importance_quota(topic, start_ts, end_ts, score, weight):
     db.session.add(item)
 
     db.session.commit()
+
+def save_coverage_quota(topic, start_ts, end_ts, coverage):
+    item = QuotaCoverage(topic, start_ts, end_ts, coverage)
+    item_exist = db.session.query(QuotaCoverage).filter(QuotaCoverage.topic==topic ,\
+                                                        QuotaCoverage.start_ts==start_ts ,\
+                                                        QuotaCoverage.end_ts==end_ts).first()
+    if item_exist:
+        db.session.delete(item_exist)
+    db.session.add(item)
+
+    db.session.commit()
+
+def save_person_sensitivity_quota(topic, start_ts, end_ts, ps):
+    item = QuotaPersonSensitivity(topic, start_ts, end_ts, ps)
+    item_exist = db.session.query(QuotaPersonSensitivity).filter(QuotaPersonSensitivity.topic==topic ,\
+                                                                 QuotaPersonSensitivity.start_ts==start_ts ,\
+                                                                 QuotaPersonSensitivity.end_ts==end_ts).first()
+    if item_exist:
+        db.session.delete(item_exist)
+    db.session.add(item)
+
+    db.session.commit()
+
+    
+    
 
