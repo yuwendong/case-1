@@ -4,7 +4,7 @@ import math
 import operator
 from case.extensions import db
 from utils import weiboinfo2url
-from time_utils import datetime2ts, ts2date
+from case.time_utils import datetime2ts, ts2date
 from case.global_config import xapian_search_user as user_search
 from case.model import PropagateCount, PropagateKeywords, PropagateWeibos# , AttentionCount, QuicknessCount  需要查询的表
 
