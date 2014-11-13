@@ -14,7 +14,7 @@ from city_color import province_color_map
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect
 from city_map import partition_time, partition_count, map_circle_data, map_line_data, statistics_data
 
-from dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
+from case.dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
 from xapian_case.xapian_backend import XapianSearch
 from utils import weiboinfo2url
 
@@ -132,12 +132,11 @@ def ts2date(ts):
 
 
 def get_city_weibo(total_count_list_reverse): # total_count_list_reverse=[(city1,count1),(city2,count2)...]
-    topic = u'东盟,博览会'
     weibos = []
     query_dict = {
         '$or': [{'message_type': 1}, {'message_type': 3}]
     }
-    search_city_weibo = getXapianWeiboByTopic(topic)
+    search_city_weibo = getXapianWeiboByTopic()
     count, get_results = search_city_weibo.search(query=query_dict, fields=RESP_ITER_KEYS)
     for r in get_results():
         #weibo = mongotable.find_one({'_id': int(r['_id'])})
