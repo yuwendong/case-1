@@ -5,7 +5,7 @@ import redis
 import datetime
 from xapian_case.utils import top_keywords, gen_mset_iter
 from time_utils import datetime2ts, ts2HourlyTime
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration # 获取一定时间段内的微博
+from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic # 获取一定时间段内的微博
 from config import mtype_kv, db
 from model import PropagateCount, PropagateKeywords, PropagateWeibos #, AttentionCount, QuicknessCount  一定时间、话题、信息类型对应的{domain:count}
 
@@ -207,13 +207,13 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
             mtype_dcount = {} # mtype_dcount={mtype:{domain:count}}
             mtype_kcount = {} # mtype_kcount={mtype:[terms]}
             mtype_weibo = {} # mtype_weibo={mtype:weibo}
-            print begin_ts, end_ts, 'topic %s starts calculate' % topic.encode('utf-8')
+            # print begin_ts, end_ts, 'topic %s starts calculate' % topic.encode('utf-8')
             query_dict = {
                 'timestamp': {'$gt': begin_ts, '$lt': end_ts},
                 '$or': [],
             }
-            for topic in topics:
-                query_dict['$or'].append({'topics': topic}) # 由于topic目前没有数据，所以测试阶段使用text中查询topic
+            for topic_a in topics:
+                query_dict['$or'].append({'topics': topic_a}) # 由于topic目前没有数据，所以测试阶段使用text中查询topic
             for k, v in mtype_kv.iteritems():
                 query_dict['message_type'] = v
                 #query_dict['message_type'] = 1
@@ -245,28 +245,30 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
                 mtype_dcount[v] = [end_ts, domaincount]
                 #print mtype_dcount[v]
                 #print '%s %s saved message_type domain_count' % (begin_ts, end_ts)
-                #save_pc_results(topic, mtype_dcount, during) # PropagateCount表
+                save_pc_results(topic, mtype_dcount, during) # PropagateCount表
                 #save_apc_results(topic, mtype_dcount, during) # APCount表
                 save_kc_results(topic, mtype_kcount, during, k_limit)
                 save_ws_results(topic, mtype_weibo, during, w_limit)
 
 
-def cal_topic_propagate_count_by_date(topic, datestr, duration):
-    start_ts = datetime2ts(datestr)
-    end_ts = start_ts + Day
-    datestr = datestr.replace('-', '')
-    xapian_search_weibo = getXapianWeiboByDate(datestr)
+def cal_topic_propagate_count_by_date(topic, datestr_list, duration):
+    start_ts = datetime2ts(datestr_list[0])
+    end_ts = datetime2ts(datestr_list[-1]) + Day
+    datestrlist = []
+    xapian_search_weibo = getXapianWeiboByTopic(topic)
     if xapian_search_weibo:
         propagateCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # 原始表、Attention&Penetration表
         #quicknessCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration) # Quickness表
         #propagate_keywords(topic, xapian_search_weibo, start_ts= start_ts, over_ts=end_ts, during=duration)
 
-def worker(topic, datestr):
-    print 'topic: ', topic.encode('utf8'), 'datestr:', datestr, 'Fifteenminutes: '
-    cal_topic_propagate_count_by_date(topic, datestr, Fifteenminutes)
+def worker(topic, datestr_list):
+    print 'topic: ', topic.encode('utf8'), 'datestr:', datestr_list, 'Fifteenminutes: '
+    cal_topic_propagate_count_by_date(topic, datestr_list, Fifteenminutes)
 
 
 if __name__ == '__main__':
     datestr = '2013-09-01'
-    topic = u"中国"
-    worker(topic,datestr)
+    datestr_list = ['2013-09-02', '2013-09-03', '2013-09-04',\
+                    '2013-09-05', '2013-09-06', '2013-09-07']
+    topic = u"东盟,博览会"
+    worker(topic,datestr_list)

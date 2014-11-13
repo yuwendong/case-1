@@ -152,12 +152,12 @@ def _top_keywords(kcount_dict, top=TOP_READ):
 
 def ReadPropagateKeywords(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_LIMIT, unit=MinInterval, top=TOP_READ):
     kcounts_dict = {}
-    print '*'*5
-    print topic, end_ts, during, mtype
-    print during-unit
+    # print '*'*5
+    # print topic, end_ts, during, mtype
+    # print during-unit
     if during <= unit:
-        print '*'*10
-        print topic, end_ts, during, mtype
+        # print '*'*10
+        # print topic, end_ts, during, mtype
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         item = db.session.query(PropagateKeywords).filter(PropagateKeywords.end==upbound, \
                                                           PropagateKeywords.topic==topic, \

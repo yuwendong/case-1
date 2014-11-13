@@ -228,6 +228,7 @@ class PropagateKeywords(db.Model):
         self.range = range
         self.limit = limit
         self.mtype = mtype
+        self.kcount = kcount
 
 class PropagateWeibos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

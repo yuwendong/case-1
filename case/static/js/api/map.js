@@ -1,9 +1,8 @@
+var province_list = ["安徽", "北京", "重庆", "福建", "甘肃", "广东", "广西", "贵州", "海南", "河北", "黑龙江", "河南", "湖北", "湖南", "内蒙古", "江苏", "江西", "吉林", "辽宁", "宁夏", "青海", "山西", "山东", "上海", "四川", "天津", "西藏", "新疆", "云南", "浙江", "陕西", "台湾", "香港", "澳门"];
 var topic = QUERY;
 var START_TS = START_TS;
 var END_TS = END_TS;
 var DURING_INTERGER = POINT_INTERVAL;
-
-
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 
@@ -29,14 +28,17 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
     this.start_ts = start_ts;
     this.end_ts = end_ts;
     this.pointInterval = pointInterval;
-    this.during = end_ts - start_ts;
     this.ts_list=[];
     this.dataMap = {};
+    this.rank_city = [];
     this.mappoint_data;
     this.map_div_id_whole = 'map_div_whole';
     this.map_div_id_zone = 'map_div_zone';
+    this.weibo_tab_id = 'Tableselect_2';
+    this.weibo_cont_id = 'vertical-ticker_2';
+    this.weibo_more_id = 'more_information_2';
 
-    this.pList = ['安徽', '北京', '重庆', '福建', '甘肃', '广东','广西','贵州','海南','河北','黑龙江','河南','湖北','湖南','内蒙古','江苏','江西','吉林','辽宁','宁夏','青海','山西','山东','上海','四川','天津','西藏','新疆','云南','浙江','陕西','台湾','香港','澳门', '海外'];
+    this.pList = ['安徽', '北京', '重庆', '福建', '甘肃', '广东','广西','贵州','海南','河北','黑龙江','河南','湖北','湖南','内蒙古','江苏','江西','吉林','辽宁','宁夏','青海','山西','山东','上海','四川','天津','西藏','新疆','云南','浙江','陕西','台湾','香港','澳门'];
     this.dataFormatter = function(obj){
         var temp;
         for (var year in obj) {
@@ -51,8 +53,8 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
         return obj;
     }
 
-    this.whole_map_ajax_url = function(query, start_ts, end_ts, during, style){
-        return "/evolution/topic_ajax_spatial/?start_ts=" + start_ts + "&end_ts=" + end_ts + '&during=' + during + '&topic=' + query + '&style=' + style
+    this.whole_map_ajax_url = function(query, start_ts, end_ts, pointInterval, style, incremental){
+        return "/evolution/topic_ajax_spatial/?start_ts=" + start_ts + "&end_ts=" + end_ts + '&pointInterval=' + pointInterval + '&topic=' + query + '&style=' + style + '&incremental=' + incremental
     }
     this.ajax_method = "GET";
     this.call_sync_ajax_request = function(url, method, callback){
@@ -79,16 +81,7 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
         '3': '评论',
         '4': '总数'
     };
-    this.select_province_idx_list = [1, 5, 23];
-    this.geoCoordObj = {
-        "北京":[116.46,39.92], // 支持数组[经度，维度]
-        "上海":[121.48,31.22],
-        "广东":[113.23,23.16],
-        "西藏":[91.11,29.97],
-        "新疆":[87.68,43.77],
-        "海外":[126.9,37.51]
-    };
-
+    // this.select_province_idx_list = [1, 5, 6, 14, 23, 30];
     this.myChart_whole;
     this.myChart_zone;
     this.disposeMyChartWhole = function () {
@@ -112,16 +105,27 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
         'global': 4
     }
 
+    this.Index2Incre = {
+        'growth': 0,
+        'accumulative': 1
+    }
+
     this.addSwitchMyChartListener = function(){
         var that = this;
         $('input:radio[name="optionsStatusWhole"]').on('change', function (e) {
-            var curIndex = e.target.value;
-            curIdxWhole = that.Index2Idx[curIndex];
+            curIdxWhole = that.Index2Idx[e.target.value];
+            that.showWholeMapChart();
+        });
+        $('input:radio[name="optionsStatusWholeSta"]').on('change', function (e) {
+            incrementalWhole = that.Index2Incre[e.target.value];
             that.showWholeMapChart();
         });
         $('input:radio[name="optionsStatusZone"]').on('change', function (e) {
-            var curIndex = e.target.value;
-            curIdxZone = that.Index2Idx[curIndex];
+            curIdxZone = that.Index2Idx[e.target.value];
+            that.showZoneChart();
+        });
+        $('input:radio[name="optionsStatusZoneSta"]').on('change', function (e) {
+            incrementalZone = that.Index2Incre[e.target.value];
             that.showZoneChart();
         });
     }
@@ -135,65 +139,33 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
         this.initPullDrawZone();
     }
 
-    /*
-    this.showZoneChart = function(curSta) {
-        this.disposeMyChartZone();
-        this.initPullDrawZoneChart(curSta);
-    }
-    */
 
     this.addSwitchTabListener = function(){
         var that = this;
         var select_a;
         var unselect_a;
-        // $("#mapTabDiv").children("a").unbind();
         $("#mapTabDiv").children("[status='wholemap']").click(function() {
             select_a = $(this);
             unselect_a = $(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                // that.showSwitchedTab('wholemap');
                 that.showWholeMapChart();
                 that.showZoneChart();
             }
         });
-        /*
-        $("#mapTabDiv").children("[status='zone']").click(function() {
-            select_a = $(this);
-            unselect_a = $(this).siblings('a');
-            if(!select_a.hasClass('curr')) {
-                select_a.addClass('curr');
-                unselect_a.removeClass('curr');
-                that.showSwitchedTab('zone');
-            }
-        });
-        */
     }
 
-    /*
-    this.showSwitchedTab = function(curSta) {
-        this.disposeMyChart();
-        if(curSta == 'wholemap'){
-            // var curIdx = '1';
-            this.showWholeMapChart(curIdx);
-        }
-        else if(curSta == 'zone'){
-            // var curIdx = '1';
-            this.showZoneChart(curIdx);
-        }
-    }
-    */
 
 }
 
 CaseMap.prototype.initPullDrawZone = function(sta){
-    var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, curIdxZone);
+    var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, curIdxZone, incrementalZone);
     var myChart_zone = echarts.init(document.getElementById(this.map_div_id_zone));
     this.myChart_zone = myChart_zone;
 
     myChart_zone.showLoading({
-        text: '努力加载数据中...'
+        effect:'whirling'
     });
 
     var that = this;
@@ -214,12 +186,12 @@ CaseMap.prototype.initPullDrawZone = function(sta){
 }
 
 CaseMap.prototype.initPullDrawMap = function(){
-    var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, curIdxWhole);
+    var ajax_url = this.whole_map_ajax_url(this.query, this.start_ts, this.end_ts, this.pointInterval, curIdxWhole, incrementalWhole);
     var myChart_whole = echarts.init(document.getElementById(this.map_div_id_whole));
     this.myChart_whole = myChart_whole;
 
     myChart_whole.showLoading({
-        text: '努力加载数据中...'
+        effect:'whirling'
     });
 
     var that = this;
@@ -227,91 +199,36 @@ CaseMap.prototype.initPullDrawMap = function(){
 
     function callback(data){
         myChart_whole.hideLoading();
-        var rank_city = [];
         var data_count = data["count"];
         var format_data = that.dataFormatter(data_count);
-        var max_count = data["max_count"];
+        var max_count = Math.ceil(data["max_count"] / 10) * 10;
 
+        // show weibo
         var total_count = data["total_count"];
-        // var first_city = data["first_city"];
-        var curr_data = data['top_city_weibo'];
+        that.rank_city = [];
         for(var j = 0; j < 10; j++ ) {
-            rank_city.push(total_count[j][0]);
+            that.rank_city.push(total_count[j][0]);
         }
-
         drawWholeMap(that, format_data, max_count, myChart_whole);
 
-        // drawtable(total_count);
-        // source_data(first_city);
-        drawtab(curr_data, rank_city);
+        if (!top_city_weibo){
+            top_city_weibo = data["top_city_weibo"];
+        }
+        drawtab(that.rank_city, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
     }
 }
 
-/*
-function drawtable(total_count){
-    var cellCount = 2;
-    console.log('here')
-    var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th>省份</th><th>微博数量</th></tr></thead>';
-    var tbody = '<tbody>';
-      for (var i = 0;i < 10;i++) {
-        var tr = '<tr>';
-        var t = i;
-        var v = t+1;
-        var s = v.toString();
-        var td = '<td><span class="label label-important">'+ s +'</span></td>';
-        tr += td;
-        for(var j = 0;j < cellCount;j++) {
-            if(j == 0 ){
-                 td = '<td><u style="cursor: pointer;" onclick = \"connect(\''+total_count[i][j]+'\')\">'+total_count[i][j]+'</u></td>';
-            }
-            else{
-                 td = '<td>'+total_count[i][j]+'</td>';
-            }
-            tr += td;
-        }
-        tr += '</tr>';
-        tbody += tr;
-      }
-      tbody += '</tbody>';
-      table += thead + tbody;
-      table += '</table>'
-      $("#rank_table_country").html(table);
-}
-
-function connect(topic){
-    var value_data = topic;
-    $("#Tablebselect").children("a").unbind();
-    $("#Tableselect").children("a").each(function(){        
-        var select_a = $(this);
-        var unselect_a = $(this).siblings('a');
-        if(select_a.attr('topic') == value_data){
-            if(!select_a.hasClass('curr')){
-                select_a.addClass('curr');
-                unselect_a.removeClass('curr');
-                show_weibo(value_data,curr_data);
-            }
-        }
-    });
-}
-function source_data(first_city){
-    html = '';
-    $("#source").empty();
-    html += '传播源头:' + first_city;
-    $("#source").append(html);  
-}
-*/
-
-
-// 默认加载总数
+// 默认加载总数,默认加载增量
 var curIdxWhole = '4';
 var curIdxZone = '4';
+var incrementalWhole = '0';
+var incrementalZone = '0';
 var casemap = new CaseMap(topic, START_TS, END_TS, POINT_INTERVAL);
 // casemap.showWholeMapChart(curIdx);
 casemap.addSwitchTabListener();
 casemap.addSwitchMyChartListener();
 
-function drawZoneChart(that, data, ts_list, myChart){
+function drawZoneChart(that, data, ts_list, myChart_zone){
     var keyCity = that.pList;
 
     var option = {
@@ -332,10 +249,30 @@ function drawZoneChart(that, data, ts_list, myChart){
         
         toolbox: {
             show : true,
+            orient : 'vertical',
+            x:'right',
+            y:'center',
             feature : {
                 mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                dataView : {show: true,
+                    readOnly: false,
+                    optionToContent:function (v){
+                        var results = '';
+                        for (var t = 0;t < v.xAxis[0]['data'].length;t++){
+                            var sdata2str = v.xAxis[0]['data'][t];
+                            sdata2str += ':\n';
+                            for (var i = 1;i < v.series.length;i++){
+                                var sname = v.series[i]['name'];
+                                var sdata = v.series[i]['data'];
+                                sdata2str += sname + ':' + sdata[i] + ',';
+                            }
+                            sdata2str += '\n';
+                            results += sdata2str;
+                        }
+                        return results;
+                    }
+                },
+                // magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
                 restore : {show: true},
                 saveAsImage : {show: true}
             }
@@ -376,17 +313,18 @@ function drawZoneChart(that, data, ts_list, myChart){
         });
         selected[city] = false;
     }
-    selected['北京'] = true;
-    selected['上海'] = true;
-    selected['广东'] = true;
+    var markNum = 3; // number of true legends
+    for(var i=0;i < markNum;i++){
+        selected[that.rank_city[i]] = true;
+    }
     option.legend.selected = selected;
     option.series = series;
 
-    myChart.setOption(option);
+    myChart_zone.setOption(option);
 }
 
-function drawWholeMap(that, fdata, max_count, myChart){
-    var get_bar_series_data_ele = function(name, data) {
+function drawWholeMap(that, fdata, max_count, myChart_whole){
+    var get_bar_series_data_ele = function(data) {
         return {
             type: 'bar',
             itemStyle : {
@@ -407,18 +345,18 @@ function drawWholeMap(that, fdata, max_count, myChart){
                     label : {
                         show : true,
                         textStyle : {
-                            color : 'orange',
+                            color : 'rgb(240,22,77)',
                             fontWeight : 'bold'
                         }
                     }
                 }
             },
-            'data': data
+            data: data
         }
     }
-    var get_map_series_data_ele = function(name, markPointData, data, geoCoord) {
+    var get_map_series_data_ele = function(markPointData, data) {
         return {
-            name: name,
+            name:'微博数量',
             type: 'map',
             mapType: 'china',
             roam: false,
@@ -427,53 +365,59 @@ function drawWholeMap(that, fdata, max_count, myChart){
                 emphasis:{label:{show:true}}
             },
             mapLocation: {
-                x: 'right',
+                x: 350,
                 y: 80
             },
             data: data,
             markPoint:{
-                symbolSize: 20, // 用于修改标记label的大小
+                symbolSize: function(v){
+                    return 15;
+                },
                 itemStyle : {
                     normal:{
-                        color:'green' // 用于修改标记label的颜色
+                        color:'rgb(240,22,77)'
                     },
-                    emphasis:{label:{show:true}}
+                    emphasis:{
+                        label:{
+                            show:false
+                        }
+                    }
                 },
                 data : markPointData
             },
-            geoCoord : geoCoord
+            geoCoord : city2lnglat
         }
     }
 
     var option_data_arr = [];
-    var ts_list = [];
     var date_list = [];
     for(var timestamp in fdata){
         var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
-        ts_list.push(timestamp);
         date_list.push(date);
 
         var markPointData = [];
-        var geoCoord = {};
-        for(var i in that.select_province_idx_list){
-            var idx = that.select_province_idx_list[i];
-            markPointData.push(fdata[timestamp][idx]);
-            geoCoord[that.pList[idx]] = that.geoCoordObj[that.pList[idx]];
+        var markNum = 5; // number of markpoints
+        for(var i=0;i < markNum;i++){
+            for (var m=0;m < that.pList.length;m++){
+                if (that.pList[m] == that.rank_city[i]){
+                    markPointData.push(fdata[timestamp][m]);
+                    break;
+                }
+            }
         }
 
-        //markPointData.push({name:"海外" ,value: 250});
-        var name = '微博数量';
         var darr = fdata[timestamp];
         darr.sort(function(a, b) {
             return a.value - b.value
         });
+
         var sorted_plist = [];
         for(var i in darr){
             sorted_plist.push(darr[i]['name']);
         }
 
-        var map_series_data = get_map_series_data_ele(name, markPointData, darr, geoCoord);
-        var bar_series_data = get_bar_series_data_ele(name, darr);
+        var map_series_data = get_map_series_data_ele(markPointData, darr);
+        var bar_series_data = get_bar_series_data_ele(darr);
         var option_data = {
             title : {
                 x: 'center',
@@ -483,16 +427,34 @@ function drawWholeMap(that, fdata, max_count, myChart){
             },
 
             tooltip:{
-                'trigger': 'item'
+                trigger: 'item'
             },
 
             toolbox:{
-                'show': true,
-                'feature':{
-                    'mark':{'show':true},
-                    'dataView':{'show':true,'readOnly':false},
-                    'restore':{'show':true},
-                    'saveAsImage':{'show':true}
+                show: true,
+                orient: 'vertical',
+                x: 'right',
+                y: 'top',
+                feature:{
+                    mark:{show:true},
+                    dataView:{show:true,
+                        readOnly:false,
+                        optionToContent:function(v){
+                            var results = '';
+                            for (var i=1;i < v.series.length;i++){
+                                // var sname = v.series[i]['name'];
+                                var sdata = v.series[i]['data'];
+                                var sdata2str = '';
+                                for (var m = 0;m < sdata.length;m++){
+                                    sdata2str += sdata[m]['name'] + ':' + sdata[m]['value'] + ';';
+                                }
+                                results += sdata2str;
+                            }
+                            return results;
+                        }
+                    },
+                    restore:{show:true},
+                    saveAsImage:{show:true}
                 }
             },
 
@@ -507,7 +469,7 @@ function drawWholeMap(that, fdata, max_count, myChart){
                 calculable: true,
                 x: 'right',
                 y: 'bottom',
-                padding:10,
+                padding: 10,
                 textStyle: {
                     color: 'orange'
                 }
@@ -515,7 +477,7 @@ function drawWholeMap(that, fdata, max_count, myChart){
 
             grid:{
                 x: 50,
-                x2: 200,
+                x2: 80,
                 y2: 10,
                 borderWidth:0
             },
@@ -523,9 +485,12 @@ function drawWholeMap(that, fdata, max_count, myChart){
                 {
                     type : 'value',
                     position: 'bottom',
-                    name: '（条）',
-                    splitLine: {show: false},
-                    boundaryGap : [0, 0.01]
+                    splitLine: {show: true},
+                    boundaryGap : [0, 0.01],
+                    axisLabel:{
+                        show:true,
+                        formatter:'{value}'
+                    },
                 }
             ],
             yAxis : [
@@ -556,7 +521,7 @@ function drawWholeMap(that, fdata, max_count, myChart){
                 }
             },
             autoPlay: true,
-            x: 30,
+            x: 20,
             y: 20,
             playInterval: 1000,
             type: 'number',
@@ -568,6 +533,6 @@ function drawWholeMap(that, fdata, max_count, myChart){
         options: option_data_arr
     };
 
-    myChart.setOption(option);
+    myChart_whole.setOption(option);
 }
 

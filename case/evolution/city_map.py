@@ -15,10 +15,10 @@ HOUR = 3600
 SIXHOURS = 6 * HOUR
 DAY = 24 * HOUR
 
-INTERVAL = DAY
+INTERVAL = HOUR
 
-BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 0, 0).timetuple())
-END_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 1, 0).timetuple())
+# BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 0, 0).timetuple())
+# END_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 1, 0).timetuple())
 
 def partition_time(ts_arr, data, interval = INTERVAL):
     ts_series = []
@@ -26,7 +26,6 @@ def partition_time(ts_arr, data, interval = INTERVAL):
     ts_end = ts_arr[-1]
     each_step = interval
     ts_current = ts_start
-    # index = 0
     data_cursor = -1
     groups = []
     while ts_current  < ts_end:
@@ -51,6 +50,16 @@ def partition_time(ts_arr, data, interval = INTERVAL):
 
     print 'groups', len(groups)
     return ts_series, groups
+
+def select_groups(ts_series, groups, start_ts, end_ts):
+    selected_ts_series = []
+    selected_groups = []
+    for index, ts_sery in enumerate(ts_series):
+        if ((ts_sery[0] >= start_ts) and (ts_sery[1] <= end_ts)):
+            selected_ts_series.append(ts_series[index])
+            selected_groups.append(groups[index])
+
+    return selected_ts_series, selected_groups
 
 def partition_count(ts_arr, data, interval = INTERVAL):
     ts_series = []
@@ -190,15 +199,44 @@ def map_line_data(groups, incremental = True):
         for key in province_repost_count:
             count = province_repost_count[key]['count']
             province_repost_count[key]['rank'] = repost_level(count, max_repost_num)
-    print 'line', len(draw_line_data)
     return max_repost_num, draw_line_data
+
+def work_in_out(draw_line_data):
+    # in_out_results=[[(city,{'in':[(city,value),(city,value),],'out':[(city,value),(city,value),], 'total':value}),(city,{})],[]]
+
+    in_out_results = []
+
+    for index, group in enumerate(draw_line_data):
+        latlng_count_dict = {}
+        for key in group:
+            out_city = key.split('-')[0]
+            in_city = key.split('-')[1]
+            if out_city not in latlng_count_dict:
+                latlng_count_dict[out_city] = {'in': {}, 'out': {}, 'in_total': 0, 'out_total': 0, 'total': 0}
+            if in_city not in latlng_count_dict:
+                latlng_count_dict[in_city] = {'in': {}, 'out': {}, 'in_total':0, 'out_total': 0,  'total': 0}
+            latlng_count_dict[out_city]['out'][in_city] = group[key]['count']
+            latlng_count_dict[out_city]['out_total'] += group[key]['count']
+            latlng_count_dict[out_city]['total'] += group[key]['count']
+            latlng_count_dict[in_city]['in'][out_city] = group[key]['count']
+            latlng_count_dict[in_city]['in_total'] += group[key]['count']
+            latlng_count_dict[in_city]['total'] += group[key]['count']
+
+        for city in latlng_count_dict:
+            latlng_count_dict[city]['in'] = sorted(latlng_count_dict[city]['in'].iteritems(), key=lambda(k,v):v, reverse=True)
+            latlng_count_dict[city]['out'] = sorted(latlng_count_dict[city]['out'].iteritems(), key=lambda(k,v):v, reverse=True)
+
+        latlng_count_dict = sorted(latlng_count_dict.iteritems(), key=lambda(k,v):v['total'], reverse=True)
+        in_out_results.append(latlng_count_dict)
+
+    return in_out_results
 
 def work_total_data(draw_line_data):
     draw_total_data = []
     history_data = []
 
     for index, group in enumerate(draw_line_data):
-        latlng_count_dict= {}
+        latlng_count_dict = {}
         for key in group:
             city = key.split('-')[0]
             if city not in latlng_count_dict:
@@ -237,23 +275,8 @@ def work_total_data(draw_line_data):
     return draw_total_data
 
 
-    '''
-    for group in draw_line_data:
-        total_data_dict = {}
-        for key in group:
-            cities = key.split('-')
-            city = cities[0]
-            cur = group[key]['count']
-            try:
-                total_data_dict[city][0] += cur
-            except KeyError:
-                total_data_dict[city] = [cur, 0, repr(-1)]
-        total_data_dict = sorted(total_data_dict.iteritems(),key=lambda(k, v): v[0], reverse=True)
-        draw_total_data.append(total_data_dict)
-    return draw_total_data
-    '''
 
-def statistics_data(groups, draw_line_data):
+def statistics_data(groups, draw_line_data, incremental = True):
     statistics_data = []
     origin_series = []
     repost_series = []
@@ -270,12 +293,34 @@ def statistics_data(groups, draw_line_data):
             if release_latlng not in latlng_count_dict:
                 repost_num = 0
                 origin_num = 0
+                if incremental == True:
+                    j = index
+                    while j > 0:
+                        previous_data = history_data[index-1]
+                        if release_latlng in previous_data:
+                            repost_num = previous_data[release_latlng][0]
+                            origin_num = previous_data[release_latlng][1]
+                            break
+                        else:
+                            j -= 1
+
                 latlng_count_dict[release_latlng] = [repost_num, origin_num]
 
             if status['original']:
                 latlng_count_dict[release_latlng][1] += 1
             else:
                 latlng_count_dict[release_latlng][0] += 1
+
+        if incremental == True:
+            if index > 0:
+                previous_data = history_data[index-1]
+                for release_latlng in previous_data:
+                    try:
+                        latlng_count_dict[release_latlng]
+                    except KeyError:
+                        latlng_count_dict[release_latlng] = previous_data[release_latlng]
+                        continue
+        history_data.append(latlng_count_dict)
 
         province_count_repost_dict = {}
         province_count_origin_dict = {}
@@ -343,7 +388,6 @@ def statistics_data(groups, draw_line_data):
             province_count_origin_dict[latlng] = [cur_origin, delta_origin, repr(status_origin)]
             province_count_post_dict[latlng] = [total_post, phi, repr(status_post)]
 
-        history_data.append(latlng_count_dict)
         province_count_repost_dict = sorted(province_count_repost_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
         province_count_origin_dict = sorted(province_count_origin_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
         province_count_post_dict = sorted(province_count_post_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
