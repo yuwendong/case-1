@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+
+import sys
 import IP   #引入IP，对'geo'字段进行解析
 import json
 import datetime
 from topics import _all_topics
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic #获取一定时间段内的微博
 from config import mtype_kv, db

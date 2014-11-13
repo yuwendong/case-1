@@ -5,9 +5,10 @@ try:
 except ImportError:
     print 'Hadoop module is not installed or configured.'
 
+import sys
 import time
 import tempfile
-
+sys.path.append('../')
 from time_utils import unix2hadoop_date
 
 def generate_job_id(ts, window_size, topic_id, network_type):

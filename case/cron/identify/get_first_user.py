@@ -6,6 +6,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import redis
 from config import db
+sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
 from dynamic_xapian_weibo import getXapianWeiboByDate
 from config import xapian_search_user as user_search

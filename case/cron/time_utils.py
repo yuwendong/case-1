@@ -22,3 +22,11 @@ def datetimestr2ts(date):
 
 def ts2datetimestr(ts):
     return time.strftime('%Y%m%d', time.localtime(ts))
+
+def ts2HourlyTime(ts, interval):
+    # interval 取 Minite、Hour
+    ts = ts - ts % interval
+    return ts
+
+def ts2datetime_full(ts):
+    return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(ts))

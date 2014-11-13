@@ -1,10 +1,12 @@
 #-*- coding:utf-8 -*-
 
+import sys
 import os
 import json
 import pymongo
 from topics import _all_topics
 from config import emotions_kv, db
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime
 from xapian_case.xapian_backend import XapianSearch
 from xapian_case.utils import top_keywords, gen_mset_iter

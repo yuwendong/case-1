@@ -8,7 +8,7 @@ import networkx as nx
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
+sys.path.append('../')
 from time_utils import datetime2ts, window2time, ts2datetimestr
 from hadoop_utils import generate_job_id
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, is_in_trash_list, acquire_user_by_id, read_key_users

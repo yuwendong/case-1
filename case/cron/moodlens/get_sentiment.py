@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.append('../')
 from time_utils import datetime2ts, ts2HourlyTime
 from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration
 

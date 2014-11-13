@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+
+import sys
 import networkx as nx
+sys.path.append('../')
 from config import db
 from model import BetweenessCentralityUser, Source # model.py建表
 from time_utils import ts2datetime, datetime2ts
