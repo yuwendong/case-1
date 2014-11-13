@@ -24,9 +24,6 @@ DAY = 24 * HOUR
 s = getXapianWeiboByTopic(u'东盟,博览会')
 l = getXapianWeiboByTopic(u'东盟,博览会')
 
-BEGIN_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 0, 0).timetuple())
-END_TS = time.mktime(datetime.datetime(2013, 9, 1, 16, 1, 0).timetuple())
-
 
 def repost_search(topic):
     repost_list = []
@@ -35,7 +32,6 @@ def repost_search(topic):
         topics = topic.strip().split(',')
 
         query_dict = {
-                # 'timestamp':{'$gt':BEGIN_TS, '$lt':END_TS},
                 '$or': [],
                 }
         for topic_a in topics:

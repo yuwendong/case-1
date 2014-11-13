@@ -5,7 +5,7 @@ import json
 from peak_detection import detect_peaks
 from read_quota import ReadPropagate, ReadIncrement, ReadPropagateKeywords, ReadPropagateWeibos  # ,ReadAttention, ReadPenetration, ReadQuickness 
 
-mtype_kv = {'origin': 1, 'forward': 2, 'comment': 3}
+mtype_kv = {'origin': 1, 'comment': 2, 'forward': 3}
 
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
@@ -15,7 +15,7 @@ def ajax_propagate():
     mtype = request.args.get('style', '')
     mtype = int(mtype)
     topic = request.args.get('topic', '')
-    during = request.args.get('during', 900)
+    during = request.args.get('during', 3600)
     during = int(during)
     end = request.args.get('end_ts', '')
     end = int(end)
@@ -92,7 +92,6 @@ def propagate_weibos():
     end_ts = int(end_ts)
     limit = request.args.get('limit', 50)
     limit = int(limit)
-
     results_dict = {}
 
     if mtype == 4 or mtype == 5:

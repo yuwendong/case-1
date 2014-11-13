@@ -172,30 +172,6 @@ def moodlens():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
-@mod.route('/area/')
-def area():
-    # 要素
-    yaosu = 'area'
-
-    # 话题关键词
-    topic = request.args.get('query', default_topic)
-
-    # 时间范围: 20130901-20130901
-    time_range = request.args.get('time_range', default_timerange)
-
-    # 时间粒度: 3600
-    point_interval = request.args.get('point_interval', None)
-    if not point_interval:
-        point_interval = default_pointInterval
-    else:
-        for pi in pointIntervals:
-            if pi['en'] == int(point_interval):
-                point_interval = pi
-                break
-
-    return render_template('index/diyu.html', yaosu=yaosu, time_range=time_range, \
-            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
-            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/semantic/')
 def meaning():
@@ -222,32 +198,7 @@ def meaning():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
-@mod.route('/testarea/')
-def testarea():
-    # 要素
-    yaosu = 'area'
-
-    # 话题关键词
-    topic = request.args.get('query', default_topic)
-
-    # 时间范围: 20130901-20130901
-    time_range = request.args.get('time_range', default_timerange)
-
-    # 时间粒度: 3600
-    point_interval = request.args.get('point_interval', None)
-    if not point_interval:
-        point_interval = default_pointInterval
-    else:
-        for pi in pointIntervals:
-            if pi['en'] == int(point_interval):
-                point_interval = pi
-                break
-
-    return render_template('index/testarea.html', yaosu=yaosu, time_range=time_range, \
-            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
-            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
-
-@mod.route('/newarea/')
+@mod.route('/area/')
 def newarea():
     # 要素
     yaosu = 'area'
@@ -268,9 +219,10 @@ def newarea():
                 point_interval = pi
                 break
 
-    return render_template('index/newarea.html', yaosu=yaosu, time_range=time_range, \
+    return render_template('index/area.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
+
 @mod.route('/time/')
 def shijian():
         # 要素
@@ -292,7 +244,7 @@ def shijian():
                 point_interval = pi
                 break
 
-    return render_template('index/shijian.html', yaosu=yaosu, time_range=time_range, \
+    return render_template('index/time.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 

@@ -169,7 +169,7 @@
             float: left;
             z-index: 1000;
             margin-right: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            # box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         .control-pane > div {
             margin: 10px;
@@ -281,6 +281,11 @@
             margin-right:auto;
             float:left;
         }
+        .more_display{
+            padding:4px;
+            text-align:center;
+            cursor:pointer;
+        }
     </style>
 {% endblock head_css %}
 
@@ -297,8 +302,8 @@
     <script src="http://api.map.baidu.com/library/CurveLine/1.5/src/CurveLine.min.js" type="text/javascript"></script>
     <script src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js" type="text/javascript"></script>
     <script src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js" type="text/javascript"></script>
-    <script src="/static/js/baidumap/city2lnglat.js" type="text/javascript"></script>
-    <script src="/static/js/baidumap/line.js"></script>
+    <script src="/static/js/api/city2lnglat.js" type="text/javascript"></script>
+    <script src="/static/js/api/line.js"></script>
     <script type="text/javascript">
         function switchTab(ProBox) {
             for (i = 1; i < 4; i++) {
@@ -341,21 +346,13 @@
     </div>
 
     <div id="con1">
-        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;margin-top:0px">
-            <div id="mapContainer" class="panel">
-                <div id="allmap"></div>
-                <!--<div id="slider_container"><div id="slider"></div></div>-->
-                <!--
-                <div id="play_pause">
-                    <div id="play_pause1"><button>播放</button></div>
-                    <div id="play_pause2"><button>暂停</button></div>
-                    <div id="play_pause3"><button>重置</button></div>
-                </div>
-                -->
+        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;height:520px;margin-top:0px">
+            <div style="margin-left:25px;width:1033px;">
+                <div id="allmap" style="float:left;width:95%;height:500px;background-color:#FFF;"></div>
             </div>
         </div>
-        <div class="well" style="width:1033px;margin-top:25px">
-            <div class="titlBar" style="padding-bottom:1px;">
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+            <div class="titlBar" style="padding-bottom:5px;width:1033px;">
                 <h4><b>各省排名</b></h4>
                 <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="各省排名"></i>&nbsp;&nbsp;
             </div>
@@ -374,35 +371,64 @@
                     <button id="influence" class="btn btn-danger" style="float: left;">原创微博影响力排名</button>
                 </div>
 
-                <!--<span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>-->
                 <div class="tabConts">
-                    <div id="rank_table" style="margin-top:5px">
+                    <div id="rank_table" style="margin-top:50px">
                         <table class="table table-bordered"></table>
                     </div>
-                    <!--<div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>-->
                 </div>
             </div>
         </div>
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+            <div class="titlBar" style="padding-bottom:15px;">
+                <h4><b>各省重要微博</b></h4>
+                <i id="weibo_tooltip_1" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="各省份的重要微博"></i>&nbsp;&nbsp;
+            </div>
+            <div class="stmTabs tabUnit" style="width:1033px;">
+                <div class="tabTitle" style="padding-top:1px;">
+                    <div class="tabUI" id="Tableselect_1">
+                    </div>
+                </div>
+                <div class="tabConts">
+                    <div id="weibos_div_1" style="float:left;">
+                        <div class="tabCon">
+                            <div class="cur" id="vertical-ticker_1"></div>
+                            <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
+                                <span>
+                                    <h4 class="weibo_more" id="more_information_1"></h4>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><br/>
+        </div>
     </div>
     <div id="con2" style="display:none">
-        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;margin-top:0px">
+        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;">
             <div class="titlBar" style="padding-bottom:25px;">
                 <h4><b>全国纵览</b></h4>
                 <i id="whole_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="全国纵览"></i>&nbsp;&nbsp;
             </div>
             <div style="margin-left:25px;width:1033px;">
                 <p style="margin: 0 0 10px;">信息类型选择：
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWhole" id="optionsRadios1" value="global" checked>总数
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWhole" id="optionsRadios1" value="origin" >原创
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWhole" id="optionsRadios1" value="repost" >转发
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWhole" id="optionsRadios1" value="comment" >评论
+                    </label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;统计方式:
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
+                        <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWholeSta" id="optionsRadios1" value="growth" checked>增长量
+                    </label>
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
+                        <input style="margin: -5px 5px 0" type="radio" name="optionsStatusWholeSta" id="optionsRadios1" value="accumulative" >累计量
                     </label>
                 </p>
                 <div id="map_div_whole" style="width:95%;height:500px;background-color:#FFF;">
@@ -416,63 +442,95 @@
             </div>
             <div style="margin-left:25px;width:1033px;">
                 <p style="margin: 0 0 10px;">信息类型选择：
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZone" id="optionsRadios2" value="global" checked>总数
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZone" id="optionsRadios2" value="origin" >原创
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZone" id="optionsRadios2" value="repost" >转发
                     </label>
-                    <label style="display: inline-block; margin-bottom: 5px; font-weight: bold;">
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
                         <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZone" id="optionsRadios2" value="comment" >评论
+                    </label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;统计方式:
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
+                        <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZoneSta" id="optionsRadios1" value="growth" checked>增长量
+                    </label>
+                    <label style="display: inline-block; margin-bottom: 0px; font-weight: bold;">
+                        <input style="margin: -5px 5px 0" type="radio" name="optionsStatusZoneSta" id="optionsRadios1" value="accumulative" >累计量
                     </label>
                 </p>
                 <div id="map_div_zone" style="width:95%;height:500px;background-color:#FFF;">
                 </div>
             </div>
         </div>
-        <!--<div class="blkUnit grpUnit" style="float:left;width:1033px;height:450px" id="cloudpie">
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
             <div class="titlBar" style="padding-bottom:15px;">
-                <h4><b>各省排名</b></h4>
-                    <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
-                    <div id="source" style = "margin-top:8px">
+                <h4><b>各省重要微博</b></h4>
+                <i id="weibo_tooltip_2" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="各省份的重要微博"></i>&nbsp;&nbsp;
+            </div>
+            <div class="stmTabs tabUnit" style="width:1033px;">
+                <div class="tabTitle" style="padding-top:1px;">
+                    <div class="tabUI" id="Tableselect_2">
                     </div>
-            </div>
-
-            <div id="rank_table_country" style="margin-top:35px;margin-left:10px">
-                <table  class="table table-bordered">
-                </table>
-            </div>
+                </div>
+                <div class="tabConts">
+                    <div id="weibos_div_2" style="float:left;">
+                        <div class="tabCon">
+                            <div class="cur" id="vertical-ticker_2"></div>
+                            <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
+                                <span>
+                                    <h4 class="weibo_more" id="more_information_2"></h4>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><br/>
         </div>
-        -->
     </div>
     <div id="con3" style="display:none">
-        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;margin-top:0px">
+        <div class="blkUnit grpUnit tabConts" style="float:left;width:1033px;height:515px;margin-top:0px">
             <div style="margin-left:25px;width:1033px;">
-                <!--<div id="mapContainer" class="panel" style="height:650px">-->
                 <div id="migration" style="float:left;width:70%;height:500px;background-color:#FFF;"></div>
-                <div id="results_list" style="float:left;width:25%;height:500px;background-color:#1b1b1b;"></div>
+                <div class="stmTabs tabUnit" id="results_list" style="margin-left:10px;margin-right:auto;float:left;width:25%;height:500px;background-color:rgba(104, 112, 77, 0.26);">
+                    <div class="control-pane">
+                        <button id="out_list" class="btn btn-danger" style="float: left;margin-left:20px;">迁出热市</button>
+                    </div>
+                    <div class="control-pane">
+                        <button id="in_list" class="btn btn-danger" style="float: left;">迁入热市</button>
+                    </div>
+                    <div class="tabConts">
+                        <div id="in_out_list" style="margin-top:70px;margin-right:-15px;">
+                            <table class="table table-bordered"></table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
             <div class="titlBar" style="padding-bottom:15px;">
                 <h4><b>各省重要微博</b></h4>
-                <i id="weibo_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="重要微博:各省份的重要微博"></i>&nbsp;&nbsp;
+                <i id="weibo_tooltip_3" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="各省份的重要微博"></i>&nbsp;&nbsp;
             </div>
             <div class="stmTabs tabUnit" style="width:1033px;">
                 <div class="tabTitle" style="padding-top:1px;">
-                    <div class="tabUI" id="Tableselect">
+                    <div class="tabUI" id="Tableselect_3">
                     </div>
                 </div>
                 <div class="tabConts">
-                    <div id="weibos_div" style="float:left;">
+                    <div id="weibos_div_3" style="float:left;">
                         <div class="tabCon">
-                            <div class="cur" id="vertical-ticker"></div>
+                            <div class="cur" id="vertical-ticker_3"></div>
+                            <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
+                                <span>
+                                    <h4 class="weibo_more" id="more_information_3"></h4>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
                 </div>
             </div><br/>
         </div>
@@ -482,8 +540,14 @@
 {% block tail_js %}
     <script>
         $("#geo_tooltip").tooltip();
+        $("#keyclient_tooltip").tooltip();
+        $("#whole_tooltip").tooltip();
+        $("#zone_tooltip").tooltip();
+        $("#weibo_tooltip_1").tooltip();
+        $("#weibo_tooltip_2").tooltip();
+        $("#weibo_tooltip_3").tooltip();
     </script>
     <script src="/static/js/api/tab_change.js" type="text/javascript"></script>"
     <script src="/static/js/api/map.js" type="text/javascript"></script>"
-    <script src="/static/js/baidumap/mapview.js" type="text/javascript"></script>
+    <script src="/static/js/api/mapview.js" type="text/javascript"></script>
 {% endblock tail_js %}

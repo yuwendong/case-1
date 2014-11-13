@@ -275,6 +275,7 @@ class PropagateKeywords(db.Model):
         self.range = range
         self.limit = limit
         self.mtype = mtype
+        self.kcount = kcount
 
     @classmethod
     def _name(cls):
