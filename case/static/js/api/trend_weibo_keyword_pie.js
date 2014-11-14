@@ -306,8 +306,7 @@ TrendsLine.prototype.initPullWeibos = function(){
 
 
 function refreshDrawWeibos(select_name, weibos_obj){
-    // var select_name = 'happy';
-    $("#weibo_list").empty();
+    $("#weibo_ul").empty();
     if (!select_name in weibos_obj){
         $("#weibo_list").append('<li class="item">关键微博为空！</li>');
         return;
@@ -315,9 +314,6 @@ function refreshDrawWeibos(select_name, weibos_obj){
 
     var data = weibos_obj[select_name];
     var html = "";
-    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
-    html += '<div class="tang-scrollpanel-content">';
-    html += '<ul id="weibo_ul">';
     for(var i = 0; i < data.length; i += 1){
         var emotion = select_name;
         var da = data[i];
@@ -348,6 +344,7 @@ function refreshDrawWeibos(select_name, weibos_obj){
         if (user_image_link == 'unknown'){
             user_image_link = '/static/img/unknown_profile_image.gif';
         }
+        var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + mid;
         html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
         html += '<img src="' + user_image_link + '">';
         html += '</a></div>';
@@ -361,28 +358,19 @@ function refreshDrawWeibos(select_name, weibos_obj){
         html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+        html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+        if(retweeted_mid != '0'){
+            var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
+            html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">源微博转发树</a>';
+        }
         html += '</div>';
         html += '</div>';
         html += '</div>';
         html += '</li>';
     }
-    html += '</ul>';
-    html += '</div>';
-    html += '<div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">';
-    html += '<div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">';
-    html += '<div class="tang-content">';
-    html += '<div id="TANGRAM_56__inner" class="tang-inner">';
-    html += '<div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;">';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-    html += '<a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>';
-    html += '</div>';
-    html += '<div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>';
-    html += '<div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>';
-    html += '</div>';
-    $("#weibo_list").append(html);
+    $("#weibo_ul").append(html);
+    $("#content_control_height").css("height", $("#weibo_ul").css("height"));
 }
 
 // instance method, 初始化绘制关键微博列表
