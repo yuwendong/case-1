@@ -10,8 +10,9 @@ sys.path.append('../../')
 from ad_filter import ad_classifier
 from global_config import emotions_kv
 from time_utils import datetime2ts, ts2HourlyTime
+from global_utils import getWeiboById, getTopicByName
+from dynamic_xapian_weibo import getXapianWeiboByTopic
 from model import SentimentCount, SentimentKeywords, SentimentWeibos, SentimentCountRatio
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
 
 Minute = 60
 Fifteenminutes = 15 * 60
@@ -29,8 +30,20 @@ SORT_FIELD = 'reposts_count'
 def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
     weibos = []
     for r in get_results():
-        weibos.append(r)
-    return weibos
+        try:
+            weibo = getWeiboById(r['_id'])
+            if weibo:
+                r['attitudes_count'] = int(weibo['attitudes_count'])
+                r['reposts_count'] = int(weibo['reposts_count'])
+                r['comments_count'] = int(weibo['comments_count'])
+            weibos.append(r)
+        except:
+            pass
+    sorted_weibos = sorted(weibos, key=lambda k: k[SORT_FIELD], reverse=False)
+    sorted_weibos = sorted_weibos[len(sorted_weibos)-top:]
+    sorted_weibos.reverse()
+
+    return sorted_weibos
 
 
 def save_rt_results(calc, query, results, during, klimit=TOP_KEYWORDS_LIMIT, wlimit=TOP_WEIBOS_LIMIT):
@@ -100,22 +113,19 @@ def save_rt_results(calc, query, results, during, klimit=TOP_KEYWORDS_LIMIT, wli
             db.session.commit()
 
 
-
-def sentimentCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field=SORT_FIELD, save_fields=RESP_ITER_KEYS, during=Fifteenminutes, w_limit=TOP_WEIBOS_LIMIT, k_limit=TOP_KEYWORDS_LIMIT):
+def sentimentCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field=SORT_FIELD, save_fields=RESP_ITER_KEYS, \
+    during=Fifteenminutes, w_limit=TOP_WEIBOS_LIMIT, k_limit=TOP_KEYWORDS_LIMIT):
     if topic and topic != '':
         start_ts = int(start_ts)
         over_ts = int(over_ts)
 
         over_ts = ts2HourlyTime(over_ts, during)
         interval = (over_ts - start_ts) / during
-        
-        topics = topic.strip().split(',')
 
         for i in range(interval, 0, -1):
-            emotions_count = {}
             emotions_kcount = {}
+            emotions_count = {}
             emotions_weibo = {}
-            emotions_rcount = {}
 
             begin_ts = over_ts - during * i
             end_ts = begin_ts + during
@@ -123,79 +133,37 @@ def sentimentCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
 
             query_dict = {
                 'timestamp': {'$gt': begin_ts, '$lt': end_ts},
-                'topics':[]
+                '$and': [
+                    {'$or': [{'message_type': 1}, {'message_type': 3}]},
+                ]
             }
-            new_query_dict = {
-                    'timestamp':{'$gt':begin_ts, '$lt':end_ts},
-                    'topics': [],
-                    '$or': []
-                    }
-
-            for c_topic in topics:
-                query_dict['topics'].append(c_topic)
-                new_query_dict['topics'].append(c_topic)
-
             for k, v in emotions_kv.iteritems():
                 query_dict['sentiment'] = v
-                new_query_dict['sentiment'] = v
+                count, results = xapian_search_weibo.search(query=query_dict, fields=save_fields)
 
-                scount1 ,results1 = xapian_search_weibo.search(query=query_dict, fields=['_id', 'text'])
-                print 'scount1: ',scount1
-                results_list=[]
-                if scount1:
-                    for result in results1():
-                        results_list.append([result['_id'], result['text'].encode('utf-8')])
+                mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
+                                                  max_offset=w_limit, mset_direct=True)
 
-                    scount, data_wid = ad_classifier(results_list)
-                    print 'scount_new', scount
-                else:
-                    scount = 0
-                    data_wid = []
-                for nad_wid in data_wid:
-                    new_query_dict['$or'].append({'_id': nad_wid})
-
-                mset = xapian_search_weibo.search(query=new_query_dict, sort_by=[sort_field], \
-                                                             max_offset=w_limit, mset_direct=True)
-                
                 kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
-                top_ws = top_weibos(gen_mset_iter(xapian_search_weibo, mset, fields=save_fields), top=w_limit)
+                top_ws = top_weibos(results, top=w_limit)
 
-                emotions_count[v] = [end_ts, scount]
+                emotions_count[v] = [end_ts, count]
                 emotions_kcount[v] = [end_ts, kcount]
                 emotions_weibo[v] = [end_ts, top_ws]
 
             save_rt_results('count', topic, emotions_count, during)
             save_rt_results('kcount', topic, emotions_kcount, during, k_limit, w_limit)
-            save_rt_results('weibos', topic, emotions_weibo, during, k_limit, w_limit)
-
-
-def cal_topic_sentiment_by_date(topic, datestr_list, duration):
-    start_ts = datetime2ts(datestr_list[0])
-    end_ts = datetime2ts(datestr_list[-1]) + Day
-    datestrlist = []
-    xapian_search_weibo = getXapianWeiboByTopic(topic)
-    if xapian_search_weibo:
-        sentimentCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration)
-   
-
-def worker(topic, datestr_list):
-    print 'topic: ', topic.encode('utf8'), 'datestr:', datestr_list, 'Fifteenminutes: '
-    cal_topic_sentiment_by_date(topic, datestr_list, Fifteenminutes)
-
-
-def _topics_names():
-    results = []
-    topics = _all_topics(True)
-    for topic in topics:
-        results.append(topic.topic)
-
-    return results
+            save_rt_results('weibos', topic, emotions_weibo, during, k_limit, w_limit)  
 
 
 if __name__ == '__main__':
-    datestr = '2013-09-07'
-    datestr_list = ['2013-09-02', '2013-09-03', '2013-09-04',\
-                    '2013-09-05', '2013-09-06', '2013-09-07']
-    # xapian_search_weibo = getXapianWeiboByDate(datestr)
-    topic = u'东盟,博览会'
-    #worker(topic,datestr_list)
+    topic = u'全军政治工作会议'
+    topic_id = getTopicByName(topic)['_id']
+
+    start_ts = datetime2ts('2014-10-30')
+    end_ts = datetime2ts('2014-11-15')
+    duration = Fifteenminutes
+    xapian_search_weibo = getXapianWeiboByTopic(topic_id)
+
+    print 'topic: ', topic.encode('utf8'), 'from %s to %s' % (start_ts, end_ts)
+    sentimentCronTopic(topic, xapian_search_weibo, start_ts=start_ts, over_ts=end_ts, during=duration)
