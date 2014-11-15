@@ -846,20 +846,20 @@ function call_peak_ajax(that, series, data_list, ts_list, during, emotion){
     function peak_callback(data){
         if ( data != 'Null Data'){
             var isShift = false;
+            var flagClick = function(event){
+                var click_ts = this.x / 1000;
+                var emotion = this.emotion;
+                var title = this.title;
+
+                peakDrawTip(click_ts, emotion, title);
+                peakPullDrawKeywords(click_ts, emotion, title);
+                peakPullDrawPie(click_ts, emotion, title);
+                peakPullDrawWeibos(click_ts, emotion, title);
+            }
             for(var i in data){
                 var x = data[i]['ts'];
                 var title = data[i]['title'];
                 series.addPoint({'x': x, 'title': title, 'text': title, 'emotion': emotion, 'events': {'click': flagClick}}, true, isShift);
-                var flagClick = function(event){
-                    var click_ts = this.x / 1000;
-                    var emotion = this.emotion;
-                    var title = this.title;
-
-                    peakDrawTip(click_ts, emotion, title);
-                    peakPullDrawKeywords(click_ts, emotion, title);
-                    peakPullDrawPie(click_ts, emotion, title);
-                    peakPullDrawWeibos(click_ts, emotion, title);
-                }
             }
         }
     }
