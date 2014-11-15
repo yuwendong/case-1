@@ -73,6 +73,7 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.pie_div_id = 'pie_div';
     this.keywords_div_id = 'keywords_cloud_div';
     this.weibos_div_id = 'weibo_list';
+    this.weibo_more_id = 'more_information';
     this.select_div_id = 'Tableselect';
     this.max_keywords_size = 50; // 和计算相关的50，实际返回10
     this.min_keywords_size = 2;
@@ -169,8 +170,9 @@ TrendsLine.prototype.initPullWeibos = function(){
 TrendsLine.prototype.initDrawWeibos = function(){
     var select_name = 'origin';
     var that = this;
+    var weibo_num = 10;
 
-    refreshDrawWeibos(that, that.range_weibos_data, select_name);
+    refreshDrawWeibos(that, that.range_weibos_data, select_name, weibo_num);
     bindSentimentTabClick(that, that.range_weibos_data);
 }
 // instance method, 获取数据并绘制趋势图
@@ -484,20 +486,20 @@ function call_peak_ajax(that, series, data_list, ts_list, emotion){
     function peak_callback(data){
         if ( data != 'Null Data'){
             var isShift = false;
+            var flagClick = function(event){
+                var click_ts = this.x / 1000;
+                var emotion = this.emotion;
+                var title = this.title;
+
+                peakDrawTip(click_ts, emotion, title);
+                peakPullDrawKeywords(click_ts, emotion, title);
+                peakPullDrawPie(click_ts, emotion, title);
+                peakPullDrawWeibos(click_ts, emotion, title);
+            }
             for(var i in data){
                 var x = data[i]['ts'];
                 var title = data[i]['title'];
                 series.addPoint({'x': x, 'title': title, 'text': title, 'emotion': emotion, 'events': {'click': flagClick}}, true, isShift);
-                var flagClick = function(event){
-                    var click_ts = this.x / 1000;
-                    var emotion = this.emotion;
-                    var title = this.title;
-
-                    peakDrawTip(click_ts, emotion, title);
-                    peakPullDrawKeywords(click_ts, emotion, title);
-                    peakPullDrawPie(click_ts, emotion, title);
-                    peakPullDrawWeibos(click_ts, emotion, title);
-                }
             }
         }
     }
@@ -541,8 +543,9 @@ function call_peak_ajax(that, series, data_list, ts_list, emotion){
         var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, 'all', that.top_weibos_limit);
         that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
         function callback(data){
+            var weibo_num = 10;
             refreshWeiboTab(emotion);
-            refreshDrawWeibos(that, data, emotion);
+            refreshDrawWeibos(that, data, emotion, weibo_num);
             bindSentimentTabClick(that, data);
         }
     }
@@ -566,6 +569,7 @@ function call_peak_ajax(that, series, data_list, ts_list, emotion){
 }
 function bindSentimentTabClick(that, data){
     var select_div_id = that.select_div_id;
+    var weibo_num = 10;
     $("#"+select_div_id).children("a").unbind();
     $("#"+select_div_id).children("a").click(function() {
         var select_a = $(this);
@@ -574,26 +578,63 @@ function bindSentimentTabClick(that, data){
             select_a.addClass('curr');
             unselect_a.removeClass('curr');
             var select_sentiment = select_a.attr('value');
-            refreshDrawWeibos(that, data, select_sentiment);
+            refreshDrawWeibos(that, data, select_sentiment, weibo_num);
         }
     });
 }
-function refreshDrawWeibos(that, data, select_name){
+function bindmore_weibo(that, weibos_obj, weibo_num){
+    var weibo_more_id = that.weibo_more_id;
+    var weibo_tab_id = that.select_div_id;
+    var data = weibos_obj;
+
+    $("#"+weibo_more_id).unbind();
+
+    $("#"+weibo_more_id).click(function(){
+        weibo_num = weibo_num + 10;
+        var current_city;
+        $("#"+weibo_tab_id).children("a").each(function(){
+            var select_a = $(this);
+            var select_sentiment;
+            if (select_a.hasClass('curr')){
+                select_sentiment = select_a.attr('value');
+                refreshDrawWeibos(that, data, select_sentiment, weibo_num);
+                return false;
+            }
+        });
+    });
+}
+function refreshDrawWeibos(that, data, select_name, weibo_num){
+    // console.log(weibo_num);
     var weibos_obj = data;
     var weibos_div_id = that.weibos_div_id;
+    var weibo_more_id = that.weibo_more_id;
     $("#"+weibos_div_id).empty();
+    if ($("#"+weibo_more_id).hasClass("more_display")){
+        $("#"+weibo_more_id).html('').removeClass("more_display");
+        // console.log('remove');
+    }
     if (!select_name in weibos_obj){
         $("#"+weibos_div_id).append('<li class="item">关键微博为空！</li>');
         return;
     }
-    
     var data = weibos_obj[select_name];
+    var weibo_num = weibo_num;
+    if (data.length <= weibo_num){
+        weibo_num = data.length;
+    }
+    else{
+        var more_html = '加载更多&gt;&gt;';
+        $("#"+weibo_more_id).html(more_html).addClass("more_display");
+        bindmore_weibo(that, weibos_obj, weibo_num);
+        // console.log('append');
+    }
 
     var html = "";
-    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 70 * data.length  + 'px;">';
+
+    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 71 * weibo_num  + 'px;">';
     html += '<div class="tang-scrollpanel-content">';
     html += '<ul id="weibo_ul">';
-    for(var i = 0; i < data.length; i += 1){
+    for(var i = 0; i < weibo_num; i += 1){
         var emotion = select_name;
         var da = data[i];
         var uid = da['user'];
@@ -644,6 +685,7 @@ function refreshDrawWeibos(that, data, select_name){
     }
     html += '</ul>';
     html += '</div>';
+    /*
     html += '<div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">';
     html += '<div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">';
     html += '<div class="tang-content">';
@@ -657,6 +699,7 @@ function refreshDrawWeibos(that, data, select_name){
     html += '<div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>';
     html += '<div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>';
     html += '</div>';
+    */
     $("#"+weibos_div_id).append(html);
 }
 
