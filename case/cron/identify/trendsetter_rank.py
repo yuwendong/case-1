@@ -56,7 +56,7 @@ def trendsetter_rank(TOPK, date, topic_id, windowsize, topic, real_topic_id):
     print 'len(ds_all_uid_tr):', len(ds_all_uid_tr)
     data = save_tr_results(topic, date, windowsize, ds_sorted_uids, ds_all_uid_tr)
 
-    return ds_all_uid_tr # 标识保存是否成功    
+    return ds_all_uid_tr, data # 标识保存是否成功    
 
 def prepare_data_for_ts(topic_id, topic, date, windowsize, ds_g):
     tmp_file = tempfile.NamedTemporaryFile(delete=False)
@@ -134,7 +134,7 @@ def compute_s2(node, outlinks, ds_new_attribute_dict): # 需要再考虑考虑�
     
 def save_tr_results(topic, date, windowsize, ds_sorted_uids, ds_all_uid_tr):
     #存直接上级转发网路trendsetter_rank的结果
-    data = []
+    data = {}
     rank = 1
     count = 0
     exist_items = db.session.query(TsRank).filter(TsRank.topic==topic ,\
@@ -157,9 +157,9 @@ def save_tr_results(topic, date, windowsize, ds_sorted_uids, ds_all_uid_tr):
             location = user['location']
             count1 = user['count1']
             count2 = user['count2']
-        row = (rank, uid, name, location, count1, count2)
+        #row = (rank, uid, name, location, count1, count2)
         item = TsRank(topic, rank, uid, date, windowsize, tr)
-        data.append(row)
+        data[uid] = rank
         db.session.add(item)
         rank += 1
     db.session.commit()

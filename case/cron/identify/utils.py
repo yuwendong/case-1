@@ -65,7 +65,7 @@ def is_in_trash_list(uid):
 def save_rank_results(sorted_uids, identifyRange, method, date, window, topicname, all_uid_pr):
     '''存放源头转发网络pagerank的计算结果
     '''
-    data = []
+    data = {}
     rank = 1
     count = 0
     exist_items = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topicname, \
@@ -91,8 +91,8 @@ def save_rank_results(sorted_uids, identifyRange, method, date, window, topicnam
             count2 = user['count2']
         #read from external knowledge database
         status = user_status(uid)
-        row = (rank, uid, name, location, count1, count2, status)
-        data.append(row)
+        #row = (rank, uid, name, location, count1, count2, status)
+        data[uid] = rank
         if identifyRange == 'topic':
             item = TopicIdentification(topicname, rank, uid, date, window, method, pr)
         else:
@@ -107,7 +107,7 @@ def save_rank_results(sorted_uids, identifyRange, method, date, window, topicnam
 def save_ds_rank_results(sorted_uids, identifyRange, method, date, window, topicname, all_uid_pr):
     '''存放直接上级转发网络pagerank的计算结果
     '''
-    data = []
+    data = {}
     rank = 1
     count = 0
     exist_items = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topicname, \
@@ -133,8 +133,8 @@ def save_ds_rank_results(sorted_uids, identifyRange, method, date, window, topic
             count2 = user['count2']
         #read from external knowledge database
         status = user_status(uid)
-        row = (rank, uid, name, location, count1, count2, status)
-        data.append(row)
+        #row = (rank, uid, name, location, count1, count2, status)
+        data[uid] = rank
         if identifyRange == 'topic':
             item = DsTopicIdentification(topicname, rank, uid, date, window, method, pr)
         else:

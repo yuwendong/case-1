@@ -8,7 +8,7 @@ import redis
 from config import db
 sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
-from dynamic_xapian_weibo import getXapianWeiboByDate
+from dynamic_xapian_weibo import getXapianWeiboByTopic
 from config import xapian_search_user as user_search
 from utils import acquire_user_by_id
 from model import FirstUser, FirstDomainUser# 时间在前20的user及其对应的微博信息
@@ -52,7 +52,7 @@ def get_first_node(topic, start_date, date, windowsize):
     '''
     if topic and topic != '':
         datestr = start_date.replace('-','')
-        xapian_search_weibo = getXapianWeiboByDate(datestr)
+        xapian_search_weibo = getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939')
         begin_ts = datetime2ts(start_date)
         end_ts = datetime2ts(date)
         topics = topic.strip().split(',')
@@ -140,5 +140,5 @@ if __name__=='__main__':
     date = ts2datetime(end_ts)
     start_ts = datetime2ts('2013-09-02')
     start_date = ts2datetime(start_ts) # 确定topic的start_ts和end_ts是怎么得来的
-    get_first_node(topic, start_date, date, windowsize) # 如果start_ts就是第一条微博出现的时间，就可以直接查询前15分钟的微博
+    get_first_node(topic, start_date, date, windowsize) # 如果start_ts就是第一条微博出现的时间，不能只查询前15分钟的数据。要考虑极端情况，必须查询所有数据
     

@@ -70,11 +70,11 @@ def main():
         print 'end make network'
 
         print 'start PageRank'
-        all_uid_pr, ds_all_uid_pr = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
+        all_uid_pr, ds_all_uid_pr, data, ds_data = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
         print 'end PageRank'
 
         print 'start TrendSetter Rank'
-        ds_all_uid_tr = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
+        ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
         print 'end TrendSetter Rank'
 
         print 'start make network graph'
@@ -83,7 +83,7 @@ def main():
         if not topic_id: # 待删
             gexf = ''
         else:
-            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, ds_all_uid_pr, ds_all_uid_tr, real_topic_id) # 绘制gexf图--返回值是序列化字符串
+            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)

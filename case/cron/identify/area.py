@@ -31,7 +31,7 @@ from snowball1 import SnowballSampling
 from localbridge import GetLocalBridge
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
 
-
+search_topic_id='54635178e74050a373a1b939'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -103,7 +103,7 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     data = save_rank_results(sorted_uids, 'topic', 'pagerank', date, window_size, topicname, all_uid_pr)
     ds_data = save_ds_rank_results(ds_sorted_uids, 'topic', 'pagerank', date, window_size, topicname, ds_all_uid_pr)
 
-    return all_uid_pr, ds_all_uid_pr
+    return all_uid_pr, ds_all_uid_pr, data, ds_data
 
 '''
 def prepare_data_for_degree(topic_id, date, window_size): 
@@ -180,7 +180,7 @@ def _utf8_unicode(s):
         return unicode(s, 'utf-8')
 
 
-def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, ds_all_uid_pr, ds_all_uid_tr, real_topic_id, key_user_labeled=True):
+def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, pr_data, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, real_topic_id, key_user_labeled=True):
     date = current_date
     '''
     key_users对应的是源头转发网络的pagerank前10的用户，ds_key_users对应的是直接上级转发网络的pagerank前10的用户
@@ -235,8 +235,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, d
     
     
     print 'start snowball sampling'
-    new_G, new_gg = SnowballSampling(G, gg, topic, network_type)
-    ds_new_G, ds_new_gg = SnowballSampling(ds_dg, ds_udg, topic, ds_network_type)
+    #new_G, new_gg = SnowballSampling(G, gg, topic, network_type)
+    #ds_new_G, ds_new_gg = SnowballSampling(ds_dg, ds_udg, topic, ds_network_type)
     print 'sampling complicated'
     
     # Local Bridge的算法需要提升效率，此处先不显示
@@ -251,16 +251,16 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, d
     new_gg = gg
     ds_new_G = ds_dg
     ds_new_gg = ds_udg
-    compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
-    compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
+    #compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
+    #compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
     print 'quota computed complicated'
 
     # 生成gexf文件
     '''
     将生成gexf文件的部分作为一个函数，将相关的参数传入。以此简洁化两个不同不同网络的gexf生成过程
     '''
-    gexf = make_gexf('hxq', 'Source Network', new_G, node_degree, key_users, all_uid_pr, partition, new_attribute_dict)
-    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_tr_key_users, ds_all_uid_pr, ds_all_uid_tr, ds_partition, ds_new_attribute_dict)
+    gexf = make_gexf('hxq', 'Source Network', new_G, node_degree, key_users, all_uid_pr, pr_data , partition, new_attribute_dict)
+    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_tr_key_users, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, ds_partition, ds_new_attribute_dict)
     '''
     gexf = Gexf("Yang Han", "Topic Network")
 
@@ -361,8 +361,9 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     end_time = int(datetime2ts(date))
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
+    topic_id='54635178e74050a373a1b939'
     #statuses_search = getXapianweiboByTs(start_time, end_time) # 获得查询时间段的XapianSearch类
-    statuses_search = getXapianWeiboByTopic(topic)
+    statuses_search = getXapianWeiboByTopic(search_topic_id)
 
     g = nx.DiGraph() # 初始化一个有向图
     gg = nx.Graph() # 为计算quota初始化一个无向图
@@ -539,7 +540,8 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
 
 def get_ds_info(text, userid, topic, timestamp_add, DEFAULT_INTERVAL): # timestamp_add 表示最终极转发用户发表微博的时间戳
     direct_superior_info = {}
-    xapian_search_weibo = getXapianWeiboByTopic(topic)
+
+    xapian_search_weibo = getXapianWeiboByTopic(search_topic_id)
     query_dict = {
         'user': userid ,
         'text': text
