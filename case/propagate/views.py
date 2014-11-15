@@ -100,7 +100,7 @@ def propagate_weibos():
             results_dict[k] = ReadPropagateWeibos(topic, end_ts, during, v, limit)
             weibos.extend(results_dict[k])
         sorted_weibos = sorted(weibos, key=lambda k:k['reposts_count'], reverse=False)
-        sorted_weibos = sorted_weibos[len(sorted_weibos)-10:]
+        sorted_weibos = sorted_weibos[len(sorted_weibos)-50:]
         sorted_weibos.reverse()
         results_dict['total'] = sorted_weibos
     else:
@@ -136,7 +136,7 @@ def PropagatePeak():
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
-        print idx, point_idx
+        # print idx, point_idx
         ts = ts_lis[point_idx]
         end_ts = ts
 

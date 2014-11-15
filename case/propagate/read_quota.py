@@ -16,7 +16,7 @@ Day = Hour * 24
 MinInterval = Fifteenminutes
 
 TOP_KEYWORDS_LIMIT = 50
-TOP_READ =10
+TOP_READ =50
 TOP_WEIBOS_LIMIT = 50
 
 expr = 100 # 经验值的计算

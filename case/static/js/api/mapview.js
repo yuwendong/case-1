@@ -429,7 +429,6 @@ function bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id){
 }
 
 function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_more_id){
-    console.log(weibo_num);
     $("#"+weibo_cont_id).empty();
     // console.log('empty');
 

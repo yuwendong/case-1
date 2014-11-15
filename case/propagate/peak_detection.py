@@ -52,7 +52,7 @@ def filter_continuous(peaks):
 			if pk-1 in new_peaks:
 				delt.append(pk)
 			new_peaks.append(pk)
-	print 'filter_continuous',delt
+	# print 'filter_continuous',delt
 	new_peaks = [pk for pk in new_peaks if pk not in delt]
 	return new_peaks
 
@@ -139,7 +139,7 @@ def filter_micro_macro(lis,peaks,micro_dur=3,macro_dur=6,form=0):
 			if peak_rank[i] >= begin and peak_rank[i] <= end:
 				if lis[peak_rank[i]] < lis[pk]:
 					delts.append(peak_rank[i])
-	print'miciro_macro filter nodes:', delts
+	# print'miciro_macro filter nodes:', delts
 	return [pk for pk in peaks if pk not in delts]
 
 
@@ -150,7 +150,7 @@ def detect_peaks(lis,topN=10,form=0,micro_dur=5,macro_dur=10):
 		return [0]
 	else:
 		peaks = find_topN(lis,topN)
-		print peaks,'step1 top'+str(topN)+'nodes'
+		# print peaks,'step1 top'+str(topN)+'nodes'
 		if lis[0] > lis[1]:
 			peaks.append(0)
 		if lis[-1] > lis[-2]:
@@ -165,11 +165,11 @@ def detect_peaks(lis,topN=10,form=0,micro_dur=5,macro_dur=10):
 		scan_nodes.append([pk,remove_stay])		
 		if remove_stay == [0,0]:
 			remove_nodes.append(pk)
-	print scan_nodes,'remove_nodes',remove_nodes
+	# print scan_nodes,'remove_nodes',remove_nodes
 
 	new_zeros = set([pk for pk in peaks if pk not in remove_nodes])
 	new_zeros = list(new_zeros)
 	new_zeros = filter_micro_macro(lis,new_zeros,micro_dur=3,macro_dur=6,form=0)
 	new_zeros = sorted(new_zeros)	
-	print new_zeros,'final nodes 1'
+	# print new_zeros,'final nodes 1'
 	return new_zeros
