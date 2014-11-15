@@ -622,9 +622,9 @@ class FirstDomainUser(db.Model):
     date = db.Column(db.Date)
     windowsize = db.Column(db.Integer, default=1)
     uid = db.Column(db.BigInteger(11, unsigned=True))
-    timestamp = db.Column(db.Text)
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
     user_info = db.Column(db.Text)
-    weibo_info = db.Column(db.String(20))
+    weibo_info = db.Column(db.Text)
     user_domain = db.Column(db.String(20))
     rank = db.Column(db.Integer)
 

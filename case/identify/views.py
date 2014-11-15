@@ -140,7 +140,7 @@ def ds_network_tr_rank():
     date = ts2datetime(end_ts)
 
     results = read_tr_rank_results(topic, topn, date, windowsize)
-    print 'results1:', results[0]
+    #print 'results1:', results[0]
     return json.dumps(results)
 
 @mod.route('/ds_degree_centrality_rank/')

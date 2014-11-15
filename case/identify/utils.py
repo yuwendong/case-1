@@ -103,7 +103,7 @@ def read_ds_topic_rank_results(topic, top_n, date, windowsize):
             rank = item.rank
             uid = item.userId
             user = acquire_user_by_id_v2(uid)
-            pr = item.pr
+            pr = float(item.pr)
             item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
                                                       TsRank.uid==uid ,\
                                                       TsRank.date==date ,\
@@ -280,7 +280,7 @@ def read_ds_degree_centrality_rank(topic, top_n, date, windowsize):
                                                                      DsTopicIdentification.identifyDate==date ,\
                                                                      DsTopicIdentification.identifyWindow==windowsize ,\
                                                                      DsTopicIdentification.userId==uid).first()
-            pr = item_pr.pr
+            pr = float(item_pr.pr)
             item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
                                                        TsRank.date==date ,\
                                                        TsRank.windowsize==windowsize ,\
@@ -336,7 +336,7 @@ def read_tr_rank_results(topic, top_n, date, windowsize):
                                                                      DsTopicIdentification.identifyDate==date ,\
                                                                      DsTopicIdentification.identifyWindow==windowsize ,\
                                                                      DsTopicIdentification.userId==uid).first()
-            pr = item_pr.pr
+            pr = float(item_pr.pr)
             item_dc = db.session.query(DegreeCentralityUser).filter(DegreeCentralityUser.topic==topic ,\
                                                                     DegreeCentralityUser.date==date ,\
                                                                     DegreeCentralityUser.windowsize==windowsize ,\
@@ -421,7 +421,7 @@ def read_ds_betweeness_centrality_rank(topic, top_n, date, windowsize):
                                                                      DsTopicIdentification.identifyDate==date ,\
                                                                      DsTopicIdentification.identifyWindow==windowsize ,\
                                                                      DsTopicIdentification.userId==uid).first()
-            pr = item_pr.pr
+            pr = float(item_pr.pr)
             item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
                                                       TsRank.date==date ,\
                                                       TsRank.windowsize==windowsize ,\
@@ -509,7 +509,7 @@ def read_ds_closeness_centrality_rank(topic, top_n, date, windowsize):
                                                                      DsTopicIdentification.identifyDate==date ,\
                                                                      DsTopicIdentification.identifyWindow==windowsize ,\
                                                                      DsTopicIdentification.userId==uid).first()
-            pr = item_pr.pr
+            pr = float(item_pr.pr)
             item_tr = db.session.query(TsRank).filter(TsRank.topic==topic ,\
                                                       TsRank.date==date ,\
                                                       TsRank.windowsize==windowsize ,\

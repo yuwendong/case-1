@@ -1,46 +1,42 @@
 # -*- coding: utf-8 -*-
 
 import os
-from config import DYNAMIC_XAPIAN_WEIBO_STUB_PATH
+from config import XAPIAN_WEIBO_TOPIC_DATA_PATH
 from xapian_case.xapian_backend import XapianSearch
-
-path = DYNAMIC_XAPIAN_WEIBO_STUB_PATH
 
 def getXapianWeiboByDate(datestr):
     # datestr: 20130908    
     stub_file = path + datestr
-    
     if os.path.exists(stub_file):
-    	xapian_search_weibo = XapianSearch(stub=stub_file, include_remote=True, schema_version=5)
-    	return xapian_search_weibo
+        print 'step--stub exist'
+        xapian_search_weibo = XapianSearch(stub=stub_file, schema_version='5')
+        return xapian_search_weibo
     else:
-    	return None
+        print 'stub not exist'
+        return None
 
 
-def getXapianWeiboByDuration(datestr_list):
-    stub_file_list = []
-
-    for datestr in datestr_list:
-        stub_file = path + datestr
-	if os.path.exists(stub_file):
-            print 'stub exist'
-	    stub_file_list.append(stub_file)
-
-    if len(stub_file_list):
-        xapian_search_weibo = XapianSearch(stub=stub_file_list, include_remote=True, schema_version='5')
-        return xapian_search_weibo 
-
-    else:
-    	return None
-
-def getXapianWeiboByTopic(topic):
-    stub_file = '/home/ubuntu4/ljh/csv/stub/master_timeline_weibo_topic'
-    print stub_file
+def getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939'):
+    stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):
         print 'stub exist'
         xapian_search_weibo = XapianSearch(stub=stub_file, schema_version='5')
         return xapian_search_weibo
     else:
         print 'stub not exist'
-    return None
+        return None
 
+def getXapianWeiboByDuration(datestr_list):
+    stub_file_list = []
+
+    for datestr in datestr_list:
+        stub_file = path + datestr
+        if os.path.exists(stub_file):
+            stub_file_list.append(stub_file)
+
+    if len(stub_file_list):
+        xapian_search_weibo = XapianSearch(stub=stub_file_list, include_remote=True, schema_version='5')
+        return xapian_search_weibo
+
+    else:
+        return None

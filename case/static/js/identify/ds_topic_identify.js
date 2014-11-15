@@ -6,7 +6,7 @@ else{
   var start_ts = START_TS;
 }
 var end_ts = END_TS;
-var network_type = 1;//源头转发网络为1，直接上级转发网络为2
+var network_type = 2;//源头转发网络是1，直接上级转发网络是2
 var previous_data = null;
 var current_data = null;
 var networkShowed = 0;
@@ -33,7 +33,6 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
         type : 'GET',
         async: false,
         success: function(data){
-
             quota[name[key]] = data;
         }
 
@@ -63,9 +62,29 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
 
 
 $(document).ready(function(){
+    //获取网络指标
     get_network_infor();
+    //获取最短路径分布
     getnetwork_line();
     drawpicture(index,value);
+    //获取首发者信息
+    get_firstuser();
+    get_domain_firstuser_folk();
+    get_domain_firstuser_media();
+    get_domain_firstuser_opinionleader();
+    get_domain_firstuser_oversea();
+    get_domain_firstuser_other();
+    //获取关键用户信息
+    console.log('get important user info');
+    //get_pagerank();
+    get_trendsetterrank();
+    get_centrelity();
+    betweeness_centrality_rank();
+    closeness_centrality_rank();
+    get_pagerank();
+
+
+
     // switch_curr_add();
 })
 // Date format
@@ -154,12 +173,14 @@ function updatePane (graph, filter) {
   // get max degree
   var maxDegree = 0,
       maxPagerank = 0,
+      maxTrendsetterrank = 0;
       categories = {};
   
   // read nodes
   graph.nodes().forEach(function(n) {
     maxDegree = Math.max(maxDegree, graph.degree(n.id));
     maxPagerank = Math.max(maxPagerank, n.attributes.pagerank);
+    maxTrendsetterrank = Math.max(maxTrendsetterrank, n.attributes.trendsetter_rank);
     if(n.attributes.acategory in categories){
         categories[n.attributes.acategory] += 1;
     }
@@ -201,6 +222,11 @@ function updatePane (graph, filter) {
 
   _.$('min-pagerank').max = maxPagerank * 100000000;
   _.$('max-pagerank-value').textContent = maxPagerank * 100000000;
+
+  _.$('min-trendsetterrank').max = maxTrendsetterrank * 100000000;
+  console.log('min-trendsetterrank');
+  console.log(_.$('min-trendsetterrank').max);
+  _.$('max-trendsetterrank-value').textContent = maxTrendsetterrank * 100000000;
   
   // node category
   var nodecategoryElt = _.$('node-category');
@@ -213,10 +239,13 @@ function updatePane (graph, filter) {
 
   // reset button
   _.$('reset-btn').addEventListener("click", function(e) {
+    console.log('reset-btn');
     _.$('min-degree').value = 0;
     _.$('min-degree-val').textContent = '0';
     _.$('min-pagerank').value = 0;
     _.$('min-pagerank-val').textContent = '0';
+    _.$('min-trendsetterrank').value = 0;
+    _.$('min-trendsetterrank-val').textContent = '0';
     _.$('node-category').selectedIndex = 0;
     filter.undo().apply();
   });
@@ -323,26 +352,49 @@ function network_request_callback(data) {
                 filter
                   .undo('min-pagerank')
                   .nodesBy(function(n) {
+                    console.log('applyMinPagerankFilter');
+                    console.log(n.attributes.pagerank);
                     return n.attributes.pagerank * 100000000 >= v;
                   }, 'min-pagerank')
                   .apply();
               }
+              //trendsetterrank过滤器
+              function applyMinTrendsetterrankFilter(e){
+                var v = e.target.value;
+                _.$('min-trendsetterrank-val').textContent = v;
 
+                filter
+                  .undo('min-trendsetterrank')
+                  .nodesBy(function(n){
+                    return n.attributes.trendsetter_rank * 100000000 >= v;
+                  }, 'min-trendsetterrank')
+                  .apply();
+              }
+              //过滤器通过固定一种情况，变化另一个情况，但是现在有三种情况怎么做？！
               function applyZhibiaoCategoryFilter(e){
                 var v = e.target.value;
                 _.$('min-degree').value = 0;
                 _.$('min-degree-val').textContent = '0';
                 _.$('min-pagerank').value = 0;
                 _.$('min-pagerank-val').textContent = '0';
+                _.$('min-trendsetterrank').value = 0;
+                _.$('min-trendsetterrank-val').textContent = '0';
                 _.$('node-category').selectedIndex = 0;
                 filter.undo().apply();
                 if(v == 'degree'){
                     $('#min_degree_container').removeClass('hidden');
+                    $('#min_trendsetterrank_container').addClass('hidden');
                     $('#min_pagerank_container').addClass('hidden');
                 }
                 if(v == 'pagerank'){
                     $('#min_pagerank_container').removeClass('hidden');
+                    $('#min_trendsetterrank_container').addClass('hidden');
                     $('#min_degree_container').addClass('hidden');
+                }
+                if(v== 'trendsetterrank'){
+                    $('#min_trendsetterrank_container').removeClass('hidden');
+                    $('#min_degree_container').addClass('hidden');
+                    $('#min_pagerank_container').addClass('hidden');
                 }
               }
 
@@ -350,6 +402,8 @@ function network_request_callback(data) {
               _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+, that sucks
               _.$('min-pagerank').addEventListener("input", applyMinPagerankFilter);  // for Chrome and FF
               _.$('min-pagerank').addEventListener("change", applyMinPagerankFilter); // for IE10+, that sucks
+              _.$('min-trendsetterrank').addEventListener("input", applyMinTrendsetterrankFilter);
+              _.$('min-trendsetterrank').addEventListener("change", applyMinTrendsetterrankFilter);
               _.$('zhibiao-category').addEventListener("change", applyZhibiaoCategoryFilter);
               _.$('node-category').addEventListener("change", applyCategoryFilter);
 
@@ -469,6 +523,7 @@ function network_request_callback(data) {
                   var node_name = node.attributes.name;
                   var node_location = node.attributes.location;
                   var node_pagerank = node.attributes.pagerank;
+                  var node_trendsetterrank = node.attributes.trendsetter_rank
                   var node_community = node.attributes.acategory;
                   var node_text = node.attributes.text;
                   var node_reposts_count = node.attributes.reposts_count;
@@ -478,6 +533,7 @@ function network_request_callback(data) {
                   $('#nickname').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">' + node_name + '</a>');
                   $('#location').html(node_location);
                   $('#pagerank').html(new Number(node_pagerank).toExponential(2) + ' ( 排名:' + Math.floor(Math.random() * ( 100 + 1)) + ' )');
+                  $('#trendsetter_rank').html(new Number(node_trendsetterrank).toExponential(2) + '(排名:' + Math.floor(Math.random() * (100 + 1)) +')');
                   //$('#weibo_created_at').html(node_timestamp);
                   //$('#weibo_text').html(node_text);
                   //$('#weibo_reposts_count').html(node_reposts_count);
@@ -535,7 +591,7 @@ function network_request_callback(data) {
 
 function show_network() {
     networkShowed = 0;
-    network_type2 = 'source_graph'
+    network_type2 = 'direct_superior_graph'
     if (!networkShowed) {
         $("#network").height(610);
         $("#loading_network_data").css("display", "block");
@@ -551,6 +607,8 @@ function show_network() {
 
                 success: function (data) {
                     networkdata = data;
+                    console.log('show_network');
+                    console.log(networkdata);
                     network_request_callback(data);
                 },
                 error: function(result) {
@@ -566,17 +624,72 @@ function show_network() {
  }
 }
 
+function fu_request_callback(data){
+  rankdata = data;
+  var status = 'current finished';
+  var page_num = 10 ;
+  if (status == 'current finished'){
+    $("#current_process_bar").css('width', "100%")
+    $("#current_process").removeClass("active");
+    $("#current_process").removeClass("progress-striped");
+    fu_current_data = data;
+    //console.log(fu_current_data);
+    if (fu_current_data.length) {
+      $("#loading_current_data").text("计算完成!");
+      if (fu_current_data.length < page_num) {
+          page_num = fu_current_data.length
+          create_firstuser_table(fu_current_data, 0, page_num, 'pro');
+      }
+      else {
+          create_firstuser_table(fu_current_data, 0, page_num, 'pro');
+          var total_pages = 0;
+          if (fu_current_data.length % page_num == 0) {
+              total_pages = fu_current_data.length / page_num;
+          }
+          else {
+              total_pages = fu_current_data.length / page_num + 1;
+          }
+  
+          $('#rank_page_selection').bootpag({
+              total: total_pages,
+              page: 1,
+              maxVisible: 30
+          }).on("page", function(event, num){
+              start_row = (num - 1)* page_num;
+              end_row = start_row + page_num;
+              if (end_row > fu_current_data.length)
+                  end_row = fu_current_data.length;
+                  create_firstuser_table(fu_current_data, start_row, end_row, 'pro');
+          });
+      }
+  }
+  else {
+      $("#loading_current_data").text("很抱歉，本期计算结果为空!");
+  }
+  }
+  else{
+    return
+  }
+
+}
 function request_callback(data) {
         rankdata = data;
+        console.log('request_callback start');
+        //console.log(rankdata)
         var status = 'current finished';
         var page_num = 10 ;
         if (status == 'current finished') {
             $("#current_process_bar").css('width', "100%")
             $("#current_process").removeClass("active");
             $("#current_process").removeClass("progress-striped");
-            current_data = data;
+            current_data = rankdata;
+            console.log('current_data');
+            console.log(current_data);
+            console.log('current_data_length')
+            console.log(current_data.length)
             if (current_data.length) {
-                $("#loading_current_data").text("计算完成!");
+                console.log('loading_current_data2');
+                $("#loading_current_data2").text("计算完成!");
                 if (current_data.length < page_num) {
                     page_num = current_data.length
                     create_current_table(current_data, 0, page_num, 'pro');
@@ -591,7 +704,7 @@ function request_callback(data) {
                         total_pages = current_data.length / page_num + 1;
                     }
             
-                    $('#rank_page_selection').bootpag({
+                    $('#rank_page_selection2').bootpag({
                         total: total_pages,
                         page: 1,
                         maxVisible: 30
@@ -605,7 +718,7 @@ function request_callback(data) {
                 }
             }
             else {
-                $("#loading_current_data").text("很抱歉，本期计算结果为空!");
+                $("#loading_current_data2").text("很抱歉，本期计算结果为空!");
             }
         }
         else{
@@ -623,13 +736,65 @@ function filter_node_in_network(node_uid){
       .apply();
 }
 
+//首发用户的表格显示
+function create_firstuser_table(data, start_row, end_row, type){
+  //此处的type没有作用了
+  $("#firstuser_table").empty(); //firstuser_table要在html中写出来
+  //console.log(data)
+  var cellCount = 7;
+  var table = '<table class="table table-bordered">';
+  var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>博主领域</th><th>微博发布时间</th><th>微博内容</th></thead>'
+  var tbody = '<tbody>';
+  for (var i = start_row; i <end_row; i++){
+    var tr = '<tr>';
+    for (var j = 0;j < cellCount; j++){
+      if (j == 0) {
+        var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
+      }
+      else if(j == 1){
+            var td = '<td style="display:none">'+data[i][j]+'</td>';
+      }
+      else if(j == 2){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+      else if(j == 3){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+      else if(j == 4){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+      else if(j == 5){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+      else if(j == 6){
+            var td = '<td>'+data[i][j]+'</td>';
+        }
+      tr += td
+    }
+    tr += '</tr>';
+    tbody += tr;
+  }
+  tbody += '</tbody>';
+  table += thead + tbody;
+  table += '</table>';
 
+
+  $("#firstuser_table").html(table);
+}
+//暂时删掉看这一部分实在做什么
+// function fu_identify_request(){
+//   $.get("/identify/first_user/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts}, fu_request_callback, "json");
+// }
+// fu_identify_request();
+
+
+//data的数据结构需要再确定
 function create_current_table(data, start_row, end_row, type) {
     $("#rank_table").empty();
-
-    var cellCount = 10;
+    //console.log(data);
+    var cellCount = 11;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>TR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
@@ -668,64 +833,64 @@ function create_current_table(data, start_row, end_row, type) {
     $("#rank_table").html(table);
 }
 
-function identify_request() {
-  var topn = 100;
-  $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn, "network_type":network_type}, request_callback, "json");
-}
+// function identify_request() {
+//   var topn = 100;
+//   $.get("/identify/ds_pr_rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn, 'network_type': network_type}, request_callback, "json");
+// }
 
-function identify_origin_request(){
-  $.get("/identify/origin/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts, "network_type":network_type}, origin_request_callback, "json");
-}
+// function identify_origin_request(){
+//   $.get("/identify/origin/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts, 'network_type': network_type}, origin_request_callback, "json");
+// }
 
-function origin_request_callback(data) {
-    rankdata = data;
-    var status = 'current finished';
-    var page_num = 10 ;
-    if (status == 'current finished') {
-        $("#current_process_bar").css('width', "100%")
-        $("#current_process").removeClass("active");
-        $("#current_process").removeClass("progress-striped");
-        current_data = data;
-        if (current_data.length) {
-            $("#loading_current_data_source").text("计算完成!");
-            if (current_data.length < page_num) {
-                page_num = current_data.length
-                create_current_table(current_data, 0, page_num, 'source');
-            }
-            else {
-                create_current_table(current_data, 0, page_num, 'source');
-                var total_pages = 0;
-                if (current_data.length % page_num == 0) {
-                    total_pages = current_data.length / page_num;
-                }
-                else {
-                    total_pages = current_data.length / page_num + 1;
-                }
+ function origin_request_callback(data) {
+     rankdata = data;
+     var status = 'current finished';
+     var page_num = 10 ;
+     if (status == 'current finished') {
+         $("#current_process_bar").css('width', "100%")
+         $("#current_process").removeClass("active");
+         $("#current_process").removeClass("progress-striped");
+         current_data = data;
+         if (current_data.length) {
+             $("#loading_current_data_source").text("计算完成!");
+             if (current_data.length < page_num) {
+                 page_num = current_data.length
+                 create_current_table(current_data, 0, page_num, 'source');
+             }
+             else {
+                 create_current_table(current_data, 0, page_num, 'source');
+                 var total_pages = 0;
+                 if (current_data.length % page_num == 0) {
+                     total_pages = current_data.length / page_num;
+                 }
+                 else {
+                     total_pages = current_data.length / page_num + 1;
+                 }
         
-                $('#rank_page_selection_source').bootpag({
-                    total: total_pages,
-                    page: 1,
-                    maxVisible: 30
-                }).on("page", function(event, num){
-                    start_row = (num - 1)* page_num;
-                    end_row = start_row + page_num;
-                    if (end_row > current_data.length)
-                        end_row = current_data.length;
-                        create_current_table(current_data, start_row, end_row, 'source');
-                });
-            }
-        }
-        else {
-            $("#loading_current_data_source").text("很抱歉，本期计算结果为空!");
-        }
-    }
-    else{
-        return
-    }
-}
+                 $('#rank_page_selection_source').bootpag({
+                     total: total_pages,
+                     page: 1,
+                     maxVisible: 30
+                 }).on("page", function(event, num){
+                     start_row = (num - 1)* page_num;
+                     end_row = start_row + page_num;
+                     if (end_row > current_data.length)
+                         end_row = current_data.length;
+                         create_current_table(current_data, start_row, end_row, 'source');
+                 });
+             }
+         }
+         else {
+             $("#loading_current_data_source").text("很抱歉，本期计算结果为空!");
+         }
+     }
+     else{
+         return
+     }
+ }
 
-identify_request();
-identify_origin_request();
+// identify_request();
+// identify_origin_request();
 
 var index = [];
 var value = [];
@@ -733,24 +898,129 @@ var x_data = [];
 var y_data = [];
 var topn = 100;
 
+function get_firstuser(){
+  $.ajax({
+    url: "/identify/first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts,
+    dataType: "json",
+    type:'Get',
+    async:false,
+    success:function(data){
+      //console.log('get_firstuser');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+
+function get_domain_firstuser_folk(){
+  domain = 'folk'
+  $.ajax({
+    url:"/identify/domain_first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&domain=' + domain,
+    dataType:"json",
+    type:"Get",
+    async:false,
+    success:function(data){
+      //console.log('get_domain_firstuser_folk');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+function get_domain_firstuser_media(){
+  domain = 'media'
+  $.ajax({
+    url:"/identify/domain_first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&domain=' + domain,
+    dataType:"json",
+    type:"Get",
+    async:false,
+    success:function(data){
+      //console.log('get_domain_firstuser_media');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+function get_domain_firstuser_opinionleader(){
+  domain = 'opinion_leader'
+  $.ajax({
+    url:"/identify/domain_first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&domain=' + domain,
+    dataType:"json",
+    type:"Get",
+    async:false,
+    success:function(data){
+      //console.log('get_domain_firstuser_opinionleader');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+function get_domain_firstuser_oversea(){
+  domain = 'oversea'
+  $.ajax({
+    url:"/identify/domain_first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&domain=' + domain,
+    dataType:"json",
+    type:"Get",
+    async:false,
+    success:function(data){
+      //console.log('get_domain_firstuser_oversea');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+function get_domain_firstuser_other(){
+  domain = 'other'
+  $.ajax({
+    url:"/identify/domain_first_user/?topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&domain=' + domain,
+    dataType:"json",
+    type:"Get",
+    async:false,
+    success:function(data){
+      //console.log('get_domain_firstuser_other');
+      //console.log(data);
+      fu_request_callback(data);
+    }
+  });
+}
+
 function get_pagerank(){
-        $.ajax({
-      url: "/identify/rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&topn=' + topn + '&network_type=' + network_type ,
+      $.ajax({
+      url: "/identify/ds_pr_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&topn=' + topn + '&network_type=' + network_type,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
+        console.log('get_pagerank');
+        console.log(data);
         request_callback(data);
       }  
   }) ; 
 }
+
+function get_trendsetterrank(){
+  $.ajax({
+    url: "/identify/ds_tr_rank/?topic=" + topic + "&start_ts=" + start_ts + "&end_ts=" + end_ts + "&topn=" + topn,
+    dataType:"json",
+    type:'Get',
+    async:false,
+    success:function(data){
+      console.log('get_trendsetterrank');
+      console.log(data);
+      request_callback(data);
+    }
+  }
+    );
+}
+
 function get_centrelity(){
         $.ajax({
-      url: "/identify/degree_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type' + network_type,
+      url: "/identify/ds_degree_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type=' + network_type,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
+        console.log('get_centrelity');
+        console.log(data);
      
       // for (var i = 0; i< data.length; i ++){
       //     var ydata = Number(data[i].toFixed(3));
@@ -763,11 +1033,13 @@ function get_centrelity(){
 
 function betweeness_centrality_rank(){
         $.ajax({
-      url: "/identify/betweeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type' + network_type,
+      url: "/identify/ds_betweeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type=' + network_type,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
+        console.log('betweeness_centrality_rank');
+        console.log(data);
      
       // for (var i = 0; i< data.length; i ++){
       //     var ydata = Number(data[i].toFixed(3));
@@ -781,11 +1053,13 @@ function betweeness_centrality_rank(){
 
 function closeness_centrality_rank(){
         $.ajax({
-      url: "/identify/closeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type' + network_type,
+      url: "/identify/ds_closeness_centrality_rank/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts + '&network_type=' + network_type,
       dataType : "json",
       type : 'GET',
       async: false,
       success: function(data){
+        console.log('closeness_centrality_rank');
+        console.log(data);
      
       // for (var i = 0; i< data.length; i ++){
       //     var ydata = Number(data[i].toFixed(3));
@@ -802,35 +1076,37 @@ function closeness_centrality_rank(){
     var outdegree_y = [];
     var shortest_path_x = [];
     var shortest_path_y = [];
+
+
 function getnetwork_line(){
 
-    $.ajax({
-        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + 'indegree_histogram' + '&network_type=' + network_type,
-        dataType : "json",
-        type : 'GET',
-        async: false,
-        success: function(data){
-          // alert("dwsqdw");
-            for (var key in data){
-            indegree_x.push(key);
-            indegree_y.push(data[key]);
-        }
-            }  
+  //   $.ajax({
+  //       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + 'indegree_histogram' + '&network_type=' + network_type,
+  //       dataType : "json",
+  //       type : 'GET',
+  //       async: false,
+  //       success: function(data){
+  //         // alert("dwsqdw");
+  //           for (var key in data){
+  //           indegree_x.push(key);
+  //           indegree_y.push(data[key]);
+  //       }
+  //           }  
    
-    }) ;
+  //   }) ;
            
-  $.ajax({
-      url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=outdegree_histogram' + '&network_type=' + network_type,
-      dataType : "json",
-      type : 'GET',
-      async: false,
-      success: function(data){
-            for (var key in data){
-            outdegree_x.push(key);
-            outdegree_y.push(data[key]);
-        }
-      }
-  }) ; 
+  // $.ajax({
+  //     url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=outdegree_histogram' + '&network_type=' + network_type,
+  //     dataType : "json",
+  //     type : 'GET',
+  //     async: false,
+  //     success: function(data){
+  //           for (var key in data){
+  //           outdegree_x.push(key);
+  //           outdegree_y.push(data[key]);
+  //       }
+  //     }
+  // }) ; 
 
     $.ajax({
       url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=shortest_path_length_histogram' + '&network_type=' + network_type,
@@ -841,6 +1117,7 @@ function getnetwork_line(){
             for (var key in data){         
             shortest_path_x.push(key);
             shortest_path_y.push(data[key]/2);
+            //drawpicture(index,value);
 
         }
       }
@@ -848,15 +1125,17 @@ function getnetwork_line(){
   }) ;     
 }
 
-
-
 function drawpicture() {
-  get_centrelity();
-  betweeness_centrality_rank();
-  closeness_centrality_rank();
+  // get_firstuser();
+  // get_domain_firstuser_folk();
+  // get_domain_firstuser_media();
+  // get_domain_firstuser_opinionleader();
+  // get_domain_firstuser_oversea();
+  // get_domain_firstuser_other();
 
-
- 
+  //get_centrelity(); 
+  //betweeness_centrality_rank();
+  //closeness_centrality_rank();
     $('#line').highcharts({
       chart: {
                 type: 'spline',
@@ -939,88 +1218,7 @@ function drawpicture() {
         }]
     });
 }
-//     $('#line').highcharts({
-//       chart: {
-//                 type: 'spline',
-//             },
-//         title: {
-//             text: '',
-//             fontSize:'10px',
-//             align:'right',
-//             x : -70
-//         },
-//         lang: {
-//             printButtonTitle: "打印",
-//             downloadJPEG: "下载JPEG 图片",
-//             downloadPDF: "下载PDF文档",
-//             downloadPNG: "下载PNG 图片",
-//             downloadSVG: "下载SVG 矢量图",
-//             exportButtonTitle: "导出图片"
-//             },
-//         subtitle: {
-//             text: '',
-//             x: -20
-//         },
-//         xAxis: {
 
-//             categories:shortest_path_x,
-//           labels: {
-//                 step: 20
-//             }
-//           },
-//         yAxis: {
-//             title: {
-//                 text: '节点数量',
-//                 style: {
-//                     color: '#666',
-//                     fontWeight: 'bold',
-//                     fontSize: '12px',
-//                     fontFamily: 'Microsoft YaHei'
-//                 }
-//             },
-//             plotLines: [{
-//                 value: 0,
-//                 width: 1,
-//                 color: '#808080'
-//             }]
-//         },
-//          plotOptions: {
-//           spline: {
-//               lineWidth: 2,
-//               states: {
-//                   hover: {
-//                       lineWidth: 3
-//                   }
-//               },
-//               marker: {
-//                   enabled: false
-//               },
-//             }
-//         },
-//         tooltip: {
-//             valueSuffix: '',
-//             headerFormat: '<b>{series.name}</b><br>',
-
-//         },
-//             legend: {
-//             layout: 'vertical',
-//             align: 'center',
-//             verticalAlign: 'bottom',
-//             borderWidth: 0,
-//             itemStyle: {
-//               color: '#666',
-//               fontWeight: 'bold',
-//               fontSize: '12px',
-//               fontFamily: 'Microsoft YaHei'
-//               }
-//         },
-//         series: [{
-//             name: '最短路径长度',
-//             data: shortest_path_y
-//         }]
-
-//     });
-// }
 function drawpicture_ln() {
 
     $('#line').highcharts({

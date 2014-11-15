@@ -1,0 +1,978 @@
+{% extends "base.html" %}
+{% block title %}网络分析{% endblock %}
+{% block module_title %}深度分析{% endblock %}
+
+{% block head_css %}
+    <!-- 走势图切换按钮css -->
+    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
+
+    <style type="text/css">
+        .block {
+            color: #666;
+        }
+        .block: hover {
+            color: #666;
+        }
+        #trend_div {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        #trend_div1 {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+        //rank_table要重新画！！！！！！
+        #rank_table a:hover{
+            color: #428bca;
+        }
+
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 5px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float:left
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }.stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .sigma-expand {
+            position: absolute;
+            margin: 0px auto;
+            height: 620px;
+            width: 686px;
+            float: left;
+        }
+        .label-important, .badge-important {
+            background-color: #b94a48;
+        }
+        .mainSplit {
+            top: 64px;
+            position: relative;
+            _overflow: visible;
+            padding: 0px 26px 20px 15px;
+            border-left: 2px solid #e1e1e1;
+        }
+        .icon-ok {
+            background-position: -312px 0;
+        }
+        .icon-ok{
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-top: 1px;
+            line-height: 14px;
+            vertical-align: text-top;
+            background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+            background-position: 14px 14px;
+            background-repeat: no-repeat;
+        }
+        .pagination ul {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-left: 0;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .pagination-centered {
+            text-align: center;
+        }
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination ul>li>a, .pagination ul>li>span {
+            float: left;
+            padding: 4px 12px;
+            line-height: 20px;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-left-width: 0;
+        }
+        .pagination ul>li {
+            display: inline;
+        }
+        .lrRadius {
+            display: inline-block;
+            width: 184px;
+            height: 20px;
+            margin: 0 6px;
+            text-align: right;
+            font-weight: normal;
+        }
+        .lrRadius .lrRl {
+            float: left;
+            margin-left: -6px;
+            background-position: -100px -180px;
+        }
+        .lrRadius .lrRl, .lrRadius .lrRr {
+            top: 0;
+            width: 6px;
+            height: 20px;
+            background-image: url(../imgs/icons.png?0508);
+        }
+        .lrRadius .lrRc {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        .lrRadius .lrRb {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        td, th {
+            display: table-cell;
+            vertical-align: inherit;
+            padding-left: 80px;
+        }
+        th {
+            font-weight: bold;
+        }
+
+        #firstuser_table a:hover{
+            color: #428bca;
+        }
+
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 5px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float:left
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }.stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .sigma-expand {
+            position: absolute;
+            margin: 0px auto;
+            height: 620px;
+            width: 686px;
+            float: left;
+        }
+        .label-important, .badge-important {
+            background-color: #b94a48;
+        }
+        .mainSplit {
+            top: 64px;
+            position: relative;
+            _overflow: visible;
+            padding: 0px 26px 20px 15px;
+            border-left: 2px solid #e1e1e1;
+        }
+        .icon-ok {
+            background-position: -312px 0;
+        }
+        .icon-ok{
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-top: 1px;
+            line-height: 14px;
+            vertical-align: text-top;
+            background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+            background-position: 14px 14px;
+            background-repeat: no-repeat;
+        }
+        .pagination ul {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-left: 0;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .pagination-centered {
+            text-align: center;
+        }
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination ul>li>a, .pagination ul>li>span {
+            float: left;
+            padding: 4px 12px;
+            line-height: 20px;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-left-width: 0;
+        }
+        .pagination ul>li {
+            display: inline;
+        }
+        .lrRadius {
+            display: inline-block;
+            width: 184px;
+            height: 20px;
+            margin: 0 6px;
+            text-align: right;
+            font-weight: normal;
+        }
+        .lrRadius .lrRl {
+            float: left;
+            margin-left: -6px;
+            background-position: -100px -180px;
+        }
+        .lrRadius .lrRl, .lrRadius .lrRr {
+            top: 0;
+            width: 6px;
+            height: 20px;
+            background-image: url(../imgs/icons.png?0508);
+        }
+        .lrRadius .lrRc {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        .lrRadius .lrRb {
+            float: left;
+            width: 200px;
+            height: 18px;
+            padding-top: 2px;
+            background-color: #e2e2e2;
+            text-align: left;
+        }
+        td, th {
+            display: table-cell;
+            vertical-align: inherit;
+            padding-left: 80px;
+        }
+        th {
+            font-weight: bold;
+        }
+
+        #lTools {
+            height: 600px;
+        }
+        .node-info-popup ul li a:link {
+            color: #000000;
+        }
+        .node-info-popup ul li a:hover {
+            color: #00FFFF;
+        }
+        .control-pane{
+            position: relative;
+            float: left;
+            z-index: 1000;
+            margin-right: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .control-pane > div {
+            margin: 10px;
+        }
+        .control-pane a:hover{
+            color: #428bca;
+        }
+        .control-pane input[type=range] {
+            width: 130px;
+            display: inline;
+        }
+        #control-pane-rightdown {
+            right: 2px;
+            position: absolute;
+            float: left;
+            width: 304px;
+            background-color: rgb(249, 247, 237);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        #control-pane-rightdown a:hover{
+            color: #428bca;
+        }
+        #control-pane-rightdown > div {
+            margin: 10px;
+        }
+        #cluster_panel {
+            top: 389px;
+            right: 2px;
+            position: absolute;
+            float: left;
+            width: 304px;
+            background-color: rgb(249, 247, 237);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        #cluster_panel a:hover{
+            color: #428bca;
+        }
+        #cluster_panel > div {
+            margin: 10px;
+        }
+        .line {
+            clear: both;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 12px 0 0 0;
+            border-bottom: 1px solid #aac789;
+            background: transparent;
+        }
+        .underline {
+            color: #437356;
+            background: #f4f0e4;
+            margin: 0;
+            border-radius: 2px;
+            padding: 8px 12px;
+            font-weight: 700;
+        }
+        .hidden {
+            display: none;
+            visibility: hidden;
+        }
+
+    </style>
+{% endblock head_css %}
+
+{% block head_js %}
+    <script src="/static/js/highstock.js"></script>
+    <script src="/static/js/exporting.js"></script>
+    <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+    <!--
+    <script src="/static/js/identify/sigma.min.js"></script>
+    <script src="/static/js/identify/sigma.parseGexf.js"></script>
+    -->
+    <!-- START SIGMA IMPORTS -->
+    <script src="/static/sigma.js/src/sigma.core.js"></script>
+    <script src="/static/sigma.js/src/conrad.js"></script>
+    <script src="/static/sigma.js/src/utils/sigma.utils.js"></script>
+    <script src="/static/sigma.js/src/utils/sigma.polyfills.js"></script>
+    <script src="/static/sigma.js/src/sigma.settings.js"></script>
+    <script src="/static/sigma.js/src/classes/sigma.classes.dispatcher.js"></script>
+    <script src="/static/sigma.js/src/classes/sigma.classes.configurable.js"></script>
+    <script src="/static/sigma.js/src/classes/sigma.classes.graph.js"></script>
+    <script src="/static/sigma.js/src/classes/sigma.classes.camera.js"></script>
+    <script src="/static/sigma.js/src/classes/sigma.classes.quad.js"></script>
+    <script src="/static/sigma.js/src/captors/sigma.captors.mouse.js"></script>
+    <script src="/static/sigma.js/src/captors/sigma.captors.touch.js"></script>
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.canvas.js"></script>
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.webgl.js"></script>
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+    <script src="/static/sigma.js/src/middlewares/sigma.middlewares.rescale.js"></script>
+    <script src="/static/sigma.js/src/middlewares/sigma.middlewares.copy.js"></script>
+    <script src="/static/sigma.js/src/misc/sigma.misc.animation.js"></script>
+    <script src="/static/sigma.js/src/misc/sigma.misc.bindEvents.js"></script>
+    <script src="/static/sigma.js/src/misc/sigma.misc.drawHovers.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.plugins.neighborhoods/sigma.plugins.neighborhoods.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
+    <script src="/static/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
+    <!-- END SIGMA IMPORTS -->
+
+    <script src="/static/js/identify/jquery.bootpag.js"></script> 
+    
+{% endblock head_js %}
+
+{% block content %}
+    <div class="blkUnit grpUnit" id="trendProfile" style="height:170px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>网络概况</b></h4>
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        </div>
+        <!--
+        <div class="tabTitle" style="padding-top:1px;">
+            <div class="tabUI" id="zhibiaoTabDiv">
+                <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                    <div class="nmTab">有向图</div>
+                    <div class="hvTab">有向图</div>
+                </a>
+            </div>
+        </div>
+        -->
+
+        <div class="tabConts">
+            <table class="mtable" id="mstable"></table>
+        </div>
+        
+        <!--
+        <div class="tabUnit">
+            <div class="tabConts"></div>
+            <h5 style="padding-left:30px;padding-top:5px"><b>有向图</b></h5>
+            <table class="mtable" id="mstable"></table>            
+        </div>
+        -->
+    </div>
+
+    <div class="blkUnit grpUnit" id="trendProfile" style="margin-top:20px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4 style="margin-left:15px"><b>网络曲线图-转发链条长度分布</b></h4>
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF"data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <!--
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="fenbuTabDiv">
+                    <a sentiment="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">转发链条长度分布曲线</div>
+                        <div class="hvTab">转发链条长度分布曲线</div>-->
+                        <!--
+                        <button class="btn btn-danger" style="margin-left:18px;margin-top:10px" onclick='drawpicture()'>转发链条长度分布曲线</button>
+                        -->
+                        <!--
+                        <button class="btn btn-danger" style="margin-top:10px" onclick='drawpicture_ln()'>节点出入度分布曲线</button>
+                        --><!--
+                    </a>
+                </div>
+            </div>-->
+        
+            <div class="tabConts">
+                <div id="line" style="height:300px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>首发用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="首发用户"></i>&nbsp;&nbsp;
+        </div>
+        <div class="stmTabs tabUnit">
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_firstuser()' style="float: left;">整体首发者</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_domain_firstuser_folk()' style="float: left;">folk首发者</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_domain_firstuser_media()' style="float: left;">media首发者</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_domain_firstuser_opinionleader()' style="float: left;">opinion_leader首发者</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_domain_firstuser_oversea()' style="float: left;">oversea首发者</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_domain_firstuser_other()' style="float: left;">other首发者</button>
+            </div>
+            <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+            <div class="tabConts">
+                <div id="firstuser_table" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+
+        </div>
+    <div>
+
+    <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键传播用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="stmTabs tabUnit">
+            <!--
+            <div class="tabTitle" style="padding-top:1px;">
+                <div class="tabUI" id="guanjianproTabDiv">
+                    <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键传播用户</div>
+                        <div class="hvTab">关键传播用户</div>
+                    </a>
+            -->
+                    <!--
+                    <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
+                        <div class="nmTab">关键源头用户</div>
+                        <div class="hvTab">关键源头用户</div>
+                    </a>-->
+            <!--    </div>
+            </div>-->
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
+            </div>
+            
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_trendsetterrank()' style="float: left;">TR值排名</button>
+            </div> 
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
+            </div>
+            <div class="control-pane">
+                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
+            </div>
+
+            <span id="loading_current_data2" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+                <!--
+                <div>
+                    <p>
+                        <a class="btn btn-small btn-success" href="#" id="out">
+                            <i class="icon-download-alt"></i> 导出
+                        </a>
+                        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
+                            <i class="icon-file"></i> 加入知识库
+                        </a>
+                        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
+                            <i class="icon-file"></i> 移出知识库
+                        </a>
+                        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
+                            <i class="icon-ban-circle"></i> 加入垃圾名单
+                        </a>
+                    </p>
+                </div>
+                -->
+            <div class="tabConts">
+                <div id="rank_table" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection2" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+        </div>
+    </div>
+
+     <!-- <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键源头用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="stmTabs tabUnit"> 
+            
+            <span id="loading_current_data_source" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+               
+            <div class="tabConts">
+                <div id="rank_table_source" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection_source" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="well" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+            <h4><b>网络呈现</b></h4>
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+        </div>
+        <input type="hidden" id="filter_node">
+        <div style="position: relative; height: 40px;">
+            <div class="control-pane">
+                <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <div id="layout_controller_div" style="display: none;">
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--linLogMode-->对数模式
+                        <label>
+                            <input type="radio" name="linLogModeRadios" value="true" checked>
+                                是
+                        </label>
+                        <label>
+                            <input type="radio" name="linLogModeRadios" value="false">
+                                否
+                        </label>
+                        <input id="linLogModeInput" value="true" type="hidden">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--outboundAttractionDistribution-->离心力分布模式
+                        <label>
+                            <input type="radio" name="outboundAttractionRadios" value="true" checked>
+                                是
+                        </label>
+                        <label>
+                            <input type="radio" name="outboundAttractionRadios" value="false">
+                                否
+                        </label>
+                        <input id="outboundAttractionInput" value="true" type="hidden">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--adjustSizes-->调整尺寸模式
+                        <label>
+                            <input type="radio" name="adjustSizesRadios" value="true" checked>
+                                是
+                        </label>
+                        <label>
+                            <input type="radio" name="adjustSizesRadios" value="false">
+                                否
+                        </label>
+                        <input id="adjustSizesInput" value="true" type="hidden">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--strongGravityMode-->强引力模式
+                        <label>
+                            <input type="radio" name="strongGravityModeRadios" value="true" checked>
+                                是
+                        </label>
+                        <label>
+                            <input type="radio" name="strongGravityModeRadios" value="false">
+                                否
+                        </label>
+                        <input id="strongGravityModeInput" value="true" type="hidden">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span">1</span><br>
+                        <input id="edgeWeightInfluence_input" type="range" min="0" value="1" onclick="change_edgeWeightInfluence();">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span">1</span><br>
+                        <input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span">10</span><br>
+                        <input id="gravity_input" type="range" min="0" value="10" onclick="change_gravity();"> 
+                    </div>
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span">2</span><br>
+                        <input id="slowdown_input" type="range" min="0" value="2" onclick="change_slowdown();"> 
+                    </div>
+                    <span class="line"></span>
+                    <span>
+                        <a id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+                        <a id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+                        <a id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+                    </span>
+                </div>
+            </div>
+            <div class="control-pane">
+                <a id="filter_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 181px;"><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+                <div id="filter_controller_div" style="display: none;">
+                    <div>
+                        指标类别
+                        <select id="zhibiao-category">
+                            <option value="degree" selected>度</option>
+                            <option value="pagerank">PR值</option>
+                            <option value="trendsetterrank">TRR值</option>
+                        </select>
+                    </div>
+                    <div id="min_degree_container">
+                      最小度&nbsp;&nbsp;<span id="min-degree-val">0</span><br>
+                      <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
+                    </div>
+                    <div id="min_pagerank_container" class="hidden">
+                      最小PR值&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
+                      <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
+                    </div>
+                    <div id="min_trendsetterrank_container" class="hidden">
+                        最小TR值&nbsp;&nbsp;<span id="min-trendsetterrank-val">0</span>e-8<br>
+                        <input id="min-trendsetterrank" type="range" min="0" value="0"> <span id="max-trendsetterrank-value">0</span>e-8
+                    </div>
+                    <div>
+                      节点类别
+                      <select id="node-category">
+                        <option value="" selected>所有类别</option>
+                      </select>
+                    </div>
+                    <span class="line"></span>
+                    <div>
+                      <button id="reset-btn">重置过滤器</button>
+                    </div>
+                </div>
+            </div>
+            <div class="control-pane">
+                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
+            </div>
+            <div class="control-pane">
+                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
+            </div>
+            <div id="loading_network_data" class="alert alert-info" style="float:left;height: 33px;width: 308px;padding: 9px;display: none;">
+            系统繁忙计算中，请稍后...
+            </div>
+        </div>
+
+        <div id="network" class="collapse out" style="position: relative;">
+            <!--
+                <label>
+                    <div id="network_progress" class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>
+                </label>
+            -->
+            <div class="sigma-expand" id="sigma-graph"></div>
+            <div id="control-pane-rightdown">
+                <h4 class="underline">节点信息</h4>
+                <div>
+                    用户昵称: <span id="nickname"></span>&nbsp;&nbsp;
+                </div>
+                <div>
+                用户所在地: <span id="location"></span>
+                </div>
+                <div>
+                用户PR值: <span id="pagerank"></span>
+                </div>
+                <div>
+                用户TR值: <span id="trendsetter_rank"></span>
+                </div>
+                <div>
+                用户微博信息: <span id="user_weibo"></span>
+                </div>
+                <!--
+                <div>
+                微博发布时间: <span id="weibo_created_at"></span>
+                </div>
+                <div>
+                微博文本内容: <p id="weibo_text"></p>
+                </div>
+                <div>
+                微博转发数: <span id="weibo_reposts_count"></span>
+                </div>
+                <div>
+                微博评论数: <span id="weibo_comments_count"></span>
+                </div>
+                -->
+                <div>
+                    用户所属社团: 
+                    <span id="community"></span>
+                    <span><a id="community_detail_a" class="block" href="#network">查看社团详情</a></span>
+                    <span><a id="neighbourhood_detail_a" class="block" href="#network">查看邻居详情</a></span>
+                </div>
+                <div>
+                    用户所属领域: 
+                    <span id="area_value">财经</span>
+                    <span><a href="#network" class="block">查看领域详情</a></span>
+                </div>
+                <div>
+                    用户深度分析：
+                    <span id="user_profile_link">
+                        <a href="##network" class="block">查看用户深度分析结果</a>
+                    </span>
+                </div>
+            </div>
+            <!--
+            <div id="cluster_panel">
+                <h4 class="underline">群组信息</h4>
+                <div>
+                    关键用户: 
+                    <div id="group_user_list">
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+{% endblock content %}
+{% block tail_js %}
+    <script>      
+        $("#summary_tooltip").tooltip();
+        $("#keyclient_tooltip").tooltip();
+        $("#display_tooltip").tooltip();
+        $("#frequency_tooltip").tooltip();
+        $("#power_law_distribution_tooltip").tooltip();
+        $("#layout_controller").click(function(){
+            if($("#layout_controller").attr('status') == 'closed'){
+                $("#layout_controller_div").css("display", "block");
+                $("#layout_controller").attr('status', 'opened')
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+            }
+            else{
+                $("#layout_controller_div").css("display", "none");
+                $("#layout_controller").attr('status', 'closed');
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+            }
+        });
+        $("#filter_controller").click(function(){
+            if($("#filter_controller").attr('status') == 'closed'){
+                $("#filter_controller_div").css("display", "block");
+                $("#filter_controller").attr('status', 'opened')
+                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+            }
+            else{
+                $("#filter_controller_div").css("display", "none");
+                $("#filter_controller").attr('status', 'closed');
+                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+            }
+        });
+    </script>
+    <script src="/static/js/identify/ds_topic_identify.js"></script>
+{% endblock tail_js %}

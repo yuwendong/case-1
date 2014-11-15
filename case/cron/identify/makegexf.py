@@ -6,7 +6,7 @@ from gexf import Gexf
 from utils import acquire_user_by_id
 
 
-def make_gexf(gexf_name_1, gexf_name_2, G, node_degree, key_users, all_uid_pr, partition, new_attribute_dict):
+def make_gexf(gexf_name_1, gexf_name_2, G, node_degree, key_users, all_uid_pr, pr_data, partition, new_attribute_dict):
     gexf = Gexf(gexf_name_1, gexf_name_2)
 
     node_id = {}
@@ -20,7 +20,7 @@ def make_gexf(gexf_name_1, gexf_name_2, G, node_degree, key_users, all_uid_pr, p
     graph.addNodeAttribute('reposts_count', type='string', force_id='reposts_count') # 新添加的属性
     graph.addNodeAttribute('comments_count', type='string', force_id='comments_count')
     graph.addNodeAttribute('attitude_count', type='string', force_id='attitude_count')
-
+    graph.addNodeAttribute('rank_pr', type='string', force_id='rank_pr') # 用户的pagerank值对应的排名
     pos = nx.spring_layout(G) # 定义一个布局 pos={node:[v...]/(v...)}
 
     node_counter = 0
@@ -42,6 +42,8 @@ def make_gexf(gexf_name_1, gexf_name_2, G, node_degree, key_users, all_uid_pr, p
         #print 'al_uid_pr:', all_uid_pr
         pr = str(all_uid_pr[str(uid)])
         _node.addAttribute('pagerank', pr)
+        rank = pr_data[uid]
+        _node.addAttribute('rank_pr', rank)
         #print 'pagarank_uid:', uid
         try:
             text_add = new_attribute_dict[uid][0][0] # 添加节点属性--text
@@ -83,7 +85,7 @@ def i2u(s):
     else:
         return str(s)
 
-def make_ds_gexf(gexf_name_1, gexf_name_2, G, node_degree, pr_key_users, tr_key_user, all_uid_pr, all_uid_tr, partition, ds_new_attribute_dict):
+def make_ds_gexf(gexf_name_1, gexf_name_2, G, node_degree, pr_key_users, tr_key_user, all_uid_pr, ds_pr_data, all_uid_tr, ds_tr_data, partition, ds_new_attribute_dict):
     gexf = Gexf(gexf_name_1, gexf_name_2)
 
     node_id = {}
@@ -98,6 +100,8 @@ def make_ds_gexf(gexf_name_1, gexf_name_2, G, node_degree, pr_key_users, tr_key_
     graph.addNodeAttribute('reposts_count', type='string', force_id='reposts_count')
     graph.addNodeAttribute('comments_count', type='string', force_id='comments_count')
     graph.addNodeAttribute('attitude_count', type='string', force_id='attitude_count')
+    graph.addNodeAttribute('rank_pr', type='string', force_id='rank_pr')
+    graph.addNodeAttribute('rank_tr', type='string', force_id='rank_tr')
 
     pos = nx.spring_layout(G)
 
@@ -123,6 +127,10 @@ def make_ds_gexf(gexf_name_1, gexf_name_2, G, node_degree, pr_key_users, tr_key_
         #print 'all_uid_pr:', all_uid_pr
         tr = str(all_uid_tr[str(uid)])
         _node.addAttribute('trendsetter_rank', tr)
+        rank_pr = ds_pr_data[uid]
+        _node.addNodeAttribute('rank_pr', rank_pr)
+        rank_tr = ds_tr_data[uid]
+        _node.addNodeAttribute('rank_tr', rank_tr)
         try:
             text_add = ds_new_attribute_dict[uid][0][0]
             _node.addAttribute('text', json.dumps(text_add))
