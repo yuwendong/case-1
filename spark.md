@@ -16,8 +16,16 @@ worker：
 ```
 
 参考http://spark.apache.org/docs/latest/spark-standalone.html中Installing Spark Standalone to a Cluster的Starting a Cluster Manually
-在主节点的/home/spark/spark-1.0.1-bin-hadoop1/下执行./sbin/start-master.sh
-在worker的/home/spark/spark-1.0.1-bin-hadoop1/下执行./bin/spark-class org.apache.spark.deploy.worker.Worker spark://mirage:7077
+
+在主节点的/home/spark/spark-1.0.1-bin-hadoop1/下执行
+```
+./sbin/start-master.sh
+```
+
+在worker的/home/spark/spark-1.0.1-bin-hadoop1/下执行
+```
+./bin/spark-class org.apache.spark.deploy.worker.Worker spark://mirage:7077
+```
 
 注意配置每台机器下的/etc/hosts
 
