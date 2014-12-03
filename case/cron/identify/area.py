@@ -1,37 +1,36 @@
 # -*- coding: utf-8 -*-
 
+import re
+import sys
+import json
 import tempfile
 import operator
-import json
-import re
-import networkx as nx
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-sys.path.append('../')
-from time_utils import datetime2ts, window2time, ts2datetimestr
-from hadoop_utils import generate_job_id
-from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, is_in_trash_list, acquire_user_by_id, read_key_users
-from utils import ds_read_key_users, read_graph, ds_tr_read_key_users, read_attribute_dict
-from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
-
-from config import xapian_search_user as user_search
-from dynamic_xapian_weibo import getXapianWeiboByDuration, getXapianWeiboByTopic
-
-from pagerank import pagerank
-from makegexf import make_gexf, make_ds_gexf
 from gexf import Gexf
 from lxml import etree
+import networkx as nx
 
+from pagerank import pagerank
 from gquota import compute_quota
-import sys
-sys.path.append('../libsvm-3.17/python')
-from sta_ad import start as ystart
-from snowball1 import SnowballSampling
 from localbridge import GetLocalBridge
+from snowball1 import SnowballSampling
+from hadoop_utils import generate_job_id
+from makegexf import make_gexf, make_ds_gexf
+from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
+from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
+        is_in_trash_list, acquire_user_by_id, read_key_users, ds_read_key_users, \
+        read_graph, ds_tr_read_key_users, read_attribute_dict
 
-search_topic_id='54635178e74050a373a1b939'
+reload(sys)
+sys.setdefaultencoding('utf-8')
+sys.path.append('../../')
+from ad_filter import ad_classifier
+from time_utils import datetime2ts, window2time, ts2datetimestr
+from global_config import xapian_search_user as user_search
+from dynamic_xapian_weibo import getXapianWeiboByTopic
+
+
+search_topic_id = '545f2cbecf198b18c57b8013'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -42,10 +41,6 @@ network_type = 1
 ds_network_type = 2
 GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 
-def get_nad(rlist):
-    flag = '0500'
-    data = ystart(rlist, flag)
-    return len(data),data
 
 '''
 def degree_rank(top_n, date, topic_id, window_size):
@@ -251,8 +246,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     new_gg = gg
     ds_new_G = ds_dg
     ds_new_gg = ds_udg
-    #compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
-    #compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
+    compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
+    compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
     print 'quota computed complicated'
 
     # 生成gexf文件
@@ -344,25 +339,12 @@ def cut_network(g, node_degree, degree_threshold): # 筛选出节点度数大于
     return g
 
 
-def getXapianweiboByTs(start_time, end_time): # 将查询时间段转化为每一天时间戳组成的字符串，获取时间段内的微博
-    xapian_date_list =[]
-    days = (int(end_time) - int(start_time)) / Day
-
-    for i in range(0, days):
-        _ts = start_time + i * Day
-        xapian_date_list.append(ts2datetimestr(_ts))
-    print 'xapian_date_list:', xapian_date_list
-    statuses_search = getXapianWeiboByDuration(xapian_date_list)
-    return statuses_search
-
-
 def make_network(topic, date, window_size, max_size=100000, attribute_add = False):
     topics = topic.strip().split(',')
     end_time = int(datetime2ts(date))
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
     topic_id='54635178e74050a373a1b939'
-    #statuses_search = getXapianweiboByTs(start_time, end_time) # 获得查询时间段的XapianSearch类
     statuses_search = getXapianWeiboByTopic(search_topic_id)
 
     g = nx.DiGraph() # 初始化一个有向图
@@ -385,7 +367,7 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     if count:
         for weibo in get_statuses_results():
             results_list.append([weibo['_id'],weibo['text']])
-        scount, data_wid = get_nad(results_list)
+        scount, data_wid = ad_classifier(results_list)
     else:
         data_wid = []
         scount = 0
@@ -581,8 +563,4 @@ if __name__=='__main__':
     topicname = u'东盟,博览会'
     real_topic_id = 227
     pagerank_rank(TOPK, date, topic_id, window_size, topicname, real_topic_id)
-    
-    
-    
-    
     

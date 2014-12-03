@@ -16,9 +16,11 @@ from flask import Blueprint, url_for, render_template, request, abort, flash, ma
 
 from utils import read_topic_rank_results, read_degree_centrality_rank ,\
                   read_betweeness_centrality_rank, read_closeness_centrality_rank
-from utils import read_ds_topic_rank_results, read_tr_rank_results, read_ds_degree_centrality_rank ,\
+from utils import read_ds_topic_rank_results, read_ds_degree_centrality_rank ,\
                   read_ds_betweeness_centrality_rank, read_ds_closeness_centrality_rank
-from first_user import time_top_user, time_domain_top_user
+from first_user import time_top_user, time_domain_top_user,read_table_fu
+from trend_user import read_trend_maker, read_trend_pusher, read_trend_user_table
+from community_util import read_uid_weibos, read_uid_neighbors
 
 
 TOPK = 1000
@@ -96,7 +98,46 @@ def network():
         return None
 
 
+@mod.route("/trend_maker/")
+def trend_makers():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    rank_method = request.args.get('rank_method', '') # content, timestamp,reposts_count, friends_count, statuses_count 
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    results = read_trend_maker(topic, date, windowsize, rank_method)
+    return json.dumps(results)
 
+@mod.route('/trend_pusher/')
+def trend_pushers():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    rank_method = request.args.get('rank_method', '')
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    results = read_trend_pusher(topic, date, windowsize, rank_method)
+    return json.dumps(results)
+
+@mod.route('/trend_user/')
+def trend_user():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts','')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    results = read_trend_user_table(topic,  date, windowsize)
+    
+    return json.dumps(results)
+    
+    
 @mod.route("/rank/")
 def network_rank():
     topic = request.args.get('topic', '')
@@ -107,9 +148,10 @@ def network_rank():
     windowsize = (end_ts - start_ts) / Day
     topn = request.args.get('topn', 100)
     topn = int(topn)
+    domain = request.args.get('domain', 'all')
     date = ts2datetime(end_ts)
     rank_method = 'pagerank'
-    results = read_topic_rank_results(topic, topn, rank_method, date, windowsize)
+    results = read_topic_rank_results(topic, topn, rank_method, date, windowsize, domain)
     return json.dumps(results)
 
 @mod.route('/ds_pr_rank/')
@@ -122,25 +164,10 @@ def ds_network_pr_rank():
     windowsize = (end_ts - start_ts) / Day
     topn = request.args.get('topn', 100)
     topn = int(topn)
+    domain = request.args.get('domain','all')
     date = ts2datetime(end_ts)
 
-    results = read_ds_topic_rank_results(topic, topn, date, windowsize)
-    return json.dumps(results)
-
-@mod.route('/ds_tr_rank/')
-def ds_network_tr_rank():
-    topic = request.args.get('topic', '')
-    start_ts = request.args.get('start_ts', '')
-    start_ts = int(start_ts)
-    end_ts = request.args.get('end_ts' ,'')
-    end_ts = int(end_ts)
-    windowsize = (end_ts - start_ts) / Day
-    topn = request.args.get('topn', 100)
-    topn = int(topn)
-    date = ts2datetime(end_ts)
-
-    results = read_tr_rank_results(topic, topn, date, windowsize)
-    #print 'results1:', results[0]
+    results = read_ds_topic_rank_results(topic, topn, date, windowsize, domain)
     return json.dumps(results)
 
 @mod.route('/ds_degree_centrality_rank/')
@@ -154,7 +181,8 @@ def ds_node_degree_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_ds_degree_centrality_rank(topic, topn, date, windowsize)
+    domain = request.args.get('domain', 'all')
+    results = read_ds_degree_centrality_rank(topic, topn, date, windowsize, domain)
 
     return json.dumps(results)
     
@@ -170,7 +198,8 @@ def node_degree_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_degree_centrality_rank(topic, topn, date, windowsize)
+    domain = request.args.get('domain','all')
+    results = read_degree_centrality_rank(topic, topn, date, windowsize, domain)
     return json.dumps(results)
 
 
@@ -185,7 +214,8 @@ def ds_betweeness_degree_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_ds_betweeness_centrality_rank(topic, topn, date, windowsize)
+    domain = request.args.get('domain', 'all')
+    results = read_ds_betweeness_centrality_rank(topic, topn, date, windowsize, domain)
     return json.dumps(results)
 
 @mod.route('/betweeness_centrality_rank/')
@@ -199,7 +229,8 @@ def betweeness_degree_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_betweeness_centrality_rank(topic, topn, date, windowsize)
+    domain = request.args.get('domain', 'all')
+    results = read_betweeness_centrality_rank(topic, topn, date, windowsize, domain)
     return json.dumps(results)
 
 @mod.route('/ds_closeness_centrality_rank/')
@@ -213,7 +244,8 @@ def ds_closeness_centrality_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_ds_closeness_centrality_rank(topic, topn, date , windowsize)
+    domain = request.args.get('domain', 'all')
+    results = read_ds_closeness_centrality_rank(topic, topn, date , windowsize, domain)
     return json.dumps(results)
 
 @mod.route('/closeness_centrality_rank/')
@@ -227,38 +259,15 @@ def closeness_centrality_rank():
     date = ts2datetime(end_ts)
     topn = request.args.get('topn', 100)
     topn = int(topn)
-    results = read_closeness_centrality_rank(topic, topn, date, windowsize)
+    domain = request.args.get('domain', 'all')
+    results = read_closeness_centrality_rank(topic, topn, date, windowsize, domain)
     return json.dumps(results)
 
 def _utf8_unicode(s):
     if isinstance(s, unicode):
         return s
     else:
-        return unicode(s, 'utf-8')
-'''
-@mod.route('/origin/')
-def origin_user():
-    topic = request.args.get('topic', '')
-    start_ts = request.args.get('start_ts','')
-    start_ts = int(start_ts)
-    end_ts = request.args.get('end_ts','')
-    end_ts = int(end_ts)
-    end_ts = int(end_ts)
-    date = ts2datetime(end_ts)
-    windowsize = (end_ts - start_ts ) / Day
-    
-    results = get_origin_user(topic, date, windowsize)
-    rank = 0
-    results_list = []
-    for uid, result, reposts_count in results[:10]:
-        rank += 1
-        results_list.append([rank, result['uid'], result['name'], \
-                           result['location'], result['count1'], result['count2'], \
-                           result['pr'], result['dc'], result['bc'], result['cc']])
-    
-
-    return json.dumps(results_list)
-'''   
+        return unicode(s, 'utf-8')  
 
 @mod.route("/quota/")
 def network_quota():
@@ -295,11 +304,26 @@ def network_first_user():
     start_ts = int(start_ts)
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
+    rank_method = request.args.get('rank_method','')
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
-    results = time_top_user(topic, date, windowsize)
+    results = time_top_user(topic, date, windowsize, rank_method)
     #print 'view-len(results):', len(results)
     #print 'results[0]:', results[0]
+    return json.dumps(results)
+
+@mod.route('/table_first_user/')
+def table_fu():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts','')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts','')
+    end_ts = int(end_ts)
+    top_n = request.args.get('topn','')
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    results = read_table_fu(topic, date, windowsize, top_n)
+
     return json.dumps(results)
 
 @mod.route('/domain_first_user/')
@@ -310,7 +334,40 @@ def network_domain_first_user():
     end_ts = request.args.get('end_ts', '')
     end_ts = int(end_ts)
     domain = request.args.get('domain','')
+    rank_method = request.args.get('rank_method','')
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
-    results = time_domain_top_user(topic, date, windowsize, domain)
+    results = time_domain_top_user(topic, date, windowsize, domain, rank_method)
     return json.dumps(results)
+
+
+@mod.route('/uid_weibo/')
+def network_uid_weibos():
+    uid = request.args.get('uid', '')
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    results = read_uid_weibos(topic, date, windowsize, uid)
+    return json.dumps(results)
+
+@mod.route('/uid_neighbor/')
+def network_uid_neighbor():
+    uid = request.args.get('uid', '')
+    print 'uid:', uid
+    uid = int(uid)
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    network_type = request.args.get('network_type','source_graph')
+    # network_type="source_graph" or 'direct_superior_graph'
+    results = read_uid_neighbors(topic, date, windowsize , uid, network_type)
+    return json.dumps(results)
+

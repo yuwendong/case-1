@@ -43,7 +43,7 @@ def make_gexf(gexf_name_1, gexf_name_2, G, node_degree, key_users, all_uid_pr, p
         pr = str(all_uid_pr[str(uid)])
         _node.addAttribute('pagerank', pr)
         rank = pr_data[uid]
-        _node.addAttribute('rank_pr', rank)
+        _node.addAttribute('rank_pr', str(rank))
         #print 'pagarank_uid:', uid
         try:
             text_add = new_attribute_dict[uid][0][0] # 添加节点属性--text
@@ -128,9 +128,9 @@ def make_ds_gexf(gexf_name_1, gexf_name_2, G, node_degree, pr_key_users, tr_key_
         tr = str(all_uid_tr[str(uid)])
         _node.addAttribute('trendsetter_rank', tr)
         rank_pr = ds_pr_data[uid]
-        _node.addNodeAttribute('rank_pr', rank_pr)
+        _node.addAttribute('rank_pr', str(rank_pr))
         rank_tr = ds_tr_data[uid]
-        _node.addNodeAttribute('rank_tr', rank_tr)
+        _node.addAttribute('rank_tr', str(rank_tr))
         try:
             text_add = ds_new_attribute_dict[uid][0][0]
             _node.addAttribute('text', json.dumps(text_add))
