@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
+
 import sys
+import networkx as nx
+
+from area import pagerank_rank, make_network, make_network_graph 
+from topicStatus import _topic_not_calc, _update_topic_status2Computing, \
+        _update_topic_status2Completed
+from utils import acquire_topic_name, acquire_topic_id, \
+        save_rank_results, save_gexf_results, save_attribute_dict, \
+        acquire_real_topic_id
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
-import networkx as nx
-sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
-from area import pagerank_rank, make_network, make_network_graph 
-from utils import acquire_topic_name, acquire_topic_id, save_rank_results, save_gexf_results, save_attribute_dict
-from utils import acquire_real_topic_id
-from topicStatus import _topic_not_calc, _update_topic_status2Computing, _update_topic_status2Completed
-import networkx as nx
 from config import db #　用于测试期间，建立topicstatus这张表。待删
 import time # 用于测试生成topicStatus入库时间，待删
 from model import TopicStatus # 用于测试，待删
@@ -94,7 +97,8 @@ def main():
 if __name__ == '__main__':
     module_t_s = 'identify'
     status = -1
-    topic = u'东盟,博览会'
+    #topic = u'东盟,博览会'
+    topic = u'APEC'
     start = datetime2ts('2013-09-02')
     end = datetime2ts('2013-09-07') + Day
     db_date = int(time.time())
