@@ -476,6 +476,7 @@ function network_request_callback(data) {
                   var node_comments_count = node.attributes.comments_count;
                   var node_timestamp = node.attributes.timestamp;
                   var node_rank_pr = node.attributes.rank_pr;
+                  var graph_type = 1; 
 
                   $('#nickname').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">' + node_name + '</a>');
                   $('#location').html(node_location);
@@ -484,8 +485,11 @@ function network_request_callback(data) {
                   //$('#weibo_text').html(node_text);
                   //$('#weibo_reposts_count').html(node_reposts_count);
                   //$('#weibo_comments_count').html(node_comments_count);
-                  $('#community').html(node_community);
-                  $('#user_weibo').html('<a target="_blank" href="/index/user_weibo/?uid=' + node_uid + '">' + '查看用户微博列表' + '</a>');
+                  // console.log(node_uid);
+                  // console.log(node_community);
+                  $('#community_detail_a').html('<button onclick="network_uid_community(' + node_community +','+ node_uid +',' + graph_type +')">' + '查看社团信息详情' + '</button>');
+                  $('#user_weibo').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '查看用户微博列表' + '</button>');
+                  $('#neighbourhood_detail_a').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '查看邻居信息详情' + '</button>');
 
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -594,7 +598,6 @@ function request_callback(data) {
                     else {
                         total_pages = current_data.length / page_num + 1;
                     }
-                    console.log(total_pages, current_data.length);
             
                     $('#rank_page_selection').bootpag({
                         total: total_pages,

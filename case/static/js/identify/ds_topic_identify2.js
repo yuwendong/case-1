@@ -585,6 +585,7 @@ function network_request_callback2(data) {
                   var node_comments_count = node.attributes.comments_count;
                   var node_timestamp = node.attributes.timestamp;
                   var node_rank_pr = node.attributes.rank_pr;
+                  var graph_type = 2;
 
                   $('#nickname2').html('<a target="_blank" href="http://weibo.com/u/' + node_uid + '">' + node_name + '</a>');
                   $('#location2').html(node_location);
@@ -596,9 +597,9 @@ function network_request_callback2(data) {
                   //$('#weibo_comments_count').html(node_comments_count);
                   //$('#community2').html(node_community);
                   //$('#user_weibo2').html('<a target="_blank" href="/index/user_weibo/?uid=' + node_uid + '">' + '查看用户微博列表' + '</a>');
-                  $('#community_detail_a2').html('<button onclick="network_uid_community(' + node_community + ')">' + '查看社团信息详情' + '</button>');
-                  $('#user_weibo2').html('<button onclick="network_weibolist(' + node_uid + ')">' + '查看用户微博列表' + '</button>');
-                  $('#neighbourhood_detail_a2').html('<button onclick="network_uid_neighbor(' + node_uid + ')">' + '查看邻居信息详情' + '</button>');
+                  $('#community_detail_a2').html('<button onclick="network_uid_community(' + node_community +','+ node_uid + ',' + graph_type +')">' + '查看社团信息详情' + '</button>');
+                  $('#user_weibo2').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '查看用户微博列表' + '</button>');
+                  $('#neighbourhood_detail_a2').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '查看邻居信息详情' + '</button>');
                   
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -650,7 +651,15 @@ function network_request_callback2(data) {
 
 
 //节点信息部分用户微博列表数据获取
-function network_weibolist(uid){
+function network_weibolist(uid, network_type){
+  if (network_type==1){
+    network_type = 'source_graph';
+  }
+  else if(network_type==2){
+    network_type = 'direct_superior_graph';
+  }
+  console.log('network_weibolist');
+  console.log(network_type);
   $.ajax({
     url: "/identify/uid_weibo/?uid=" + uid + "&topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts,
     dataType: "json",
@@ -658,7 +667,7 @@ function network_weibolist(uid){
     async:false,
     success:function(data){
       //console.log(data);
-      show_network_weibo(data);
+      show_network_weibo(data, network_type);
 
     }
   });
@@ -666,72 +675,412 @@ function network_weibolist(uid){
 
 
 //显示节点信息部分的微博列表
-function show_network_weibo(data){
+function show_network_weibo(data, network_type){
+  console.log('show_network_weibo');
+  console.log(network_type);
+  if (network_type=='direct_superior_graph'){
   document.getElementById("network_uid_community").style.display="none";
   document.getElementById("network_uid_neighbor").style.display="none";
   document.getElementById("network_uid2weibo").style.display = "";
   $("#network_weibo_ul").empty();
+  var pre_div_id = 'network_weibo_ul';
+  var pre_div_id2 = 'network_content_control_height';
+  }
+  else if(network_type=='source_graph'){
+    document.getElementById('network_uid_community1').style.display='none';
+    document.getElementById('network_uid_neighbor1').style.display='none';
+    document.getElementById('network_uid2weibo1').style.display='';
+    $('#network_weibo_ul1').empty();
+    var pre_div_id = 'network_weibo_ul1';
+    var pre_div_id2 = 'network_content_control_height1';
+  }
+
+  
   var html = "";
   var n = data.length;
   for(var i=0;i<n;i++){
-    weibo = data[i]
-    timestamp = weibo[0];
-    sentiment = weibo[1];
-    text = weibo[2];
-    geo = weibo[3];
-    source = weibo[4];
-    reposts_count = weibo[5];
-    comments_count = weibo[6];
-    html += '<li class="item">';
+    var weibo = data[i]
+    var wid = weibo[0];
+    var uid = weibo[1];
+    var name = weibo[2];
+    var location = weibo[3]
+    var friends_count = weibo[4];
+    var followers_count = weibo[5];
+    var created_at = weibo[6];
+    var statuses_count = weibo[7];
+    var profile_image_url = weibo[8];
+    var date = weibo[9];
+    var text = weibo[10];
+    var geo = weibo[11];
+    var source = weibo[12];
+    var reposts_count = weibo[13];
+    var comments_count = weibo[14];
+    var weibo_link = weibo[15];
+    var user_link = 'http://weibo.com/u/' + uid;
+    var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + wid;
+    html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
+    html += '<img src="' + profile_image_url + '">';
+    html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '情感:' + sentiment +'</p>';
+    html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-    html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a></div>';
+    html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(' + friends_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    html += '<a class="undlin" href="javascript:;" target="_blank">关注数(' + followers_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
-    html += '<a class="undlin">' + timestamp + '</a>&nbsp;-&nbsp;';
+    html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
-    html += '</li>'
+    html += '</li>' 
   }
-   $("#network_weibo_ul").append(html);
-   $("#network_content_control_height").css("height", $("#weibo_ul").css("height"));
+   $("#"+pre_div_id).append(html);
+   $("#"+pre_div_id2).css("height", $("#weibo_ul").css("height"));
 }
 
 //获取节点邻居信息
-function network_uid_neighbor(uid){
+function network_uid_neighbor(uid, network_type){
+  if (network_type==1){
+    network_type = 'source_graph';
+  }
+  else if(network_type==2){
+    network_type = 'direct_superior_graph';
+  }
+  console.log('network_uid_neighbor');
+  console.log(network_type);
   $.ajax({
-    url: "/identify/uid_neighbor/?uid=" + uid + "&topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&network_type=' + 'direct_superior_graph',
+    url: "/identify/uid_neighbor/?uid=" + uid + "&topic="+ topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&network_type=' + network_type,
     dataType: "json",
     type:'Get',
     async:false,
     success:function(data){
       //console.log(data);
-      show_network_neighbor(data);
+      show_network_neighbor(data, network_type);
     }
   });
 
 }
+
+function network_uid_community(cid, uid, network_type){
+  
+  if (network_type==1){
+    network_type = 'source_graph';
+  }
+  else if(network_type==2){
+    network_type = 'direct_superior_graph';
+  }
+  console.log('network_uid_community');
+  console.log(network_type);
+  $.ajax({
+    url:"/identify/uid_community/?uid=" + uid + '&topic=' + topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&network_type=' + network_type + '&community_id=' + cid,
+    dataType:'json',
+    type:'Get',
+    async:false,
+    success:function(data){
+      //console.log(data);
+      show_network_community(data, network_type);
+    } 
+  });
+
+}
+//显示节点所属社区信息
+function show_network_community(data, network_type){
+  if (network_type=='direct_superior_graph'){
+  document.getElementById("network_uid_community").style.display="";
+  document.getElementById("network_uid_neighbor").style.display="none";
+  document.getElementById("network_uid2weibo").style.display = "none";
+  }
+  else if(network_type=='source_graph'){
+    document.getElementById('network_uid_community1').style.display='';
+    document.getElementById('network_uid_neighbor1').style.display='none';
+    document.getElementById('network_uid2weibo1').style.display='none';
+  }
+  weibos = data[0];
+  neighbor_weibo(weibos, 'community', network_type);
+  top_words = data[1];
+  draw_neighbor_cloud(top_words, 'community', network_type);
+  sentiment = data[2];
+  draw_neighbor_pie(sentiment, 'community', network_type);
+  users = data[3];
+  draw_user_table(users, 'community', network_type);
+  trend = data[4];
+  //console.log('trend');
+  //console.log(trend);
+  draw_trend(trend, 'community', network_type)
+  user_num = users.length;
+  weibo_num = weibos.length;
+  //console.log(user_num);
+  //console.log(weibo_num);
+  draw_easy_info(user_num, weibo_num, 'community', network_type);
+}
+
+function draw_easy_info(u_num, w_num, type, network_type){
+  if (type=='community' && network_type=='direct_superior_graph'){
+    pre_div_id = 'community_easy_info';
+    type_ch = '社区';
+  }
+  else if (type=='neighbor' && network_type=='direct_superior_graph'){
+    pre_div_id = 'neighbor_easy_info';
+    type_ch = '邻居'; 
+  }
+  else if (type=='community' && network_type=='source_graph'){
+    pre_div_id = 'community_easy_info1';
+    type_ch = '社区';
+  }
+  else if (type=='neighbor' && network_type=='source_graph'){
+    pre_div_id = 'neighbor_easy_info1';
+    type_ch = '邻居';
+  }
+  $('#'+pre_div_id).empty();
+  html = ''; 
+  html += '<a>' + type_ch + '用户数:' + u_num + '</a>&nbsp&nbsp<a>' + type_ch + '微博数:' + w_num + '</a>';
+  $('#'+pre_div_id).append(html);
+}
+
 //显示节点邻居信息
-function show_network_neighbor(data){
+function show_network_neighbor(data, network_type){
+  if (network_type=='direct_superior_graph'){
   document.getElementById("network_uid_community").style.display="none";
   document.getElementById("network_uid_neighbor").style.display="";
   document.getElementById("network_uid2weibo").style.display = "none";
+  }
+  else if(network_type == 'source_graph'){
+  document.getElementById('network_uid_community1').style.display='none';
+  document.getElementById('network_uid_neighbor1').style.display='';
+  document.getElementById('network_uid2weibo1').style.display='none';
+  }
   weibos = data[0];
-  neighbor_weibo(weibos);
+  neighbor_weibo(weibos, 'neighbor', network_type);
   top_words = data[1];
-  draw_neighbor_cloud(top_words);
+  draw_neighbor_cloud(top_words, 'neighbor', network_type);
   sentiment = data[2];
-  draw_neighbor_pie(sentiment);
+  draw_neighbor_pie(sentiment, 'neighbor', network_type);
+  users = data[3];
+  draw_user_table(users, 'neighbor', network_type);
+  trend = data[4];
+  draw_trend(trend, 'neighbor', network_type);
+  user_num = users.length;
+  weibo_num = weibos.length;
+  //console.log(user_num);
+  //console.log(weibo_num);
+  draw_easy_info(user_num, weibo_num, 'neighbor', network_type);
+
 }
 
-function draw_neighbor_pie(data){
+// 显示节点信息所在的社区或者邻居的名单列表
+function draw_user_table(data, type, network_type){
+  if (type=='neighbor' && network_type=='direct_superior_graph'){
+    pre_div_id = 'neighbor_alternatecolor';
+  }
+  else if(type=='community' && network_type=='direct_superior_graph'){
+    pre_div_id = 'community_alternatecolor';
+  }
+  else if(type=='neighbor' && network_type=='source_graph'){
+    pre_div_id = 'neighbor_alternatecolor1';
+  }
+  else if (type=='community' && network_type=='source_graph'){
+    pre_div_id = 'community_alternatecolor1';
+  }
+  $('#'+pre_div_id).empty();
+  N = data.length;
+  cellCount = N / 5;
+  if (N - cellCount * 5 != 0){
+    cellCount += 1;
+  }
+  var html = '';
+  for (var i=0;i<cellCount;i++){
+    html += '<tr>'
+    for (var j=1;j<=5;j++){
+      index = i * 5 + (j-1);
+      if (index<N){
+        //console.log('index');
+        //console.log(index);
+        //console.log('user');
+      user = data[index];
+      //console.log(user);
+      uid = user[0];
+      uname = user[1];
+      profile_image_url = user[2];
+      user_link = 'http://weibo.com/u/' + uid;
+      user_sys_link = '#' + uid; 
+      html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>';
+      html += '<a>' + uname +'</a><br><a target="_blank" href="' + user_link + '">用户页面</a><br>';
+      html += '<a target="_blank" href="' + user_sys_link + '">画像系统</a></div>';
+    }
+      else{
+        uname = '';
+        profile_image_url = '';
+        html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>';
+        html += '<a>' + uname +'</a></div>';
+      }       
+    }
+    html += '</tr>';
+  }
+  $('#'+pre_div_id).append(html);
+}
+
+function draw_trend(data, type, network_type){
+  //console.log('draw_trend');
+  var xAxisTitleText = '时间';
+  var yAxisTitleText = '数量';
+  var series_data = [{
+            name: '全量',
+            data: [],
+            id: 'total',
+            color: '#b172c5',
+            marker : {
+                enabled : false,
+            }
+        }];
+  console.log('draw_trend_before');
+  console.log(type);
+  if (type=='neighbor' && network_type=='direct_superior_graph'){
+    var name = '邻居微博趋势';
+    var trend_div_id = 'trend_div_whole';
+
+  }
+  else if(type=='community' && network_type=='direct_superior_graph'){
+    var name = '社区微博趋势';
+    var trend_div_id = 'community_trend_div_whole';
+  }
+  else if (type=='neighbor' && network_type=='source_graph'){
+    var name = '邻居微博趋势';
+    var trend_div_id = 'trend_div_whole1';
+  }
+  else if (type=='community' && network_type=='source_graph'){
+    var name = '社区微博趋势';
+    var trend_div_id = 'community_trend_div_whole1';
+  }
+  console.log('draw_trend');
+  console.log(type);
+  console.log(network_type);
+  console.log(trend_div_id);
+  var timestamp_list = [];
+  var count_list = [];
+  for (var i=0;i<data.length;i++){
+      var row = data[i];
+      timestamp_list.push(row[0]);
+      count_list.push([row[1]]);
+  }
+  //console.log('timestamp_list');
+  //console.log(timestamp_list);
+  //console.log('count_list');
+  //console.log(count_list);
+  $('#' + trend_div_id).highcharts({
+    chart: {
+            type: 'spline',// line,
+            animation: Highcharts.svg, // don't animate in old IE
+            style: {
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+            }},
+    title : {
+            text: '走势分析图', // trends_title
+            margin: 20,
+            style: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                fontFamily: 'Microsoft YaHei'
+            }
+        },
+    lang: {
+            printChart: "打印",
+            downloadJPEG: "下载JPEG 图片",
+            downloadPDF: "下载PDF文档",
+            downloadPNG: "下载PNG 图片",
+            downloadSVG: "下载SVG 矢量图",
+            exportButtonTitle: "导出图片"
+        },
+    xAxis: {
+            title: {
+                enabled: true,
+                text: xAxisTitleText,
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
+
+            },
+            type: 'datetime',
+            tickPixelInterval: 150,
+            categories:timestamp_list
+        },
+
+    yAxis: {
+            min: 0,
+            title: {
+                enabled: true,
+                text: yAxisTitleText,
+                style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    fontFamily: 'Microsoft YaHei'
+                }
+            },
+
+        },
+
+    tooltip: {
+            valueDecimals: 2,
+            xDateFormat: '%Y-%m-%d %H:%M:%S'
+        },
+
+    legend: {
+            layout: 'horizontal',
+            //verticalAlign: true,
+            //floating: true,
+            align: 'center',
+            verticalAlign: 'bottom',
+            x: 0,
+            y: -2,
+            borderWidth: 1,
+            itemStyle: {
+                color: '#666',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                fontFamily: 'Microsoft YaHei'
+            }
+            //enabled: true,
+            //itemHiddenStyle: {
+                //color: 'white'
+            //}
+        },
+    exporting: {
+            enabled: true
+        },
+    series: [{
+            name: '数量',
+            data: count_list
+        }]
+  });
+}
+
+function draw_neighbor_pie(data, type, network_type){
   var pie_title = '类别饼图';
   var pie_series_title = '各类占比';
-  var pie_div_id = 'pie_div';
+  if (type=='neighbor' && network_type=='direct_superior_graph'){
+    var pie_div_id = 'pie_div';
+  }
+  else if(type=='community' && network_type=='direct_superior_graph'){
+    var pie_div_id = 'community_pie_div';
+  }
+  else if(type=='neighbor' && network_type=='source_graph'){
+    var pie_div_id = 'pie_div1';
+  }
+  else if (type=='community' && network_type=='source_graph'){
+    var pie_div_id = 'community_pie_div1';
+  }
   var pie_data = [];
   var legend_data = [];
   for (var i=0;i<data.length;i++){
@@ -829,24 +1178,38 @@ function draw_neighbor_pie(data){
 
 }
 
-function draw_neighbor_cloud(data){
+function draw_neighbor_cloud(data, type, network_type){
   var max_keywords_size = 20;
   var min_keywords_size = 5;
-  console.log('keyword');
-  console.log(data);
-  $('#keywords_cloud_div').empty();
+  //console.log('keyword');
+  //console.log(data);
+  console.log('draw_neighbor_cloud---network_type');
+  console.log(network_type);
+  if (type=="neighbor" && network_type=='direct_superior_graph'){
+    div_id = 'keywords_cloud_div';
+  }
+  else if (type=='community' && network_type=='direct_superior_graph'){
+    div_id = 'community_keywords_cloud_div';
+  }
+  else if(type=='neighbor' && network_type=='source_graph'){
+    div_id = 'keywords_cloud_div1';
+  }
+  else if (type=='community' && network_type =='source_graph'){
+    div_id = 'community_keywords_cloud_div1';
+  }
+  $('#'+div_id).empty();
   if (data==[]){
-    $("#keywords_cloud_div").append("<a style='font-size:1ex'>关键词云数据为空</a>");
+    $('#'+div_id).append("<a style='font-size:1ex'>关键词云数据为空</a>");
   }
   else{
     var min_count, max_count = 0, words_count_obj = {};
     for (var i=0;i<data.length; i++){
       var keyword = data[i];
-      console.log(keyword);
+      //console.log(keyword);
       var word = keyword[0];
       var count = keyword[1];
-      console.log(word);
-      console.log(count);
+      //console.log(word);
+      //console.log(count);
       if(count > max_count){
                 max_count = count;
             }
@@ -860,15 +1223,15 @@ function draw_neighbor_cloud(data){
 
 
     }
-    console.log(words_count_obj);
+    //console.log(words_count_obj);
     var color = '#11c897';
     for(var keyword in words_count_obj){
         var count = words_count_obj[keyword];
         var size = defscale(count, min_count, max_count, min_keywords_size, max_keywords_size);
-        $('#keywords_cloud_div').append('<a><font style="color:' + color +  '; font-size:' + size + 'px;">' + keyword + '</font></a>');
+        $('#'+div_id).append('<a><font style="color:' + color +  '; font-size:' + size + 'px;">' + keyword + '</font></a>');
         }
 
-        on_load('keywords_cloud_div');
+        on_load(div_id);
 
   }
 }
@@ -881,8 +1244,25 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     }
 }
 
-function neighbor_weibo(data){
-  $("#neighbor_weibo_ul").empty();
+function neighbor_weibo(data, type, network_type){
+  if (type=='neighbor' && network_type =='direct_superior_graph'){
+    var div_id = 'neighbor_weibo_ul';
+    var div_id2 = 'neighbor_content_control_height';
+  }
+  else if (type=='neighbor' && network_type=='source_graph'){
+    var div_id = 'neighbor_weibo_ul1';
+    var div_id2 = 'neighbor_content_control_height1';
+
+  }
+  else if(type=='community' && network_type == 'direct_superior_graph'){
+    var div_id = 'community_weibo_ul';
+    var div_id2 = 'community_content_control_height';
+  }
+  else if(type=='community' && network_type == 'source_graph'){
+    var div_id = 'community_weibo_ul1';
+    var div_id2 = 'community_content_control_height1';
+  }
+  $("#"+div_id).empty();
   var html = '';
   N = data.length;
   for (var i = 0; i < N; i += 1){
@@ -933,8 +1313,8 @@ function neighbor_weibo(data){
     html += '</div>'
     html += '</li>' 
   }
-   $("#neighbor_weibo_ul").append(html);
-   $("#cneighbor_content_control_height").css("height", $("#weibo_ul").css("height"));
+   $("#"+div_id).append(html);
+   $("#"+div_id2).css("height", $("#weibo_ul").css("height"));
 
 }
 

@@ -1080,7 +1080,7 @@
                 </div>
             </div>
             <div class="control-pane">
-                <a href="javascript:void(0);" onclick=uid"show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
+                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
             </div>
             <div class="control-pane">
                 <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
@@ -1129,6 +1129,248 @@
             
         </div>
     </div>
+
+    <div id="network_uid2weibo1" style="display:none">
+      <div class="blkUnit grpUnit" id="weibo-container" style="width:1033px;margin-top:25px;min-height:40px;">
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+            <h4><b>用户微博列表</b></h4>
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="用户微博列表"></i>&nbsp;&nbsp;
+        </div>
+                <div id="network_weibo_div" style="float:left;width:100%;">
+                    <div class="tabCon">
+                        <div class="tabCont gColor4" style="zoom:1;">
+                            <div id="network_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+                                <div id="network_content_control_height1" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="network_weibo_ul1">
+                                        <!-- 这里是显示信息的地方 -->
+                                        </ul>
+                                    </div>
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+                                            <div class="tang-content">
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+                                                </div>
+                                            </div>
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+                                        </div>
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+      </div>
+    </div>
+
+    <div id="network_uid_community1" style="display:none">
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+            <h4><b>社区信息详情</b></h4>
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+            </div>
+            <div id="community_easy_info1"></div>
+        </div>
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="commu_user1">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                <h4><b>社区用户列表</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区用户列表"></i>&nbsp;&nbsp;
+            </div>
+            <div class="tabUnit">
+                <div class="tabTitle" style="padding-top:11px;">
+                </div>
+                <div class="tabConts" style="padding-left:20px;">
+                    <div id="community_u_table1" style="width:1000px;">
+                        <table rules=rows frame= hsides class="altrowstable" id="community_alternatecolor1">
+                        <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+                       </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                 <h4><b>社区时间走势图</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+            </div>
+
+            <div class="tabUnit">
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+               <div class="tabConts">
+                  <div id="trend_div_container1">
+                      <div id="community_trend_div_whole1"></div>
+                  </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+           <div class="titlBar" style="padding-bottom:15px;">
+                <h4><b>关键词云|各类信息占比分析</b></h4>
+                <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+            </div>
+            <div class="tabUnit">
+             <div class="tabTitle" style="padding-top:1px;"></div>
+                <div class="tabConts">
+                    <div style="width:1033px;height:300px">
+                    <div id="keywords_cloud_frame1" style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+                        <div id="community_keywords_cloud_div1"></div>
+                    </div>
+                    <div id="community_pie_div1" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+        <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px;min-height:420px;">
+            <div class="titlBar" style="padding-bottom:15px;">
+                 <h4><b>社区微博列表</b></h4>
+                 <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="同社区用户微博"></i>&nbsp;&nbsp;
+            </div>
+            <div id="community_weibo_div1" style="float:left;width:100%;">
+                    <div class="tabCon">
+                        <div class="tabCont gColor4" style="zoom:1;">
+                            <div id="community_weibo_list1" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+                                <div id="community_content_control_height1" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="community_weibo_ul1">
+                                        <!-- 这里是显示信息的地方 -->
+                                        </ul>
+                                    </div>
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+                                            <div class="tang-content">
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+                                                </div>
+                                            </div>
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+                                        </div>
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+            </div>
+        </div>  
+    </div>
+
+
+    <div id="network_uid_neighbor1" style="display:none">
+        <div class="blkUnit grpUnit" id="neighbor-container" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+               <h4><b>邻居信息详情</b></h4>
+                <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居信息详情"></i>&nbsp;&nbsp;
+            </div>
+            <div id="neighbor_easy_info1"></div>
+        </div>
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="neigh_user1">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                 <h4><b>邻居用户列表</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居用户列表"></i>&nbsp;&nbsp;
+            </div>
+            <div class="tabUnit">
+                <div class="tabTitle" style="padding-top:11px;">
+                </div>
+                <div class="tabConts" style="padding-left:20px;">
+                 <div id="neighbor_u_table1" style="width:1000px;">
+                      <table rules=rows frame= hsides class="altrowstable" id="neighbor_alternatecolor1">
+                          <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+                      </table>
+                 </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+            <h4><b>邻居时间走势图</b></h4>
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+            </div>
+
+            <div class="tabUnit">
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+               <div class="tabConts">
+                  <div id="trend_div_container1">
+                      <div id="trend_div_whole1"></div>
+                  </div>
+              </div>
+            </div>
+        </div>
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+           <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>关键词云|各类信息占比分析</b></h4>
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+            </div>
+            <div class="tabUnit">
+             <div class="tabTitle" style="padding-top:1px;"></div>
+              <div class="tabConts">
+                <div style="width:1033px;height:300px">
+                    <div id="keywords_cloud_frame1" style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+                        <div id="keywords_cloud_div1"></div>
+                    </div>
+                    <div id="pie_div1" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+                </div>
+            </div>
+           </div>
+        </div>
+        <div class="blkUnit grpUnit" id="neighbor-weibo-container1" style="width:1033px;margin-top:25px;min-height:420px;">
+            <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>邻居微博列表</b></h4>
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="邻居节点微博"></i>&nbsp;&nbsp;
+            </div>
+            <div id="neighbor_weibo_div1" style="float:left;width:100%;">
+                    <div class="tabCon">
+                        <div class="tabCont gColor4" style="zoom:1;">
+                            <div id="neighbor_weibo_list1" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+                                <div id="neighbor_content_control_height1" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="neighbor_weibo_ul1">
+                                        <!-- 这里是显示信息的地方 -->
+                                        </ul>
+                                    </div>
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+                                            <div class="tang-content">
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+                                                </div>
+                                            </div>
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+                                        </div>
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+          </div>  
+        </div>
+
 </div>
 
 
@@ -1155,6 +1397,7 @@
             </div>
         </div>
     </div>
+    
     <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px;margin-bottom:20px;">
         <div class="titlBar" style="padding-bottom:1px;">
             <h4><b>关键传播用户</b></h4>
@@ -1362,7 +1605,7 @@
         </div>
     </div>
     <div id="network_uid2weibo" style="display:none">
-      <div class="blkUnit grpUnit" id="weibo-container" style="width:1033px;margin-top:25px;min-height:110px;">
+      <div class="blkUnit grpUnit" id="weibo-container" style="width:1033px;margin-top:25px;min-height:40px;">
         <div class="titlBar" style="padding-bottom:15px; position: relative;">
             <h4><b>用户微博列表</b></h4>
             <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="用户微博列表"></i>&nbsp;&nbsp;
@@ -1404,26 +1647,155 @@
     <div id="network_uid_community" style="display:none">
         <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
             <div class="titlBar" style="padding-bottom:15px; position: relative;">
-            <h4><b>社团信息详情</b></h4>
+            <h4><b>社区信息详情</b></h4>
             <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
             </div>
-            <!-- 使用tab页的方式显示 -->
-
+            <div id="community_easy_info"></div>
         </div>
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="commu_user">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                <h4><b>社区用户列表</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区用户列表"></i>&nbsp;&nbsp;
+            </div>
+            <div class="tabUnit">
+                <div class="tabTitle" style="padding-top:11px;">
+                </div>
+                <div class="tabConts" style="padding-left:20px;">
+                    <div id="community_u_table" style="width:1000px;">
+                        <table rules=rows frame= hsides class="altrowstable" id="community_alternatecolor">
+                        <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+                       </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                 <h4><b>社区时间走势图</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+            </div>
+
+            <div class="tabUnit">
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+               <div class="tabConts">
+                  <div id="trend_div_container">
+                      <div id="community_trend_div_whole"></div>
+                  </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+           <div class="titlBar" style="padding-bottom:15px;">
+                <h4><b>关键词云|各类信息占比分析</b></h4>
+                <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+            </div>
+            <div class="tabUnit">
+             <div class="tabTitle" style="padding-top:1px;"></div>
+                <div class="tabConts">
+                    <div style="width:1033px;height:300px">
+                    <div id="keywords_cloud_frame" style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+                        <div id="community_keywords_cloud_div"></div>
+                    </div>
+                    <div id="community_pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+        <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px;min-height:420px;">
+            <div class="titlBar" style="padding-bottom:15px;">
+                 <h4><b>社区微博列表</b></h4>
+                 <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="同社区用户微博"></i>&nbsp;&nbsp;
+            </div>
+            <div id="community_weibo_div" style="float:left;width:100%;">
+                    <div class="tabCon">
+                        <div class="tabCont gColor4" style="zoom:1;">
+                            <div id="community_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+                                <div id="community_content_control_height" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="community_weibo_ul">
+                                        <!-- 这里是显示信息的地方 -->
+                                        </ul>
+                                    </div>
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+                                            <div class="tang-content">
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+                                                </div>
+                                            </div>
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+                                        </div>
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+            </div>
+        </div>  
     </div>
 
     <div id="network_uid_neighbor" style="display:none">
-        <div class="blkUnit grpUnit" id="neighbor-container" style="width:1033px;margin-top:25px;min-height:40px;">
+        <div class="blkUnit grpUnit" id="neighbor-container" style="width:1033px;margin-top:25px;min-height:110px;">
             <div class="titlBar" style="padding-bottom:15px; position: relative;">
                <h4><b>邻居信息详情</b></h4>
                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居信息详情"></i>&nbsp;&nbsp;
             </div>
-         </div>
+            <div id="neighbor_easy_info"></div>
+        </div>
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="neigh_user">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+                 <h4><b>邻居用户列表</b></h4>
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居用户列表"></i>&nbsp;&nbsp;
+            </div>
+            <div class="tabUnit">
+                <div class="tabTitle" style="padding-top:11px;">
+                </div>
+                <div class="tabConts" style="padding-left:20px;">
+                 <div id="neighbor_u_table" style="width:1000px;">
+                      <table rules=rows frame= hsides class="altrowstable" id="neighbor_alternatecolor">
+                          <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+                      </table>
+                 </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+            <h4><b>邻居时间走势图</b></h4>
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+            </div>
+
+            <div class="tabUnit">
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+               <div class="tabConts">
+                  <div id="trend_div_container">
+                      <div id="trend_div_whole"></div>
+                  </div>
+              </div>
+            </div>
+        </div>
+
+        
+
+
+
          <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
            <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>关键词云|各类信息占比分析</b></h4>
-            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:3类信息-原创、转发、评论占比"></i>&nbsp;&nbsp;
-            <span id="peak_cloudpie_tooltip"></span>
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
             </div>
             <div class="tabUnit">
              <div class="tabTitle" style="padding-top:1px;"></div>
@@ -1476,7 +1848,7 @@
           </div>  
         </div>
     </div>
-<!-- </div> -->
+
 
 
 {% endblock content %}

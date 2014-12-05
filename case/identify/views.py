@@ -20,7 +20,7 @@ from utils import read_ds_topic_rank_results, read_ds_degree_centrality_rank ,\
                   read_ds_betweeness_centrality_rank, read_ds_closeness_centrality_rank
 from first_user import time_top_user, time_domain_top_user,read_table_fu
 from trend_user import read_trend_maker, read_trend_pusher, read_trend_user_table
-from community_util import read_uid_weibos, read_uid_neighbors
+from community_util import read_uid_weibos, read_uid_neighbors, read_uid_community
 
 
 TOPK = 1000
@@ -369,5 +369,22 @@ def network_uid_neighbor():
     network_type = request.args.get('network_type','source_graph')
     # network_type="source_graph" or 'direct_superior_graph'
     results = read_uid_neighbors(topic, date, windowsize , uid, network_type)
+    return json.dumps(results)
+
+@mod.route('/uid_community/')
+def network_uid_community():
+    uid = request.args.get('uid', '')
+    # uid 在网络节点以str形式存放
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    network_type = request.args.get('network_type', 'source_graph')
+    community_id = request.args.get('community_id', '')
+    community_id = int(community_id)
+    results = read_uid_community(topic, date, windowsize, uid, network_type, community_id)
     return json.dumps(results)
 
