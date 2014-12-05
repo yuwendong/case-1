@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 import redis
 import networkx as nx
 from xapian_case.xapian_backend import XapianSearch
 from xapian_case.utils import top_keywords, gen_mset_iter
 from case.time_utils import ts2date, datetime2ts
-from case.extensions import db
 from case.model import Topics
+from case.extensions import db
 from case.global_config import xapian_search_user as user_search
 from utils import weiboinfo2url
-from community_information import get_timestamp_count
+
 
 GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
@@ -55,36 +56,38 @@ def acquire_real_topic_id(topic, date, windowsize):
 
     return real_topic_id
 
-def get_neighbor_info(topic, date, windowsize, uid, network_type):
-    # 为读取graph结构，需要获取topic对应id
+def get_community_info(topic, date, windowsize, uid, cid, network_type):
     real_topic_id = acquire_real_topic_id(topic, date, windowsize)
     if not real_topic_id:
         return None, None, None
-    # 该话题存在进行下面的计算
+        # 该话题存在进行下面的计算
     key_pre = str(real_topic_id) + '_' + str(date) + '_' + str(windowsize)
-    # 选择无向图进行邻居信息的计算
+    # 选择有向图进行社区信息的计算
     if network_type=='source_graph':
         key = str(GRAPH_PATH)+key_pre + '_gg_graph.gexf'
     elif network_type=='direct_superior_graph':
         key = str(GRAPH_PATH)+key_pre + '_ds_udg_graph.gexf'
     g = nx.read_gexf(key)
-    neighbor_list = g.neighbors(str(uid)) # 纯邻居节点组成的list
-    u_neighbor_list = neighbor_list.append(uid) # 包含uid在内的节点list
-    neighbor_num = len(neighbor_list)
-    #获取邻居节点的信息
-    neighbor_info, top_keyword, sentiment_dict ,query_dict= get_info(neighbor_list)
-    neighbor_t_c = get_timestamp_count(query_dict, topic, date, windowsize)
-    return neighbor_list, neighbor_info, top_keyword, sentiment_dict, neighbor_t_c
+    # 获取图结构中节点uid对应的社区包括的节点list
+    community_user_list = get_community_user(g, uid, cid)
+    # 考虑节点社区属性存放的位置
+    
+    u_community_user_list = community_user_list.append(uid) # uid type str
+    community_user_num = len(community_user_list)
 
-def get_info(neighbor_list):
-    # topic_id = get_topic_id(topic, start_ts, end_ts) 这里需要补充通过话题名称、时间范围获取topic id的代码
+    community_info, top_keyword, sentiment_dict , query_dict= community_result(community_user_list, topic, date, windowsize)
+    community_t_c = get_timestamp_count(query_dict, topic, date, windowsize)
+    return community_user_list, community_info, top_keyword, sentiment_dict, community_t_c
+
+def community_result(community_user_list, topic, date, windowsize):
+    #topic_id = get_topic_id(topic, date, windowsize)
     xapian_search_weibo = getXapianWeiboByTopic()
     query_dict = {
         '$or' : []
         }
-    for uid in neighbor_list:
+    for uid in community_user_list:
         query_dict['$or'].append({'user': int(uid)})
-    neighbor_info = []
+    community_info = []
     count, weibo_results = xapian_search_weibo.search(query=query_dict, fields= weibo_fields_list)
     if count==0:
         return None, None, None
@@ -120,14 +123,15 @@ def get_info(neighbor_list):
         sentiment = weibo['sentiment']
         sentiment_name = emotions_kv[sentiment]
         weibo_link = weiboinfo2url(uid, _id)
+        domain = uid2domain(uid)
 
         try:
             sentiment_count[sentiment] += 1
         except KeyError:
             sentiment_count[sentiment] = 1
-        neighbor_info.append([_id, name, location, friends_count, followers_count, created_at, statuses_count, profile_image_url, text, date, reposts_count, source, geo, comments_count, sentiment_name,weibo_link, uid])
+        community_info.append([_id, name, location, friends_count, followers_count, created_at, statuses_count, profile_image_url, text, date, reposts_count, source, geo, comments_count, sentiment_name,weibo_link, domain])
     
-    sort_neighbor_info = sorted(neighbor_info, key=lambda x:x[10], reverse=True) #以转发量排序
+    sort_community_info = sorted(community_info, key=lambda x:x[10], reverse=True) #以转发量排序
     
     mset = xapian_search_weibo.search(query=query_dict, max_offset=50, mset_direct=True)
     top_keyword = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=50)
@@ -141,7 +145,7 @@ def get_info(neighbor_list):
         ratio = float(num) / float(count)
         new_sentiment_list.append([sentiment_ch, num, ratio])
    
-    return sort_neighbor_info, sort_top_keyword, new_sentiment_list, query_dict
+    return sort_community_info, sort_top_keyword, new_sentiment_list, query_dict
 
 def getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
@@ -154,3 +158,54 @@ def getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939'):
         print 'stub not exist'
         return None
 
+def get_community_user(g, uid, cid):
+    # 中间存储的graph结构与后面进行生成xml文件的图结构不同
+    # 中间存储结构是完整的图结构，而xml文件的图结构去除了零度节点、自环
+    # 这里的计算还是针对完整图结构计算----但这样会产生差异吧？？比如说社区划分有所差异
+    #???Q???所有的指标计算都是针对处理图结构----但是pagerank却是完整的？
+    import community
+    partition = community.best_partition(g)
+    #print 'partition:', partition
+    community_user_list = []
+    for node in g.nodes():
+        node_cid = partition[node]
+        if node_cid == cid:
+            #print 'node:', node, type(node)
+            community_user_list.append(node)
+    #print 'community_user_list:', community_user_list
+    return community_user_list
+
+def get_timestamp_count(query_dict, topic, date, windowsize):
+    during = 3600
+    day = 24 * 3600
+    xapian_search_weibo = getXapianWeiboByTopic()
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - windowsize * day
+    interval = (end_ts - start_ts) / during # 以小时作为统计粒度
+    time_count = []
+    #query_dict['timestamp'] = {'$gt':start_ts, '$lt':end_ts}
+    #print 'query_dict:', query_dict
+    #count, results = xapian_search_weibo.search(query=query_dict, fields=['_id'])
+    #print 'query_dict  count:', count
+    for i in range(interval, 0, -1):
+        begin = end_ts - during * i
+        end = begin + during
+
+        query_dict['timestamp'] = {'$gt':begin, '$lt':end}
+        #print 'query_dict:', query_dict
+        #print 'begin, end:', begin, end
+        count, result = xapian_search_weibo.search(query=query_dict, fields = ['_id'])
+        #print 'end, count:', end, count
+        time_count.append([end, count])
+    #print 'time_count:', time_count
+    return time_count
+
+    
+        
+        
+        
+        
+    
+    
+    
+    
