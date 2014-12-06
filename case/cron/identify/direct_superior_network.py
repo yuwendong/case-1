@@ -107,12 +107,13 @@ def get_item(uname):
         write_log_file(file_name)
         return None
     content = content_stream.read()
-    print 'uname:', uname
-    print 'type:content:', type(content)
-    print 'content:', content
+    #print 'uname:', uname
+    #print 'type:content:', type(content)
+    #print 'content:', content
     # 上述计数了能够从微薄文本中解析出用户昵称，但是在爬虫爬取过程中为能获取到的。即在一年的时间内修改了昵称的用户数量        
     resp = json.loads(content)
-    if 'error' in resp[0]:
+    print 'resp:', resp
+    if 'error' in resp:
         file_name = 'fix_uname2.txt'
         write_log_file(file_name)
     
@@ -120,7 +121,7 @@ def get_item(uname):
         print 'failed scripy '
         item = None
     else:
-        item = resp2item_search(resp[0])
+        item = resp2item_search(resp)
     print 'item:', item 
     return item
 
