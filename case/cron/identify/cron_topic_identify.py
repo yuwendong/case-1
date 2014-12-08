@@ -18,7 +18,7 @@ import time # 用于测试生成topicStatus入库时间，待删
 from model import TopicStatus # 用于测试，待删
 from lxml import etree
 from get_first_user import get_first_node
-from trendsetter_rank import trendsetter_rank
+# from trendsetter_rank import trendsetter_rank
 from area import _utf8_unicode
 
 TOPK = 1000
@@ -76,9 +76,9 @@ def main():
         all_uid_pr, ds_all_uid_pr, data, ds_data = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
         print 'end PageRank'
 
-        print 'start TrendSetter Rank'
-        ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
-        print 'end TrendSetter Rank'
+        #print 'start TrendSetter Rank'
+        #ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
+        #print 'end TrendSetter Rank'
 
         print 'start make network graph'
         topic_id = int(topic_id)
@@ -86,7 +86,8 @@ def main():
         if not topic_id: # 待删
             gexf = ''
         else:
-            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
+            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, real_topic_id)
+            #gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)
@@ -97,8 +98,8 @@ def main():
 if __name__ == '__main__':
     module_t_s = 'identify'
     status = -1
-    #topic = u'东盟,博览会'
-    topic = u'APEC'
+    topic = u'东盟,博览会'
+    #topic = u'APEC'
     start = datetime2ts('2013-09-02')
     end = datetime2ts('2013-09-07') + Day
     db_date = int(time.time())

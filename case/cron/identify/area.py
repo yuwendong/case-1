@@ -19,7 +19,7 @@ from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
         is_in_trash_list, acquire_user_by_id, read_key_users, ds_read_key_users, \
-        read_graph, ds_tr_read_key_users, read_attribute_dict
+        read_graph, read_attribute_dict
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -30,7 +30,7 @@ from global_config import xapian_search_user as user_search
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 
 
-search_topic_id = '545f2cbecf198b18c57b8013'
+search_topic_id ='54635178e74050a373a1b939'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -175,7 +175,7 @@ def _utf8_unicode(s):
         return unicode(s, 'utf-8')
 
 
-def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, pr_data, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, real_topic_id, key_user_labeled=True):
+def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, pr_data, ds_all_uid_pr, ds_pr_data,  real_topic_id, key_user_labeled=True):
     date = current_date
     '''
     key_users对应的是源头转发网络的pagerank前10的用户，ds_key_users对应的是直接上级转发网络的pagerank前10的用户
@@ -183,11 +183,11 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     if key_user_labeled:
         key_users = read_key_users(current_date, window_size, topic, top_n=10)
         ds_key_users = ds_read_key_users(current_date, window_size, topic ,top_n=10)
-        ds_tr_key_users = ds_tr_read_key_users(current_date, window_size, topic, top_n=10)
+        #ds_tr_key_users = ds_tr_read_key_users(current_date, window_size, topic, top_n=10)
     else:
         key_users = []
         ds_key_users = []
-        ds_tr_key_users = []
+        #ds_tr_key_users = []
     '''
     读取图结构，并从数据库中获取new_attribute_dict, ds_new_attribute_dict
     '''
@@ -225,8 +225,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     print 'after cut_network:'
     print 'len(G):', len(G)
     print 'len(ds_dg):', len(ds_dg)
-    partition = community.best_partition(gg)
-    ds_partition = community.best_partition(ds_udg) # 将直接上级转发网络进行社区划分！！！！！！！！！！！！
+    p_gg = nx.read_gexf(str(GRAPH_PATH)+str(key)+'_gg_graph.gexf')
+    p_ds_udg = nx.read_gexf(str(GRAPH_PATH)+str(key)+'_ds_udg_graph.gexf')
+    partition = community.best_partition(p_gg)
+    ds_partition = community.best_partition(p_ds_udg) # 将直接上级转发网络进行社区划分！！！！！！！！！！！！
     
     
     print 'start snowball sampling'
@@ -255,7 +257,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     将生成gexf文件的部分作为一个函数，将相关的参数传入。以此简洁化两个不同不同网络的gexf生成过程
     '''
     gexf = make_gexf('hxq', 'Source Network', new_G, node_degree, key_users, all_uid_pr, pr_data , partition, new_attribute_dict)
-    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_tr_key_users, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, ds_partition, ds_new_attribute_dict)
+    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_all_uid_pr, ds_pr_data, ds_partition, ds_new_attribute_dict)
     '''
     gexf = Gexf("Yang Han", "Topic Network")
 
@@ -345,7 +347,7 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
     topic_id='54635178e74050a373a1b939'
-    statuses_search = getXapianWeiboByTopic(search_topic_id)
+    statuses_search = getXapianWeiboByTopic(topic_id)
 
     g = nx.DiGraph() # 初始化一个有向图
     gg = nx.Graph() # 为计算quota初始化一个无向图
