@@ -62,6 +62,10 @@ vi /etc/hosts
 mkdir -p /mnt/mfs
 /usr/bin/mfsmount /mnt/mfs -H mfsmaster
 
+aclocal-1.14: command not found
+LANG=C
+sudo apt-get install intltool
+
 
 续：
 http://219.224.135.126:9425/mfs.cgi?CCdata=cpu§ions=IN监控信息
