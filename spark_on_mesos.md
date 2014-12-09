@@ -18,3 +18,11 @@ $ ssh localhost
 $ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa 
 $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 ```
+至此免密码ssh登陆localhost配置完成
+
+```
+$ scp ~/.ssh/id_dsa.pub root@219.224.135.47:~/.ssh/authorized_keys
+$ scp ~/.ssh/id_dsa.pub root@219.224.135.48:~/.ssh/authorized_keys
+$ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
+```
+至此master到各个slave的免密码ssh登陆配置完成
