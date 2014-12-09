@@ -29,4 +29,5 @@ $ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
 
 2.配置mesos
 
-参见http://mesos.apache.org/gettingstarted/，尽量使用Apache官网下载方案，git版本不稳定
+参见http://mesos.apache.org/gettingstarted/
+尽量使用Apache官网下载方案，git版本不稳定
