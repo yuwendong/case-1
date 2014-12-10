@@ -651,15 +651,30 @@ function refreshDrawWeibos(that, data, select_name, weibo_num){
         var mid = da['_id'];
         var retweeted_mid = da['retweeted_mid'];
         var retweeted_uid = da['retweeted_uid'];
-        var ip = da['geo'];
-        var loc = ip;
+        if (da['geo']){
+        	var ip = da['geo'];
+        	var loc = ip;
+        }
+        else{
+        	var loc = ip = '未知';
+        }
+        
         var text = da['text'];
+        if (text.length > 100){
+        	t = '';
+        	for(j=0;j<=100;j++){
+        		t = t + text[j];
+        	}
+        	t = t + '...';
+        	text = t;
+        }
         var reposts_count = da['reposts_count'];
         var comments_count = da['comments_count'];
         var timestamp = da['timestamp'];
         var date = timestamp;
         var weibo_link = da['weibo_link'];
         var user_link = 'http://weibo.com/u/' + uid;
+        var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + mid;
         var user_image_link = da['profile_image_url'];
         if (user_image_link == 'unknown'){
             user_image_link = '/static/img/unknown_profile_image.gif';
@@ -668,16 +683,25 @@ function refreshDrawWeibos(that, data, select_name, weibo_num){
         html += '<img src="' + user_image_link + '">';
         html += '</a></div>';
         html += '<div class="weibo_detail">';
-        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>(' + loc + ')&nbsp;&nbsp;发布ip:' + '未知' + '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;' + text + '</p>';;
         html += '<div class="weibo_info">';
         html += '<div class="weibo_pz">';
-        html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-        html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+        html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    		html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    		html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+   		  html += '<a class="undlin" href="javascript:;" target="_blank">关注数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    		html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
         html += '<div class="m">';
         html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+    //html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+    		html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    		html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    		html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
+    		html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
+    		if(retweeted_mid != '0'){
+            var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
+            html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发子树</a>';
+        }
         html += '</div>';
         html += '</div>';
         html += '</div>';
