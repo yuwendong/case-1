@@ -806,7 +806,8 @@ function getnetwork_line(){
         }
       }
 
-  }) ;     
+  }) ;  
+  $('#con3_button').hide();  
 }
 
 

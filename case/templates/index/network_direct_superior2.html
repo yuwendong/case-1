@@ -935,6 +935,12 @@
             color: yellow;
 
         }
+        .weibo_more {
+            padding: 4px;
+            text-align: center;
+            cursor: pointer;
+            
+        }
 
 
 
@@ -1803,7 +1809,7 @@
                 <div id="line" style="width:1030px"></div>
 
             </div>
-            <button class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line(); get_network_infor1()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+            <button id='con3_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line(); get_network_infor1()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
         </div>
 
     </div>
@@ -2371,8 +2377,8 @@
                         <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
 
                        </table>
-                         <div class="more" style = "width:580px; height:20px;">
-                                <span><h4 id="more_profile" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                         <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile" class="weibo_more">加载更多&gt;&gt;<h4><span>
                         </div> 
 
                     </div>
@@ -2478,7 +2484,7 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div class="more" style = "width:580px; height:20px ;"><span><h4 id="more_inform" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                                        <div class="more" style = "width:100%; height:20px ;"><span><h4 id="more_inform" class="weibo_more" >加载更多&gt;&gt;<h4><span>
                                         </div> 
 
                                     </div>
@@ -2578,8 +2584,8 @@
                           <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                       </table>
-                    <div class="more" style = "width:580px; height:20px ;">
-                                <span><h4 id="more_profile1" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                    <div class="more" style = "width:100%; height:24px ;">
+                                <span><h4 id="more_profile1" class="weibo_more">加载更多&gt;&gt;<h4><span>
                     </div> 
 
 
@@ -2686,8 +2692,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                         <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform1" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform1" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
 
                                     </div>
 
@@ -2758,7 +2764,7 @@
             <div class="tabConts">
                 <div id="line2" style="width:1030px;"></div>
             </div>
-            <button class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line2(); get_network_infor3()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+            <button id='con4_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line2(); get_network_infor3()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
         </div>
     </div>
     <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px;margin-bottom:20px;">
@@ -3250,9 +3256,9 @@
                         <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                        </table>
-                                           <div class="more" style = "width:580px; height:20px ;">
-                                <span><h4 id="more_profile2" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
-                    </div> 
+                                           <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile2" class = "weibo_more">加载更多&gt;&gt;<h4><span>
+                        </div> 
 
                     </div>
 
@@ -3357,8 +3363,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform2" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                        <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform2" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
 
                                     </div>
 
@@ -3456,8 +3462,8 @@
                           <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                       </table>
-                        <div class="more" style = "width:580px; height:20px；">
-                                <span><h4 id="more_profile3" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                        <div class="more" style = "width:100%; height:24px；">
+                                <span><h4 id="more_profile3" class="weibo_more" >加载更多&gt;&gt;<h4><span>
                          </div> 
 
                  </div>
@@ -3573,8 +3579,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                         <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform3" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform3" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
                                     </div>
 
 
