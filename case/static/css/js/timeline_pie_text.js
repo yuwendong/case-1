@@ -43,6 +43,11 @@
                var n = data.length;
                var si = 100.0/n;
                var si_str = si + '%';
+               var width_tab = document.getElementById("Tableselect").offsetWidth;
+               var tab_wd = width_tab/n;
+               console.log(width_tab);
+               console.log(tab_wd);
+
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][1];
                     result1[i] = data[i][2];
@@ -50,12 +55,12 @@
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;">';
+                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
                     else{
-                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;">';
+                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
                         html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
                     }
@@ -424,7 +429,7 @@
                 		else{
                     	html += '<tr topic='+topic+'>'; 
                 		}                  
-                    html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
+                    html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px;cursor:pointer;\">"+topic+"</b></td>";
                     if (topic_child_keywords[topic].length>=5){
                     	total = 5;
                     }
