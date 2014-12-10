@@ -908,7 +908,7 @@ function draw_easy_info(u_num, w_num, type, network_type){
   }
   $('#'+pre_div_id).empty();
   html = ''; 
-  html += '<a>' + type_ch + '用户数:' + u_num + '</a>&nbsp&nbsp<a>' + type_ch + '微博数:' + w_num + '</a>';
+  html += '<a style="margin-left:20px;font-size:13px;">' + type_ch + '用户数:' + u_num + '</a>&nbsp&nbsp<a style="margin-left:20px;font-size:13px;">' + type_ch + '微博数:' + w_num + '</a>';
   $('#'+pre_div_id).append(html);
 }
 
