@@ -754,7 +754,7 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     if(maxcount == mincount){
         return (maxsize + minsize) * 1.0 / 2
     }else{
-        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / maxcount), 2)
     }
 }
 // 绘制饼图方法

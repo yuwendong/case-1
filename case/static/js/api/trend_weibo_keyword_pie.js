@@ -64,7 +64,7 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.range_weibos_data = {};
     this.top_keywords_limit = 50; // 和计算相关的50，实际返回10
     this.top_weibos_limit = 50; // 和计算相关的50，实际返回10
-    this.max_keywords_size = 50;
+    this.max_keywords_size = 20;
     this.min_keywords_size = 2;
     this.pie_title = '情绪饼图';
     this.pie_series_title = '情绪占比';
@@ -234,7 +234,7 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     if(maxcount == mincount){
         return (maxsize + minsize) * 1.0 / 2
     }else{
-        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / maxcount), 2)
     }
 }
 
