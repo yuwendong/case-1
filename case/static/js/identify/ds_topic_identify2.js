@@ -908,7 +908,7 @@ function draw_easy_info(u_num, w_num, type, network_type){
   }
   $('#'+pre_div_id).empty();
   html = ''; 
-  html += '<a>' + type_ch + '用户数:' + u_num + '</a>&nbsp&nbsp<a>' + type_ch + '微博数:' + w_num + '</a>';
+  html += '<a style="margin-left:20px;font-size:13px;">' + type_ch + '用户数:' + u_num + '</a>&nbsp&nbsp<a style="margin-left:20px;font-size:13px;">' + type_ch + '微博数:' + w_num + '</a>';
   $('#'+pre_div_id).append(html);
 }
 
@@ -973,7 +973,9 @@ function draw_user_table(data, type, network_type){
     cellCount += 1;
   }
   draw_profile(cellCount,data,pre_div_id1);
+  $(this).hide();
 });
+
 
   $("#more_profile1").click(function(){
   N = data.length;
@@ -983,6 +985,7 @@ function draw_user_table(data, type, network_type){
     cellCount += 1;
   }
   draw_profile(cellCount,data,pre_div_id1);
+  $(this).hide();
 });
 
   $("#more_profile2").click(function(){
@@ -993,6 +996,7 @@ function draw_user_table(data, type, network_type){
     cellCount += 1;
   }
   draw_profile(cellCount,data,pre_div_id1);
+  $(this).hide();
 });
 
   $("#more_profile3").click(function(){
@@ -1003,6 +1007,7 @@ function draw_user_table(data, type, network_type){
     cellCount += 1;
   }
   draw_profile(cellCount,data,pre_div_id1);
+  $(this).hide();
 });
 
 }
@@ -1399,21 +1404,24 @@ function neighbor_weibo(data, type, network_type){
     $("#more_inform").click(function(){
   N = 20;
   draw_text(N,data,div_id,div_id2);
+  $(this).hide();
 
 });
     $("#more_inform1").click(function(){
   N = 20;
   draw_text(N,data,div_id,div_id2);
+  $(this).hide();
 });
 
   $("#more_inform2").click(function(){
   N = 20;
   draw_text(N,data,div_id,div_id2);
-
+  $(this).hide();
 });
     $("#more_inform3").click(function(){
   N = 20;
   draw_text(N,data,div_id,div_id2);
+  $(this).hide();
 });
 }
 function  draw_text(N,data,div_id,div_id2){
@@ -2168,7 +2176,8 @@ function getnetwork_line2(){
         }
       }
 
-  }) ;     
+  }) ;
+  $('#con4_button').hide();     
 }
 
 function drawpicture2(shortest_path_x,shortest_path_y) {
