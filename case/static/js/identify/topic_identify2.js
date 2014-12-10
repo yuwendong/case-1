@@ -263,16 +263,16 @@ function draw_animation() {
     }
 }
 
-$("input[name='linLogModeRadios']").on("click", function(){
+$("input[name='linLogModeRadios1']").on("click", function(){
     $('#linLogModeInput').val($(this).val());
 });
-$("input[name='outboundAttractionRadios']").on("click", function(){
+$("input[name='outboundAttractionRadios1']").on("click", function(){
     $('#outboundAttractionInput').val($(this).val());
 });
-$("input[name='adjustSizesRadios']").on("click", function(){
+$("input[name='adjustSizesRadios1']").on("click", function(){
     $('#adjustSizesInput').val($(this).val());
 });
-$("input[name='strongGravityModeRadios']").on("click", function(){
+$("input[name='strongGravityModeRadios1']").on("click", function(){
     $('#strongGravityModeInput').val($(this).val());
 });
 
@@ -663,10 +663,11 @@ function create_current_table(data, start_row, end_row, type) {
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
+      var rank = i+1;
       for(var j = 0;j < cellCount;j++) {
         if(j == 0) {
           // rank status
-          var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
+          var td = '<td><span class="label label-important">'+rank+'</span></td>';
         }
         else if(j == 1){
             var td = '<td style="display:none">'+data[i][j]+'</td>';
