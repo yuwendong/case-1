@@ -19,7 +19,7 @@ def get_opinion_time(topic):
     return results
 
 def get_opinion_ratio(topic):
-    items = db.session.query(OpinionTestRatio).filter((OpinionTestRatio.id>=11)&(OpinionTestRatio.id<=20)).all()#ratio表有问题，话题存不进去
+    items = db.session.query(OpinionTestRatio).filter((OpinionTestRatio.id>=43)&(OpinionTestRatio.id<=53)).all()#ratio表有问题，话题存不进去
     if not items:
         return None
 ##    items = db.session.query(OpinionTestRatio).filter(OpinionTestRatio.topic==topic).all()

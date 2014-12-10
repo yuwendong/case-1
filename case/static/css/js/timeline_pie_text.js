@@ -29,7 +29,7 @@
     var result1 = [];
     var result2 = [];
     var result3 = [];
-    var topic = '东盟,博览会';
+    var topic = '全军政治工作会议';
 
     function gettimeline_data() {
         var html ="<table>";
