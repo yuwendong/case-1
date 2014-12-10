@@ -306,7 +306,7 @@
                     }
                 }*/
                 
-                html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+                html += '<div class="tang-scrollpanel-wrapper">';// style="height: ' + 78 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
                 for(var i = 0; i < data.length; i += 1){
@@ -353,6 +353,8 @@
             html += '</ul>';
             html += '</div>';
             $("#vertical-ticker").append(html);
+            $("#tabCon").css("height", $("#vertical-ticker").css("height"));
+            $("#weibos_div").css("height", $("#tabCon").css("height"));
             }
  
 
