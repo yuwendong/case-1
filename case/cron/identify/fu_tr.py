@@ -103,7 +103,7 @@ def get_interval_count(topic, date, windowsize):
     trend_maker = get_makers(topic, new_zeros, new_bottom, ts_list)
     print 'trend_makers:', trend_maker
     
-    trend_pusher = get_pushers(new_zeros, new_bottom, ts_list)
+    trend_pusher = get_pushers(topic,new_zeros, new_bottom, ts_list)
     print 'trend_pushers:', trend_pusher
 
     save_trend_maker(topic, date, windowsize, trend_maker)
@@ -258,17 +258,20 @@ def get_keyword(topic, begin_ts, end_ts, top):
 
 # sort makers
 def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
+    '''
     if begin_ts == ts_list[0]:
-        start = begin_ts
-        end = begin_ts + Hour
+        start = begin_ts + 2 * Day
+        end = begin_ts + 2 * Day + 12 * Hour
     else:
-        start = begin_ts - Hour
-        end = begin_ts + Hour
+        start = begin_ts + 2 * Day - 6 * Hour
+        end = begin_ts + 2 * Day + 12 * Hour
     query_dict = {
         'timestamp' : {'$gt':start, '$lt':end}
         }
-    xapian_search_weibo = getXapianWeiboByTopic()
+    print 'sort_maker-query_dict:', query_dict
+    xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
     count , search_weibos = xapian_search_weibo.search(query=query_dict, fields=field_list)
+    print 'sort_makers:', count
     if count == 0:
         return []
     weibo_term = {}
@@ -285,11 +288,33 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
                 key_term_count += 1
         weibo_term[uid] = [wid, key_term_count] 
     sort_weibo_term = sorted(weibo_term.items(), key=lambda x:x[1][1], reverse=True)
-        
-    return sort_weibo_term[:100]
+    '''
+    begin_ts = begin_ts - Hour
+    query_dict = {'timestamp':{'$gt': begin_ts, '$lt': end_ts}}
+    xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
+    count, search_weibo = xapian_search_weibo.search(query=query_dict, sort_by=['-timestamp'], fields=field_list)
+    num = 0
+    if count == 0:
+        return []
+    weibo_term = {}
+    for weibo in search_weibo():
+        num += 1
+        if num > 50:
+            break
+        uid = weibo['user']
+        wid = weibo['_id']
+        terms_list = weibo['terms']
+        key_term_count = 0
+        for term in terms_list:
+            term = term.decode('utf-8')
+            if term in keyword_data:
+                key_term_count += 1
+        weibo_term[uid] = [wid, key_term_count]
+    sort_weibo_term = sorted(weibo_term.items(), key=lambda x:x[1][1], reverse=True)
+    return sort_weibo_term[:20]
 
 #trend_pusher
-def get_pushers(new_peaks, new_bottom, ts_list):
+def get_pushers(topic, new_peaks, new_bottom, ts_list):
     unit = 900
     p_during = Hour
     p_ts_list = []
@@ -376,8 +401,16 @@ def get_max_k_timestamp(results, p_ts_list):
             #print 'smooth_results:',i ,results[i-2:i+1], smooth_results
         l = len(smooth_results)
         if l>=2:
-            k = (smooth_results[l-1] - smooth_results[l-2]) / smooth_results[l-2]
+            '''
+            if smooth_results[l-2]!=0:
+                k = (smooth_results[l-1] - smooth_results[l-2]) / smooth_results[l-2]
+                k_dict[l-1] = k
+            else:
+                k_dict[l-1] = 0
+            '''
+            k = (smooth_results[l-1] - smooth_results[l-2]) / Hour
             k_dict[l-1] = k
+
     #print 'smooth_results:', smooth_results
     sort_k_list = sorted(k_dict.items(), key=lambda c:c[1], reverse=True)
     #print 'sort_k_list:', sort_k_list
@@ -482,8 +515,8 @@ def get_user_info(uid):
 
 
 if __name__=='__main__':
-    topic = u'东盟,博览会'
-    date = '2013-09-08'
-    windowsize = 6
+    topic = u'全军政治工作会议'
+    date = '2014-11-16'
+    windowsize = 17
     get_interval_count(topic, date, windowsize)
     

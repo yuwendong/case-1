@@ -30,7 +30,7 @@ from global_config import xapian_search_user as user_search
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 
 
-search_topic_id ='54635178e74050a373a1b939'
+search_topic_id ='545f4c22cf198b18c57b8014'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -346,7 +346,7 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     end_time = int(datetime2ts(date))
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
-    topic_id='54635178e74050a373a1b939'
+    topic_id='545f4c22cf198b18c57b8014'
     statuses_search = getXapianWeiboByTopic(topic_id)
 
     g = nx.DiGraph() # 初始化一个有向图
@@ -497,25 +497,28 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                 new_attribute_dict[rresult['user']] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
         #print 'map_dict:', map_dict
         new_attribute_dict = check_attribute(new_attribute_dict, new_query_dict, map_dict) # 对query_dict中没有查询到的r_mid,在new_attribute_dict中进行补全处理
-
-        ds_ruid_count, ds_r_results = statuses_search.search(query=ds_new_query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'])
-        for ds_rresult in ds_r_results():
-            uid = ds_rresult['user']
-            timestamp_add = ds_rresult['timestamp']
-            text = ds_rresult['text'] # 这里的text需要再做一次处理----剔除掉’//@..:‘的内容，只获取作者自己的微博文本
-            text_spl = text.split('//@')
-            try:
-                text_add = text_spl[0]
-            except:
-                text_add = text
-            reposts_count_add = ds_rresult['reposts_count']
-            comment_count_add = ds_rresult['comments_count']
-            attitude_count_add = ds_rresult['attitude_count']
-            ruid_add = rresult['retweeted_uid']
-            try:
-                ds_new_attribute_dict[uid].append([text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add])
-            except:
-                ds_new_attribute_dict[uid] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
+        print 'quer_dict:', ds_new_query_dict
+        print 'len(ds_new_attribute_dict):', len(ds_new_attribute_dict)
+        if query_dict!={'$or':[]}:
+            ds_ruid_count, ds_r_results = statuses_search.search(query=ds_new_query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'])
+            for ds_rresult in ds_r_results():
+                uid = ds_rresult['user']
+                timestamp_add = ds_rresult['timestamp']
+                text = ds_rresult['text'] # 这里的text需要再做一次处理----剔除掉’//@..:‘的内容，只获取作者自己的微博文本
+                text_spl = text.split('//@')
+                try:
+                    text_add = text_spl[0]
+                except:
+                    text_add = text
+                reposts_count_add = ds_rresult['reposts_count']
+                comment_count_add = ds_rresult['comments_count']
+                attitude_count_add = ds_rresult['attitude_count']
+                ruid_add = rresult['retweeted_uid']
+                try:
+                    ds_new_attribute_dict[uid].append([text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add])
+                except:
+                    ds_new_attribute_dict[uid] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
+        
         ds_new_attribute_dict = check_attribute(ds_new_attribute_dict, ds_new_query_dict, ds_map_dict)
     #print 'new_attribute_dict:', new_attribute_dict
     print 'len(g):', len(g)

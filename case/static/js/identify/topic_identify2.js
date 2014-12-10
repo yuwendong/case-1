@@ -21,8 +21,30 @@ var node;
 var y_data;
 
 function get_network_infor(){
+var  name = ['number_edges', 'number_nodes','ave_degree'];
+  for ( var key in name){
+    $.ajax({
+        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key] + '&network_type=' + network_type1,
+        dataType : "json",
+        type : 'GET',
+        async: false,
+        success: function(data){
+            quota[name[key]] = data;
+        }
+
+    }) ; 
+  }
+  var html ='';
+ html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总节点数<span class=\"tsp\">   : </span>" +quota['number_nodes'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总边数<span class=\"tsp\">   : </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均节点度<span class=\"tsp\">   : </span>" +quota['ave_degree'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  $("#mstable").append(html);
+}
+
+function get_network_infor1(){
 var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betweenness_centrality',
- 'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
+ 'ave_closeness_centrality','number_strongly_connected_components',
  'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
  'diameter','power_law_distribution','number_weakly_connected_components',
  'degree_assortativity_coefficient','average_clustering'];
@@ -33,39 +55,38 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
         type : 'GET',
         async: false,
         success: function(data){
-
             quota[name[key]] = data;
         }
 
     }) ; 
   }
-  $("#mstable").empty();
   var html ='';
-  html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总节点数<span class=\"tsp\">   : </span>" +quota['number_nodes'] +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总边数<span class=\"tsp\">   : </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均节点度<span class=\"tsp\">   : </span>" +quota['ave_degree'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">幂律分布系数<i id=\"power_law_distribution_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"度分布进行幂律分布拟合得到的系数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['power_law_distribution'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均度中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点度中心性即节点的所有连接数除以可能的最大连接数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_betweenness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均紧密中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点紧密中心性即节点到达它可达节点的平均距离\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_closeness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"如果总体上度大的节点倾向于连接度大的节点，那么网络同配。同配性系数用作考察度值相近的节点是否倾向于互相连接\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  //html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"如果总体上度大的节点倾向于连接度大的节点，那么网络同配。同配性系数用作考察度值相近的节点是否倾向于互相连接\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
+  //html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均聚类系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点聚类系数即某节点的邻居节点间实际存在的边数与总的可能存在的边数之比\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_clustering'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均聚类系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点聚类系数即某节点的邻居节点间实际存在的边数与总的可能存在的边数之比\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_clustering'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均最短路径长度<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两节点间最短路径长度的均值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_shortest_path_length'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两个节点之间距离的最大值为网络直径\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
-  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两个节点之间距离的最大值为网络直径\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th>";
+  //html += "<tr>"
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均离心率<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点偏心率计算了单点偏离中心的程度\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['ave_eccentricity'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
-  $("#mstable").append(html);
+  $("#mstable1").append(html);
 }
 
 
 $(document).ready(function(){
+    //获取网络指标
     get_network_infor();
-    getnetwork_line();
+    //获取最短路径分布
+    // getnetwork_line();
+    // drawpicture(index,value);
+    //获取首发者信息
     // drawpicture(index,value);
     // switch_curr_add();
 })
@@ -487,9 +508,9 @@ function network_request_callback(data) {
                   //$('#weibo_comments_count').html(node_comments_count);
                   // console.log(node_uid);
                   // console.log(node_community);
-                  $('#community_detail_a').html('<button onclick="network_uid_community(' + node_community +','+ node_uid +',' + graph_type +')">' + '查看社团信息详情' + '</button>');
-                  $('#user_weibo').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '查看用户微博列表' + '</button>');
-                  $('#neighbourhood_detail_a').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '查看邻居信息详情' + '</button>');
+                  $('#community_detail_a').html('<button onclick="network_uid_community(' + node_community +','+ node_uid +',' + graph_type +')">' + '社团' + '</button>');
+                  $('#user_weibo').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '微博' + '</button>');
+                  $('#neighbourhood_detail_a').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '邻居' + '</button>');
 
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -797,12 +818,17 @@ function drawpicture(shortest_path_x, shortest_path_y) {
 
  
     $('#line').highcharts({
-      chart: {
+        chart: {
                 type: 'spline',
             },
-        title: {
-            text: '',
-            x: -20 //center
+            title: {
+            text: '网络曲线图-转发链条长度分布',
+        style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    fontFamily: 'Microsoft YaHei'
+                }
         },
         lang: {
             printButtonTitle: "打印",

@@ -52,7 +52,7 @@ def get_first_node(topic, start_date, date, windowsize):
     '''
     if topic and topic != '':
         datestr = start_date.replace('-','')
-        xapian_search_weibo = getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939')
+        xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
         begin_ts = datetime2ts(start_date)
         end_ts = datetime2ts(date)
         topics = topic.strip().split(',')
@@ -149,11 +149,11 @@ def save_first_nodes(topic, date, windowsize, uid, timestamp, user_info, weibo_i
 
 
 if __name__=='__main__':
-    topic = u'东盟,博览会'
-    windowsize = 6
-    end_ts = datetime2ts('2013-09-08')
+    topic = u'全军政治工作会议'
+    windowsize = 17
+    end_ts = datetime2ts('2014-11-16')
     date = ts2datetime(end_ts)
-    start_ts = datetime2ts('2013-09-02')
+    start_ts = datetime2ts('2014-10-30')
     start_date = ts2datetime(start_ts) # 确定topic的start_ts和end_ts是怎么得来的
     get_first_node(topic, start_date, date, windowsize) # 如果start_ts就是第一条微博出现的时间，不能只查询前15分钟的数据。要考虑极端情况，必须查询所有数据
     

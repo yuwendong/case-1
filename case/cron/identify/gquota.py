@@ -175,7 +175,7 @@ def compute_quota(G, gg, date, windowsize, topic, all_uid_pr, network_type):
     # get_key_user module
     print 'get_user'
     get_key_user(topic, date, windowsize, dCentrality, bCentrality, cCentrality, network_type)
-    
+    ''' 
     eCentrality = nx.eigenvector_centrality_numpy(G)
     # 特征向量中心性
     #get_key_user('eigenvector_centrality', topic, date, windowsize, eCentrality)
@@ -183,7 +183,7 @@ def compute_quota(G, gg, date, windowsize, topic, all_uid_pr, network_type):
     aveec = get_ave(eCentrality)
     # 平均特征向量中心性 float
     save_quota(prekey+'_eigenvector_centrality_'+str(network_type), aveec)
-    
+    '''
     spl_histogram = get_spl_histogram(H)
     save_quota(prekey + '_shortest_path_length_histogram_'+str(network_type), json.dumps(spl_histogram))
        

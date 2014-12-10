@@ -147,7 +147,7 @@ def community_result(community_user_list, topic, date, windowsize):
    
     return sort_community_info, sort_top_keyword, new_sentiment_list, query_dict
 
-def getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939'):
+def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):
