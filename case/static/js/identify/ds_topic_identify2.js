@@ -21,11 +21,7 @@ var node;
 var y_data;
 
 function get_network_infor2(){
-var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betweenness_centrality',
- 'ave_closeness_centrality','eigenvector_centrality','number_strongly_connected_components',
- 'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
- 'diameter','power_law_distribution','number_weakly_connected_components',
- 'degree_assortativity_coefficient','average_clustering'];
+var  name = ['number_edges', 'number_nodes','ave_degree'];
   for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key] + '&network_type=' + network_type2,
@@ -44,29 +40,75 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总节点数<span class=\"tsp\">   : </span>" +quota['number_nodes'] +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">总边数<span class=\"tsp\">   : </span>" +quota['number_edges'] +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均节点度<span class=\"tsp\">   : </span>" +quota['ave_degree'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
+  $("#mstable2").append(html);
+}
+
+function get_network_infor3(){
+var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betweenness_centrality',
+ 'ave_closeness_centrality','number_strongly_connected_components',
+ 'average_shortest_path_length','ave_eccentricity','power_law_distribution','ave_degree',
+ 'diameter','power_law_distribution','number_weakly_connected_components',
+ 'degree_assortativity_coefficient','average_clustering'];
+  for ( var key in name){
+    $.ajax({
+        url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key] + '&network_type=' + network_type2,
+        dataType : "json",
+        type : 'GET',
+        async: false,
+        success: function(data){
+            quota[name[key]] = data;
+        }
+
+    }) ; 
+  }
+  $("#mstable3").empty();
+  var html ='';
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">幂律分布系数<i id=\"power_law_distribution_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"度分布进行幂律分布拟合得到的系数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['power_law_distribution'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均度中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点度中心性即节点的所有连接数除以可能的最大连接数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_degree_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均介数中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点介数中心性即所有的节点对之间通过该节点的最短路径条数\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_betweenness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
   html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均紧密中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点紧密中心性即节点到达它可达节点的平均距离\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['ave_closeness_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"如果总体上度大的节点倾向于连接度大的节点，那么网络同配。同配性系数用作考察度值相近的节点是否倾向于互相连接\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
+  //html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均特征向量中心性<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"基于“高指数节点的连接对一个节点的贡献度比低指数节点的贡献度高”这一原则，每个节点都有一个相对指数值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['eigenvector_centrality'].toExponential(2) +"</div><div class=\"lrRr\"></div></div></th>";
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">同配性系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"如果总体上度大的节点倾向于连接度大的节点，那么网络同配。同配性系数用作考察度值相近的节点是否倾向于互相连接\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['degree_assortativity_coefficient'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
+  //html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均聚类系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点聚类系数即某节点的邻居节点间实际存在的边数与总的可能存在的边数之比\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_clustering'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
   html += "<tr>"
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均聚类系数<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点聚类系数即某节点的邻居节点间实际存在的边数与总的可能存在的边数之比\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_clustering'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均最短路径长度<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两节点间最短路径长度的均值\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['average_shortest_path_length'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th>";
-  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两个节点之间距离的最大值为网络直径\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th></tr>";
-  html += "<tr>"
+  html += "<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">直径<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"网络中任意两个节点之间距离的最大值为网络直径\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>" +quota['diameter'] +"</div><div class=\"lrRr\"></div></div></th>";
+  //html += "<tr>"
   html +="<th><div class=\"lrRadius\"><div class=\"lrRl\"></div><div class=\"lrRc\">平均离心率<i id=\"trend_tooltip\" class=\"glyphicon glyphicon-question-sign\" style=\"color:#2894FF\"data-toggle=\"tooltip\" data-placement=\"right\" title=\"单点偏心率计算了单点偏离中心的程度\"></i>&nbsp;&nbsp;<span class=\"tsp\">   : </span>"+quota['ave_eccentricity'].toExponential(2)+"</div><div class=\"lrRr\"></div></div></th></tr>";
-  $("#mstable2").append(html);
+  $("#mstable3").append(html);
 }
+ 
+ // function bindmore_infor(html){
+ // 	var target = document.getElementById('trendProfile2');
+ // 	console.log("123456789");
+ // 	$("#show_more").unbind();
+ // 	$("#show_more").bind("click",function(){
+ // 		console.log("more_information");
+ // 		$("#mstable2").append(html);
+ // 		target.style.display = "block";
+ // 	});	
+ // }
+
+ // function bindmore_infor(html){
+ // 	var target = document.getElementById('trendProfile2');
+ // 	$("#show_more1").unbind();
+ // 	$("#show_more1").bind("click",function(){
+ // 		console.log("more_information");
+ // 		$("#mstable2").append(html);
+ // 		target.style.display = "block";
+ // 	});	
+ // }
+
 
 
 $(document).ready(function(){
     //获取网络指标
     get_network_infor2();
     //获取最短路径分布
-    getnetwork_line2();
+    // getnetwork_line2();
     // drawpicture2(index,value);
     //获取首发者信息
     get_fu_table();
@@ -177,26 +219,47 @@ function drawtable(data){
   var modal_html = '';
   for (var i=0;i<=5;i++){
     row = data[i];
+    if (row.length==1){
+      continue;
+    }
     categorie = row[0]
-    html += '<tr><td><b>'+categorie+'</b>';
+    html += '<tr><td style="text-align:center"><b>'+categorie+'</b>';
     modal_html += '<tr><td><b>'+categorie+'</b>';
     row_length = row.length;
     for (var j=1; j<=20;j++){
        
       if (j < row_length){
        rrow = row[j];
-       
        uname = rrow[1];
        profile_image_url = row[j][2];
+      if (profile_image_url == 'no'){
+      profile_image_url = '/static/img/unknown_profile_image.gif';
+        }
       }
       else{
         uname = '';
         profile_image_url = '';
       }
-      if (j<=10){
-          html += '<td><div class="fu_table_td"><img src=' + profile_image_url + '><br>'+'<a>'+uname+'</a></div></td>';
+      if (j<=9){
+        if (uname == ''){
+          html += '<td><div class="fu_table_td "  style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"></div></td>';
+
+        }
+        else{
+          html += '<td><div class="fu_table_td "  style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + '  title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
+        }
+
+          //html += '<td><div class="fu_table_td "  style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + '  title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
       }
-      modal_html += '<td><div class="fu_table_td"><img src=' + profile_image_url + '><br>'+'<a>'+uname+'</a></div></td>';
+      if (uname == ''){
+        modal_html += '<td><div class="fu_table_td"  style="width:45px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"></div></td>';
+
+      }
+      else{
+        modal_html += '<td><div class="fu_table_td"  style="width:45px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + ' title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
+
+      }
+      //modal_html += '<td><div class="fu_table_td"  style="width:45px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + ' title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
 
   }
     html += '</tr>';
@@ -237,15 +300,13 @@ function draw_tr_table(data){
       //console.log(user);
       uname = user[1];
       profile_image_url = user[2];}
-      else{
-        uname = '';
-        profile_image_url = '';
-
-      }
-      if (j<=10){
-          html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>' + '<a>' + uname +'</a></div></td>';
+    if (profile_image_url == 'no'){
+      profile_image_url = '/static/img/unknown_profile_image.gif';
+    }
+      if (j<=8){
+          html += '<td><div class="fu_table_td "  style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + '  title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
          }
-      modal_html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>' + '<a>' + uname +'</a></div></td>';
+      modal_html += '<td><div class="fu_table_td"  style="width:45px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + ' title='+uname+'><br>'+'<a>'+uname+'</a></div></td>';
     }
     html += '</tr>';
     modal_html += '</tr>';
@@ -597,9 +658,9 @@ function network_request_callback2(data) {
                   //$('#weibo_comments_count').html(node_comments_count);
                   //$('#community2').html(node_community);
                   //$('#user_weibo2').html('<a target="_blank" href="/index/user_weibo/?uid=' + node_uid + '">' + '查看用户微博列表' + '</a>');
-                  $('#community_detail_a2').html('<button onclick="network_uid_community(' + node_community +','+ node_uid + ',' + graph_type +')">' + '查看社团信息详情' + '</button>');
-                  $('#user_weibo2').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '查看用户微博列表' + '</button>');
-                  $('#neighbourhood_detail_a2').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '查看邻居信息详情' + '</button>');
+                  $('#community_detail_a2').html('<button onclick="network_uid_community(' + node_community +','+ node_uid + ',' + graph_type +')">' + '社团' + '</button>');
+                  $('#user_weibo2').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '微博' + '</button>');
+                  $('#neighbourhood_detail_a2').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '邻居' + '</button>');
                   
                   neighbor_graph.nodes.forEach(function(n){
                       toKeep[n.id] = n; 
@@ -666,7 +727,7 @@ function network_weibolist(uid, network_type){
     type:'Get',
     async:false,
     success:function(data){
-      //console.log(data);
+      console.log(data);
       show_network_weibo(data, network_type);
 
     }
@@ -709,6 +770,9 @@ function show_network_weibo(data, network_type){
     var created_at = weibo[6];
     var statuses_count = weibo[7];
     var profile_image_url = weibo[8];
+    if (profile_image_url == 'no'){
+      profile_image_url = '/static/img/unknown_profile_image.gif';
+    }
     var date = weibo[9];
     var text = weibo[10];
     var geo = weibo[11];
@@ -735,14 +799,14 @@ function show_network_weibo(data, network_type){
     html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+    html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
     html += '</li>' 
   }
    $("#"+pre_div_id).append(html);
-   $("#"+pre_div_id2).css("height", $("#weibo_ul").css("height"));
+   $("#"+pre_div_id).css("height", $("#weibo_ul").css("height"));
 }
 
 //获取节点邻居信息
@@ -761,7 +825,7 @@ function network_uid_neighbor(uid, network_type){
     type:'Get',
     async:false,
     success:function(data){
-      //console.log(data);
+      console.log(data);
       show_network_neighbor(data, network_type);
     }
   });
@@ -877,53 +941,95 @@ function show_network_neighbor(data, network_type){
 // 显示节点信息所在的社区或者邻居的名单列表
 function draw_user_table(data, type, network_type){
   if (type=='neighbor' && network_type=='direct_superior_graph'){
-    pre_div_id = 'neighbor_alternatecolor';
+    pre_div_id1 = 'neighbor_alternatecolor';
   }
   else if(type=='community' && network_type=='direct_superior_graph'){
-    pre_div_id = 'community_alternatecolor';
+    pre_div_id1 = 'community_alternatecolor';
   }
   else if(type=='neighbor' && network_type=='source_graph'){
-    pre_div_id = 'neighbor_alternatecolor1';
+    pre_div_id1 = 'neighbor_alternatecolor1';
   }
   else if (type=='community' && network_type=='source_graph'){
-    pre_div_id = 'community_alternatecolor1';
+    pre_div_id1 = 'community_alternatecolor1';
   }
-  $('#'+pre_div_id).empty();
+  $('#'+pre_div_id1).empty();
   N = data.length;
-  cellCount = N / 5;
-  if (N - cellCount * 5 != 0){
+
+  cellCount = N / 7;
+  if (N - cellCount * 7 != 0){
     cellCount += 1;
   }
+  draw_profile(cellCount/2,data,pre_div_id1);
+
+  $("#more_profile").click(function(){
+  N = data.length;
+
+  cellCount = N / 7;
+  if (N - cellCount * 7 != 0){
+    cellCount += 1;
+  }
+  draw_profile(cellCount,data,pre_div_id1);
+});
+
+  $("#more_profile1").click(function(){
+  N = data.length;
+
+  cellCount = N / 7;
+  if (N - cellCount * 7 != 0){
+    cellCount += 1;
+  }
+  draw_profile(cellCount,data,pre_div_id1);
+});
+
+  $("#more_profile2").click(function(){
+  N = data.length;
+
+  cellCount = N / 7;
+  if (N - cellCount * 7 != 0){
+    cellCount += 1;
+  }
+  draw_profile(cellCount,data,pre_div_id1);
+});
+
+  $("#more_profile3").click(function(){
+  N = data.length;
+
+  cellCount = N / 7;
+  if (N - cellCount * 7 != 0){
+    cellCount += 1;
+  }
+  draw_profile(cellCount,data,pre_div_id1);
+});
+
+}
+
+  function draw_profile(cellCount,data,pre_div_id1){
+  $('#'+pre_div_id1).empty();
   var html = '';
   for (var i=0;i<cellCount;i++){
     html += '<tr>'
-    for (var j=1;j<=5;j++){
-      index = i * 5 + (j-1);
-      if (index<N){
-        //console.log('index');
-        //console.log(index);
-        //console.log('user');
+    for (var j=1;j<=7;j++){
+      var index = i * 7 + (j-1);
+      if (index < N){
       user = data[index];
       //console.log(user);
       uid = user[0];
       uname = user[1];
       profile_image_url = user[2];
+    if (profile_image_url == 'no'){
+      profile_image_url = '/static/img/unknown_profile_image.gif';
+    }
       user_link = 'http://weibo.com/u/' + uid;
       user_sys_link = '#' + uid; 
-      html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>';
-      html += '<a>' + uname +'</a><br><a target="_blank" href="' + user_link + '">用户页面</a><br>';
-      html += '<a target="_blank" href="' + user_sys_link + '">画像系统</a></div>';
-    }
-      else{
-        uname = '';
-        profile_image_url = '';
-        html += '<td><div class="tr_table_td"><img src=' + profile_image_url + '><br>';
-        html += '<a>' + uname +'</a></div>';
-      }       
-    }
+      html += '<td><div class="tr_table_td" style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center"><img src=' + profile_image_url + '  title='+uname+'><br>';
+      html += '<a>' + uname +'</a><br><a target="_blank"style= "font-size:10px" href="' + user_link + '">用户</a>&nbsp;&nbsp';
+      html += '<a target="_blank" style= "font-size:10px" href="' + user_sys_link + '">画像</a></div>';
+    }       
+  }
     html += '</tr>';
   }
-  $('#'+pre_div_id).append(html);
+  $('#'+pre_div_id1).append(html);
+  console.log(pre_div_id1);
 }
 
 function draw_trend(data, type, network_type){
@@ -966,7 +1072,7 @@ function draw_trend(data, type, network_type){
   var count_list = [];
   for (var i=0;i<data.length;i++){
       var row = data[i];
-      timestamp_list.push(row[0]);
+      timestamp_list.push(row[0]*1000);
       count_list.push([row[1]]);
   }
   //console.log('timestamp_list');
@@ -1013,7 +1119,10 @@ function draw_trend(data, type, network_type){
             },
             type: 'datetime',
             tickPixelInterval: 150,
-            categories:timestamp_list
+            categories:timestamp_list,
+            labels:{
+              step: 24
+            }
         },
 
     yAxis: {
@@ -1030,7 +1139,19 @@ function draw_trend(data, type, network_type){
             },
 
         },
-
+         plotOptions: {
+          spline: {
+              lineWidth: 2,
+              states: {
+                  hover: {
+                      lineWidth: 3
+                  }
+              },
+              marker: {
+                  enabled: false
+              },
+            }
+        },
     tooltip: {
             valueDecimals: 2,
             xDateFormat: '%Y-%m-%d %H:%M:%S'
@@ -1183,23 +1304,24 @@ function draw_neighbor_cloud(data, type, network_type){
   var min_keywords_size = 5;
   //console.log('keyword');
   //console.log(data);
-  console.log('draw_neighbor_cloud---network_type');
-  console.log(network_type);
+  var div_id_cloud = '' ;
+  // console.log('draw_neighbor_cloud---network_type');
+  // console.log(network_type);
   if (type=="neighbor" && network_type=='direct_superior_graph'){
-    div_id = 'keywords_cloud_div';
+    div_id_cloud = 'keywords_cloud_div';
   }
   else if (type=='community' && network_type=='direct_superior_graph'){
-    div_id = 'community_keywords_cloud_div';
+    div_id_cloud = 'community_keywords_cloud_div';
   }
   else if(type=='neighbor' && network_type=='source_graph'){
-    div_id = 'keywords_cloud_div1';
+    div_id_cloud = 'keywords_cloud_div1';
   }
   else if (type=='community' && network_type =='source_graph'){
-    div_id = 'community_keywords_cloud_div1';
+    div_id_cloud = 'community_keywords_cloud_div1';
   }
-  $('#'+div_id).empty();
+  $('#'+div_id_cloud).empty();
   if (data==[]){
-    $('#'+div_id).append("<a style='font-size:1ex'>关键词云数据为空</a>");
+    $('#'+div_id_cloud).append("<a style='font-size:1ex'>关键词云数据为空</a>");
   }
   else{
     var min_count, max_count = 0, words_count_obj = {};
@@ -1228,10 +1350,11 @@ function draw_neighbor_cloud(data, type, network_type){
     for(var keyword in words_count_obj){
         var count = words_count_obj[keyword];
         var size = defscale(count, min_count, max_count, min_keywords_size, max_keywords_size);
-        $('#'+div_id).append('<a><font style="color:' + color +  '; font-size:' + size + 'px;">' + keyword + '</font></a>');
-        }
+        $('#'+div_id_cloud).append('<a><font style="color:' + color +  '; font-size:' + size + 'px;">' + keyword + '</font></a>');
+    }
+    console.log(div_id_cloud);
 
-        on_load(div_id);
+    on_load(div_id_cloud);
 
   }
 }
@@ -1263,8 +1386,33 @@ function neighbor_weibo(data, type, network_type){
     var div_id2 = 'community_content_control_height1';
   }
   $("#"+div_id).empty();
-  var html = '';
-  N = data.length;
+  N = 5;
+  if (N >= data.length){
+  N = data.length;}
+  draw_text(N,data,div_id,div_id2);
+    $("#more_inform").click(function(){
+  N = 20;
+  draw_text(N,data,div_id,div_id2);
+
+});
+    $("#more_inform1").click(function(){
+  N = 20;
+  draw_text(N,data,div_id,div_id2);
+});
+
+  $("#more_inform2").click(function(){
+  N = 20;
+  draw_text(N,data,div_id,div_id2);
+
+});
+    $("#more_inform3").click(function(){
+  N = 20;
+  draw_text(N,data,div_id,div_id2);
+});
+}
+function  draw_text(N,data,div_id,div_id2){
+     var html = '';
+    $("#"+div_id).empty();
   for (var i = 0; i < N; i += 1){
     var weibo = data[i];
     var mid = weibo[0];
@@ -1290,11 +1438,12 @@ function neighbor_weibo(data, type, network_type){
     var rank = i + 1;
     var user_link = 'http://weibo.com/u/' + uid;
     var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + mid;
+
     html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
     html += '<img src="' + profile_image_url + '">';
     html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;(' + location + ')&nbsp;&nbsp;发布ip:' + geo + '&nbsp;&nbsp;发布内容:&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -1304,17 +1453,17 @@ function neighbor_weibo(data, type, network_type){
     html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
     html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+    html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="#">画像</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
     html += '</li>' 
   }
    $("#"+div_id).append(html);
-   $("#"+div_id2).css("height", $("#weibo_ul").css("height"));
+  $("#content_control_height").css("height", $("#weibo_ul").css("height"));
 
 }
 
@@ -1405,7 +1554,7 @@ function fu_request_callback(data){
 
 }
 
-function fu_ul_request_callback(data){
+function fu_ul_request_callback(data,start_row,end_row){
   $("#firstuser_ul").empty();
   if (data.length){
    $("#loading_current_data1").text("计算完成!");
@@ -1415,7 +1564,7 @@ function fu_ul_request_callback(data){
   //注意这里的翻页还要做处理
     N=data.length;
    
-   for(var i = 0; i < N; i += 1){
+   for(var i = start_row; i < end_row; i += 1){
     var firstuser_item = data[i]
     var rank = firstuser_item[0]
     var uid = firstuser_item[1]
@@ -1442,7 +1591,7 @@ function fu_ul_request_callback(data){
     html += '<img src="' + profile_image_url + '">';
     html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;(' + location + ')&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布ip:' + geo + '&nbsp;&nbsp;发布内容:&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(' + friends_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -1450,10 +1599,10 @@ function fu_ul_request_callback(data){
     html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
     html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+    html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+      html += '<a target="_blank" href="#">画像</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
@@ -1461,9 +1610,41 @@ function fu_ul_request_callback(data){
    } 
    $("#firstuser_ul").append(html);
    $("#content_control_height").css("height", $("#weibo_ul").css("height"));
+   firstuser_more(data,start_row, end_row);
 }
 
-function tr_maker_request_callback(data){
+function firstuser_more(data,start_row,end_row){
+	var start = start_row;
+	var end = data.length;
+	$("#firstuser_more").unbind();
+	$("#firstuser_more").bind("click",function(){
+		fu_ul_request_callback(data,start,end);
+		//$("#more_info").empty();
+	});
+}
+
+function trendmaker_more(data,start_row,end_row){
+	var start = start_row;
+	var end = data.length;
+	$("#trendmaker_more").unbind();
+	$("#trendmaker_more").bind("click",function(){
+		tr_maker_request_callback(data,start,end);
+		//$("#more_info").empty();
+	});
+}
+
+function trendpusher_more(data,start_row,end_row){
+	var start = start_row;
+	var end = data.length;
+	$("#trendpusher_more").unbind();
+	$("#trendpusher_more").bind("click",function(){
+		console.log("123456");
+		tr_pusher_request_callback(data,start,end);
+		//$("#more_info").empty();
+	});
+}
+
+function tr_maker_request_callback(data,start_row,end_row){
   $("#trend_maker_ul").empty();
   if (data.length){
    $("#loading_current_data4").text("计算完成!");
@@ -1473,7 +1654,7 @@ function tr_maker_request_callback(data){
   //注意这里的翻页还要做处理
     N=data.length;
    
-   for(var i = 0; i < N; i += 1){
+   for(var i = start_row; i < end_row; i += 1){
     var firstuser_item = data[i]
     var rank = firstuser_item[0]
     var uid = firstuser_item[1]
@@ -1501,7 +1682,7 @@ function tr_maker_request_callback(data){
     html += '<img src="' + profile_image_url + '">';
     html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;(' + location + ')&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布ip:' + geo + '&nbsp;&nbsp;发布内容:&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -1510,10 +1691,10 @@ function tr_maker_request_callback(data){
     html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
     html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+    html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="#">画像</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
@@ -1521,10 +1702,10 @@ function tr_maker_request_callback(data){
    } 
    $("#trend_maker_ul").append(html);
    $("#maker_content_control_height").css("height", $("#weibo_ul").css("height"));
-
+   trendmaker_more(data,start_row,end_row);
 }
 
-function tr_pusher_request_callback(data){
+function tr_pusher_request_callback(data,start_row,end_row){
     $("#trend_pusher_ul").empty();
   if (data.length){
    $("#loading_current_data5").text("计算完成!");
@@ -1534,7 +1715,7 @@ function tr_pusher_request_callback(data){
   //注意这里的翻页还要做处理
     N=data.length;
    
-   for(var i = 0; i < N; i += 1){
+   for(var i = start_row; i < end_row; i += 1){
     var firstuser_item = data[i]
     var rank = firstuser_item[0]
     var uid = firstuser_item[1]
@@ -1562,7 +1743,7 @@ function tr_pusher_request_callback(data){
     html += '<img src="' + profile_image_url + '">';
     html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;(' + location + ')&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布ip:' + geo + '&nbsp;&nbsp;发布内容:&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -1571,10 +1752,10 @@ function tr_pusher_request_callback(data){
     html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
     html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + timestamp + '</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + repost_tree_link + '">本级微博转发树</a>';
+    html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="#">画像</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
     html += '</div>'
@@ -1582,7 +1763,7 @@ function tr_pusher_request_callback(data){
    } 
    $("#trend_pusher_ul").append(html);
    $("#pusher_content_control_height").css("height", $("#weibo_ul").css("height"));
-
+   trendpusher_more(data,start_row,end_row);
 
 }
 
@@ -1755,8 +1936,8 @@ function get_firstuser(rank_method){
     type:'Get',
     async:false,
     success:function(data){
-      
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
 
     }
   });
@@ -1771,7 +1952,8 @@ function get_domain_firstuser_folk(rank_method){
     async:false,
     success:function(data){
       
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1783,8 +1965,8 @@ function get_domain_firstuser_media(rank_method){
     type:"Get",
     async:false,
     success:function(data){
-      
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1797,7 +1979,8 @@ function get_domain_firstuser_opinionleader(rank_method){
     async:false,
     success:function(data){
       
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1810,7 +1993,8 @@ function get_domain_firstuser_oversea(rank_method){
     async:false,
     success:function(data){
       
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1823,7 +2007,8 @@ function get_domain_firstuser_other(rank_method){
     async:false,
     success:function(data){
       
-      fu_ul_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      fu_ul_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1835,8 +2020,8 @@ function get_trend_maker(rank_method){
     type:"Get",
     async:false,
     success:function(data){
-      //console.log(data);
-      tr_maker_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      tr_maker_request_callback(data,start_row,end_row);
     }
   });
 }
@@ -1849,7 +2034,8 @@ function get_trend_pusher(rank_method){
     async:false,
     success:function(data){
       //console.log(data);
-      tr_pusher_request_callback(data);
+      var start_row = 0; var end_row = 5;
+      tr_pusher_request_callback(data,start_row,end_row);
     }
   }
     );
@@ -1971,9 +2157,14 @@ function drawpicture2(shortest_path_x,shortest_path_y) {
       chart: {
                 type: 'spline',
             },
-        title: {
-            text: '',
-            x: -20 //center
+            title: {
+            text: '网络曲线图-转发链条长度分布',
+        style: {
+                    color: '#666',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    fontFamily: 'Microsoft YaHei'
+                }
         },
         lang: {
             printButtonTitle: "打印",
