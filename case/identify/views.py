@@ -283,7 +283,6 @@ def network_quota():
     network_type = request.args.get('network_type', '')
     print 'network_type:', network_type
     key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota+'_'+network_type
-    print 'key:', key
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)
         value = ssdb.request('get',[key])
