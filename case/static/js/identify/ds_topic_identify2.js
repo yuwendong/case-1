@@ -776,6 +776,9 @@ function show_network_weibo(data, network_type){
     var date = weibo[9];
     var text = weibo[10];
     var geo = weibo[11];
+    if (geo==null){
+       geo = '未知';
+    }
     var source = weibo[12];
     var reposts_count = weibo[13];
     var comments_count = weibo[14];
@@ -786,7 +789,7 @@ function show_network_weibo(data, network_type){
     html += '<img src="' + profile_image_url + '">';
     html += '</a></div>';
     html += '<div class="weibo_detail">';
-    html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;地区:' + location + '&nbsp;&nbsp;发布地点:' + geo + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>(' + location + ')&nbsp;&nbsp;发布ip:' + '未知' + '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;' + text + '</p>';
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -796,9 +799,10 @@ function show_network_weibo(data, network_type){
     html += '<a class="undlin" href="javascript:;" target="_blank">微博数(' + statuses_count + ')</a></div>';
     html += '<div class="m">';
     html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;-&nbsp;';
-    html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
+    //html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
     html += '</div>'
     html += '</div>'
@@ -1070,13 +1074,15 @@ function draw_trend(data, type, network_type){
   console.log(trend_div_id);
   var timestamp_list = [];
   var count_list = [];
+  var data_list = [];
   for (var i=0;i<data.length;i++){
       var row = data[i];
       timestamp_list.push(row[0]*1000);
       count_list.push([row[1]]);
+      data_list.push([row[0]*1000, row[1]]);
   }
-  //console.log('timestamp_list');
-  //console.log(timestamp_list);
+  console.log('timestamp_list');
+  console.log(timestamp_list);
   //console.log('count_list');
   //console.log(count_list);
   $('#' + trend_div_id).highcharts({
@@ -1119,10 +1125,10 @@ function draw_trend(data, type, network_type){
             },
             type: 'datetime',
             tickPixelInterval: 150,
-            categories:timestamp_list,
-            labels:{
-              step: 24
-            }
+            //categories:timestamp_list,
+            // labels:{
+            //   step: 24
+            // }
         },
 
     yAxis: {
@@ -1182,7 +1188,7 @@ function draw_trend(data, type, network_type){
         },
     series: [{
             name: '数量',
-            data: count_list
+            data: data_list
         }]
   });
 }
@@ -1431,6 +1437,9 @@ function  draw_text(N,data,div_id,div_id2){
     var reposts_count = weibo[10];
     var source = weibo[11];
     var geo = weibo[12];
+    if (geo==null){
+      geo = '未知';
+    }
     var comments_count = weibo[13];
     var sentiment = weibo[14];
     var weibo_link = weibo[15];
@@ -1475,7 +1484,8 @@ function show_network2() {
     
     if (!networkShowed) {
         $("#network2").height(610);
-        $("#loading_network_data2").css("display", "block");
+        //$("#loading_network_data9").css("display", "block");
+        $('#loading_network_data9').text('计算完成');
         $("#network2").removeClass('out');
         $("#network2").addClass('in');
         networkShowed = 0;
@@ -1493,7 +1503,7 @@ function show_network2() {
                     network_request_callback2(data);
                 },
                 error: function(result) {
-                    $("#loading_network_data2").text("暂无结果!");
+                    $("#loading_network_data9").text("暂无结果!");
                 }
             })
         }
@@ -1582,6 +1592,9 @@ function fu_ul_request_callback(data,start_row,end_row){
     var statuses_count = firstuser_item[10]
     var created_at = firstuser_item[11]
     var geo = firstuser_item[12]
+    if (geo==null){
+      geo = '未知';
+    }
     var source = firstuser_item[13]
     var weibo_link = firstuser_item[14]
     var mid = firstuser_item[15]
@@ -1672,6 +1685,9 @@ function tr_maker_request_callback(data,start_row,end_row){
     var statuses_count = firstuser_item[10]
     var created_at = firstuser_item[11]
     var geo = firstuser_item[12]
+    if (geo==null){
+      geo = '未知';
+    }
     var source = firstuser_item[13]
     var weibo_link = firstuser_item[14]
     var mid = firstuser_item[15]
@@ -1733,6 +1749,9 @@ function tr_pusher_request_callback(data,start_row,end_row){
     var statuses_count = firstuser_item[10]
     var created_at = firstuser_item[11]
     var geo = firstuser_item[12]
+    if (geo==null){
+      geo = '未知';
+    }
     var source = firstuser_item[13]
     var weibo_link = firstuser_item[14]
     var mid = firstuser_item[15]
@@ -1884,13 +1903,14 @@ function create_current_table2(data, start_row, end_row, type) {
     var table = '<table class="table table-bordered">';
     var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
     var tbody = '<tbody>';
-    
+    //var rank = 0;
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
+      var rank = i+1;
       for(var j = 0;j < cellCount;j++) {
         if(j == 0) {
           // rank status
-          var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
+          var td = '<td><span class="label label-important">'+rank+'</span></td>';
         }
         else if(j == 1){
             var td = '<td style="display:none">'+data[i][j]+'</td>';

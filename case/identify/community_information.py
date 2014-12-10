@@ -196,8 +196,9 @@ def get_timestamp_count(query_dict, topic, date, windowsize):
         #print 'begin, end:', begin, end
         count, result = xapian_search_weibo.search(query=query_dict, fields = ['_id'])
         #print 'end, count:', end, count
+        #new_end = ts2date(end)
         time_count.append([end, count])
-    #print 'time_count:', time_count
+    print 'time_count:', time_count
     return time_count
 
     

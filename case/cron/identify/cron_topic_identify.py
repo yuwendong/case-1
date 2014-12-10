@@ -15,11 +15,12 @@ sys.setdefaultencoding('utf-8')
 from time_utils import ts2datetime, datetime2ts
 from config import db #　用于测试期间，建立topicstatus这张表。待删
 import time # 用于测试生成topicStatus入库时间，待删
-from model import TopicStatus # 用于测试，待删
+from model import TopicStatus, Topics # 用于测试，待删
 from lxml import etree
 from get_first_user import get_first_node
 # from trendsetter_rank import trendsetter_rank
 from area import _utf8_unicode
+from fu_tr import get_interval_count
 
 TOPK = 1000
 Minute = 60
@@ -91,6 +92,8 @@ def main():
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)
+        print 'start fu_tr'
+        get_interval_count(topicname, date, windowsize)
         print 'update_topic_end'
         _update_topic_status2Completed(topicname, start_ts, end_ts, db_date) 
     
@@ -98,10 +101,20 @@ def main():
 if __name__ == '__main__':
     module_t_s = 'identify'
     status = -1
-    topic = u'东盟,博览会'
-    #topic = u'APEC'
-    start = datetime2ts('2013-09-02')
-    end = datetime2ts('2013-09-07') + Day
+    #topic = u'全军政治工作会议'
+    topic = u'APEC'
+    start = datetime2ts('2014-11-01')
+    end = datetime2ts('2014-11-20') + Day
+
+    save_topics = Topics(topic, start, end)
+    save_topics_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
+                                                        Topics.start_ts==start ,\
+                                                        Topics.end_ts==end).first()
+    if save_topics_exist:
+        db.session.delete(save_topics_exist)
+    db.session.add(save_topics)
+    db.session.commit()
+    
     db_date = int(time.time())
     save_t_s = TopicStatus(module_t_s, status, topic, start, end, db_date)
     save_t_s_exist = db.session.query(TopicStatus).filter(TopicStatus.module==module_t_s, TopicStatus.topic==topic ,\
