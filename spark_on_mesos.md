@@ -78,3 +78,14 @@ $ source /etc/environment
 ```
 
 
+三、可能遇到的问题
+
+1.cannot locate package
+先检查package名字是否输入错误(注意字母l和数字1）
+```
+sudo apt-get update
+```
+2.E: Sub-process /usr/bin/dpkg returned an error code (1)
+参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
+
+
