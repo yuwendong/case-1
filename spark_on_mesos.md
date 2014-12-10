@@ -32,3 +32,6 @@ $ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
 统一安装位置：/home/spark/
 参见http://mesos.apache.org/gettingstarted/
 尽量使用Apache官网下载方案，git版本不稳定
+
+配置完成后可将mesos文件夹分发到其他服务器相同位置下，无需单独进行make，make install
+
