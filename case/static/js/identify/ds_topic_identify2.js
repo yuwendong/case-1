@@ -1640,7 +1640,7 @@ function firstuser_more(data,start_row,end_row){
 	$("#firstuser_more").unbind();
 	$("#firstuser_more").bind("click",function(){
 		fu_ul_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#firstmore_infor").empty();
 	});
 }
 
@@ -1650,7 +1650,7 @@ function trendmaker_more(data,start_row,end_row){
 	$("#trendmaker_more").unbind();
 	$("#trendmaker_more").bind("click",function(){
 		tr_maker_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#makemore_infor").empty();
 	});
 }
 
@@ -1661,7 +1661,7 @@ function trendpusher_more(data,start_row,end_row){
 	$("#trendpusher_more").bind("click",function(){
 		console.log("123456");
 		tr_pusher_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#pushmore_infor").empty();
 	});
 }
 
