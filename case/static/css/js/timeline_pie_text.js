@@ -22,7 +22,6 @@
         // Called when the Visualization API is loaded.
     $(document).ready(function(){   //网页加载时执行下面函数
         gettimeline_data();
-        console.log('abc');
 
     })
     var result = [];
@@ -45,8 +44,6 @@
                var si_str = si + '%';
                var width_tab = document.getElementById("Tableselect").offsetWidth;
                var tab_wd = width_tab/n;
-               console.log(width_tab);
-               console.log(tab_wd);
 
                for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][1];
@@ -84,10 +81,6 @@
 
     function bindSentimentTabClick(){
         
-        /*$("#Tablebselect").children("a").unbind();
-        console.log('yuan');
-        console.log($("#Tablebselect").children("a"));*/
-
         $("[name='c_topic']").click(function() {
             
             var select_a = $(this);
@@ -223,34 +216,7 @@
     };
     var myChart = echarts.init(document.getElementById('main'));
     myChart.setOption(option);
-        
     }
-    
-    // $(document).ready(function(){   //网页加载时执行下面函数
-    //     var style = '1';
-    //    keyword_data();
-    //    switch_curr_add();
-    //    getpie_data();
-    //    getweibos_data(style);
-    //    bindSentimentTabClick();
-    // })
-
-    // function bindSentimentTabClick(){
-        
-    //     $("#Tablebselect").children("a").unbind();
-
-    //     $("#Tableselect").children("a").click(function() {
-    //         console.log("avvv");
-    //         var select_a = $(this);
-    //         var unselect_a = $(this).siblings('a');
-    //         if(!select_a.hasClass('curr')) {
-    //             select_a.addClass('curr');
-    //             unselect_a.removeClass('curr');
-    //             style = select_a.attr('value');
-    //             getweibos_data(style);
-    //         }
-    //     });
-    // }
 
     function getweibos_data(data){   
             var topic_child = data;
@@ -264,7 +230,6 @@
                     for (var i = 0 ;i< data[topic_child].length; i++){
                          dataselect.push(data[topic_child][i]);
                     }
-                console.log(dataselect);
                 chg_weibos(dataselect);
             }
         });
@@ -273,56 +238,17 @@
 
             function chg_weibos(data){  
                 $("#vertical-ticker").empty();
-                console.log(data);
                 var html = "";
                 var temporary
                 var data_af = [];
                 var time;
-                // for (var j =0 ; j < data.length; j++){
-                //     rank_count.push(data[j]['reposts_count']);
-                // }
-                // rank_count_af = rank_count.sort(function(a,b){return b-a});
-                
-                // for (var m = 0; m < rank_count_af.length; m++){
-                //     time = 0;
-                //     for (var k = 0; k < data.length; k++){
-                //         if(data[k]['reposts_count'] == rank_count_af[m]){ 
-                //             time++;                           
-                //             if(time == 1){
-                //                 date_af.push(data[k]);
-                //             }
-                                                                                          
-                //         }
-                //     }
-                // }
-               /* for(var m = 0; m< data.length; m++){
-                    for(var n = m+1; n< data.length; n++){
-                        if(data[m]['reposts_count'] < data[n]['reposts_count']){
-                            temporary = data[n];
-                            data[n] = data[m];
-                            data[m] = temporary;
-
-                        }
-                    }
-                }*/
                 
                 html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
                 for(var i = 0; i < data.length; i += 1){
-                    console.log(data);
                 var da = data[i];
                 var uid = da['user'];
-                /*var name;
-                if ('name' in da){
-                    name = da['name'];
-                    if(name == 'unknown'){
-                        name = '未知';
-                    }
-                }
-                else{
-                    name = '未知';
-                }*/
                 var mid = da['_id'];
                 var text = da['text'];
                 var reposts_count = da['reposts_count'];
@@ -364,51 +290,13 @@
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                        console.log(data);                            
                         drawtable(data);
                     }
                 });
             }
 
         function drawtable(data){
-            /*var topic_child = {};
-            var html = '';
-            for(var key in data){
-                topic_child[key] = [];
-                for (var i = 0 ; i < data[key].length; i++){
-                    topic_child[key].push(data[key][i][0]);
-                }
-            }
-            console.log("123");
-            console.log(topic_child);
-            for(var topic in topic_child){
-                console.log(topic);
-                console.log(result2[0]);
-                if (topic == result2[0]){
-                    html += '<tr topic='+topic+' class="tablecurrent">'; 
-                }
-                else{
-                    html += '<tr topic='+topic+'>'; 
-                }
-                html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
-                
-                if(topic_child[topic].length > 5){
-                    for(var j = 0; j < 5; j++){
-                        html += '<td>'+topic_child[topic][j]+'</td>';
-                    }
-                }
-                
-                else{
-                    for(var m = 0;m < topic_child[topic].length; m++){
-                        html += '<td>'+topic_child[topic][m]+'</td>';
-                    }
-                }
-
-            }
-
-            $("#alternatecolor").append(html);
-                 // $("#alternate").append(html1);*/
-            		var topic_child_keywords = {};
+                var topic_child_keywords = {};
                 var html = '';
                 var target_html = '';
                 var m = 0;
@@ -464,7 +352,6 @@
        
         function connect(data){
             var value_data = data;
-            console.log(data);
 
             $("#alternatecolor tr").each(function() {
                 var select_all =$(this);
@@ -499,6 +386,5 @@
                     }
                 }
             });
-             console.log("curr"+curr_data);
             getweibos_data(curr_data);
         }

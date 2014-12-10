@@ -759,6 +759,9 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
 }
 // 绘制饼图方法
 function refreshDrawPie(that, pie_data, legend_data) {
+    for (var i in pie_data){
+        pie_data[i]['name'] += pie_data[i]['value'];
+    }
     var pie_title = that.pie_title;
     var pie_series_title = that.pie_series_title;
     var pie_div_id = that.pie_div_id;
@@ -808,7 +811,7 @@ function refreshDrawPie(that, pie_data, legend_data) {
                 type: 'pie',
                 radius : '50%',
                 center: ['50%', '60%'],
-                itemStyle: {
+                /*itemStyle: {
                     normal: {
                         label: {
                             position: 'inner',
@@ -832,7 +835,7 @@ function refreshDrawPie(that, pie_data, legend_data) {
                             }
                         }
                     }
-                },
+                },*/
                 data: pie_data
             }
         ],
