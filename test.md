@@ -5,3 +5,7 @@
 a. rsync写速度: 11MB/s
 
 rsync -r /mnt/ds600/csv_weibo_201309/* --progress /mnt/mfs/csv_weibo_201309/
+
+2. elasticsearch
+
+配置：219.224.135.45、46、47、48、60、126
