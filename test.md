@@ -9,3 +9,9 @@ rsync -r /mnt/ds600/csv_weibo_201309/* --progress /mnt/mfs/csv_weibo_201309/
 2. elasticsearch
 
 配置：219.224.135.45、46、47、48、60、126
+
+3. cobar
+
+关于集群的配置：http://www.th7.cn/db/mysql/201208/20061.shtml
+
+cobar wiki：https://github.com/alibaba/cobar/wiki
