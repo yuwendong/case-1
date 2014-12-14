@@ -9,3 +9,6 @@ error:host is not allowed to connect to mysql server
 ```
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '' WITH GRANT OPTION;
 ```
+
+1. mysql -uroot -h219.224.135.45
+CREATE DATABASE weibo DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
