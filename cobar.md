@@ -120,14 +120,20 @@ conf/schema.xml
  27                                                                             
  28   <!-- 路由函数定义 -->                                                     
  29   <function name="func1" class="com.alibaba.cobar.route.function.PartitionB❯
- 30     <property name="partitionCount">6</property>                            
- 31     <property name="partitionLength">170</property>                         
+ 30     <property name="partitionCount">5,1</property>                            
+ 31     <property name="partitionLength">170,174</property>                         
  32   </function> 
  ```
  
  注:
  
- a. 如果schema中定义的table是每个mysql实例分别建的，那么如果6个节点的mysql实例中其中有一个实例没建该表，会报错
+ a. 如果schema中定义的table是每个mysql实例分别建的，那么如果6个节点的mysql实例中其中有一个实例没建该表，会报错;
  
- b. 
+    如果schema中定义的table是通过cobar入口去创建的，那么6个节点的mysql实例会自动去创建，除非该表没有出现在schema的定义中，它会出现在<schema name="production_cobar_schema" dataNode="dnTest2">中的dnTest2
+ 
+ b. 如果需要改变shard的rule，可以分别从各mysql实例上dump出数据，然后drop table，再重新启动cobar server
+ 
+ c.进入cobar：mysql -uroot -h219.224.135.46 -P8066
+ 
+ 
 
