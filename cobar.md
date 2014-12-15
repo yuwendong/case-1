@@ -36,4 +36,5 @@ mysql> show cobar_status;
 彻底重装mysql
 ```
 sudo apt-get purge mysql-server-5.1 mysql-common
+sudo apt-get install mysql-server
 ```
