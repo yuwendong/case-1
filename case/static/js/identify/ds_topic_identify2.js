@@ -830,7 +830,7 @@ function network_uid_neighbor(uid, network_type){
     async:false,
     success:function(data){
       console.log(data);
-      show_network_neighbor(data, network_type);
+      show_network_neighbor(data, network_type, uid);
     }
   });
 
@@ -853,13 +853,13 @@ function network_uid_community(cid, uid, network_type){
     async:false,
     success:function(data){
       //console.log(data);
-      show_network_community(data, network_type);
+      show_network_community(data, network_type, uid, cid);
     } 
   });
 
 }
 //显示节点所属社区信息
-function show_network_community(data, network_type){
+function show_network_community(data, network_type, uid, cid){
   if (network_type=='direct_superior_graph'){
   document.getElementById("network_uid_community").style.display="";
   document.getElementById("network_uid_neighbor").style.display="none";
@@ -887,6 +887,33 @@ function show_network_community(data, network_type){
   //console.log(user_num);
   //console.log(weibo_num);
   draw_easy_info(user_num, weibo_num, 'community', network_type);
+  draw_community_uid(uid, cid, network_type);
+}
+function draw_community_uid(uid, cid, network_type){
+  //console.log('draw_community_uid');
+  if (network_type == 'direct_superior_graph'){
+    $('#uid_community_2').empty();
+    html = '';
+    html += uid;
+    $('#uid_community_2').append(html);
+    $('#cid_community_2').empty();
+    c_html = '';
+    c_html += cid;
+    $('#cid_community_2').append(c_html);
+    // console.log('uid:');
+    // console.log(uid);
+    // console.log('cid:');
+    // console.log(cid);
+  }
+  else if(network_type == 'source_graph'){
+    $('#uid_community_1').empty();
+    html = '';
+    html += uid;
+    $('#uid_community_1').append(html);
+    $('#cid_community_1').empty();
+    c_html = ''+cid;
+    $('#cid_community_1').append(c_html);
+  }
 }
 
 function draw_easy_info(u_num, w_num, type, network_type){
@@ -913,7 +940,7 @@ function draw_easy_info(u_num, w_num, type, network_type){
 }
 
 //显示节点邻居信息
-function show_network_neighbor(data, network_type){
+function show_network_neighbor(data, network_type, uid){
   if (network_type=='direct_superior_graph'){
   document.getElementById("network_uid_community").style.display="none";
   document.getElementById("network_uid_neighbor").style.display="";
@@ -939,6 +966,20 @@ function show_network_neighbor(data, network_type){
   //console.log(user_num);
   //console.log(weibo_num);
   draw_easy_info(user_num, weibo_num, 'neighbor', network_type);
+  draw_uid(uid, network_type);
+}
+function draw_uid(uid, network_type){
+  console.log('draw_uid')
+  if(network_type == 'direct_superior_graph'){
+    $('#uid_neighbor_2').empty();
+    html = '' + uid;
+    $('#uid_neighbor_2').append(html);
+  }
+  else if(network_type == 'source_graph'){
+    $('#uid_neighbor_1').empty();
+    html = ''+uid;
+    $('#uid_neighbor_1').append(html);
+  }
 
 }
 
@@ -1378,6 +1419,35 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     }
 }
 
+function get_community_weibo(rank_method, network_type, uid, cid){
+  $.ajax({
+    url:"/identify/uid_community_by_ts/?uid=" + uid + '&topic=' + topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&network_type=' + network_type + '&community_id=' + cid + '&rank_method=' + rank_method,
+    dataType:'json',
+    type:'Get',
+    async:false,
+    success:function(data){
+      //console.log(data);
+      neighbor_weibo(data, 'community', network_type);
+    } 
+  });
+
+}
+function get_neighbor_weibo(rank_method, network_type, uid){
+  console.log('get_neighbor_weibo');
+  $.ajax({
+    url:"/identify/uid_neighbor_by_ts/?uid=" + uid + '&topic=' + topic + '&start_ts=' + start_ts + '&end_ts=' + end_ts + '&network_type=' + network_type + '&rank_method=' + rank_method,
+    dataType:'json',
+    type:'Get',
+    async:false,
+    success:function(data){
+      //console.log(data);
+      neighbor_weibo(data, 'neighbor', network_type);
+    } 
+  });
+
+}
+
+
 function neighbor_weibo(data, type, network_type){
   if (type=='neighbor' && network_type =='direct_superior_graph'){
     var div_id = 'neighbor_weibo_ul';
@@ -1402,24 +1472,24 @@ function neighbor_weibo(data, type, network_type){
   N = data.length;}
   draw_text(N,data,div_id,div_id2);
     $("#more_inform").click(function(){
-  N = 20;
+  N = data.length;
   draw_text(N,data,div_id,div_id2);
   $(this).hide();
 
 });
     $("#more_inform1").click(function(){
-  N = 20;
+  N = data.length;
   draw_text(N,data,div_id,div_id2);
   $(this).hide();
 });
 
   $("#more_inform2").click(function(){
-  N = 20;
+  N = data.length;
   draw_text(N,data,div_id,div_id2);
   $(this).hide();
 });
     $("#more_inform3").click(function(){
-  N = 20;
+  N = data.length;
   draw_text(N,data,div_id,div_id2);
   $(this).hide();
 });
@@ -1640,7 +1710,7 @@ function firstuser_more(data,start_row,end_row){
 	$("#firstuser_more").unbind();
 	$("#firstuser_more").bind("click",function(){
 		fu_ul_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#firstmore_infor").empty();
 	});
 }
 
@@ -1650,7 +1720,7 @@ function trendmaker_more(data,start_row,end_row){
 	$("#trendmaker_more").unbind();
 	$("#trendmaker_more").bind("click",function(){
 		tr_maker_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#makemore_infor").empty();
 	});
 }
 
@@ -1661,7 +1731,7 @@ function trendpusher_more(data,start_row,end_row){
 	$("#trendpusher_more").bind("click",function(){
 		console.log("123456");
 		tr_pusher_request_callback(data,start,end);
-		//$("#more_info").empty();
+		$("#pushmore_infor").empty();
 	});
 }
 
@@ -1909,7 +1979,7 @@ function create_current_table2(data, start_row, end_row, type) {
     //console.log(data);
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性(10e-4)</th><th>紧密中心性(10e-3)</th></tr></thead>';
     var tbody = '<tbody>';
     //var rank = 0;
     for (var i = start_row;i < end_row;i++) {
@@ -1935,8 +2005,17 @@ function create_current_table2(data, start_row, end_row, type) {
         else if(j == 5){
             var td = '<td>'+data[i][j]+'</td>';
         }
-        else{
+        else if(j == 6){
             var td = '<td>'+data[i][j].toFixed(3)+'</td>';
+        }
+        else if(j == 7){
+            var td = '<td>'+data[i][j].toFixed(3)+'</td>';
+        }
+        else if(j == 8){
+            var td = '<td>'+(data[i][j]*10000).toFixed(3)+'</td>';
+        }
+        else if(j == 9){
+            var td = '<td>'+(data[i][j]*1000).toFixed(3)+'</td>';
         }
         tr += td;
       }
@@ -2321,4 +2400,41 @@ $("#submit_trendpusher_request").click(function(){
   var rank_method = $("#select_trendpusher_rank").val();
   //console.log(rank_method);
   get_trend_pusher(rank_method);
+});
+$("#submit_request_community_2").click(function(){
+  var rank_method = $('#select_community_2').val();
+  var network_type = 'direct_superior_graph';
+  var uid = document.getElementById('uid_community_2').innerHTML.toString();
+  var cid = document.getElementById('cid_community_2').innerHTML.toString();
+  // console.log('uid:');
+  // console.log(uid);
+  // console.log('cid:');
+  // console.log(cid);
+  get_community_weibo(rank_method, network_type, uid, cid);
+});
+$("#submit_request_community_1").click(function(){
+  var rank_method = $('#select_community_1').val();
+  var network_type = 'source_graph';
+  var uid = document.getElementById('uid_community_1').innerHTML.toString();
+  var cid = document.getElementById('cid_community_1').innerHTML.toString();
+  console.log('uid:');
+  console.log(uid);
+  console.log('cid:');
+  console.log(cid);
+  get_community_weibo(rank_method, network_type, uid, cid);
+});
+$('#submit_request_neighbor_2').click(function(){
+  console.log('submit_request_neighbor2_start');
+  var rank_method = $('#select_neighbor_2').val();
+  var network_type = 'direct_superior_graph';
+  var uid = document.getElementById('uid_neighbor_2').innerHTML.toString();
+  console.log('submit_request_neighbor_2');
+  console.log('uid:'+uid);
+  get_neighbor_weibo(rank_method, network_type, uid);
+});
+$("#submit_request_neighbor_1").click(function(){
+  var rank_method = $('#select_neighbor_1').val();
+  var network_type = 'source_graph';
+  var uid = document.getElementById('uid_neighbor_1').innerHTML.toString();
+  get_neighbor_weibo(rank_method, network_type, uid);
 });
