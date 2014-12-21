@@ -144,12 +144,15 @@ def save_trend_maker(topic, date, windowsize, trend_maker):
             break
         rank += 1
         wid = maker[1]
+        value = maker[2] #内容相关度---关键词命中个数
+        key_item = maker[3] # 命中的关键词 
         user_info = get_user_info(uid)
         weibo_info = xapian_search_weibo.search_by_id(wid, fields=weibo_fields_list)
         #print 'trend_maker weibo_info:', weibo_info
         domain = uid2domain(uid)
         timestamp = int(weibo_info['timestamp'])
-        item = TrendMaker(topic, date, windowsize, uid, timestamp, json.dumps(user_info), json.dumps(weibo_info), domain, rank)
+        # 修改model
+        item = TrendMaker(topic, date, windowsize, uid, timestamp, json.dumps(user_info), json.dumps(weibo_info), domain, rank,value, json.dumps(key_item))
         db.session.add(item)
     db.session.commit()
     print 'save_trend_maker success'
@@ -203,7 +206,8 @@ def get_makers(topic, new_peaks, new_bottom, ts_list):
         uid = maker[0]
         mid = maker[1][0]
         value = maker[1][1]
-        makers_list.append((uid, mid, value))
+        key_term  = maker[1][2]
+        makers_list.append((uid, mid, value, key_term))
     #print 'trend_makers:', makers
     return makers_list
 
@@ -305,13 +309,15 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
         wid = weibo['_id']
         terms_list = weibo['terms']
         key_term_count = 0
+        key_term = []
         for term in terms_list:
             term = term.decode('utf-8')
             if term in keyword_data:
                 key_term_count += 1
-        weibo_term[uid] = [wid, key_term_count]
+                key_term.append(term)
+        weibo_term[uid] = [wid, key_term_count, key_term]
     sort_weibo_term = sorted(weibo_term.items(), key=lambda x:x[1][1], reverse=True)
-    return sort_weibo_term[:20]
+    return sort_weibo_term[:50]
 
 #trend_pusher
 def get_pushers(topic, new_peaks, new_bottom, ts_list):

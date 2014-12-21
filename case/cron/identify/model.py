@@ -526,8 +526,10 @@ class TrendMaker(db.Model):
     weibo_info = db.Column(db.Text)
     domain = db.Column(db.String(20))
     rank = db.Column(db.Integer)
+    value = db.Column(db.Integer)
+    key_item = db.Column(db.Text)
 
-    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, domain, rank):
+    def __init__(self, topic, date, windowsize, uid, timestamp, user_info, weibo_info, domain, rank, value, key_item):
         self.topic = topic
         self.date = date
         self.windowsize = windowsize
@@ -537,6 +539,8 @@ class TrendMaker(db.Model):
         self.weibo_info = weibo_info
         self.domain = domain
         self.rank = rank
+        self.value = value
+        self.key_item = key_item
 
 class TrendPusher(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -1770,6 +1770,8 @@ function tr_maker_request_callback(data,start_row,end_row){
     var weibo_link = firstuser_item[14]
     var mid = firstuser_item[15]
     var reposts_count = firstuser_item[16]
+    var value = firstuser_item[17]/50 //关键词命中个数
+    var key_item = firstuser_item[18] //命中关键词
     var user_link = 'http://weibo.com/u/' + uid;
     var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + mid;
     html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
@@ -1777,8 +1779,15 @@ function tr_maker_request_callback(data,start_row,end_row){
     html += '</a></div>';
     html += '<div class="weibo_detail">';
     html += '<p>排名:'+rank+'&nbsp;&nbsp;昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uname + '</a>&nbsp;&nbsp;(' + location + ')&nbsp;&nbsp;领域:' + domain + '&nbsp;&nbsp;发布ip:' + geo + '&nbsp;&nbsp;发布内容:&nbsp;&nbsp;' + text + '</p>';
+    html += '<p>关键词:'
+    for(var k=0;k<key_item.length;k++){
+      keyword = key_item[k];
+      html += keyword+'&nbsp;&nbsp;';
+    }
+    html += '</p>'
     html += '<div class="weibo_info">';
     html += '<div class="weibo_pz">';
+    html += '<a class="undlin" href="javascript:;" target="_blank">内容相关度(' + value + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
     html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
     html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(' + friends_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
     html += '<a class="undlin" href="javascript:;" target="_blank">关注数(' + followers_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
@@ -1979,7 +1988,7 @@ function create_current_table2(data, start_row, end_row, type) {
     //console.log(data);
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性(10e-4)</th><th>紧密中心性(10e-3)</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性    (10e-4)</th><th>紧密中心性    (10e-3)</th></tr></thead>';
     var tbody = '<tbody>';
     //var rank = 0;
     for (var i = start_row;i < end_row;i++) {
