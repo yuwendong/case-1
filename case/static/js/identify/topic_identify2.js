@@ -659,7 +659,7 @@ function create_current_table(data, start_row, end_row, type) {
 
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性(10e-4)</th><th>紧密中心性(10e-3)</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性    (10e-4)</th><th>紧密中心性    (10e-3)</th></tr></thead>';
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
