@@ -88,4 +88,20 @@ sudo apt-get update
 2.E: Sub-process /usr/bin/dpkg returned an error code (1)
 参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
 
+四、mesos启动
 
+1.启动master
+
+登录219.224.135.46
+```
+$ cd /home/spark/mesos-0.20.1/build
+$ ./bin/mesos-master.sh --ip=219.224.135.46 --work_dir=/var/lib/mesos
+```
+2.启动slave
+登录47，48，60等服务器
+```
+$ cd /home/spark/mesos-0.20.1/build
+$ ./bin/mesos-master.sh --master=219.224.135.46:5050
+```
+3.webUI界面
+219.224.135.46:5050
