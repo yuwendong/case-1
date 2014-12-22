@@ -16,7 +16,7 @@ def getXapianWeiboByDate(datestr):
         return None
 
 
-def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
+def getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939'):
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):
         print 'stub exist'

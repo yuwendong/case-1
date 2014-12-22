@@ -1,36 +1,36 @@
 # -*- coding: utf-8 -*-
 
+import re
+import sys
+import json
 import tempfile
 import operator
-import json
-import re
-import networkx as nx
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-sys.path.append('../')
-from time_utils import datetime2ts, window2time, ts2datetimestr
-from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, is_in_trash_list, acquire_user_by_id, read_key_users
-from utils import ds_read_key_users, read_graph, ds_tr_read_key_users, read_attribute_dict
-from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
-
-from config import xapian_search_user as user_search
-from dynamic_xapian_weibo import getXapianWeiboByDuration, getXapianWeiboByTopic
-
-from spark_test.pagerank import pagerank
-from makegexf import make_gexf, make_ds_gexf
 from gexf import Gexf
 from lxml import etree
+import networkx as nx
 
 from gquota import compute_quota
-import sys
-sys.path.append('../libsvm-3.17/python')
-from sta_ad import start as ystart
-from snowball1 import SnowballSampling
 from localbridge import GetLocalBridge
+from snowball1 import SnowballSampling
+# from hadoop_utils import generate_job_id
+from makegexf import make_gexf, make_ds_gexf
+from spark_test.pagerank import pagerank
+from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
+from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
+        is_in_trash_list, acquire_user_by_id, read_key_users, ds_read_key_users, \
+        read_graph, read_attribute_dict
 
-search_topic_id='54635178e74050a373a1b939'
+reload(sys)
+sys.setdefaultencoding('utf-8')
+sys.path.append('../../')
+from ad_filter import ad_classifier
+from time_utils import datetime2ts, window2time, ts2datetimestr
+from global_config import xapian_search_user as user_search
+from dynamic_xapian_weibo import getXapianWeiboByTopic
+
+
+search_topic_id ='545f4c22cf198b18c57b8014'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -41,10 +41,6 @@ network_type = 1
 ds_network_type = 2
 GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 
-def get_nad(rlist):
-    flag = '0500'
-    data = ystart(rlist, flag)
-    return len(data),data
 
 def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     data = []
@@ -72,8 +68,8 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     if not topicname:
         return data
     print 'save_rank_results'
-    # data = save_rank_results(sorted_uids, 'topic', 'pagerank', date, window_size, topicname, all_uid_pr)
-    # ds_data = save_ds_rank_results(ds_sorted_uids, 'topic', 'pagerank', date, window_size, topicname, ds_all_uid_pr)
+    data = save_rank_results(sorted_uids, 'topic', 'spark_pagerank', date, window_size, topicname, all_uid_pr)
+    ds_data = save_ds_rank_results(ds_sorted_uids, 'topic', 'spark_pagerank', date, window_size, topicname, ds_all_uid_pr)
 
     return all_uid_pr, ds_all_uid_pr, data, ds_data
 
@@ -136,7 +132,7 @@ def _utf8_unicode(s):
         return unicode(s, 'utf-8')
 
 
-def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, pr_data, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, real_topic_id, key_user_labeled=True):
+def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, pr_data, ds_all_uid_pr, ds_pr_data,  real_topic_id, key_user_labeled=True):
     date = current_date
     '''
     key_users对应的是源头转发网络的pagerank前10的用户，ds_key_users对应的是直接上级转发网络的pagerank前10的用户
@@ -144,11 +140,11 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     if key_user_labeled:
         key_users = read_key_users(current_date, window_size, topic, top_n=10)
         ds_key_users = ds_read_key_users(current_date, window_size, topic ,top_n=10)
-        ds_tr_key_users = ds_tr_read_key_users(current_date, window_size, topic, top_n=10)
+        #ds_tr_key_users = ds_tr_read_key_users(current_date, window_size, topic, top_n=10)
     else:
         key_users = []
         ds_key_users = []
-        ds_tr_key_users = []
+        #ds_tr_key_users = []
     '''
     读取图结构，并从数据库中获取new_attribute_dict, ds_new_attribute_dict
     '''
@@ -186,8 +182,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     print 'after cut_network:'
     print 'len(G):', len(G)
     print 'len(ds_dg):', len(ds_dg)
-    partition = community.best_partition(gg)
-    ds_partition = community.best_partition(ds_udg) # 将直接上级转发网络进行社区划分！！！！！！！！！！！！
+    p_gg = nx.read_gexf(str(GRAPH_PATH)+str(key)+'_gg_graph.gexf')
+    p_ds_udg = nx.read_gexf(str(GRAPH_PATH)+str(key)+'_ds_udg_graph.gexf')
+    partition = community.best_partition(p_gg)
+    ds_partition = community.best_partition(p_ds_udg) # 将直接上级转发网络进行社区划分！！！！！！！！！！！！
     
     
     print 'start snowball sampling'
@@ -207,8 +205,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     new_gg = gg
     ds_new_G = ds_dg
     ds_new_gg = ds_udg
-    #compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
-    #compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
+    compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
+    compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
     print 'quota computed complicated'
 
     # 生成gexf文件
@@ -216,7 +214,76 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     将生成gexf文件的部分作为一个函数，将相关的参数传入。以此简洁化两个不同不同网络的gexf生成过程
     '''
     gexf = make_gexf('hxq', 'Source Network', new_G, node_degree, key_users, all_uid_pr, pr_data , partition, new_attribute_dict)
-    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_tr_key_users, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, ds_partition, ds_new_attribute_dict)
+    ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_all_uid_pr, ds_pr_data, ds_partition, ds_new_attribute_dict)
+    '''
+    gexf = Gexf("Yang Han", "Topic Network")
+
+    node_id = {}
+    graph = gexf.addGraph("directed", "static", "demp graph")
+    graph.addNodeAttribute('name', type='string', force_id='name')
+    graph.addNodeAttribute('location', type='string', force_id='location') # 添加地理位置属性
+    graph.addNodeAttribute('timestamp', type='int', force_id='timestamp')
+    graph.addNodeAttribute('pagerank', type='string', force_id='pagerank')
+    graph.addNodeAttribute('acategory', type='string', force_id='acategory')
+    graph.addNodeAttribute('text', type='string', force_id='text')
+    graph.addNodeAttribute('reposts_count', type='string', force_id='reposts_count') # 新添加的属性
+    graph.addNodeAttribute('comments_count', type='string', force_id='comments_count')
+    graph.addNodeAttribute('attitude_count', type='string', force_id='attitude_count')
+
+    pos = nx.spring_layout(G) # 定义一个布局 pos={node:[v...]/(v...)}
+
+    node_counter = 0
+    edge_counter = 0
+
+    for node in G.nodes():
+        x, y = pos[node] # 返回位置(x,y)
+        degree = node_degree[node]
+        if node not in node_id: # {node:排名}
+            node_id[node] = node_counter
+            node_counter += 1
+        uid = node # 节点就是用户名
+        if uid in key_users: # 根据是否为关键用户添加不同的节点 
+            _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='255', g='51', b='51', size=str(degree))
+        else:
+            _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='0', g='204', b='204', size=str(degree))
+        cluster_id = str(partition[node])
+        _node.addAttribute('acategory', cluster_id)
+        #print 'al_uid_pr:', all_uid_pr
+        pr = str(all_uid_pr[str(uid)])
+        _node.addAttribute('pagerank', pr)
+        #print 'pagarank_uid:', uid
+        try:
+            text_add = new_attribute_dict[uid][0][0] # 添加节点属性--text
+            _node.addAttribute('text', json.dumps(text_add))
+            reposts_count_add = new_attribute_dict[uid][0][1]
+            _node.addAttribute('reposts_count', str(reposts_count_add)) # 添加节点属性--reposts_count
+            comment_count_add = new_attribute_dict[uid][0][2]
+            _node.addAttribute('comments_count', str(comment_count_add)) # 添加节点属性--comment_count
+            attitude_count_add = new_attribute_dict[uid][0][3]
+            if attitude_count_add == None:
+                attitude_count_add = u'未知'
+            _node.addAttribute('attitude_count', attitude_count_add) # 添加节点属性--attitude_count
+        except KeyError:
+            _node.addAttribute('text', u'未知')
+            _node.addAttribute('reposts_count', u'未知')
+            _node.addAttribute('comments_count', u'未知')
+            _node.addAttribute('attitude_count', u'未知')
+        user_info = acquire_user_by_id(uid) # 获取对应的用户信息，添加属性
+        if user_info:
+            _node.addAttribute('name', user_info['name'])
+            _node.addAttribute('location', user_info['location'])
+        else:
+            _node.addAttribute('name', u'未知')
+            _node.addAttribute('location', u'未知')
+            #_node.addAttribute('timestamp', str(uid_ts[uid]))
+
+    for edge in G.edges():
+        start, end = edge # (repost_uid, source_uid)
+        start_id = node_id[start]
+        end_id = node_id[end]
+        graph.addEdge(str(edge_counter), str(start_id), str(end_id))
+        edge_counter += 1
+    '''
 
     return etree.tostring(gexf.getXML(), pretty_print=True, encoding='utf-8', xml_declaration=True), etree.tostring(ds_gexf.getXML(), pretty_print=True, encoding='utf-8', xml_declaration=True)# 生成序列化字符串
 
@@ -229,26 +296,13 @@ def cut_network(g, node_degree, degree_threshold): # 筛选出节点度数大于
     return g
 
 
-def getXapianweiboByTs(start_time, end_time): # 将查询时间段转化为每一天时间戳组成的字符串，获取时间段内的微博
-    xapian_date_list =[]
-    days = (int(end_time) - int(start_time)) / Day
-
-    for i in range(0, days):
-        _ts = start_time + i * Day
-        xapian_date_list.append(ts2datetimestr(_ts))
-    print 'xapian_date_list:', xapian_date_list
-    statuses_search = getXapianWeiboByDuration(xapian_date_list)
-    return statuses_search
-
-
 def make_network(topic, date, window_size, max_size=100000, attribute_add = False):
     topics = topic.strip().split(',')
     end_time = int(datetime2ts(date))
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
-    topic_id='54635178e74050a373a1b939'
-    #statuses_search = getXapianweiboByTs(start_time, end_time) # 获得查询时间段的XapianSearch类
-    statuses_search = getXapianWeiboByTopic(search_topic_id)
+    topic_id='545f4c22cf198b18c57b8014'
+    statuses_search = getXapianWeiboByTopic(topic_id)
 
     g = nx.DiGraph() # 初始化一个有向图
     gg = nx.Graph() # 为计算quota初始化一个无向图
@@ -270,7 +324,7 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     if count:
         for weibo in get_statuses_results():
             results_list.append([weibo['_id'],weibo['text']])
-        scount, data_wid = get_nad(results_list)
+        scount, data_wid = ad_classifier(results_list)
     else:
         data_wid = []
         scount = 0
@@ -398,25 +452,28 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                 new_attribute_dict[rresult['user']] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
         #print 'map_dict:', map_dict
         new_attribute_dict = check_attribute(new_attribute_dict, new_query_dict, map_dict) # 对query_dict中没有查询到的r_mid,在new_attribute_dict中进行补全处理
-
-        ds_ruid_count, ds_r_results = statuses_search.search(query=ds_new_query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'])
-        for ds_rresult in ds_r_results():
-            uid = ds_rresult['user']
-            timestamp_add = ds_rresult['timestamp']
-            text = ds_rresult['text'] # 这里的text需要再做一次处理----剔除掉’//@..:‘的内容，只获取作者自己的微博文本
-            text_spl = text.split('//@')
-            try:
-                text_add = text_spl[0]
-            except:
-                text_add = text
-            reposts_count_add = ds_rresult['reposts_count']
-            comment_count_add = ds_rresult['comments_count']
-            attitude_count_add = ds_rresult['attitude_count']
-            ruid_add = rresult['retweeted_uid']
-            try:
-                ds_new_attribute_dict[uid].append([text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add])
-            except:
-                ds_new_attribute_dict[uid] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
+        print 'quer_dict:', ds_new_query_dict
+        print 'len(ds_new_attribute_dict):', len(ds_new_attribute_dict)
+        if query_dict!={'$or':[]}:
+            ds_ruid_count, ds_r_results = statuses_search.search(query=ds_new_query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'])
+            for ds_rresult in ds_r_results():
+                uid = ds_rresult['user']
+                timestamp_add = ds_rresult['timestamp']
+                text = ds_rresult['text'] # 这里的text需要再做一次处理----剔除掉’//@..:‘的内容，只获取作者自己的微博文本
+                text_spl = text.split('//@')
+                try:
+                    text_add = text_spl[0]
+                except:
+                    text_add = text
+                reposts_count_add = ds_rresult['reposts_count']
+                comment_count_add = ds_rresult['comments_count']
+                attitude_count_add = ds_rresult['attitude_count']
+                ruid_add = rresult['retweeted_uid']
+                try:
+                    ds_new_attribute_dict[uid].append([text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add])
+                except:
+                    ds_new_attribute_dict[uid] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
+        
         ds_new_attribute_dict = check_attribute(ds_new_attribute_dict, ds_new_query_dict, ds_map_dict)
     #print 'new_attribute_dict:', new_attribute_dict
     print 'len(g):', len(g)

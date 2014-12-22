@@ -212,13 +212,13 @@
         .lTools {
             z-index: 1000;
             position: absolute;
-            height:590px;
+            height:650px;
             width: 222px;
             top: 61px;
             display: block;
             padding: 1px;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: visible;
             background-color: #FFF;
             border-right: 1px solid #eee;
         }
@@ -393,21 +393,23 @@
 
                     <div style="margin: 20px auto 10px 0px;font-size: 13px;">深度分析</div>
                     {% for en, zh in deep_yaosus['yaosu'] %}
-                        {% if en == yaosu %}
+                      
+                          {% if en == yaosu %}
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}" checked>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}" checked >
                                         {{ zh }}
                                 </label>
                             </div>
-                        {% else %}
+                          {% else %}
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}">
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="{{ en }}" type="hidden">
                                         {{ zh }}
                                 </label>
                             </div>
-                        {% endif %}
+                          {% endif %}
+ 
                     {% endfor %}
 
                     <input id="yaosu_input" name="all_dur" type="hidden" value="{{ yaosu }}">
@@ -430,7 +432,7 @@
     <script>
         var all_startDate = new Date('09/01/2013');
         var all_endDate = new Date('09/21/2013');
-        var all_maxDate = new Date('12/31/2014');
+        var all_maxDate = new Date('09/21/2013');
         var all_minDate = new Date('09/01/2013');
         var week_ago = subtract(all_endDate,7);
         //var month_ago = subtract(all_endDate,30);
@@ -470,7 +472,9 @@
 
         $("input[name='optionsRadios']").on("click", function(){
             $('#yaosu_input').val($(this).val());
+            var bz = $('#yaosu_input').val();
         });
+
 
         $("#submit_request").click(function(){
             var QUERY = document.getElementById('keyword_input').value;

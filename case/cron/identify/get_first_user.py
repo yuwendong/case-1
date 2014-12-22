@@ -19,7 +19,7 @@ fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timesta
                'comments_count', 'sentiment', 'topics', 'message_type', 'terms']
 
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
-                    'followers_count', 'location']
+                    'followers_count', 'location', 'created_at','statuses_count']
 
 REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
@@ -52,14 +52,16 @@ def get_first_node(topic, start_date, date, windowsize):
     '''
     if topic and topic != '':
         datestr = start_date.replace('-','')
-        xapian_search_weibo = getXapianWeiboByTopic(topic_id='54635178e74050a373a1b939')
+        xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
         begin_ts = datetime2ts(start_date)
         end_ts = datetime2ts(date)
         topics = topic.strip().split(',')
         query_dict = {
             'timestamp': {'$gt': begin_ts, '$lt': end_ts},
+            '$or': [{'message_type':1},{'message_type':3}],
             '$and': []
             }
+        # 这里只选取原创和转发微博进行计算
         for c_topic in topics:
             query_dict['$and'].append({'topics': c_topic})
     
@@ -113,11 +115,24 @@ def get_user_info(uid):
     if result:
         user_info['name'] = result['name']
         user_info['location'] = result['location']
-        user_info['gender'] = result['gender']
+        #user_info['gender'] = result['gender']
         user_info['friends_count'] = result['friends_count']
         user_info['followers_count'] = result['followers_count']
         user_info['profile_image_url'] = result['profile_image_url']
-        
+        user_info['friends_count'] = result['friends_count']
+        user_info['followers_count'] = result['followers_count']
+        user_info['created_at'] = result['created_at']
+        user_info['statuses_count'] = result['statuses_count']
+    else:
+        user_info['name'] = u'未知'
+        user_info['location'] = u'未知'
+        user_info['friends_count'] = u'未知'
+        user_info['followers_count'] = u'未知'
+        user_info['profile_image_url'] = 'no'
+        user_info['friends_count'] = u'未知'
+        user_info['followers_count'] = u'未知'
+        user_info['created_at'] = u'未知'
+        user_info['statuses_count'] = u'未知'      
         
     return user_info
         
@@ -134,11 +149,11 @@ def save_first_nodes(topic, date, windowsize, uid, timestamp, user_info, weibo_i
 
 
 if __name__=='__main__':
-    topic = u'东盟,博览会'
-    windowsize = 6
-    end_ts = datetime2ts('2013-09-08')
+    topic = u'全军政治工作会议'
+    windowsize = 17
+    end_ts = datetime2ts('2014-11-16')
     date = ts2datetime(end_ts)
-    start_ts = datetime2ts('2013-09-02')
+    start_ts = datetime2ts('2014-10-30')
     start_date = ts2datetime(start_ts) # 确定topic的start_ts和end_ts是怎么得来的
     get_first_node(topic, start_date, date, windowsize) # 如果start_ts就是第一条微博出现的时间，不能只查询前15分钟的数据。要考虑极端情况，必须查询所有数据
     

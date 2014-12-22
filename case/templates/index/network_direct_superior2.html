@@ -1,0 +1,3916 @@
+{% extends "base.html" %}
+
+{% block title %}网络分析{% endblock %}
+
+{% block module_title %}深度分析{% endblock %}
+
+
+
+{% block head_css %}
+
+    <!-- 走势图切换按钮css -->
+
+    <link rel="stylesheet" href="/static/bootstrap-switch/_dist/css/bootstrap3/bootstrap-switch.min.css">
+
+
+
+    <style type="text/css">
+
+        .block {
+
+            color: #666;
+
+        }
+
+        .block: hover {
+
+            color: #666;
+
+        }
+
+        #trend_div {
+
+            height: 270px;
+
+            width: 100%;
+
+            float: left;
+
+            border: 1px solid #F0F0F0;
+
+            background: #F0F0F0;
+
+        }
+
+
+
+        #trend_div1 {
+
+            height: 270px;
+
+            width: 100%;
+
+            float: left;
+
+            border: 1px solid #F0F0F0;
+
+            background: #F0F0F0;
+
+        }
+
+        #rank_table a:hover{
+
+            color: #428bca;
+
+        }
+
+
+
+        .blkUnit {
+
+            position: relative;
+
+            clear: both;
+
+            margin-top: 5px;
+
+            background-color: #fff;
+
+        }
+
+        .blkUnit .titlBar {
+
+            z-index: 4;
+
+            position: relative;
+
+            height: 16px;
+
+            padding: 20px;
+
+            background-color: #f6f6f6;
+
+        }
+
+        .titlBar h4 {
+
+            display: inline-block;
+
+            margin-top: -5px;
+
+            padding-right: 0px;
+
+            font-size: 15px;
+
+            color: #666;
+
+        }
+
+        .titlBar .compInfo {
+
+            padding-right: 15px;
+
+            color: #858585;
+
+        }
+
+        .stmTabs{
+
+            padding: 20px;
+
+        }
+
+        .stmTabs .tabTitle {
+
+            height: 22px;
+
+            margin-bottom: 12px;
+
+            border-bottom: 1px solid #f0f0f0;
+
+        }
+
+        .stmTabs .tabLi {
+
+            display: block;
+
+            float: left;
+
+            text-decoration: none;
+
+            color: #666
+
+        }
+
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+
+            height: 23px;
+
+            padding: 0 14px;
+
+            _float:left
+
+        }
+
+        .stmTabs .tabLi .hvTab {
+
+            display: none;
+
+            color: #6e87d7;
+
+            height: 21px;
+
+            border-bottom: 2px solid #6e87d7
+
+        }
+
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+
+            display: block
+
+        }
+
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+
+            display:none
+
+        }.stmTabs .tabConts {
+
+            padding-bottom: 10px
+
+        }
+
+        .stmTabs .moreLnk {
+
+            float: right;
+
+            margin-bottom: -10px;
+
+            _position:relative
+
+        }
+
+        .stmTabs .moreLnk a {
+
+            text-decoration: none
+
+        }
+
+        .stmTabs .moreLnk a:hover {
+
+            text-decoration: underline
+
+        }
+
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+
+            max-width: 130px;
+
+            text-overflow: ellipsis;
+
+            overflow: hidden;
+
+            white-space: nowrap
+
+        }
+
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+
+            color: #6e87d7;
+
+            border-color: #6e87d7
+
+        }
+
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+
+            color: #11c897;
+
+            border-color: #11c897
+
+        }
+
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+
+            color: #fa7256;
+
+            border-color: #fa7256;
+
+        }
+
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+
+            color: #b172c5;
+
+            border-color: #b172c5
+
+        }
+
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+
+            color: #f367a7;
+
+            border-color: #f367a7
+
+        }
+
+        .sigma-expand {
+
+            position: absolute;
+
+            margin: 0px auto;
+
+            height: 620px;
+
+            width: 686px;
+
+            float: left;
+
+        }
+
+        .label-important, .badge-important {
+
+            background-color: #b94a48;
+
+        }
+
+        .mainSplit {
+
+            top: 64px;
+
+            position: relative;
+
+            _overflow: visible;
+
+            padding: 0px 26px 20px 15px;
+
+            border-left: 2px solid #e1e1e1;
+
+        }
+
+        .icon-ok {
+
+            background-position: -312px 0;
+
+        }
+
+        .icon-ok{
+
+            display: inline-block;
+
+            width: 14px;
+
+            height: 14px;
+
+            margin-top: 1px;
+
+            line-height: 14px;
+
+            vertical-align: text-top;
+
+            background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+
+            background-position: 14px 14px;
+
+            background-repeat: no-repeat;
+
+        }
+
+        .pagination ul {
+
+            display: inline-block;
+
+            margin-bottom: 0;
+
+            margin-left: 0;
+
+            -webkit-border-radius: 4px;
+
+            -moz-border-radius: 4px;
+
+            border-radius: 4px;
+
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+        }
+
+        .pagination-centered {
+
+            text-align: center;
+
+        }
+
+        .pagination {
+
+            margin: 20px 0;
+
+        }
+
+        .pagination ul>li>a, .pagination ul>li>span {
+
+            float: left;
+
+            padding: 4px 12px;
+
+            line-height: 20px;
+
+            text-decoration: none;
+
+            background-color: #fff;
+
+            border: 1px solid #ddd;
+
+            border-left-width: 0;
+
+        }
+
+        .pagination ul>li {
+
+            display: inline;
+
+        }
+
+        .lrRadius {
+
+            display: inline-block;
+
+            width: 184px;
+
+            height: 20px;
+
+            margin: 0 6px;
+
+            text-align: right;
+
+            font-weight: normal;
+
+        }
+
+        .lrRadius .lrRl {
+
+            float: left;
+
+            margin-left: -6px;
+
+            background-position: -100px -180px;
+
+        }
+
+        .lrRadius .lrRl, .lrRadius .lrRr {
+
+            top: 0;
+
+            width: 6px;
+
+            height: 20px;
+
+            background-image: url(../imgs/icons.png?0508);
+
+        }
+
+        .lrRadius .lrRc {
+
+            float: left;
+
+            width: 200px;
+
+            height: 18px;
+
+            padding-top: 2px;
+
+            background-color: #e2e2e2;
+
+            text-align: left;
+
+        }
+
+        .lrRadius .lrRb {
+
+            float: left;
+
+            width: 200px;
+
+            height: 18px;
+
+            padding-top: 2px;
+
+            background-color: #e2e2e2;
+
+            text-align: left;
+
+        }
+
+        td, th {
+
+            display: table-cell;
+
+            vertical-align: inherit;
+
+            padding-left: 65px;
+
+            width:80px;
+
+        }
+
+        th {
+
+            font-weight: bold;
+
+        }
+
+        .weibo_list a {
+
+            text-decoration: none;
+
+        }
+
+
+        .weibo_list a.undlin {
+
+            text-decoration: underline;
+
+        }
+
+        .weibo_list li.item {
+
+            line-height: 18px;
+
+            border-bottom: 1px solid #f5f5f5;
+
+            padding: 9px 10px 10px 0;
+
+            min-height: 55px;
+
+            _height: 55px;
+
+        }
+
+        .weibo_detail {
+
+            margin-left: 65px;
+
+        }
+
+        .weibo_face {
+
+            position: relative;
+
+            float: left;
+
+            width: 50px;
+
+            margin-top: 3px;
+
+        }
+
+        .weibo_info {
+
+            margin-top: 7px;
+
+            color: #666;
+
+        }
+
+        .weibo_info .weibo_pz {
+
+            float: right;
+
+            color: #858585;
+
+            height: 18px;
+
+            line-height: 18px;
+
+        }
+
+        .weibo_info .m a {
+
+            color: #666;
+
+        }
+
+
+/*        .tang-scrollpanel {
+
+            overflow: hidden;
+
+        }
+
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+
+            position: relative;
+
+            overflow: hidden;
+
+            width: 100%!important;
+
+        }
+
+        .tang-scrollpanel .tang-scrollpanel-content {
+
+            position: absolute;
+
+            left: 0;
+
+            top: 0;
+
+            width: 100%!important;
+
+        }
+
+        .tang-scrollpanel .tang-slider {
+
+            position: absolute;
+
+            top: 0;
+
+            right: 0;
+
+            font-size: 0;
+
+        }
+
+        .tang-scrollpanel .tang-slider-vtl {
+
+            height: 100%;
+
+        }
+
+        .scrolls {
+
+            overflow: hidden;
+
+        }
+
+*/
+
+        #lTools {
+
+            height: 650px;
+
+        }
+
+        .node-info-popup ul li a:link {
+
+            color: #000000;
+
+        }
+
+        .node-info-popup ul li a:hover {
+
+            color: #00FFFF;
+
+        }
+
+        .control-pane{
+
+            position: relative;
+
+            float: left;
+
+            z-index: 1000;
+
+            margin-right: 10px;
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+        }
+
+        .control-pane > div {
+
+            margin: 10px;
+
+        }
+
+        .control-pane a:hover{
+
+            color: #428bca;
+
+        }
+
+        .control-pane input[type=range] {
+
+            width: 130px;
+
+            display: inline;
+
+        }
+
+        #control-pane-rightdown {
+
+            right: 2px;
+
+            position: absolute;
+
+            float: left;
+
+            width: 304px;
+
+            background-color: rgb(249, 247, 237);
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+        }
+
+        #control-pane-rightdown a:hover{
+
+            color: #428bca;
+
+        }
+
+        #control-pane-rightdown > div {
+
+            margin: 10px;
+
+        }
+
+        #control-pane-rightdown2 {
+
+            right: 2px;
+
+            position: absolute;
+
+            float: left;
+
+            width: 304px;
+
+            background-color: rgb(249, 247, 237);
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+        }
+
+        #control-pane-rightdown2 a:hover{
+
+            color: #428bca;
+
+        }
+
+        #control-pane-rightdown2 > div {
+
+            margin: 10px;
+
+        }
+
+        #cluster_panel {
+
+            top: 389px;
+
+            right: 2px;
+
+            position: absolute;
+
+            float: left;
+
+            width: 304px;
+
+            background-color: rgb(249, 247, 237);
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+        }
+
+        #cluster_panel a:hover{
+
+            color: #428bca;
+
+        }
+
+        #cluster_panel > div {
+
+            margin: 10px;
+
+        }
+
+        .line {
+
+            clear: both;
+
+            display: block;
+
+            width: 100%;
+
+            margin: 0;
+
+            padding: 12px 0 0 0;
+
+            border-bottom: 1px solid #aac789;
+
+            background: transparent;
+
+        }
+
+        .line2{
+
+            clear: both;
+
+            display: block;
+
+            width: 100%;
+
+            margin: 0;
+
+            padding: 12px 0 0 0;
+
+            border-bottom: 1px solid #aac789;
+
+            background: transparent;
+
+        }
+
+        .underline {
+
+            color: #437356;
+
+            background: #f4f0e4;
+
+            margin: 0;
+
+            border-radius: 2px;
+
+            padding: 8px 12px;
+
+            font-weight: 700;
+
+        }
+
+        .hidden {
+
+            display: none;
+
+            visibility: hidden;
+
+        }
+
+        .compOK {
+
+            color: #FFF;
+
+            text-decoration: none;
+
+            display: block;
+
+            width: 90px;
+
+            height: 20px;
+
+            margin-left: 9px;
+
+            padding-top: 2px;
+
+            text-align: center;
+
+            border: 1px solid #3073d1;
+
+            background-color: #4284e2;
+
+            cursor: pointer;
+
+        }
+
+        /*.modal{
+
+            width:100%;
+
+            position:fixed;
+
+            text-align:center;
+
+            margin: 0px auto;
+
+            top:0px;left:0px;
+
+            bottom: 0px;
+
+            right: 0px;
+
+            z-index: 1050px;
+
+        }
+
+        .modal_wrapper{
+
+            display: table;
+
+            height: 100%;
+
+            margin: 0px auto;
+
+        }
+
+        .modal-dialog{
+
+            display: table-cell;
+
+            vertical-align: middle;
+
+        }*/
+
+
+
+        #firstuser_table td{
+
+            padding-left:23px;
+
+            width:95px;
+
+        }
+
+        .modal-body td{
+
+            padding-left: 23px;
+
+        }
+
+        #trenduser_table td{
+
+            padding-left:30px;
+
+            width: 120px;
+
+        }
+
+        .keywords_cloud {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 100%;
+
+            margin: 0px auto 0
+
+        }
+
+
+
+        .keywords_cloud a {
+
+            position: absolute;
+
+            top: 0px;
+
+            left: 0px;
+
+            font-family: Microsoft YaHei;
+
+            color: #AD12C2;
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            padding: 3px 6px;
+
+        }
+
+
+
+        .keywords_cloud a:hover {
+
+            border: 1px solid #eee;
+
+            background: #000;
+
+        }
+
+        .keywords_cloud .blue {
+
+            color: blue;
+
+        }
+
+        .keywords_cloud .red {
+
+            color: red;
+
+        }
+
+        .keywords_cloud .yellow {
+
+            color: yellow;
+
+        }
+        .weibo_more {
+            padding: 4px;
+            text-align: center;
+            cursor: pointer;
+            
+        }
+
+
+
+
+
+    </style>
+
+{% endblock head_css %}
+
+
+
+{% block head_js %}
+
+    <script src="/static/js/highstock.js"></script>
+
+    <script src="/static/js/exporting.js"></script>
+
+    <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+
+    <!--
+
+    <script src="/static/js/identify/sigma.min.js"></script>
+
+    <script src="/static/js/identify/sigma.parseGexf.js"></script>
+
+    -->
+
+    <!-- START SIGMA IMPORTS -->
+
+    <script src="/static/sigma.js/src/sigma.core.js"></script>
+
+    <script src="/static/sigma.js/src/conrad.js"></script>
+
+    <script src="/static/sigma.js/src/utils/sigma.utils.js"></script>
+
+    <script src="/static/sigma.js/src/utils/sigma.polyfills.js"></script>
+
+    <script src="/static/sigma.js/src/sigma.settings.js"></script>
+
+    <script src="/static/sigma.js/src/classes/sigma.classes.dispatcher.js"></script>
+
+    <script src="/static/sigma.js/src/classes/sigma.classes.configurable.js"></script>
+
+    <script src="/static/sigma.js/src/classes/sigma.classes.graph.js"></script>
+
+    <script src="/static/sigma.js/src/classes/sigma.classes.camera.js"></script>
+
+    <script src="/static/sigma.js/src/classes/sigma.classes.quad.js"></script>
+
+    <script src="/static/sigma.js/src/captors/sigma.captors.mouse.js"></script>
+
+    <script src="/static/sigma.js/src/captors/sigma.captors.touch.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.canvas.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.webgl.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/sigma.renderers.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+
+    <script src="/static/sigma.js/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+
+    <script src="/static/sigma.js/src/middlewares/sigma.middlewares.rescale.js"></script>
+
+    <script src="/static/sigma.js/src/middlewares/sigma.middlewares.copy.js"></script>
+
+    <script src="/static/sigma.js/src/misc/sigma.misc.animation.js"></script>
+
+    <script src="/static/sigma.js/src/misc/sigma.misc.bindEvents.js"></script>
+
+    <script src="/static/sigma.js/src/misc/sigma.misc.drawHovers.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.plugins.neighborhoods/sigma.plugins.neighborhoods.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
+
+    <script src="/static/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
+
+    <!-- END SIGMA IMPORTS -->
+
+
+
+    <script src="/static/js/identify/jquery.bootpag.js"></script> 
+
+    <script type="text/javascript">
+
+        function switchTab(ProBox,id) {
+        	
+
+            for (i = 1; i < 5; i++) {			
+
+            	$("#Tab"+i).removeClass("curr");
+                if ("con" + i == ProBox) {
+                    document.getElementById(ProBox).style.display = "";
+
+                } else {
+                	if($("#Tab"+i))
+                    document.getElementById("con" + i).style.display = "none";
+
+
+                }
+
+            }
+           $("#"+id).addClass("curr");
+        }
+
+    </script>
+
+
+
+{% endblock head_js %}
+
+
+
+{% block content %}
+
+    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+
+        <div class="titlBar" style="padding-bottom:15px;width:1033px;">
+
+            <p style='font-size:17px'>网络分析</p>
+
+        </div>
+
+
+
+        <div class="stmTabs tabUnit">
+
+            <div class="tabTitle" style="padding-top:1px;">
+
+                <div class="tabUI" id="mapTabDiv">
+
+                    <a status="end" class="tabLi gColor curr" href="javascript:;" id ="Tab1" onclick="switchTab('con1','Tab1')" style="display: block;">
+
+                        <div class="nmTab">早期参与者</div>
+
+                        <div class="hvTab">早期参与者</div>
+
+                    </a>
+
+                    <a status="wholemap" class="tabLi gColor1" href="javascript:;" id = "Tab2" onclick="switchTab('con2','Tab2')" style="display: block;">
+
+                        <div class="nmTab">趋势发起人</div>
+
+                        <div class="hvTab">趋势发起人</div>
+
+                    </a>
+
+                    <a status="wholemap" class="tabLi gColor2" href="javascript:;" id ="Tab3" onclick="switchTab('con3','Tab3')" style="display: block;">
+
+                        <div class="nmTab">源头转发网络</div>
+
+                        <div class="hvTab">源头转发网络</div>
+
+                    </a>
+
+                    <a status="front" class="tabLi gColor3" href="javascript:;" id ="Tab4" onclick="switchTab('con4','Tab4')" style="display: block;">
+
+                        <div class="nmTab">直接转发网络</div>
+
+                        <div class="hvTab">直接转发网络</div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+<div id="con1">
+
+        <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="weiboarea">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>早期参与者</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="早期参与者"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <!-- 首发用户显示表格 -->
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="firstuser">
+
+        <div class="tabUnit">
+
+           <div class="tabTitle" style="padding-top:11px;">
+
+            </div>
+
+        <div class="tabConts" style="padding-left:20px;">
+
+        <div id="firstuser_table" style="width:1000px;">
+
+            <table rules=rows frame= hsides class="altrowstable" id="alternatecolor">
+
+                <tr style="margin-left:5px;height:30px;text-align:center"><td><b>领域</b></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td >9</td></tr>
+
+
+
+            </table>
+
+            <button data-toggle="modal" data-target="#fu_modal">显示更多早期参与者</button>
+
+            <!-- 模态框（Mod<al） -->
+
+            <div id="fu_modal" class="modal fade modal_wrapper" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
+
+                <div class="modal-dialog">
+
+                    <div class="modal-content" style="position:fixed;width:1600px;margin-left:-500px">
+
+                        <div class="modal-header">
+
+                            <button type="button" class="close" 
+
+                               data-dismiss="modal" aria-hidden="true">
+
+                                  &times;
+
+                            </button>
+
+                            <h4>
+
+                               早期参与者
+
+                            </h4>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <table rules=rows frame= hsides class="altrowstable" id="alternate"style = "margin-left :15px;height : 250px;width:1500px;text-align:center">
+
+                                <tr><td><b>领域</b></td><td>1</td><td>2</td><td >3</td><td >4</td><td>5</td><td>6</td><td>7</td><td>8</td><td >9</td><td >10</td><td>11</td><td>12</td><td>13</td><td>14</td><td >15</td><td >16</td><td >17</td><td>18</td><td>19</td><td>20</td></tr>
+
+                            </table>                    
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-primary" 
+
+                               data-dismiss="modal">关闭
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+        <!-- 分隔符 -->
+
+         <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    早期参与者分类：
+
+                    <select id="select_fu_domain" name="rank_method">
+
+                        <option value="fu_all" selected="selected">所有</option>
+
+                        <option value="folk">民众</option>
+
+                        <option value="media">媒体</option>
+
+                        <option value="opinion_leader">意见领袖</option>
+
+                        <option value="oversea">海外</option>
+
+                        <option value="other">其他</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+
+
+        <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_fu_rank_method" name="rank_method">
+
+                        <option value="timestamp" selected="selected">时间</option>
+
+                        <option value="friends_count">粉丝数</option>
+
+                        <option value="statuses_count">微博数</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+
+
+         <span id="submit_fu_request" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+
+
+
+        <div class="stmTabs tabUnit">
+
+            <!-- <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_firstuser()' style="float: left;">整体首发者</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_domain_firstuser_folk()' style="float: left;">民众首发者</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_domain_firstuser_media()' style="float: left;">媒体首发者</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_domain_firstuser_opinionleader()' style="float: left;">意见领袖首发者</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_domain_firstuser_oversea()' style="float: left;">海外首发者</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_domain_firstuser_other()' style="float: left;">其他首发者</button>
+
+            </div> -->
+
+            <span id="loading_current_data1" class="alert alert-info" style="float:left;height: 22px;padding: 4px;margin-left:4px;">系统繁忙计算中，请稍后...</span>
+
+            <div class="tabConts">
+
+
+
+                <!-- 换成ul--类似于moodlens中keywweibos的显示 -->
+
+                <div id="firstuser_div" style="float:left;width:100%;">
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper">
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="firstuser_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                         				<div class="more" id='firstuser_more' style = "width:100%; height:24px;">
+                               			 	<span><h4 id="firstmore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
+
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 分割符 -->
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div id="con2" style="display:none">
+
+        <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="weiboarea">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>趋势发起人概览</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="趋势发起人概览"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <!-- 早期参与者显示表格 -->
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="trend_user">
+
+        <div class="tabUnit">
+
+           <div class="tabTitle" style="padding-top:11px;">
+
+            </div>
+
+        <div class="tabConts" style="padding-left:20px;">
+
+        <div id="trenduser_table" style="width:1000px;">
+
+            <table rules=rows frame= hsides class="altrowstable" id="tr_alternatecolor">
+
+                <tr style="margin-left:5px;height:30px;text-align:center;"><td><b>类别</b></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td>
+
+            </table>
+
+            <button data-toggle="modal" data-target="#tr_modal">显示更多趋势发起人</button>
+
+            <!-- 模态框（Mod<al） -->
+
+            <div id="tr_modal" class="modal fade modal_wrapper" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
+
+                <div class="modal-dialog">
+
+                    <div class="modal-content" style="position:fixed;width:1600px;margin-left:-500px">
+
+                        <div class="modal-header">
+
+                            <button type="button" class="close" 
+
+                               data-dismiss="modal" aria-hidden="true">
+
+                                  &times;
+
+                            </button>
+
+                            <h4>
+
+                               
+
+                            </h4>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <table rules=rows frame= hsides class="altrowstable" id="tr_alternate"style = "margin-left :15px;height : 250px;width:1500px;">
+
+                                <tr><td><b>类别</b></td><td>1</td><td>2</td><td >3</td><td >4</td><td>5</td><td>6</td><td>7</td><td>8</td><td >9</td><td >10</td><td>11</td><td>12</td><td>13</td><td>14</td><td >15</td><td >16</td><td >17</td><td>18</td><td>19</td><td>20</td></tr>
+
+                            </table>                    
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-primary" 
+
+                               data-dismiss="modal">关闭
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+        <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="weiboarea">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>趋势制造者</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="趋势制造者"></i>&nbsp;&nbsp;
+
+        </div>
+
+
+
+        <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_trendmaker_rank" name="rank_method">
+
+                        <option value="content" selected="selected">内容相关度</option>
+
+                        <option value="timestamp">时间</option>
+
+                        <option value="friends_count">粉丝数</option>
+
+                        <option value="statuses_count">微博数</option>
+
+                        <option value="reposts_count">转发数</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+
+
+         <span id="submit_trendmaker_request" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+
+        <div class="tabUnit">
+
+            
+
+            <span id="loading_current_data4" class="alert alert-info" style="float:left;height: 22px;padding: 4px;margin-left:4px;">系统繁忙计算中，请稍后...</span>
+
+            <div class="tabConts">
+
+
+
+                <!-- 换成ul--类似于moodlens中keywweibos的显示 -->
+
+                <div id="trendmaker_div" style="float:left;width:100%;">
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="maker_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="maker_content_control_height" class="tang-scrollpanel-wrapper">
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="trend_maker_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                   		<div class="more" id = 'trendmaker_more'style = "width:100%; height:24px;">
+                               			 	<span><h4 id="makemore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
+ 	
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 分割符 -->
+
+
+
+            </div>
+
+        </div>
+
+        </div>
+
+
+
+        <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="weiboarea">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>趋势推动者</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="趋势推动者"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_trendpusher_rank" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                        <option value="friends_count">粉丝数</option>
+
+                        <option value="statuses_count">微博数</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+
+
+         <span id="submit_trendpusher_request" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+
+        <div class="tabUnit">
+
+            
+
+            <span id="loading_current_data5" class="alert alert-info" style="float:left;height: 22px;padding: 4px;margin-left:4px;">系统繁忙计算中，请稍后...</span>
+
+            <div class="tabConts">
+
+
+
+                <!-- 换成ul--类似于moodlens中keywweibos的显示 -->
+
+                <div id="trendpusher_div" style="float:left;width:100%;">
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="pusher_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="pusher_content_control_height" class="tang-scrollpanel-wrapper">
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="trend_pusher_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                   		<div class="more" id = 'trendpusher_more'style = "width:100%; height:24px;">
+                               			 	<span><h4 id="pushmore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 分割符 -->
+
+
+
+            </div>
+
+        </div>
+
+        </div>
+
+</div>
+
+
+
+
+
+
+
+<div id="con3" style="display:none">
+
+   <div class="blkUnit grpUnit" id="trendProfile" style="height:100%;width:1033px;">
+
+        <div class="titlBar" style="padding-bottom:15px;">
+
+            <h4><b>网络概况</b></h4>
+
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <div class="tabConts"style = "margin-top:15px">
+
+            <table class="mtable" id="mstable"></table>
+            <table class="mtable" id="mstable1"></table>
+
+        </div>
+        <div class="tabUnit">
+
+        
+
+            <div class="tabConts">
+
+                <div id="line" style="width:1030px"></div>
+
+            </div>
+            <button id='con3_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line(); get_network_infor1()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+        </div>
+
+    </div>
+
+
+
+    <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px">
+
+        <div class="titlBar" style="padding-bottom:1px;">
+
+            <h4><b>关键传播用户</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+
+        </div>
+
+
+
+        <div class="stmTabs tabUnit">
+
+            <!-- 调整tab为两个单选框 -->
+
+            <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select11" name="rank_method">
+
+                        <option value="pr_method" selected="selected">权威性排名</option>
+
+                        <option value="dc_method">度中心性排名</option>
+
+                        <option value="bc_method">介数中心性排名</option>
+
+                        <option value="cc_method">紧密中心性排名</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+            <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    领域选择：
+
+                    <select id="select12" name="domain_method">
+
+                        <option value="all" selected="selected">所有</option>
+
+                        <option value="folk">民众</option>
+
+                        <option value="opinion_leader">意见领袖</option>
+
+                        <option value="oversea">海外</option>
+
+                        <option value="media">媒体</option>
+
+                        <option value="other">其他</option>
+
+                    </select> 
+
+                </form>
+
+            </div>
+
+            <span id="submit_request1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+
+
+
+            <!-- 分隔符 -->
+
+
+
+            <!-- <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
+
+            </div>
+
+            <div class="control-pane">
+
+                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
+
+            </div> -->
+
+
+
+            <span id="loading_current_data3" class="alert alert-info" style="float:left;height: 22px;padding: 4px;margin-left:4px;">系统繁忙计算中，请稍后...</span>
+
+                
+
+            <div class="tabConts">
+
+                <div id="rank_table" style="margin-top:5px">
+
+                    <table class="table table-bordered"></table>
+
+                </div>
+
+                <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+    <div class="blkUnit grpUnit" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
+
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>网络呈现</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <input type="hidden" id="filter_node">
+
+        <div style="position: relative; height: 40px;">
+
+            <div class="control-pane">
+
+                <a id="layout_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+
+                <div id="layout_controller_div" style="display: none;">
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--linLogMode-->对数模式
+
+                        <label>
+
+                            <input type="radio" name="linLogModeRadios1" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="linLogModeRadios1" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="linLogModeInput" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--outboundAttractionDistribution-->离心力分布模式
+
+                        <label>
+
+                            <input type="radio" name="outboundAttractionRadios1" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="outboundAttractionRadios1" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="outboundAttractionInput" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--adjustSizes-->调整尺寸模式
+
+                        <label>
+
+                            <input type="radio" name="adjustSizesRadios1" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="adjustSizesRadios1" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="adjustSizesInput" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--strongGravityMode-->强引力模式
+
+                        <label>
+
+                            <input type="radio" name="strongGravityModeRadios1" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="strongGravityModeRadios1" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="strongGravityModeInput" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span">1</span><br>
+
+                        <input id="edgeWeightInfluence_input" type="range" min="0" value="1" onclick="change_edgeWeightInfluence();">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span">1</span><br>
+
+                        <input id="scalingRatio_input" type="range" min="0" value="1" onclick="change_scalingRatio();">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span">10</span><br>
+
+                        <input id="gravity_input" type="range" min="0" value="10" onclick="change_gravity();"> 
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span">2</span><br>
+
+                        <input id="slowdown_input" type="range" min="0" value="2" onclick="change_slowdown();"> 
+
+                    </div>
+
+                    <span class="line"></span>
+
+                    <span>
+
+                        <a style="cursor:pointer;" id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+
+                        <a style="cursor:pointer;" id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+
+                        <a style="cursor:pointer;" id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a id="filter_controller" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 181px;"><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+
+                <div id="filter_controller_div" style="display: none;">
+
+                    <div>
+
+                        指标类别
+
+                        <select id="zhibiao-category">
+
+                            <option value="degree" selected>度</option>
+
+                            <option value="pagerank">PR值</option>
+
+                        </select>
+
+                    </div>
+
+                    <div id="min_degree_container">
+
+                      最小度&nbsp;&nbsp;<span id="min-degree-val">0</span><br>
+
+                      <input id="min-degree" type="range" min="0" value="0"> <span id="max-degree-value">0</span>
+
+                    </div>
+
+                    <div id="min_pagerank_container" class="hidden">
+
+                      最小PR值&nbsp;&nbsp;<span id="min-pagerank-val">0</span>e-8<br>
+
+                      <input id="min-pagerank" type="range" min="0" value="0"> <span id="max-pagerank-value">0</span>e-8
+
+                    </div>
+
+                    <div>
+
+                      节点类别
+
+                      <select id="node-category">
+
+                        <option value="" selected>所有类别</option>
+
+                      </select>
+
+                    </div>
+
+                    <span class="line"></span>
+
+                    <div>
+
+                      <button id="reset-btn">重置过滤器</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a href="javascript:void(0);" onclick="show_network();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
+
+            </div>
+
+            <div id="loading_network_data" class="alert alert-info" style="float:left;height: 33px;padding: 9px;display: none;">
+
+            系统繁忙计算中，请稍后...
+
+            </div>
+
+        </div>
+
+
+
+        <div id="network" class="collapse out" style="position: relative;">
+
+            
+
+            <div class="sigma-expand" id="sigma-graph"></div>
+
+            <div id="control-pane-rightdown">
+
+                <h4 class="underline">节点信息</h4>
+
+                <div>
+
+                    用户昵称: <span id="nickname"></span>&nbsp;&nbsp;
+
+                </div>
+
+                <div>
+
+                用户所在地: <span id="location"></span>
+
+                </div>
+
+                <div>
+
+                用户PR值: <span id="pagerank"></span>
+
+                </div>
+
+                <!-- <div>
+
+                    用户所属领域: 
+
+                    <span id="area_value">未知</span>
+
+
+                </div> -->
+    
+                <!-- <div>
+
+                    用户深度分析：
+
+                    <span id="user_profile_link">
+
+                        <a href="##network" class="block">深度分析</a>
+
+                    </span>
+
+                </div> -->
+                <div>
+                    <span id="community"></span>
+                    <span><a id="user_weibo"class="block" href="#network_weibo_div">微博</span>
+                    <span><a id="neighbourhood_detail_a" class="block" href="#network_uid_neighbor1">邻居</a></span>
+                    <span><a id="community_detail_a" class="block" href="#network_uid_community1">社团</a></span>
+
+                    
+                </div>
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+    </div>
+
+
+
+    <div id="network_uid2weibo1" style="display:none">
+
+      <div class="blkUnit grpUnit" id="weibo-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>用户微博列表</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="用户微博列表"></i>&nbsp;&nbsp;
+
+        </div>
+
+                <div id="network_weibo_div" style="float:left;width:100%;">
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="network_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper"style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="network_weibo_ul1">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+      </div>
+
+    </div>
+
+
+
+    <div id="network_uid_community1" style="display:none">
+
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>社区信息详情</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div id="community_easy_info1" style='margin-top:15px;min-height:30px;'></div>
+
+        </div>
+
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="commu_user1">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                <h4><b>社区用户列表</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区用户列表"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div class="tabUnit">
+
+                <div class="tabTitle" style="padding-top:11px;">
+
+                </div>
+
+                <div class="tabConts" style="padding-left:20px;">
+
+                    <div id="community_u_table1" style="width:1000px;">
+
+                        <table rules=rows frame= hsides class="altrowstable" id="community_alternatecolor1">
+
+                        <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
+
+                       </table>
+                         <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        </div> 
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>社区时间走势图</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container1">
+
+                      <div id="community_trend_div_whole1"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div> -->
+
+
+
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+
+           <div class="titlBar" style="padding-bottom:15px;">
+
+                <h4><b>关键词云|各类信息占比分析</b></h4>
+
+                <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+
+            </div>
+
+            <div class="tabUnit">
+
+             <div class="tabTitle" style="padding-top:1px;"></div>
+
+                <div class="tabConts">
+
+                    <div style="width:1033px;height:300px">
+
+                    <div style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+
+                        <div class="keywords_cloud" id="community_keywords_cloud_div1"></div>
+
+                    </div>
+
+                    <div id="community_pie_div1" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+
+                    </div>
+
+                </div>
+
+             </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>社区时间走势图</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container1">
+
+                      <div id="community_trend_div_whole1"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px;">
+
+            <div class="titlBar" style="padding-bottom:25px;">
+
+                 <h4><b>社区微博列表</b></h4>
+
+                 <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="同社区用户微博"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div id="community_weibo_div1" style="float:left;width:100%;">
+              <div class='node_submit' style="margin-top:10px;background-color:#fff;">  
+                <div id='uid_community_1' style='display:none;'>
+                </div>
+                <div id='cid_community_1' style='display:none;'>
+                </div>
+               <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_community_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+                </div>
+                <span id="submit_request_community_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+                <br>
+            </div>
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="community_weibo_list1" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper" style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="community_weibo_ul1">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                        <div class="more" style = "width:100%; height:20px ;"><span><h4 id="more_inform" class="weibo_more" >加载更多&gt;&gt;<h4><span>
+                                        </div> 
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+            </div>
+
+        </div>  
+
+    </div>
+
+
+
+
+
+    <div id="network_uid_neighbor1" style="display:none">
+
+        <div class="blkUnit grpUnit" id="neighbor-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+               <h4><b>邻居信息详情</b></h4>
+
+                <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+            <div id="neighbor_easy_info1" style='margin-top:15px;min-height:30px;'></div>
+
+        </div>
+
+
+
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="neigh_user1">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>邻居用户列表</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居用户列表"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div class="tabUnit">
+
+                <div class="tabTitle" style="padding-top:11px;">
+
+                </div>
+
+                <div class="tabConts" style="padding-left:20px;">
+
+                 <div id="neighbor_u_table1" style="width:1000px;">
+
+                      <table rules=rows frame= hsides class="altrowstable" id="neighbor_alternatecolor1">
+
+                          <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+
+                      </table>
+                    <div class="more" style = "width:100%; height:24px ;">
+                                <span><h4 id="more_profile1" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                    </div> 
+
+
+                 </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    
+
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+
+           <div class="titlBar" style="padding-bottom:15px;">
+
+            <h4><b>关键词云|各类信息占比分析</b></h4>
+
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+
+            </div>
+
+            <div class="tabUnit">
+
+             <div class="tabTitle" style="padding-top:1px;"></div>
+
+              <div class="tabConts">
+
+                <div style="width:1033px;height:300px">
+
+                    <div style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+
+                        <div class="keywords_cloud" id="keywords_cloud_div1"></div>
+
+                    </div>
+
+                    <div id="pie_div1" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+
+                </div>
+
+            </div>
+
+           </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>邻居时间走势图</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container1">
+
+                      <div id="trend_div_whole1"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="neighbor-weibo-container1" style="width:1033px;margin-top:25px;">
+
+            <div class="titlBar" style="padding-bottom:25px;">
+
+            <h4><b>邻居微博列表</b></h4>
+
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="邻居节点微博"></i>&nbsp;&nbsp;
+
+            </div>
+            <!-- <div id='uid_neighbor_1' style="display:none;">
+            </div>
+
+            <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_neighboe_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span> -->
+
+            <div id="neighbor_weibo_div1" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_neighbor_1' style="display:none;">
+                   </div>
+
+                   <div style="float: left;margin-left:20px;">
+
+                   <form>
+
+                    排序方式：
+
+                    <select id="select_neighboe_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="neighbor_weibo_list1" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper" style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="neighbor_weibo_ul1">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform1" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+          </div>  
+
+        </div>
+</div>
+
+
+
+
+
+<div id="con4" style="display:none">
+<div class="blkUnit grpUnit" id="trendProfile" style="height:100%;width:1033px">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>网络概况</b></h4>
+            <i id="summary_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="网络概况"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="tabConts" style = "margin-top:15px">
+            <table class="mtable" id="mstable2"></table>
+            <table class="mtable" id="mstable3"></table>
+        </div>                   
+        <div class="tabUnit">
+        
+            <div class="tabConts">
+                <div id="line2" style="width:1030px;"></div>
+            </div>
+            <button id='con4_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line2(); get_network_infor3()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+        </div>
+    </div>
+    <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px;margin-bottom:20px;">
+
+        <div class="titlBar" style="padding-bottom:1px;">
+
+            <h4><b>关键传播用户</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+
+        </div>
+
+
+
+        <div class="stmTabs tabUnit">
+
+          <!-- 双选下拉框 -->
+
+          <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select21" name="rank_method">
+
+                        <option value="pr_method" selected="selected">权威性排名</option>
+
+                        <option value="dc_method">度中心性排名</option>
+
+                        <option value="bc_method">介数中心性排名</option>
+
+                        <option value="cc_method">紧密中心性排名</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+
+            <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    领域选择：
+
+                    <select id="select22" name="domain_method">
+
+                        <option value="all" selected="selected">所有</option>
+
+                        <option value="folk">民众</option>
+
+                        <option value="opinion_leader">意见领袖</option>
+
+                        <option value="oversea">海外</option>
+
+                        <option value="media">媒体</option>
+
+                        <option value="other">其他</option>
+
+                    </select> 
+
+                </form>
+
+            </div>
+
+            <span id="submit_request2" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+
+
+
+            <span id="loading_current_data2" class="alert alert-info" style="float:left;height: 22px;padding: 4px;margin-left:4px;">系统繁忙计算中，请稍后...</span>
+
+
+
+            <div class="tabConts">
+
+                <div id="rank_table2" style="margin-top:5px">
+
+                    <table class="table table-bordered"></table>
+
+                </div>
+
+                <div id="rank_page_selection2" class="pagination-centered" style="margin-top:5px"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="blkUnit grpUnit" id="graph-container" style="width:1033px; margin-top:25px;min-height: 110px;">
+
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>网络呈现</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="网络呈现"></i>&nbsp;&nbsp;
+
+        </div>
+
+        <input type="hidden" id="filter_node2">
+
+        <div style="position: relative; height: 40px;">
+
+            <div class="control-pane" style="margin-left:20px">
+
+                <a id="layout_controller2" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 230px;"><h5>布局控制器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+
+                <div id="layout_controller_div2" style="display: none;">
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--linLogMode-->对数模式
+
+                        <label>
+
+                            <input type="radio" name="linLogModeRadios" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="linLogModeRadios" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="linLogModeInput2" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--outboundAttractionDistribution-->离心力分布模式
+
+                        <label>
+
+                            <input type="radio" name="outboundAttractionRadios" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="outboundAttractionRadios" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="outboundAttractionInput2" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--adjustSizes-->调整尺寸模式
+
+                        <label>
+
+                            <input type="radio" name="adjustSizesRadios" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="adjustSizesRadios" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="adjustSizesInput2" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--strongGravityMode-->强引力模式
+
+                        <label>
+
+                            <input type="radio" name="strongGravityModeRadios" value="true" checked>
+
+                                是
+
+                        </label>
+
+                        <label>
+
+                            <input type="radio" name="strongGravityModeRadios" value="false">
+
+                                否
+
+                        </label>
+
+                        <input id="strongGravityModeInput2" value="true" type="hidden">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--edgeWeightInfluence-->边权重影响&nbsp;&nbsp;<span id="edgeWeightInfluence_span2">1</span><br>
+
+                        <input id="edgeWeightInfluence_input2" type="range" min="0" value="1" onclick="change_edgeWeightInfluence2();">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--scalingRatio-->缩放比例&nbsp;&nbsp;<span id="scalingRatio_span2">1</span><br>
+
+                        <input id="scalingRatio_input2" type="range" min="0" value="1" onclick="change_scalingRatio2();">
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--gravity-->引力&nbsp;&nbsp;<span id="gravity_span2">10</span><br>
+
+                        <input id="gravity_input2" type="range" min="0" value="10" onclick="change_gravity2();"> 
+
+                    </div>
+
+                    <div style="margin: 2px auto 10px 0px;font-size: 13px;">
+
+                        <!--slowdown-->收敛速度&nbsp;&nbsp;<span id="slowdown_span2">2</span><br>
+
+                        <input id="slowdown_input2" type="range" min="0" value="2" onclick="change_slowdown2();"> 
+
+                    </div>
+
+                    <span class="line"></span>
+
+                    <span>
+
+                        <a style="cursor:pointer;" id="refresh_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+
+                        <a style="cursor:pointer;" id="pause_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+
+                        <a style="cursor:pointer;" id="stop_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a id="filter_controller2" status="closed" href="javascript:void(0);" class="btn btn-danger" style="width: 181px;"><h5>过滤器<span class="glyphicon glyphicon-chevron-down"></span></h5></a>
+
+                <div id="filter_controller_div2" style="display: none;">
+
+                    <div>
+
+                        指标类别
+
+                        <select id="zhibiao-category2">
+
+                            <option value="degree" selected>度</option>
+
+                            <option value="pagerank">PR值</option>
+
+                        </select>
+
+                    </div>
+
+                    <div id="min_degree_container2">
+
+                      最小度&nbsp;&nbsp;<span id="min-degree-val2">0</span><br>
+
+                      <input id="min-degree2" type="range" min="0" value="0"> <span id="max-degree-value2">0</span>
+
+                    </div>
+
+                    <div id="min_pagerank_container2" class="hidden">
+
+                      最小PR值&nbsp;&nbsp;<span id="min-pagerank-val2">0</span>e-8<br>
+
+                      <input id="min-pagerank2" type="range" min="0" value="0"> <span id="max-pagerank-value2">0</span>e-8
+
+                    </div>
+
+                    <div>
+
+                      节点类别
+
+                      <select id="node-category2">
+
+                        <option value="" selected>所有类别</option>
+
+                      </select>
+
+                    </div>
+
+                    <span class="line"></span>
+
+                    <div>
+
+                      <button id="reset-btn2">重置过滤器</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a href="javascript:void(0);" onclick="show_network2();" class="btn btn-danger"><h5>生成并查看网络<span class="glyphicon glyphicon-arrow-down"></span></h5></a>
+
+            </div>
+
+            <div class="control-pane">
+
+                <a href="javascript:void(0);" onclick="download();" class="btn btn-danger" ><h5>下载图片<span class="glyphicon glyphicon-save"></span></h5></a>
+
+            </div>
+
+            <div id="loading_network_data9" class="alert alert-info" style="float:left;height: 33px;padding: 9px;display: none;">
+
+            系统繁忙计算中，请稍后...
+
+            </div>
+
+        </div>
+
+
+
+       <div id="network2" class="collapse out" style="position: relative;">
+ 
+            <div class="sigma-expand" id="sigma-graph2"></div>
+            <div id="control-pane-rightdown2">
+                <h4 class="underline">节点信息</h4>
+                <div>
+                    用户昵称: <span id="nickname2"></span>&nbsp;&nbsp;
+                </div>
+                <div>
+                用户所在地: <span id="location2"></span>
+                </div>
+                <!-- <div>
+                    用户所属领域: 
+                    <span id="area_value2">未知</span>
+                   
+                </div> -->
+                <div>
+                用户PR值: <span id="pagerank2"></span>
+                </div>
+                <!-- <div>
+                    用户深度分析：
+                    <span id="user_profile_link2">
+                    <a href="#" class="block">深度分析</a>
+                    </span>
+                </div> -->
+                <div>
+                    <span id="community2"></span>
+                    <span><a id="user_weibo2" class="block" href="#network_weibo_div">微博</a></span>
+                    <span><a id="neighbourhood_detail_a2" class="block" href="#network_uid_neighbor">邻居</a></span>
+                    <span><a id="community_detail_a2" class="block" href="#network_uid_community">社团</a></span>
+                </div>
+        </div>
+    </div>
+
+    <div id="network_uid2weibo" style="display:none">
+
+      <div class="blkUnit grpUnit" id="weibo-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+        <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>用户微博列表</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="用户微博列表"></i>&nbsp;&nbsp;
+
+        </div>
+
+                <div id="network_weibo_div" style="float:left;width:100%;">
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="network_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper" style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="network_weibo_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+      </div>
+    </div>
+
+    <div id="network_uid_community" style="display:none">
+
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>社区信息详情</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div id="community_easy_info" style='margin-top:15px;min-height:30px;'></div>
+
+        </div>
+
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="commu_user">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                <h4><b>社区用户列表</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区用户列表"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div class="tabUnit">
+
+                <div class="tabTitle" style="padding-top:11px;">
+
+                </div>
+
+                <div class="tabConts" style="padding-left:20px;">
+
+                    <div id="community_u_table" style="width:1000px;">
+
+                        <table rules=rows frame= hsides class="altrowstable" id="community_alternatecolor">
+
+                        <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+
+                       </table>
+                                           <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile2" class = "weibo_more">加载更多&gt;&gt;<h4><span>
+                        </div> 
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        
+
+
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+
+           <div class="titlBar" style="padding-bottom:15px;">
+
+                <h4><b>关键词云|各类信息占比分析</b></h4>
+
+                <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+
+            </div>
+
+            <div class="tabUnit">
+
+             <div class="tabTitle" style="padding-top:1px;"></div>
+
+                <div class="tabConts">
+
+                    <div style="width:1033px;height:300px">
+
+                    <div style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+
+                        <div class="keywords_cloud" id="community_keywords_cloud_div"></div>
+
+                    </div>
+
+                    <div id="community_pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+
+                    </div>
+
+                </div>
+
+             </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>社区时间走势图</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container">
+
+                      <div id="community_trend_div_whole"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
+        <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px">
+
+            <div class="titlBar" style="padding-bottom:25px;">
+
+                 <h4><b>社区微博列表</b></h4>
+
+                 <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="同社区用户微博"></i>&nbsp;&nbsp;
+
+            </div>
+            
+
+            <div id="community_weibo_div" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_community_2' style="display:none;">
+                    </div>
+                    <div id='cid_community_2' style="display:none;">
+                    </div>
+                <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_community_2" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_community_2" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="community_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper" style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="community_weibo_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                        <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform2" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
+
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+            </div>
+  
+         
+        </div>   
+
+    </div>
+
+
+
+    <div id="network_uid_neighbor" style="display:none">
+
+        <div class="blkUnit grpUnit" id="neighbor-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+               <h4><b>邻居信息详情</b></h4>
+
+                <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div id="neighbor_easy_info" style='margin-top:15px;min-height:30px;'></div>
+
+        </div>
+
+
+
+
+
+        <div class="blkUnit grpUnit" style="float:left;width:1033px;margin-bottom:20px" id="neigh_user">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>邻居用户列表</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="邻居用户列表"></i>&nbsp;&nbsp;
+
+            </div>
+
+            <div class="tabUnit">
+
+                <div class="tabTitle" style="padding-top:11px;">
+
+                </div>
+
+                <div class="tabConts" style="padding-left:20px;">
+
+                 <div id="neighbor_u_table" style="width:1000px;">
+
+                      <table rules=rows frame= hsides class="altrowstable" id="neighbor_alternatecolor">
+
+                          <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+
+                      </table>
+                        <div class="more" style = "width:100%; height:24px；">
+                                <span><h4 id="more_profile3" class="weibo_more" >加载更多&gt;&gt;<h4><span>
+                         </div> 
+
+                 </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+
+           <div class="titlBar" style="padding-bottom:15px;">
+
+            <h4><b>关键词云|各类信息占比分析</b></h4>
+
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="关键词云:热点关键词信息；各类信息占比分析:各类情感占比"></i>&nbsp;&nbsp;
+
+            <!-- <span id="peak_cloudpie_tooltip"></span> -->
+
+            </div>
+
+            <div class="tabUnit">
+
+             <div class="tabTitle" style="padding-top:1px;"></div>
+
+              <div class="tabConts">
+
+                <div style="width:1033px;height:300px">
+
+                    <div style="clear:left;width:50%;float:left;height:250px;position:relative;background-color:#FFF;">
+
+                        <div class= "keywords_cloud" id="keywords_cloud_div"></div>
+
+                    </div>
+
+                    <div id="pie_div" style="width:50%;float:left;height:250px;margin-right:-200px;background-color:#FFF;"></div>
+
+                </div>
+
+            </div>
+
+           </div>
+
+       </div>
+
+       <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>邻居时间走势图</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container">
+
+                      <div id="trend_div_whole"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
+
+
+
+        <div class="blkUnit grpUnit" id="neighbor-weibo-container" style="width:1033px;margin-top:25px">
+
+            <div class="titlBar" style="padding-bottom:25px;">
+
+            <h4><b>邻居微博列表</b></h4>
+
+            <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="邻居节点微博"></i>&nbsp;&nbsp;
+
+            </div>
+            
+            <div id="neighbor_weibo_div" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_neighbor_2' style="display:none;">
+                   </div>
+                <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_neighbor_2" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_2" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
+
+                    <div class="tabCon">
+
+                        <div class="tabCont gColor4" style="zoom:1;">
+
+                            <div id="neighbor_weibo_list" class="weibo_list weibo_list_height scrolls tang-scrollpanel">
+
+                                <div id="content_control_height" class="tang-scrollpanel-wrapper" style='background-color:#fff'>
+
+                                    <div class="tang-scrollpanel-content">
+
+                                        <ul id="neighbor_weibo_ul">
+
+                                        <!-- 这里是显示信息的地方 -->
+
+                                        </ul>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform3" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
+                                    </div>
+
+
+
+                                    <div id="TANGRAM_54__slider" class="tang-ui tang-slider tang-slider-vtl" style="height: 100%;">
+
+                                        <div id="TANGRAM_56__view" class="tang-view" style="width: 6px;">
+
+                                            <div class="tang-content">
+
+                                                <div id="TANGRAM_56__inner" class="tang-inner">
+
+                                                    <div id="TANGRAM_56__process" class="tang-process tang-process-undefined" style="height: 0px;"></div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <a id="TANGRAM_56__knob" href="javascript:;" class="tang-knob" style="top: 0%; left: 0px;"></a>
+
+                                        </div>
+
+                                        <div class="tang-corner tang-start" id="TANGRAM_54__arrowTop"></div>
+
+                                        <div class="tang-corner tang-last" id="TANGRAM_54__arrowBottom"></div>
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+ 
+                </div>
+
+          </div>  
+
+   </div>
+
+
+
+
+
+
+
+{% endblock content %}
+
+{% block tail_js %}
+
+    <script> 
+
+        $("#summary_tooltip").tooltip();
+
+        $("#keyclient_tooltip").tooltip();
+
+        $("#display_tooltip").tooltip();
+
+        $("#frequency_tooltip").tooltip();
+
+        $("#power_law_distribution_tooltip").tooltip();
+
+        $("#layout_controller").click(function(){
+
+            if($("#layout_controller").attr('status') == 'closed'){
+
+                $("#layout_controller_div").css("display", "block");
+
+                $("#layout_controller").attr('status', 'opened')
+
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+
+            }
+
+            else{
+
+                $("#layout_controller_div").css("display", "none");
+
+                $("#layout_controller").attr('status', 'closed');
+
+                $("#layout_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+
+            }
+
+        });
+
+        $("#filter_controller").click(function(){
+
+            if($("#filter_controller").attr('status') == 'closed'){
+
+                $("#filter_controller_div").css("display", "block");
+
+                $("#filter_controller").attr('status', 'opened')
+
+                $("#filter_controller").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+
+            }
+
+            else{
+
+                $("#filter_controller_div").css("display", "none");
+
+                $("#filter_controller").attr('status', 'closed');
+
+                $("#filter_controller").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+
+            }
+
+        });
+
+
+
+
+
+        
+
+        $("#layout_controller2").click(function(){
+
+            if($("#layout_controller2").attr('status') == 'closed'){
+
+                $("#layout_controller_div2").css("display", "block");
+
+                $("#layout_controller2").attr('status', 'opened')
+
+                $("#layout_controller2").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+
+            }
+
+            else{
+
+                $("#layout_controller_div2").css("display", "none");
+
+                $("#layout_controller2").attr('status', 'closed');
+
+                $("#layout_controller2").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+
+            }
+
+        });
+
+        $("#filter_controller2").click(function(){
+
+            if($("#filter_controller2").attr('status') == 'closed'){
+
+                $("#filter_controller_div2").css("display", "block");
+
+                $("#filter_controller2").attr('status', 'opened')
+
+                $("#filter_controller2").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+
+            }
+
+            else{
+
+                $("#filter_controller_div2").css("display", "none");
+
+                $("#filter_controller2").attr('status', 'closed');
+
+                $("#filter_controller2").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+
+            }
+
+        });
+
+
+
+
+
+    </script>
+
+    <script src="/static/js/identify/ds_topic_identify2.js"></script>
+
+    <script src="/static/js/identify/topic_identify2.js"></script>
+
+    <script src="/static/js/api/cloud_keywords.js" type="text/javascript"></script>
+
+{% endblock tail_js %}
+

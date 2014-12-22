@@ -1,22 +1,29 @@
 # -*- coding: utf-8 -*-
+'''
+version:2014.12
+author:hxq
+'''
 import sys
+import networkx as nx
+
+from area import pagerank_rank, make_network, make_network_graph 
+from topicStatus import _topic_not_calc, _update_topic_status2Computing, \
+        _update_topic_status2Completed
+from utils import acquire_topic_name, acquire_topic_id, \
+        save_rank_results, save_gexf_results, save_attribute_dict, \
+        acquire_real_topic_id
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
-import networkx as nx
-sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
-from area import pagerank_rank, make_network, make_network_graph 
-from utils import acquire_topic_name, acquire_topic_id, save_rank_results, save_gexf_results, save_attribute_dict
-from utils import acquire_real_topic_id
-from topicStatus import _topic_not_calc, _update_topic_status2Computing, _update_topic_status2Completed
-import networkx as nx
 from config import db #　用于测试期间，建立topicstatus这张表。待删
 import time # 用于测试生成topicStatus入库时间，待删
-from model import TopicStatus # 用于测试，待删
+from model import TopicStatus, Topics # 用于测试，待删
 from lxml import etree
 from get_first_user import get_first_node
-from trendsetter_rank import trendsetter_rank
+# from trendsetter_rank import trendsetter_rank
 from area import _utf8_unicode
+from fu_tr import get_interval_count
 
 TOPK = 1000
 Minute = 60
@@ -73,9 +80,9 @@ def main():
         all_uid_pr, ds_all_uid_pr, data, ds_data = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
         print 'end PageRank'
 
-        print 'start TrendSetter Rank'
-        ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
-        print 'end TrendSetter Rank'
+        #print 'start TrendSetter Rank'
+        #ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
+        #print 'end TrendSetter Rank'
 
         print 'start make network graph'
         topic_id = int(topic_id)
@@ -83,10 +90,13 @@ def main():
         if not topic_id: # 待删
             gexf = ''
         else:
-            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
+            gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, real_topic_id)
+            #gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)
+        print 'start fu_tr'
+        get_interval_count(topicname, date, windowsize)
         print 'update_topic_end'
         _update_topic_status2Completed(topicname, start_ts, end_ts, db_date) 
     
@@ -94,9 +104,20 @@ def main():
 if __name__ == '__main__':
     module_t_s = 'identify'
     status = -1
-    topic = u'东盟,博览会'
-    start = datetime2ts('2013-09-02')
-    end = datetime2ts('2013-09-07') + Day
+    #topic = u'全军政治工作会议'
+    topic = u'APEC'
+    start = datetime2ts('2014-11-01')
+    end = datetime2ts('2014-11-20') + Day
+
+    save_topics = Topics(topic, start, end)
+    save_topics_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
+                                                        Topics.start_ts==start ,\
+                                                        Topics.end_ts==end).first()
+    if save_topics_exist:
+        db.session.delete(save_topics_exist)
+    db.session.add(save_topics)
+    db.session.commit()
+    
     db_date = int(time.time())
     save_t_s = TopicStatus(module_t_s, status, topic, start, end, db_date)
     save_t_s_exist = db.session.query(TopicStatus).filter(TopicStatus.module==module_t_s, TopicStatus.topic==topic ,\
