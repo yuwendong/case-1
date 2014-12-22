@@ -30,7 +30,7 @@ $ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
 2.配置mesos
 
 统一安装位置：/home/spark/
-参见http://mesos.apache.org/gettingstarted/，http://mesos.apache.org/documentation/latest/deploy-scripts/
+参见http://mesos.apache.org/gettingstarted/
 尽量使用Apache官网下载方案，git版本不稳定
 
 mesos启动后可通过219.224.135.46:5050查看Web UI界面
@@ -90,18 +90,21 @@ sudo apt-get update
 
 四、mesos启动
 
-1.启动master
+参考http://mesos.apache.org/documentation/latest/deploy-scripts/
+1.集群启动
 
-登录219.224.135.46
+登陆master节点（219.224.135.46）
+可以在/usr/local/var/mesos/deploy/下配置环境变量
 ```
-$ cd /home/spark/mesos-0.20.1/build
-$ ./bin/mesos-master.sh --ip=219.224.135.46 --work_dir=/var/lib/mesos
+$ cd /usr/local/sbin
+$ ./mesos-start-cluster.sh
 ```
-2.启动slave
-登录47，48，60等服务器
+2.集群停止
+
+登陆master节点（219.224.135.46）
 ```
-$ cd /home/spark/mesos-0.20.1/build
-$ ./bin/mesos-master.sh --master=219.224.135.46:5050
+$ cd /usr/local/sbin
+$ ./mesos-stop-cluster.sh
 ```
 3.webUI界面
 219.224.135.46:5050
