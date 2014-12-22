@@ -91,6 +91,7 @@ sudo apt-get update
 四、mesos启动
 
 参考http://mesos.apache.org/documentation/latest/deploy-scripts/
+
 1.集群启动
 
 登陆master节点（219.224.135.46）
