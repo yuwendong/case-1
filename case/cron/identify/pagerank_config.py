@@ -1,3 +1,3 @@
 #-*- coding: utf-8 -*-
 
-PAGERANK_ITER_MAX = 1
+PAGERANK_ITER_MAX = 10

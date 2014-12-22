@@ -10,7 +10,6 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.path.append('../')
 from time_utils import datetime2ts, window2time, ts2datetimestr
-from hadoop_utils import generate_job_id
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, is_in_trash_list, acquire_user_by_id, read_key_users
 from utils import ds_read_key_users, read_graph, ds_tr_read_key_users, read_attribute_dict
 from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
@@ -18,7 +17,7 @@ from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from config import xapian_search_user as user_search
 from dynamic_xapian_weibo import getXapianWeiboByDuration, getXapianWeiboByTopic
 
-from pagerank import pagerank
+from spark_test.pagerank import pagerank
 from makegexf import make_gexf, make_ds_gexf
 from gexf import Gexf
 from lxml import etree
@@ -47,29 +46,6 @@ def get_nad(rlist):
     data = ystart(rlist, flag)
     return len(data),data
 
-'''
-def degree_rank(top_n, date, topic_id, window_size):
-    data = []
-    degree = prepare_data_for_degree(topic_id, date, window_size)
-
-    if not degree:
-        return data
-
-    sorted_degree = sorted(degree.iteritems(), key=operator.itemgetter(1), reverse=True)
-    sorted_uids = []
-    count = 0
-    for uid, value in sorted_degree: # 获得top_n的u_id
-        if count >= top_n:
-            break
-        sorted_uids.append(uid)
-        count += 1
-    topicname = acquire_topic_name(topic_id)
-    if not topicname:
-        return data
-    data = save_rank_results(sorted_uids, 'topic', 'degree', date, window_size, topicname) # 存储结构变为SSDB---改
-    return data
-'''
-
 def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     data = []
 
@@ -82,17 +58,13 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
 
     input_tmp_path = tmp_file.name
     ds_input_tmp_path = ds_tmp_file.name
-    
-    job_id = generate_job_id(datetime2ts(date), window_size, topic_id, network_type) # 将其转换为'%s_%s_%s_%s'的形式
-    print 'job_id:', job_id
-    ds_job_id = generate_job_id(datetime2ts(date), window_size, topic_id, ds_network_type)
-    print 'ds_job_id:', ds_job_id
+    print input_tmp_path, ds_input_tmp_path
 
     iter_count = PAGERANK_ITER_MAX
     print 'pagerank_source_network'
-    sorted_uids, all_uid_pr = pagerank(job_id, iter_count, input_tmp_path, top_n) # 排序的uid的序列
+    sorted_uids, all_uid_pr = pagerank(iter_count, input_tmp_path, top_n) # 排序的uid的序列
     print 'pagerank_direct_superior_network'
-    ds_sorted_uids, ds_all_uid_pr = pagerank(ds_job_id, iter_count, ds_input_tmp_path, ds_top_n)
+    ds_sorted_uids, ds_all_uid_pr = pagerank(iter_count, ds_input_tmp_path, ds_top_n)
     print 'top_n:', top_n
     #print 'len(sorted_uid):', len(sorted_uids)
     print 'ds_top_n:', ds_top_n
@@ -100,29 +72,10 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     if not topicname:
         return data
     print 'save_rank_results'
-    data = save_rank_results(sorted_uids, 'topic', 'pagerank', date, window_size, topicname, all_uid_pr)
-    ds_data = save_ds_rank_results(ds_sorted_uids, 'topic', 'pagerank', date, window_size, topicname, ds_all_uid_pr)
+    # data = save_rank_results(sorted_uids, 'topic', 'pagerank', date, window_size, topicname, all_uid_pr)
+    # ds_data = save_ds_rank_results(ds_sorted_uids, 'topic', 'pagerank', date, window_size, topicname, ds_all_uid_pr)
 
     return all_uid_pr, ds_all_uid_pr, data, ds_data
-
-'''
-def prepare_data_for_degree(topic_id, date, window_size): 
-    topic = acquire_topic_name(topic_id) # 将topic_id>>topic_name
-    if not topic:
-        return None
-
-    g ,gg= make_network(topic, date, window_size)
-    if not g:
-        return None
-
-    N = len(g.nodes()) 
-    print 'topic network size %s' % N
-
-    if not N:
-        return None
-
-    return g.degree() # 返回所有节点的度
-'''
 
 def prepare_data_for_pr(topic_id, date, window_size, topicname, real_topic_id):
     tmp_file = tempfile.NamedTemporaryFile(delete=False)
@@ -161,13 +114,16 @@ def write_tmp_file(tmp_file, g, N):
         outlinks = g.out_edges(nbunch=[node]) # outlinks=[(node,node1),(node,node2)...] 这里不涉及方向，node1是与node联通的店
         outlinks = map(str, [n2 for n1, n2 in outlinks]) # [str(node1),str(node2),str(node3)]
         if not outlinks:
-            value = 'pr_results,%s,%s' % (1.0/N, N) # 虚构出强连通图，影响力1/n
-            tmp_file.write('%s\t%s\n' % (node, value))
+            pass
+            # value = 'pr_results,%s,%s' % (1.0/N, N) # 虚构出强连通图，影响力1/n
+            # tmp_file.write('%s\t%s\n' % (node, value))
         else:
-            outlinks_str = ','.join(outlinks)
-            value = 'pr_results,%s,%s,' % (1.0/N, N)
-            value += outlinks_str # value=pr_results,1/n,n,str(uid1),str(uid2)
-            tmp_file.write('%s\t%s\n' % (node, value))
+            for outlink in outlinks:
+                tmp_file.write('%s\t%s\n' % (node, outlink))
+            # outlinks_str = ','.join(outlinks)
+            # value = 'pr_results,%s,%s,' % (1.0/N, N)
+            # value += outlinks_str # value=pr_results,1/n,n,str(uid1),str(uid2)
+            # tmp_file.write('%s\t%s\n' % (node, value))
 
     tmp_file.flush() # 强制提交内存中还未提交的内容
 
@@ -261,78 +217,7 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     '''
     gexf = make_gexf('hxq', 'Source Network', new_G, node_degree, key_users, all_uid_pr, pr_data , partition, new_attribute_dict)
     ds_gexf = make_ds_gexf('hxq', 'Direct Superior Network', ds_new_G, ds_node_degree, ds_key_users, ds_tr_key_users, ds_all_uid_pr, ds_pr_data, ds_all_uid_tr, ds_tr_data, ds_partition, ds_new_attribute_dict)
-    '''
-    gexf = Gexf("Yang Han", "Topic Network")
 
-    node_id = {}
-    graph = gexf.addGraph("directed", "static", "demp graph")
-    graph.addNodeAttribute('name', type='string', force_id='name')
-    graph.addNodeAttribute('location', type='string', force_id='location') # 添加地理位置属性
-    graph.addNodeAttribute('timestamp', type='int', force_id='timestamp')
-    graph.addNodeAttribute('pagerank', type='string', force_id='pagerank')
-    graph.addNodeAttribute('acategory', type='string', force_id='acategory')
-    graph.addNodeAttribute('text', type='string', force_id='text')
-    graph.addNodeAttribute('reposts_count', type='string', force_id='reposts_count') # 新添加的属性
-    graph.addNodeAttribute('comments_count', type='string', force_id='comments_count')
-    graph.addNodeAttribute('attitude_count', type='string', force_id='attitude_count')
-
-    pos = nx.spring_layout(G) # 定义一个布局 pos={node:[v...]/(v...)}
-
-    node_counter = 0
-    edge_counter = 0
-
-    for node in G.nodes():
-        x, y = pos[node] # 返回位置(x,y)
-        degree = node_degree[node]
-        if node not in node_id: # {node:排名}
-            node_id[node] = node_counter
-            node_counter += 1
-        uid = node # 节点就是用户名
-        if uid in key_users: # 根据是否为关键用户添加不同的节点 
-            _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='255', g='51', b='51', size=str(degree))
-        else:
-            _node = graph.addNode(node_id[node], str(node), x=str(x), y=str(y), z='0', r='0', g='204', b='204', size=str(degree))
-        cluster_id = str(partition[node])
-        _node.addAttribute('acategory', cluster_id)
-        #print 'al_uid_pr:', all_uid_pr
-        pr = str(all_uid_pr[str(uid)])
-        _node.addAttribute('pagerank', pr)
-        #print 'pagarank_uid:', uid
-        try:
-            text_add = new_attribute_dict[uid][0][0] # 添加节点属性--text
-            _node.addAttribute('text', json.dumps(text_add))
-            reposts_count_add = new_attribute_dict[uid][0][1]
-            _node.addAttribute('reposts_count', str(reposts_count_add)) # 添加节点属性--reposts_count
-            comment_count_add = new_attribute_dict[uid][0][2]
-            _node.addAttribute('comments_count', str(comment_count_add)) # 添加节点属性--comment_count
-            attitude_count_add = new_attribute_dict[uid][0][3]
-            if attitude_count_add == None:
-                attitude_count_add = u'未知'
-            _node.addAttribute('attitude_count', attitude_count_add) # 添加节点属性--attitude_count
-        except KeyError:
-            _node.addAttribute('text', u'未知')
-            _node.addAttribute('reposts_count', u'未知')
-            _node.addAttribute('comments_count', u'未知')
-            _node.addAttribute('attitude_count', u'未知')
-        user_info = acquire_user_by_id(uid) # 获取对应的用户信息，添加属性
-        if user_info:
-            _node.addAttribute('name', user_info['name'])
-            _node.addAttribute('location', user_info['location'])
-        else:
-            _node.addAttribute('name', u'未知')
-            _node.addAttribute('location', u'未知')
-            #_node.addAttribute('timestamp', str(uid_ts[uid]))
-
-    for edge in G.edges():
-        start, end = edge # (repost_uid, source_uid)
-        start_id = node_id[start]
-        end_id = node_id[end]
-        graph.addEdge(str(edge_counter), str(start_id), str(end_id))
-        edge_counter += 1
-    '''
-
-
-    
     return etree.tostring(gexf.getXML(), pretty_print=True, encoding='utf-8', xml_declaration=True), etree.tostring(ds_gexf.getXML(), pretty_print=True, encoding='utf-8', xml_declaration=True)# 生成序列化字符串
 
 def cut_network(g, node_degree, degree_threshold): # 筛选出节点度数大于等于2的节点，作为绘图的展示节点
@@ -581,8 +466,3 @@ if __name__=='__main__':
     topicname = u'东盟,博览会'
     real_topic_id = 227
     pagerank_rank(TOPK, date, topic_id, window_size, topicname, real_topic_id)
-    
-    
-    
-    
-    
