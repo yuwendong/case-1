@@ -88,4 +88,24 @@ sudo apt-get update
 2.E: Sub-process /usr/bin/dpkg returned an error code (1)
 参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
 
+四、mesos启动
 
+参考http://mesos.apache.org/documentation/latest/deploy-scripts/
+
+1.集群启动
+
+登陆master节点（219.224.135.46）
+可以在/usr/local/var/mesos/deploy/下配置环境变量
+```
+$ cd /usr/local/sbin
+$ ./mesos-start-cluster.sh
+```
+2.集群停止
+
+登陆master节点（219.224.135.46）
+```
+$ cd /usr/local/sbin
+$ ./mesos-stop-cluster.sh
+```
+3.webUI界面
+219.224.135.46:5050
