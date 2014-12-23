@@ -14,7 +14,7 @@ from localbridge import GetLocalBridge
 from snowball1 import SnowballSampling
 # from hadoop_utils import generate_job_id
 from makegexf import make_gexf, make_ds_gexf
-from spark_test.pagerank import pagerank
+from spam.pagerank import pagerank
 from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
@@ -65,6 +65,7 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     #print 'len(sorted_uid):', len(sorted_uids)
     print 'ds_top_n:', ds_top_n
     topicname = acquire_topic_name(topic_id)
+    print 'topicname:', topicname
     if not topicname:
         return data
     print 'save_rank_results'
@@ -516,7 +517,7 @@ def check_attribute(attribute_dict , query_dict, map_dict): # 当批量查询没
     return attribute_dict
 
 if __name__=='__main__':
-    topic_id = 1107
+    topic_id = 595
     TOPK = 10000
     date = '2013-09-08'
     window_size = 6
