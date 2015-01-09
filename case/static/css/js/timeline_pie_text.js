@@ -45,24 +45,23 @@
                var width_tab = document.getElementById("Tableselect").offsetWidth;
                var tab_wd = width_tab/n;
 
-               for (var i = 0;i < data.length;i++) {
+            for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][1];
                     result1[i] = data[i][2];
                     result2[i] = data[i][0]; 
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
+                        html += '<a style="display: block;width:'+si_str+'" topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" >';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                     else{
-                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
+                        html += '<a style="display: block;width:'+si_str+'" topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" >';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                 };
-                html += '</tr></table>';
                 $("#Tableselect").append(html);
                 bindSentimentTabClick();
 
@@ -80,20 +79,21 @@
 
 
     function bindSentimentTabClick(){
-        
+        /*    
         $("[name='c_topic']").click(function() {
-            
+        */
+        $("#Tableselect").children("a").unbind();
+        $("#Tableselect").children("a").click(function(){
             var select_a = $(this);
-            var unselect_a = $("[name='c_topic']");//$(this).siblings('a');
+            console.log(select_a.attr("topic"));
+            var unselect_a = $(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                style = select_a.attr('topic');
-              
+                var style = select_a.attr('topic');          
                 getweibos_data(style);
-
-            }
-        });
+             }
+         });
     }
 
 
@@ -243,34 +243,68 @@
                 var data_af = [];
                 var time;
                 
-                html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
+                html += '<div class="tang-scrollpanel-wrapper">';// style="height: ' + 78 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
                 for(var i = 0; i < data.length; i += 1){
                 var da = data[i];
                 var uid = da['user'];
+                var name;
+                if ('name' in da){
+                    name = da['name'];
+                    if(name == 'unknown'){
+                        name = '未知';
+                    }
+                }
+                else{
+                    name = '未知';
+                }
                 var mid = da['_id'];
+                var retweeted_mid = da['retweeted_mid'];
+        				var retweeted_uid = da['retweeted_uid'];
                 var text = da['text'];
+                if (da['geo']){
+        					var ip = da['geo'];
+        					var loc = ip;
+        				}
+        				else{
+        					var loc = ip = '未知';
+        				}
                 var reposts_count = da['reposts_count'];
                 var comments_count = da['comments_count'];
                 var timestamp = da['time'];
                 var date = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
                 var user_link = 'http://weibo.com/u/' + uid;
-                var user_image_link = '/static/img/unknown_profile_image.gif';
-                
+                var weibo_link = da['weibo_link'];
+        				var repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + mid;
+        				var user_image_link = '/static/img/unknown_profile_image.gif';
+        				/*var user_image_link = da['profile_image_url'];
+        				if (user_image_link == ''){
+            				user_image_link = '/static/img/unknown_profile_image.gif';
+        				}*/
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
                 html += '<img src="' + user_image_link + '">';
-                html += '</a></div>';
-                html += '<div class="weibo_detail">';
-                html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + uid + '</a>&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
-                html += '<div class="weibo_info">';
-                html += '<div class="weibo_pz">';
-                html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-                html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
-                html += '<div class="m">';
-                html += '<a class="undlin">' + date + '</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
+        				html += '</a></div>';
+        				html += '<div class="weibo_detail">';
+        				html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>(' + loc + ')&nbsp;&nbsp;发布ip:' + '未知' + '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;' + text + '</p>';;
+        				html += '<div class="weibo_info">';
+        				html += '<div class="weibo_pz">';
+        				html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    						html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    						html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+   		  				html += '<a class="undlin" href="javascript:;" target="_blank">关注数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+    						html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
+        				html += '<div class="m">';
+        				html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
+    //html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
+    						html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
+    						html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+    						html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
+    						html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
+    						if(retweeted_mid != '0'){
+            			var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
+            			html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发子树</a>';
+        				}
                 html += '</div>';
                 html += '</div>';
                 html += '</div>';
@@ -279,6 +313,8 @@
             html += '</ul>';
             html += '</div>';
             $("#vertical-ticker").append(html);
+            $("#weibos_div").css("height", $("#vertical-ticker").css("height"));
+            //$("#weibos_div").css("height", $("#tabCon").css("height"));
             }
  
 

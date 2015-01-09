@@ -935,6 +935,12 @@
             color: yellow;
 
         }
+        .weibo_more {
+            padding: 4px;
+            text-align: center;
+            cursor: pointer;
+            
+        }
 
 
 
@@ -1120,9 +1126,9 @@
 
                     <a status="front" class="tabLi gColor3" href="javascript:;" id ="Tab4" onclick="switchTab('con4','Tab4')" style="display: block;">
 
-                        <div class="nmTab">直接上级转发网络</div>
+                        <div class="nmTab">直接转发网络</div>
 
-                        <div class="hvTab">直接上级转发网络</div>
+                        <div class="hvTab">直接转发网络</div>
 
                     </a>
 
@@ -1351,9 +1357,9 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div id= "firstuser_more" style="border-top:1px solid #428bca;border-bottom:1px solid #428bca;text-align:center; ">
-                                        	<span><b id="more_infor"><h5>加载更多>></h5></b></span>
-                                        </div>
+                         				<div class="more" id='firstuser_more' style = "width:100%; height:24px;">
+                               			 	<span><h4 id="firstmore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
 
 
                                     </div>
@@ -1581,9 +1587,10 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                    	<div id= "trendmaker_more" style="border-top:1px solid #428bca;border-bottom:1px solid #428bca;text-align:center; ">
-                                        	<span><b id="more_infor"><h5>加载更多>></h5></b></span>
-                                        </div>    	
+                                   		<div class="more" id = 'trendmaker_more'style = "width:100%; height:24px;">
+                               			 	<span><h4 id="makemore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
+ 	
                                     </div>
 
 
@@ -1707,10 +1714,9 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div id= "trendpusher_more" style="border-top:1px solid #428bca;border-bottom:1px solid #428bca;text-align:center; ">
-                                        	<span><b id="more_infor"><h5>加载更多>></h5></b></span>
-                                        </div>
-
+                                   		<div class="more" id = 'trendpusher_more'style = "width:100%; height:24px;">
+                               			 	<span><h4 id="pushmore_infor" class="weibo_more">加载更多&gt;&gt;<h4><span>
+                        				</div> 
 
                                     </div>
 
@@ -1803,14 +1809,14 @@
                 <div id="line" style="width:1030px"></div>
 
             </div>
-            <button class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line(); get_network_infor1()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+            <button id='con3_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line(); get_network_infor1()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
         </div>
 
     </div>
 
 
 
-    <div class="well" style="width:1033px;margin-top:25px">
+    <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px">
 
         <div class="titlBar" style="padding-bottom:1px;">
 
@@ -1930,7 +1936,7 @@
 
    
 
-    <div class="well" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
+    <div class="blkUnit grpUnit" id="graph-container" style="width:1033px; position: relative;min-height: 110px;">
 
         <div class="titlBar" style="padding-bottom:15px; position: relative;">
 
@@ -2082,11 +2088,11 @@
 
                     <span>
 
-                        <a id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+                        <a style="cursor:pointer;" id="refresh_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
 
-                        <a id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+                        <a style="cursor:pointer;" id="pause_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
 
-                        <a id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+                        <a style="cursor:pointer;" id="stop_layout" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
 
                     </span>
 
@@ -2203,17 +2209,17 @@
                 用户PR值: <span id="pagerank"></span>
 
                 </div>
-                <div>
+
+                <!-- <div>
 
                     用户所属领域: 
 
-                    <span id="area_value">财经</span>
+                    <span id="area_value">未知</span>
 
-                    <span><a href="#network" class="block">领域</a></span>
 
-                </div>
+                </div> -->
     
-                <div>
+                <!-- <div>
 
                     用户深度分析：
 
@@ -2223,7 +2229,7 @@
 
                     </span>
 
-                </div>
+                </div> -->
                 <div>
                     <span id="community"></span>
                     <span><a id="user_weibo"class="block" href="#network_weibo_div">微博</span>
@@ -2340,7 +2346,7 @@
 
             </div>
 
-            <div id="community_easy_info1"></div>
+            <div id="community_easy_info1" style='margin-top:15px;min-height:30px;'></div>
 
         </div>
 
@@ -2371,8 +2377,8 @@
                         <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
 
                        </table>
-                         <div class="more" style = "width:580px; height:20px;">
-                                <span><h4 id="more_profile" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                         <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile" class="weibo_more">加载更多&gt;&gt;<h4><span>
                         </div> 
 
                     </div>
@@ -2383,7 +2389,7 @@
 
         </div>
 
-        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+        <!-- <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
 
             <div class="titlBar" style="padding-bottom:15px; position: relative;">
 
@@ -2411,7 +2417,7 @@
 
             </div>
 
-        </div>
+        </div> -->
 
 
 
@@ -2451,9 +2457,39 @@
 
         </div>
 
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:110px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>社区时间走势图</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container1">
+
+                      <div id="community_trend_div_whole1"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
         <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px;">
 
-            <div class="titlBar" style="padding-bottom:15px;">
+            <div class="titlBar" style="padding-bottom:25px;">
 
                  <h4><b>社区微博列表</b></h4>
 
@@ -2462,6 +2498,31 @@
             </div>
 
             <div id="community_weibo_div1" style="float:left;width:100%;">
+              <div class='node_submit' style="margin-top:10px;background-color:#fff;">  
+                <div id='uid_community_1' style='display:none;'>
+                </div>
+                <div id='cid_community_1' style='display:none;'>
+                </div>
+               <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_community_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+                </div>
+                <span id="submit_request_community_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+                <br>
+            </div>
 
                     <div class="tabCon">
 
@@ -2478,7 +2539,7 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div class="more" style = "width:580px; height:20px ;"><span><h4 id="more_inform" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                                        <div class="more" style = "width:100%; height:20px ;"><span><h4 id="more_inform" class="weibo_more" >加载更多&gt;&gt;<h4><span>
                                         </div> 
 
                                     </div>
@@ -2545,7 +2606,8 @@
 
             </div>
 
-            <div id="neighbor_easy_info1"></div>
+
+            <div id="neighbor_easy_info1" style='margin-top:15px;min-height:30px;'></div>
 
         </div>
 
@@ -2578,8 +2640,8 @@
                           <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                       </table>
-                    <div class="more" style = "width:580px; height:20px ;">
-                                <span><h4 id="more_profile1" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                    <div class="more" style = "width:100%; height:24px ;">
+                                <span><h4 id="more_profile1" class="weibo_more">加载更多&gt;&gt;<h4><span>
                     </div> 
 
 
@@ -2593,35 +2655,7 @@
 
 
 
-        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:40px;">
-
-            <div class="titlBar" style="padding-bottom:15px; position: relative;">
-
-            <h4><b>邻居时间走势图</b></h4>
-
-            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
-
-            </div>
-
-
-
-            <div class="tabUnit">
-
-               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
-
-               <div class="tabConts">
-
-                  <div id="trend_div_container1">
-
-                      <div id="trend_div_whole1"></div>
-
-                  </div>
-
-              </div>
-
-            </div>
-
-        </div>
+    
 
         <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
 
@@ -2659,17 +2693,92 @@
 
         </div>
 
+        <div class="blkUnit grpUnit" id="community-container1" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>邻居时间走势图</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container1">
+
+                      <div id="trend_div_whole1"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
         <div class="blkUnit grpUnit" id="neighbor-weibo-container1" style="width:1033px;margin-top:25px;">
 
-            <div class="titlBar" style="padding-bottom:15px;">
+            <div class="titlBar" style="padding-bottom:25px;">
 
             <h4><b>邻居微博列表</b></h4>
 
             <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="邻居节点微博"></i>&nbsp;&nbsp;
 
             </div>
+            <!-- <div id='uid_neighbor_1' style="display:none;">
+            </div>
+
+            <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_neighboe_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span> -->
 
             <div id="neighbor_weibo_div1" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_neighbor_1' style="display:none;">
+                   </div>
+
+                   <div style="float: left;margin-left:20px;">
+
+                   <form>
+
+                    排序方式：
+
+                    <select id="select_neighboe_1" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_1" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
 
                     <div class="tabCon">
 
@@ -2686,8 +2795,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                         <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform1" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform1" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
 
                                     </div>
 
@@ -2758,7 +2867,7 @@
             <div class="tabConts">
                 <div id="line2" style="width:1030px;"></div>
             </div>
-            <button class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line2(); get_network_infor3()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
+            <button id='con4_button' class="btn btn-mini btn-primary" style = 'margin-left:70px;padding:0px' onclick='getnetwork_line2(); get_network_infor3()'><i class=" glyphicon icon-chevron-down"></i>了解更多</button> 
         </div>
     </div>
     <div class="blkUnit grpUnit" style="width:1033px;margin-top:25px;margin-bottom:20px;">
@@ -2777,7 +2886,7 @@
 
           <!-- 双选下拉框 -->
 
-          <div style="float: left;">
+          <div style="float: left;margin-left:20px;">
 
                 <form>
 
@@ -2799,7 +2908,7 @@
 
             </div>
 
-            <div style="float: left;">
+            <div style="float: left;margin-left:20px;">
 
                 <form>
 
@@ -3000,11 +3109,11 @@
 
                     <span>
 
-                        <a id="refresh_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
+                        <a style="cursor:pointer;" id="refresh_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-refresh icons"></i>刷新布局</a>
 
-                        <a id="pause_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
+                        <a style="cursor:pointer;" id="pause_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-pause icons"></i>暂停布局</a>
 
-                        <a id="stop_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
+                        <a style="cursor:pointer;" id="stop_layout2" class="button button-rounded button-flat-primary"><i class="glyphicon glyphicon-stop icons"></i>停止布局</a>
 
                     </span>
 
@@ -3105,20 +3214,20 @@
                 <div>
                 用户所在地: <span id="location2"></span>
                 </div>
-                <div>
+                <!-- <div>
                     用户所属领域: 
-                    <span id="area_value2">财经</span>
-                    <span><a href="#network" class="block">领域</a></span>
-                </div>
+                    <span id="area_value2">未知</span>
+                   
+                </div> -->
                 <div>
                 用户PR值: <span id="pagerank2"></span>
                 </div>
-                <div>
+                <!-- <div>
                     用户深度分析：
                     <span id="user_profile_link2">
                     <a href="#" class="block">深度分析</a>
                     </span>
-                </div>
+                </div> -->
                 <div>
                     <span id="community2"></span>
                     <span><a id="user_weibo2" class="block" href="#network_weibo_div">微博</a></span>
@@ -3219,7 +3328,7 @@
 
             </div>
 
-            <div id="community_easy_info"></div>
+            <div id="community_easy_info" style='margin-top:15px;min-height:30px;'></div>
 
         </div>
 
@@ -3250,9 +3359,9 @@
                         <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                        </table>
-                                           <div class="more" style = "width:580px; height:20px ;">
-                                <span><h4 id="more_profile2" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
-                    </div> 
+                                           <div class="more" style = "width:100%; height:24px;">
+                                <span><h4 id="more_profile2" class = "weibo_more">加载更多&gt;&gt;<h4><span>
+                        </div> 
 
                     </div>
 
@@ -3262,36 +3371,7 @@
         </div>
 
 
-        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
-
-            <div class="titlBar" style="padding-bottom:15px; position: relative;">
-
-                 <h4><b>社区时间走势图</b></h4>
-
-                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
-
-            </div>
-
-
-
-            <div class="tabUnit">
-
-               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
-
-               <div class="tabConts">
-
-                  <div id="trend_div_container">
-
-                      <div id="community_trend_div_whole"></div>
-
-                  </div>
-
-              </div>
-
-            </div>
-
-        </div>
-
+        
 
 
         <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
@@ -3330,17 +3410,73 @@
 
         </div>
 
+        <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:110px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+                 <h4><b>社区时间走势图</b></h4>
+
+                 <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社区时间走势图"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container">
+
+                      <div id="community_trend_div_whole"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
         <div class="blkUnit grpUnit" id="community-weibo-container" style="width:1033px;margin-top:25px">
 
-            <div class="titlBar" style="padding-bottom:15px;">
+            <div class="titlBar" style="padding-bottom:25px;">
 
                  <h4><b>社区微博列表</b></h4>
 
                  <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="同社区用户微博"></i>&nbsp;&nbsp;
 
             </div>
+            
 
             <div id="community_weibo_div" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_community_2' style="display:none;">
+                    </div>
+                    <div id='cid_community_2' style="display:none;">
+                    </div>
+                <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_community_2" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_community_2" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
 
                     <div class="tabCon">
 
@@ -3357,8 +3493,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                        <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform2" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                        <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform2" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
 
                                     </div>
 
@@ -3423,7 +3559,7 @@
 
             </div>
 
-            <div id="neighbor_easy_info"></div>
+            <div id="neighbor_easy_info" style='margin-top:15px;min-height:30px;'></div>
 
         </div>
 
@@ -3456,8 +3592,8 @@
                           <tr style="margin-left:5px;height:30px"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
 
                       </table>
-                        <div class="more" style = "width:580px; height:20px；">
-                                <span><h4 id="more_profile3" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span>
+                        <div class="more" style = "width:100%; height:24px；">
+                                <span><h4 id="more_profile3" class="weibo_more" >加载更多&gt;&gt;<h4><span>
                          </div> 
 
                  </div>
@@ -3470,47 +3606,8 @@
 
 
 
-         <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:40px;">
-
-            <div class="titlBar" style="padding-bottom:15px; position: relative;">
-
-            <h4><b>邻居时间走势图</b></h4>
-
-            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
-
-            </div>
-
-
-
-            <div class="tabUnit">
-
-               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
-
-               <div class="tabConts">
-
-                  <div id="trend_div_container">
-
-                      <div id="trend_div_whole"></div>
-
-                  </div>
-
-              </div>
-
-            </div>
-
-        </div>
-
-
-
         
-
-
-
-
-
-
-
-         <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+        <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
 
            <div class="titlBar" style="padding-bottom:15px;">
 
@@ -3546,17 +3643,73 @@
 
        </div>
 
+       <div class="blkUnit grpUnit" id="community-container" style="width:1033px;margin-top:25px;min-height:40px;">
+
+            <div class="titlBar" style="padding-bottom:15px; position: relative;">
+
+            <h4><b>邻居时间走势图</b></h4>
+
+            <i id="display_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="rig" title="社团信息详情"></i>&nbsp;&nbsp;
+
+            </div>
+
+
+
+            <div class="tabUnit">
+
+               <div class="tabTitle" style="padding-bottom:15px;background-color:#f6f6f6;" id="auto_gsid_3"></div>
+
+               <div class="tabConts">
+
+                  <div id="trend_div_container">
+
+                      <div id="trend_div_whole"></div>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        </div>
+
+
+
+
         <div class="blkUnit grpUnit" id="neighbor-weibo-container" style="width:1033px;margin-top:25px">
 
-            <div class="titlBar" style="padding-bottom:15px;">
+            <div class="titlBar" style="padding-bottom:25px;">
 
             <h4><b>邻居微博列表</b></h4>
 
             <i id="cloud_pie_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="邻居节点微博"></i>&nbsp;&nbsp;
 
             </div>
-
+            
             <div id="neighbor_weibo_div" style="float:left;width:100%;">
+                <div class='node_submit' style="margin-top:10px;background-color:#fff;">
+                    <div id='uid_neighbor_2' style="display:none;">
+                   </div>
+                <div style="float: left;margin-left:20px;">
+
+                <form>
+
+                    排序方式：
+
+                    <select id="select_neighbor_2" name="rank_method">
+
+                        <option value="reposts_count" selected="selected">转发数</option>
+
+                        <option value="timestamp">时间</option>
+
+                    </select>
+
+                </form>
+
+            </div>
+            <span id="submit_request_neighbor_2" style="float:left"><a class="compOK" ><i class="glyphicon glyphicon-ok icons iOK"></i>提交</a></span>
+            <br>
+                </div>
 
                     <div class="tabCon">
 
@@ -3573,8 +3726,8 @@
                                         <!-- 这里是显示信息的地方 -->
 
                                         </ul>
-                                         <div class="more" style = "width:580px; height:20px ;">
-                                        <span><h4 id="more_inform3" style = " text-align:center ;" >加载更多&gt;&gt;<h4><span></div>
+                                         <div class="more" style = "width:100%; height:24px ;">
+                                        <span><h4 id="more_inform3" class="weibo_more">加载更多&gt;&gt;<h4><span></div>
                                     </div>
 
 
@@ -3677,7 +3830,7 @@
 
                 $("#filter_controller").attr('status', 'opened')
 
-                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+                $("#filter_controller").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
 
             }
 
@@ -3687,7 +3840,7 @@
 
                 $("#filter_controller").attr('status', 'closed');
 
-                $("#filter_controller").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+                $("#filter_controller").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
 
             }
 
@@ -3731,7 +3884,7 @@
 
                 $("#filter_controller2").attr('status', 'opened')
 
-                $("#filter_controller2").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
+                $("#filter_controller2").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-up\"></span></h5>");
 
             }
 
@@ -3741,7 +3894,7 @@
 
                 $("#filter_controller2").attr('status', 'closed');
 
-                $("#filter_controller2").html("<h5>布局控制器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
+                $("#filter_controller2").html("<h5>过滤器<span class=\"glyphicon glyphicon-chevron-down\"></span></h5>");
 
             }
 

@@ -21,6 +21,7 @@ from utils import read_ds_topic_rank_results, read_ds_degree_centrality_rank ,\
 from first_user import time_top_user, time_domain_top_user,read_table_fu
 from trend_user import read_trend_maker, read_trend_pusher, read_trend_user_table
 from community_util import read_uid_weibos, read_uid_neighbors, read_uid_community
+from weibo_ts import c_weibo_by_ts, n_weibo_by_ts
 
 
 TOPK = 1000
@@ -283,7 +284,6 @@ def network_quota():
     network_type = request.args.get('network_type', '')
     print 'network_type:', network_type
     key = _utf8_unicode(topic)+'_'+str(date)+'_'+str(windowsize)+'_'+quota+'_'+network_type
-    print 'key:', key
     try:
         ssdb = SSDB(SSDB_HOST, SSDB_PORT)
         value = ssdb.request('get',[key])
@@ -387,4 +387,41 @@ def network_uid_community():
     community_id = int(community_id)
     results = read_uid_community(topic, date, windowsize, uid, network_type, community_id)
     return json.dumps(results)
+
+@mod.route('/uid_community_by_ts/')
+def community_weibo_by_ts():
+    uid = request.args.get('uid', '')
+    # uid 在网络节点以str形式存放
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    network_type = request.args.get('network_type', 'source_graph')
+    community_id = request.args.get('community_id', '')
+    print 'community_id:', community_id
+    community_id = int(community_id)
+    rank_method = request.args.get('rank_method', 'timestamp')
+    results = c_weibo_by_ts(topic, date, windowsize, uid, network_type, community_id, rank_method)
+    return json.dumps(results)
+
+@mod.route('/uid_neighbor_by_ts/')
+def neighbor_weibo_by_ts():
+    uid = request.args.get('uid', '')
+    # uid 在网络节点以str形式存放
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    date = ts2datetime(end_ts)
+    windowsize = (end_ts - start_ts) / Day
+    network_type = request.args.get('network_type', 'source_graph')
+    rank_method = request.args.get('rank_method', 'timestamp')
+    results = n_weibo_by_ts(topic, date, windowsize, uid, network_type, rank_method)
+    return json.dumps(results)
+
+    
 

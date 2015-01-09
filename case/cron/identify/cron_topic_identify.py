@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-
+'''
+version:2014.12
+author:hxq
+'''
 import sys
 import networkx as nx
 

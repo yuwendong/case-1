@@ -51,7 +51,9 @@ def read_trend_maker(topic, date, windowsize, rank_method):
             user_domain = item.domain
             domain_name = domain_dict[user_domain]
             rank = item.rank
-            row = [rank, uid, uname, location, domain_name, timestamp, text, profile_image_url, friends_count, followers_count, statuses_count, created_at,geo, source, weibo_link, _id, reposts_count]
+            value = item.value # 关键词命中个数
+            key_item = json.loads(item.key_item) # 命中关键词
+            row = [rank, uid, uname, location, domain_name, timestamp, text, profile_image_url, friends_count, followers_count, statuses_count, created_at,geo, source, weibo_link, _id, reposts_count, value, key_item]
             results.append(row)
     sort_result = results
     if rank_method == 'content':

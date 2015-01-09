@@ -64,7 +64,7 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.range_weibos_data = {};
     this.top_keywords_limit = 50; // 和计算相关的50，实际返回10
     this.top_weibos_limit = 50; // 和计算相关的50，实际返回10
-    this.max_keywords_size = 50;
+    this.max_keywords_size = 20;
     this.min_keywords_size = 2;
     this.pie_title = '情绪饼图';
     this.pie_series_title = '情绪占比';
@@ -234,7 +234,7 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
     if(maxcount == mincount){
         return (maxsize + minsize) * 1.0 / 2
     }else{
-        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / (maxcount - mincount)), 2)
+        return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / maxcount), 2)
     }
 }
 
@@ -349,19 +349,23 @@ function refreshDrawWeibos(select_name, weibos_obj){
         html += '<img src="' + user_image_link + '">';
         html += '</a></div>';
         html += '<div class="weibo_detail">';
-        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + uid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>(' + loc + ')&nbsp;&nbsp;发布ip:' + '未知' + '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;' + text + '</p>';;
         html += '<div class="weibo_info">';
         html += '<div class="weibo_pz">';
-        html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-        html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+        html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">关注数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
         html += '<div class="m">';
         html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + repost_tree_link + '">转发子树</a>';
+        html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
         if(retweeted_mid != '0'){
             var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
-            html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发树</a>';
+            html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发子树</a>';
         }
         html += '</div>';
         html += '</div>';

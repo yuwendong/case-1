@@ -659,7 +659,7 @@ function create_current_table(data, start_row, end_row, type) {
 
     var cellCount = 10;
     var table = '<table class="table table-bordered">';
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
+    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值</th><th>度中心性</th><th>介数中心性    (10e-4)</th><th>紧密中心性    (10e-3)</th></tr></thead>';
     var tbody = '<tbody>';
     for (var i = start_row;i < end_row;i++) {
       var tr = '<tr>';
@@ -684,8 +684,17 @@ function create_current_table(data, start_row, end_row, type) {
         else if(j == 5){
             var td = '<td>'+data[i][j]+'</td>';
         }
-        else{
+        else if(j == 6){
             var td = '<td>'+data[i][j].toFixed(3)+'</td>';
+        }
+        else if(j == 7){
+            var td = '<td>'+data[i][j].toFixed(3)+'</td>';
+        }
+        else if(j == 8){
+            var td = '<td>'+(data[i][j]*10000).toFixed(3)+'</td>';
+        }
+        else if(j == 9){
+            var td = '<td>'+(data[i][j]*1000).toFixed(3)+'</td>';
         }
         tr += td;
       }
@@ -806,7 +815,8 @@ function getnetwork_line(){
         }
       }
 
-  }) ;     
+  }) ;  
+  $('#con3_button').hide();  
 }
 
 
