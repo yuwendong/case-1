@@ -5,7 +5,7 @@ import redis
 from xapian_case.xapian_backend import XapianSearch
 from case.time_utils import ts2date
 from neighbor_util import get_neighbor_info
-from community_information import get_community_info
+from community_information import get_community_info, getXapianWeiboByTopic
 from case.global_config import xapian_search_user as user_search
 from utils import weiboinfo2url
 
@@ -35,7 +35,7 @@ def uid2domain(user):
 
     return domain
 
-
+'''
 def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
@@ -46,6 +46,7 @@ def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     else:
         print 'stub not exist'
         return None
+'''
 
 def read_uid_weibos(topic, date, windowsize, uid):
     # topic_id = get_topic_id(topic, start_ts, end_ts) 这里需要补充通过话题名称、时间范围获取topic id的代码

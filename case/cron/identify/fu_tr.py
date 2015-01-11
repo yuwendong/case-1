@@ -66,7 +66,7 @@ def Merge_propagate(items):
 
 
 #获取区间发布的微博数，以天为单位， 并获取第一个拐点的时间区间
-def get_interval_count(topic, date, windowsize):
+def get_interval_count(topic, date, windowsize, topic_xapian_id):
     results = [0]
     ts_list = []
     start_date = ts2datetime(datetime2ts(date) - windowsize * Day)
@@ -100,14 +100,14 @@ def get_interval_count(topic, date, windowsize):
     print 'new_bottom:', new_bottom
     # 存趋势时间范围
     # save_peak_bottom(new_zeros, new_bottom)
-    trend_maker = get_makers(topic, new_zeros, new_bottom, ts_list)
+    trend_maker = get_makers(topic, new_zeros, new_bottom, ts_list, topic_xapian_id)
     print 'trend_makers:', trend_maker
     
-    trend_pusher = get_pushers(topic,new_zeros, new_bottom, ts_list)
+    trend_pusher = get_pushers(topic,new_zeros, new_bottom, ts_list, topic_xapian_id)
     print 'trend_pushers:', trend_pusher
 
-    save_trend_maker(topic, date, windowsize, trend_maker)
-    save_trend_pusher(topic, date, windowsize, trend_pusher)
+    save_trend_maker(topic, date, windowsize, trend_maker, topic_xapian_id)
+    save_trend_pusher(topic, date, windowsize, trend_pusher, topic_xapian_id)
     
     return trend_maker, trend_pusher
 '''
@@ -124,8 +124,8 @@ def save_trend_keyuser(topic, date, windowsize, trend_maker, trend_pusher):
     print 'save trend_keyuser'
 '''
 # save trend_maker
-def save_trend_maker(topic, date, windowsize, trend_maker):
-    xapian_search_weibo = getXapianWeiboByTopic() # topic id 要做一下处理
+def save_trend_maker(topic, date, windowsize, trend_maker,topic_xapian_id):
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id) # topic id 要做一下处理
     makers = trend_maker
     rank = 0
     user_exist_list = []
@@ -159,8 +159,8 @@ def save_trend_maker(topic, date, windowsize, trend_maker):
 
 
 # save trend_pusher
-def save_trend_pusher(topic, date, windowsize, trend_pusher):
-    xapian_search_weibo = getXapianWeiboByTopic() # topic id 要做一下处理
+def save_trend_pusher(topic, date, windowsize, trend_pusher, topic_xapian_id):
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id) # topic id 要做一下处理
     pushers = trend_pusher
     rank = 0
     user_exist_list = []
@@ -190,7 +190,7 @@ def save_trend_pusher(topic, date, windowsize, trend_pusher):
 
     
 #trend_maker
-def get_makers(topic, new_peaks, new_bottom, ts_list):
+def get_makers(topic, new_peaks, new_bottom, ts_list, topic_xapian_id):
     begin_ts = ts_list[new_bottom[0]]
     end_ts = ts_list[new_peaks[0]]
     #print 'get_maker begin_ts:', begin_ts
@@ -200,7 +200,7 @@ def get_makers(topic, new_peaks, new_bottom, ts_list):
 
     keyword_data = get_keyword(topic, begin_ts, end_ts, top=50) # propagateKeywork
     print 'keyword_data:', keyword_data # 权重最大的前50个terms
-    makers = sort_makers(keyword_data, begin_ts, end_ts, ts_list)
+    makers = sort_makers(keyword_data, begin_ts, end_ts, ts_list, topic_xapian_id)
     makers_list = []
     for maker in makers:
         uid = maker[0]
@@ -261,7 +261,7 @@ def get_keyword(topic, begin_ts, end_ts, top):
 
 
 # sort makers
-def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
+def sort_makers(keyword_data, begin_ts, end_ts, ts_list, topic_xapian_id):
     '''
     if begin_ts == ts_list[0]:
         start = begin_ts + 2 * Day
@@ -295,7 +295,7 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
     '''
     begin_ts = begin_ts - Hour
     query_dict = {'timestamp':{'$gt': begin_ts, '$lt': end_ts}}
-    xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
+    xapian_search_weibo = getXapianWeiboByTopic(topic_id=topic_xapian_id)
     count, search_weibo = xapian_search_weibo.search(query=query_dict, sort_by=['-timestamp'], fields=field_list)
     num = 0
     if count == 0:
@@ -320,15 +320,15 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list):
     return sort_weibo_term[:50]
 
 #trend_pusher
-def get_pushers(topic, new_peaks, new_bottom, ts_list):
+def get_pushers(topic, new_peaks, new_bottom, ts_list, topic_xapian_id):
     unit = 900
     p_during = Hour
     p_ts_list = []
     results = []
     end_ts = ts_list[new_peaks[0]]
     begin_ts = ts_list[new_bottom[0]]
-    #print 'pusher_start_ts:', ts2date(begin_ts)
-    #print 'pusher_end_ts:', ts2date(end_ts)
+    print 'pusher_start_ts:', ts2date(begin_ts)
+    print 'pusher_end_ts:', ts2date(end_ts)
     if begin_ts>end_ts:
         begin_ts = ts_list[0]
     interval = (end_ts - begin_ts) / p_during
@@ -348,12 +348,12 @@ def get_pushers(topic, new_peaks, new_bottom, ts_list):
     #print 'pusher_line:', results
     max_k_timestamp = get_max_k_timestamp(results, p_ts_list) # 获取增速最快的时间点
     #save max_k_timestamp
-    # save_ mak_k(max_k_timestamp)
+    # save_mak_k(max_k_timestamp)
     end = max_k_timestamp
     start = max_k_timestamp - p_during
-    xapian_search_weibo = getXapianWeiboByTopic()
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id)
     query_dict = {
-        'timestamp':{'$gt':start, '$lt':end}
+        'timestamp':{'$gt':end, '$lt':end+3600}
         }
     '''
     count , results = xapian_search_weibo.search(query=query_dict, fields=['_id', 'user','retweeted_uid','retweeted_mid', 'timestamp'])
@@ -379,6 +379,8 @@ def get_pushers(topic, new_peaks, new_bottom, ts_list):
     #以上是找到斜率最大的时间段内所有转发微博集中地源头用户--但是介于这些用户的相关信息找不到，因而选择使用下面的方法
     #以下是通过找到斜率最大的时间段内所有微博中转发数最大的用户
     count ,results = xapian_search_weibo.search(query=query_dict, sort_by=['reposts_count'], fields=['_id', 'user', 'reposts_count'])
+    print 'pusher_search_count:', count
+    print 'pusher_query_dict:', query_dict
     pusher_list = []
     count = 0
     for result in results():
@@ -449,7 +451,7 @@ def get_max_k_timestamp(results, p_ts_list):
 
 
 #根据第一个拐点所在的峰值区间，获取微博，统计其top source user
-def get_tsu(new_peaks, new_bottom, ts_list):
+def get_tsu(new_peaks, new_bottom, ts_list, topic_xapian_id):
     #print 'new_peaks:', new_peaks
     #print 'new_bottom:', new_bottom
     #print 'ts_list:', ts_list
@@ -464,7 +466,7 @@ def get_tsu(new_peaks, new_bottom, ts_list):
     print 'query_dict:', query_dict
     print 'begin_ts:', ts2date(begin_ts)
     print 'end_ts:', ts2date(end_ts)
-    xapian_search_weibo = getXapianWeiboByTopic()# 这里需要考虑话题id
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id)# 这里需要考虑话题id
     count, results = xapian_search_weibo.search(query=query_dict, fields=['retweeted_uid','retweeted_mid'])
     print 'count:', count
     ruid_count = {}
@@ -521,8 +523,9 @@ def get_user_info(uid):
 
 
 if __name__=='__main__':
-    topic = u'全军政治工作会议'
-    date = '2014-11-16'
-    windowsize = 17
-    get_interval_count(topic, date, windowsize)
+    topic = u'外滩踩踏'
+    date = '2015-01-10'
+    windowsize = 10
+    topic_xapian_id = '54b1183331a94c73b51935da'
+    get_interval_count(topic, date, windowsize, topic_xapian_id)
     
