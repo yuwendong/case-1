@@ -14,6 +14,7 @@ from gquota import compute_quota
 from snowball1 import SnowballSampling
 # from hadoop_utils import generate_job_id
 from makegexf import make_gexf, make_ds_gexf
+from config import GRAPH_PATH
 from spam.pagerank import pagerank
 from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
@@ -39,7 +40,7 @@ SixHour = Hour * 6
 Day = Hour * 24
 network_type = 1
 ds_network_type = 2
-GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 
 
 def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):

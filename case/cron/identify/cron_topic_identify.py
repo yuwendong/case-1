@@ -16,7 +16,7 @@ from utils import acquire_topic_name, acquire_topic_id, \
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from time_utils import ts2datetime, datetime2ts
-from config import db #　用于测试期间，建立topicstatus这张表。待删
+from config import db, GRAPH_PATH #　用于测试期间，建立topicstatus这张表。待删
 import time # 用于测试生成topicStatus入库时间，待删
 from model import TopicStatus, Topics # 用于测试，待删
 from lxml import etree
@@ -24,6 +24,7 @@ from get_first_user import get_first_node
 # from trendsetter_rank import trendsetter_rank
 from area import _utf8_unicode
 from fu_tr import get_interval_count
+
 
 TOPK = 1000
 Minute = 60
@@ -33,7 +34,7 @@ SixHour = Hour * 6
 Day = Hour * 24
 gexf_type = 1
 ds_gexf_type = 2
-GRAPH_PATH = u'/home/ubuntu4/huxiaoqian/mcase/graph/'
+#GRAPH_PATH = u'/home/ubuntu4/huxiaoqian/mcase/graph/'
 topic_xapian_id = '54b1183331a94c73b51935da' # xapian topic id
 
 def main():

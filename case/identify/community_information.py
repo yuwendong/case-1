@@ -9,10 +9,11 @@ from case.time_utils import ts2date, datetime2ts
 from case.model import Topics
 from case.extensions import db
 from case.global_config import xapian_search_user as user_search
+from case.global_config import GRAPH_PATH
 from utils import weiboinfo2url
 
 
-GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
