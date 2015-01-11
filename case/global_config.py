@@ -26,6 +26,7 @@ SSDB_PORT = 8888
 SSDB_HOST = '219.224.135.47' # SSDB服务器在47
 XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
 XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
+GRAPH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../graph/')
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import csv
 import re
 import sys
 import json
@@ -10,10 +10,11 @@ from lxml import etree
 import networkx as nx
 
 from gquota import compute_quota
-from localbridge import GetLocalBridge
+#from localbridge import GetLocalBridge
 from snowball1 import SnowballSampling
 # from hadoop_utils import generate_job_id
 from makegexf import make_gexf, make_ds_gexf
+from config import GRAPH_PATH
 from spam.pagerank import pagerank
 from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
@@ -39,7 +40,7 @@ SixHour = Hour * 6
 Day = Hour * 24
 network_type = 1
 ds_network_type = 2
-GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 
 
 def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
@@ -190,8 +191,8 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     
     
     print 'start snowball sampling'
-    #new_G, new_gg = SnowballSampling(G, gg, topic, network_type)
-    #ds_new_G, ds_new_gg = SnowballSampling(ds_dg, ds_udg, topic, ds_network_type)
+    new_G, new_gg = SnowballSampling(G, gg, topic, network_type)
+    ds_new_G, ds_new_gg = SnowballSampling(ds_dg, ds_udg, topic, ds_network_type)
     print 'sampling complicated'
     
     # Local Bridge的算法需要提升效率，此处先不显示
@@ -202,10 +203,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     print 'local bridge complicated'
     '''
     print 'start computing quota'
-    new_G = G
-    new_gg = gg
-    ds_new_G = ds_dg
-    ds_new_gg = ds_udg
+    #new_G = G
+    #new_gg = gg
+    #ds_new_G = ds_dg
+    #ds_new_gg = ds_udg
     compute_quota(new_G, new_gg, date, window_size, topic, all_uid_pr, network_type) # compute quota
     compute_quota(ds_new_G, ds_new_gg, date, window_size, topic, ds_all_uid_pr, ds_network_type)
     print 'quota computed complicated'
@@ -297,13 +298,20 @@ def cut_network(g, node_degree, degree_threshold): # 筛选出节点度数大于
     return g
 
 
-def make_network(topic, date, window_size, max_size=100000, attribute_add = False):
+def make_network(topic, date, window_size, topic_xapian_id, max_size=100000, attribute_add = False):
     topics = topic.strip().split(',')
     end_time = int(datetime2ts(date))
     start_time = int(end_time - window2time(window_size))
     print 'start, end:', start_time, end_time
-    topic_id='545f4c22cf198b18c57b8014'
+    #topic_id='545f4c22cf198b18c57b8014'
+    topic_id = topic_xapian_id
     statuses_search = getXapianWeiboByTopic(topic_id)
+    '''
+    count, test_results = statuses_search.search(query={'timestamp':{'$gt': start_time, '$lt': end_time}})
+    for i in test_results():
+        print i
+        break
+    '''
 
     g = nx.DiGraph() # 初始化一个有向图
     gg = nx.Graph() # 为计算quota初始化一个无向图
@@ -341,7 +349,9 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
         } # 用于查询direct_superior_user为retweeted_uid对应的retweeted_mid的微博内容
     map_dict = {} # map_dict = {retweeted_mid:[retweeted_uid, user, timestamp],...} 保存_id timestamp与其对应的retweeted_mid之间的对应关系
     ds_map_dict = {} # ds_dict = {retweeted_mid:[retweeted_uid, user, timestamp]} 直接上级转发网络中直接上级就是源头上级时，对应关系
-    for status in get_statuses_results():
+    get_statuses_results = [r for r in get_statuses_results() if r['retweeted_uid'] != 0]
+    set_repost_name = set()
+    for status in get_statuses_results:
         if str(status['_id']) in data_wid:
             '''
             当微博信息非垃圾时，进行new_attribute_dict的添加----即[a b]->添加a节点的微博信息
@@ -369,12 +379,18 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
             '''
             if status['retweeted_uid'] and status['retweeted_uid']!=0:
                 print 'before get_superior_userid'
+                
                 direct_superior_userid = get_superior_userid(status) # 获取直接转发上级--只获取一跳
+                '''
+                repost_name = get_superior_userid(status) # test
+                set_repost_name.add(repost_name) # test
+                '''
+                
                 print 'user_id', direct_superior_userid
                 if not direct_superior_userid:
-                    '''
-                    当直接转发上级的userid获取不到时，则认为直接转发上级就是源头转发微博
-                    '''
+                    
+                    #当直接转发上级的userid获取不到时，则认为直接转发上级就是源头转发微博
+                    
                     direct_superior_userid = r_uid
                     ds_dg.add_edge(nad_uid, direct_superior_userid)
                     ds_udg.add_edge(nad_uid, direct_superior_userid)
@@ -382,9 +398,9 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                     ds_map_dict[r_mid] = [r_uid, nad_uid, status['timestamp']]
                     # 当直接上级就是源头上级时，通过查询xapian获取weibo_text timestamp comment_counts repost_counts attitude_counts
                 else:
-                    '''
-                    存在直接转发上级
-                    '''
+                    
+                    #存在直接转发上级
+                    
                     ds_dg.add_edge(nad_uid, direct_superior_userid)
                     ds_udg.add_edge(nad_uid, direct_superior_userid)
                     if attribute_add == 'True':
@@ -396,10 +412,10 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                         direct_superior_weibo = weibo_test2[m_index+1:]
                         m_all_index = weibo_text.find(':')
                         direct_superior_weibos = weibo_text[m_all_index+1:]
-                        '''
-                        需要根据文本内容和r_uid获取timestamp
-                        '''
-                        direct_superior_info = get_ds_info(direct_superior_weibos, direct_superior_userid, topic, timestamp_add) # timestamp_add是最终转发微博额时间戳
+                        
+                        #需要根据文本内容和r_uid获取timestamp
+                        
+                        direct_superior_info = get_ds_info(direct_superior_weibos, direct_superior_userid, topic, timestamp_add, topic_xapian_id) # timestamp_add是最终转发微博额时间戳
                         # 通过直接上级微博文本内容和用户id，查询topic对应的Xapian获取该条微博的时间戳等信息
                         # 如果在xapian中查不到这条信息的timestamp，则根据其转发链条关系，以（源头用户ts-重点用户ts）/（链条中人数-1）----源头微博还是需要根据mid查询，还是有可能不在xapian里面
                         # 根据uid和text获取[timestamp, comment_counts, attitude_counts, reposts_counts, r_uid]
@@ -414,10 +430,12 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                             ds_new_attribute_dict[direct_superior_userid] = [[direct_superior_weibo, reposts_count, comment_count, attitude_count, timestamp, retweeted_uid]]
 
                 print 'after get_superior_userid'     
+            
+            
             try:
-                '''
-                源头转发网络构建
-                '''
+                
+                #源头转发网络构建
+                
                 if status['retweeted_uid'] and status['retweeted_uid'] != 0:
                     repost_uid = status['user']
                     source_uid = status['retweeted_uid']
@@ -429,6 +447,9 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
                     map_dict[r_mid] = [r_uid, nad_uid, status['timestamp']]
             except (TypeError, KeyError):
                 continue
+            
+    
+    
     print 'step_1:g', len(g)
     print 'step_1:ds_dg', len(ds_dg)
     
@@ -480,11 +501,20 @@ def make_network(topic, date, window_size, max_size=100000, attribute_add = Fals
     print 'len(g):', len(g)
     print 'len(ds_dg):', len(ds_dg)
     return g , gg, new_attribute_dict, ds_dg, ds_udg, ds_new_attribute_dict
+    '''
+    f = open('name-2.txt', 'w')
+    n = 0
+    for name in set_repost_name:
+        n += 1
+        f.write('%s\n' % name)
+    f.close()
+    print 'n',n
+    '''
 
-def get_ds_info(text, userid, topic, timestamp_add, DEFAULT_INTERVAL): # timestamp_add 表示最终极转发用户发表微博的时间戳
+def get_ds_info(text, userid, topic, timestamp_add, DEFAULT_INTERVAL, topic_xapian_id): # timestamp_add 表示最终极转发用户发表微博的时间戳
     direct_superior_info = {}
 
-    xapian_search_weibo = getXapianWeiboByTopic(search_topic_id)
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id)
     query_dict = {
         'user': userid ,
         'text': text
