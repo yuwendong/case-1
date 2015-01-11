@@ -22,14 +22,13 @@
         // Called when the Visualization API is loaded.
     $(document).ready(function(){   //网页加载时执行下面函数
         gettimeline_data();
-        console.log('abc');
 
     })
     var result = [];
     var result1 = [];
     var result2 = [];
     var result3 = [];
-    var topic = '全军政治工作会议';
+    var topic = '外滩踩踏';
 
     function gettimeline_data() {
         var html ="<table>";
@@ -45,27 +44,24 @@
                var si_str = si + '%';
                var width_tab = document.getElementById("Tableselect").offsetWidth;
                var tab_wd = width_tab/n;
-               console.log(width_tab);
-               console.log(tab_wd);
 
-               for (var i = 0;i < data.length;i++) {
+            for (var i = 0;i < data.length;i++) {
                     result[i] = data[i][1];
                     result1[i] = data[i][2];
                     result2[i] = data[i][0]; 
 
                     var s = i.toString();
                     if(i==0){
-                        html += '<tr><td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
+                        html += '<a style="display: block;width:'+si_str+'" topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0 curr" href="javascript:;" >';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                     else{
-                        html += '<td style="width:'+si_str+'"><a topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" style="display: block;width:'+tab_wd+'px;">';
+                        html += '<a style="display: block;width:'+si_str+'" topic='+ result2[i] + ' name="c_topic" class="tabLi gColor0" href="javascript:;" >';
                         html += '<div class="nmTab">'+ result2[i]+ '</div>';
-                        html += '<div class="hvTab">'+result2[i]+'</div></a></td>';
+                        html += '<div class="hvTab">'+result2[i]+'</div></a>';
                     }
                 };
-                html += '</tr></table>';
                 $("#Tableselect").append(html);
                 bindSentimentTabClick();
 
@@ -83,24 +79,21 @@
 
 
     function bindSentimentTabClick(){
-        
-        /*$("#Tablebselect").children("a").unbind();
-        console.log('yuan');
-        console.log($("#Tablebselect").children("a"));*/
-
+        /*    
         $("[name='c_topic']").click(function() {
-            
+        */
+        $("#Tableselect").children("a").unbind();
+        $("#Tableselect").children("a").click(function(){
             var select_a = $(this);
-            var unselect_a = $("[name='c_topic']");//$(this).siblings('a');
+            console.log(select_a.attr("topic"));
+            var unselect_a = $(this).siblings('a');
             if(!select_a.hasClass('curr')) {
                 select_a.addClass('curr');
                 unselect_a.removeClass('curr');
-                style = select_a.attr('topic');
-              
+                var style = select_a.attr('topic');          
                 getweibos_data(style);
-
-            }
-        });
+             }
+         });
     }
 
 
@@ -223,34 +216,7 @@
     };
     var myChart = echarts.init(document.getElementById('main'));
     myChart.setOption(option);
-        
     }
-    
-    // $(document).ready(function(){   //网页加载时执行下面函数
-    //     var style = '1';
-    //    keyword_data();
-    //    switch_curr_add();
-    //    getpie_data();
-    //    getweibos_data(style);
-    //    bindSentimentTabClick();
-    // })
-
-    // function bindSentimentTabClick(){
-        
-    //     $("#Tablebselect").children("a").unbind();
-
-    //     $("#Tableselect").children("a").click(function() {
-    //         console.log("avvv");
-    //         var select_a = $(this);
-    //         var unselect_a = $(this).siblings('a');
-    //         if(!select_a.hasClass('curr')) {
-    //             select_a.addClass('curr');
-    //             unselect_a.removeClass('curr');
-    //             style = select_a.attr('value');
-    //             getweibos_data(style);
-    //         }
-    //     });
-    // }
 
     function getweibos_data(data){   
             var topic_child = data;
@@ -264,7 +230,6 @@
                     for (var i = 0 ;i< data[topic_child].length; i++){
                          dataselect.push(data[topic_child][i]);
                     }
-                console.log(dataselect);
                 chg_weibos(dataselect);
             }
         });
@@ -273,38 +238,10 @@
 
             function chg_weibos(data){  
                 $("#vertical-ticker").empty();
-                console.log(data);
                 var html = "";
                 var temporary
                 var data_af = [];
                 var time;
-                // for (var j =0 ; j < data.length; j++){
-                //     rank_count.push(data[j]['reposts_count']);
-                // }
-                // rank_count_af = rank_count.sort(function(a,b){return b-a});
-                
-                // for (var m = 0; m < rank_count_af.length; m++){
-                //     time = 0;
-                //     for (var k = 0; k < data.length; k++){
-                //         if(data[k]['reposts_count'] == rank_count_af[m]){ 
-                //             time++;                           
-                //             if(time == 1){
-                //                 date_af.push(data[k]);
-                //             }
-                                                                                          
-                //         }
-                //     }
-                // }
-               /* for(var m = 0; m< data.length; m++){
-                    for(var n = m+1; n< data.length; n++){
-                        if(data[m]['reposts_count'] < data[n]['reposts_count']){
-                            temporary = data[n];
-                            data[n] = data[m];
-                            data[m] = temporary;
-
-                        }
-                    }
-                }*/
                 
                 html += '<div class="tang-scrollpanel-wrapper">';// style="height: ' + 78 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
@@ -360,7 +297,6 @@
     						html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
         				html += '<div class="m">';
         				html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
-    //html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
@@ -369,19 +305,7 @@
             			var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
             			html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发子树</a>';
         				}
-                /*html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
-                html += '<img src="' + user_image_link + '">';
-                html += '</a></div>';
-                html += '<div class="weibo_detail">';
-                html += '<p>UID:<a class="undlin" target="_blank" href="' + user_link  + '">' + uid + '</a>&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
-                html += '<div class="weibo_info">';
-                html += '<div class="weibo_pz">';
-                html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-                html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
-                html += '<div class="m">';
-                html += '<a class="undlin">' + date + '</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-                html += '<a target="_blank" href="' + user_link + '">用户页面</a>';*/
+
                 html += '</div>';
                 html += '</div>';
                 html += '</div>';
@@ -403,51 +327,13 @@
                     type: "GET",
                     dataType:"json",
                     success: function(data){
-                        console.log(data);                            
                         drawtable(data);
                     }
                 });
             }
 
         function drawtable(data){
-            /*var topic_child = {};
-            var html = '';
-            for(var key in data){
-                topic_child[key] = [];
-                for (var i = 0 ; i < data[key].length; i++){
-                    topic_child[key].push(data[key][i][0]);
-                }
-            }
-            console.log("123");
-            console.log(topic_child);
-            for(var topic in topic_child){
-                console.log(topic);
-                console.log(result2[0]);
-                if (topic == result2[0]){
-                    html += '<tr topic='+topic+' class="tablecurrent">'; 
-                }
-                else{
-                    html += '<tr topic='+topic+'>'; 
-                }
-                html += "<td><b>"+m+"</b></td><td><b onclick = \"connect('"+topic+"')\" style =\"width:20px\">"+topic+"</b></td>";
-                
-                if(topic_child[topic].length > 5){
-                    for(var j = 0; j < 5; j++){
-                        html += '<td>'+topic_child[topic][j]+'</td>';
-                    }
-                }
-                
-                else{
-                    for(var m = 0;m < topic_child[topic].length; m++){
-                        html += '<td>'+topic_child[topic][m]+'</td>';
-                    }
-                }
-
-            }
-
-            $("#alternatecolor").append(html);
-                 // $("#alternate").append(html1);*/
-            		var topic_child_keywords = {};
+                var topic_child_keywords = {};
                 var html = '';
                 var target_html = '';
                 var m = 0;
@@ -503,7 +389,6 @@
        
         function connect(data){
             var value_data = data;
-            console.log(data);
 
             $("#alternatecolor tr").each(function() {
                 var select_all =$(this);
@@ -538,6 +423,5 @@
                     }
                 }
             });
-             console.log("curr"+curr_data);
             getweibos_data(curr_data);
         }

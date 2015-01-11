@@ -161,6 +161,7 @@ sh.status();
 >db.runCommand({shardcollection:'54api_weibo_v2.master_timeline_user',key:{id:'hashed'}});
 >db.runCommand({shardcollection:'54api_weibo_v2.master_timeline_weibo',key:{id:'hashed'}});
 >db.runCommand({shardcollection:'boat.boatcol',key:{'id':'hashed'}});
+>db.runCommand({shardcollection:'54api_weibo_v2.master_timeline_user',key:{'id':'hashed'}});
 ```
 查看配置情况：
 ```
