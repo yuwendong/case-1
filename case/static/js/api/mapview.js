@@ -258,7 +258,7 @@ function drawWholeBaiduMap(that, par){
                     markPoint : {
                         symbol:'emptyCircle',
                         symbolSize : function (v){
-                            return 10 + v/100
+                            return 10 + v/1000
                         },
                         effect : {
                             show: true,
@@ -449,7 +449,7 @@ function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_
         // console.log('append');
     }
 
-    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 71 * weibo_num  + 'px;">';
+    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 80 * weibo_num  + 'px;">';
     html += '<div class="tang-scrollpanel-content">';
     html += '<ul id="weibo_ul">';
 

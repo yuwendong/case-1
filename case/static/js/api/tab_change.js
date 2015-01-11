@@ -289,7 +289,7 @@ function drawMigration(that, par){
                 markPoint : {
                     symbol:'emptyCircle',
                     symbolSize : function (v){
-                        return 10 + v/100
+                        return 10 + v/1000
                     },
                     effect : {
                         show: true,
@@ -392,7 +392,7 @@ function work_out_list(cgroup, city){
                 var td = '<td>'+analy_data[1]['out'][i][0]+'</td>';
             }
             else if(j == 4){
-                var td = '<td>'+Math.round(analy_data[1]['out'][i][1]*1000/total)/10+'%</td>';
+                var td = '<td>'+Math.round(analy_data[1]['out'][i][1]*100/total)/1+'%</td>';
             }
             tr += td;
         }
@@ -444,7 +444,7 @@ function work_in_list(cgroup, city){
                 var td = '<td>'+analy_data[0]+'</td>';
             }
             else if(j == 4){
-                var td = '<td>'+Math.round(analy_data[1]['in'][i][1]*1000/total)/10+'%</td>';
+                var td = '<td>'+Math.round(analy_data[1]['in'][i][1]*100/total)/1+'%</td>';
             }
             tr += td;
         }
