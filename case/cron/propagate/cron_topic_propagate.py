@@ -139,11 +139,11 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
 
 
 if __name__ == '__main__':
-    topic = u'全军政治工作会议'
+    topic = u'APEC'
     topic_id = getTopicByName(topic)['_id']
 
-    start_ts = datetime2ts('2014-10-30')
-    end_ts = datetime2ts('2014-11-15')
+    start_ts = datetime2ts('2014-11-08')
+    end_ts = datetime2ts('2014-11-20')
     duration = Fifteenminutes
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
 
