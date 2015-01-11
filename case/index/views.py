@@ -39,10 +39,10 @@ def acquire_user_by_id(uid):
 comment = ['历史是不能改变的',]
 
 def get_default_timerange():
-    return u'20141030-20141115'
+    return u'20141231-20150109'
 
 def get_default_topic():
-    return u'全军政治工作会议'
+    return u'外滩踩踏'
 
 def get_default_pointInterval():
     return {'zh': u'1天', 'en': 3600 * 24}

@@ -353,15 +353,15 @@ function refreshDrawWeibos(select_name, weibos_obj){
         html += '<div class="weibo_info">';
         html += '<div class="weibo_pz">';
         html += '<a class="undlin" href="javascript:;" target="_blank">转发数(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-    		html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-    		html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-   		  html += '<a class="undlin" href="javascript:;" target="_blank">关注数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-    		html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
+        html += '<a class="undlin" href="javascript:;" target="_blank">评论数(' + comments_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">粉丝数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">关注数(未知)</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
         html += '<div class="m">';
         html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
-    		html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
-    		html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
+        html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
         html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
         if(retweeted_mid != '0'){
             var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
