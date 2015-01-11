@@ -28,7 +28,7 @@
     var result1 = [];
     var result2 = [];
     var result3 = [];
-    var topic = '全军政治工作会议';
+    var topic = '外滩踩踏';
 
     function gettimeline_data() {
         var html ="<table>";
@@ -246,6 +246,7 @@
                 html += '<div class="tang-scrollpanel-wrapper">';// style="height: ' + 78 * data.length  + 'px;">';
                 html += '<div class="tang-scrollpanel-content">';
                 html += '<ul id="weibo_ul">';
+                console.log(data);
                 for(var i = 0; i < data.length; i += 1){
                 var da = data[i];
                 var uid = da['user'];
@@ -283,7 +284,7 @@
             				user_image_link = '/static/img/unknown_profile_image.gif';
         				}*/
                 html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
-                html += '<img src="' + user_image_link + '">';
+        				html += '<img src="' + user_image_link + '">';
         				html += '</a></div>';
         				html += '<div class="weibo_detail">';
         				html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>(' + loc + ')&nbsp;&nbsp;发布ip:' + '未知' + '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;' + text + '</p>';;
@@ -296,7 +297,6 @@
     						html += '<a class="undlin" href="javascript:;" target="_blank">微博数(未知)</a></div>';
         				html += '<div class="m">';
         				html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + date + '</a>&nbsp;-&nbsp;';
-    //html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + weibo_link + '">微博</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
     						html += '<a target="_blank" href="' + '#huaxiang' + '">画像</a>&nbsp;-&nbsp;';
@@ -305,6 +305,7 @@
             			var source_repost_tree_link = 'http://219.224.135.60:8080/show_graph/' + retweeted_mid;
             			html += '&nbsp;-&nbsp;<a target="_blank" href="' + source_repost_tree_link + '">转发子树</a>';
         				}
+
                 html += '</div>';
                 html += '</div>';
                 html += '</div>';
