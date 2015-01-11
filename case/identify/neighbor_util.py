@@ -9,7 +9,7 @@ from case.extensions import db
 from case.model import Topics
 from case.global_config import xapian_search_user as user_search
 from utils import weiboinfo2url
-from community_information import get_timestamp_count
+from community_information import get_timestamp_count, getXapianWeiboByTopic
 
 GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
@@ -143,6 +143,7 @@ def get_info(neighbor_list):
    
     return sort_neighbor_info, sort_top_keyword, new_sentiment_list, query_dict
 
+'''
 def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
@@ -153,4 +154,4 @@ def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     else:
         print 'stub not exist'
         return None
-
+'''

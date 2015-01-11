@@ -34,7 +34,7 @@ Day = Hour * 24
 gexf_type = 1
 ds_gexf_type = 2
 GRAPH_PATH = u'/home/ubuntu4/huxiaoqian/mcase/graph/'
-
+topic_xapian_id = '54b1183331a94c73b51935da' # xapian topic id
 
 def main():
     topics = _topic_not_calc() # topics=[{id:x,module:x,status:x,topic:x,start:x,end:x,db_date:x}]
@@ -53,11 +53,14 @@ def main():
 
         print 'start compute first_nodes'
         start_date = ts2datetime(start_ts) # used to compute the first user
-        get_first_node(topicname, start_date, date, windowsize)
+        #get_first_node(topicname, start_date, date, windowsize)
+        #get_first_node(topicname, start_date, date, windowsize, topic_xapian_id)
         print 'end compute first_nodes'
 
         print 'start make network'
-        g, gg, new_attribute_dict, ds_dg, ds_udg, ds_new_attribute_dict = make_network(topicname, date, windowsize, max_size=100000, attribute_add=True)
+        max_size = 100000
+        attribute_add = True
+        g, gg, new_attribute_dict, ds_dg, ds_udg, ds_new_attribute_dict = make_network(topicname, date, windowsize, topic_xapian_id, max_size, attribute_add)
         print 'write gexf file'
         real_topic_id = acquire_real_topic_id(topicname, start_ts, end_ts)
         if not real_topic_id:
@@ -95,19 +98,18 @@ def main():
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)
-        print 'start fu_tr'
-        get_interval_count(topicname, date, windowsize)
-        print 'update_topic_end'
+        #print 'start fu_tr'
+        #get_interval_count(topicname, date, windowsize, topic_xapian_id)
+        #print 'update_topic_end'
         _update_topic_status2Completed(topicname, start_ts, end_ts, db_date) 
     
 
 if __name__ == '__main__':
     module_t_s = 'identify'
     status = -1
-    #topic = u'全军政治工作会议'
-    topic = u'APEC'
-    start = datetime2ts('2014-11-01')
-    end = datetime2ts('2014-11-20') + Day
+    topic = u'外滩踩踏'
+    start = datetime2ts('2014-12-31')
+    end = datetime2ts('2015-01-09') + Day
 
     save_topics = Topics(topic, start, end)
     save_topics_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
