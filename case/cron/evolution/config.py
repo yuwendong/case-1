@@ -49,7 +49,7 @@ elif IS_PROD == 2:
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/mirage/dev/data/stub/master_timeline_weibo_'
 elif IS_PROD == 3:
     XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140804/'
-    XAPIAN_USER_DATA_PATH = '/home/ubuntu4/huxiaoqian/mcase/data/user-datapath/'
+    XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
     XAPIAN_DOMAIN_DATA_PATH = '/opt/xapian_weibo/data/20131130/'  #无
     MASTER_TIMELINE_STUB = '/home/mirage/dev/data/stub/master_timeline_weibo_stub' #无
     LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
