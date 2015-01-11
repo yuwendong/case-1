@@ -7,7 +7,8 @@ import datetime
 import IP
 from config import db
 from model import CityRepost
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
+from global_utils import getTopicByName
+from dynamic_xapian_weibo import getXapianWeiboByTopic
 
 RESP_ITER_KEYS = ['_id', 'retweeted_mid', 'timestamp', 'geo', 'message_type']
 SORT_FIELD = '-timestamp'
@@ -20,32 +21,34 @@ HOUR = 3600
 SIXHOURS = 6 * HOUR
 DAY = 24 * HOUR
 
+def datetime2ts(date):
+    return int(time.mktime(time.strptime(date, '%Y-%m-%d')))
 
-s = getXapianWeiboByTopic(u'东盟,博览会')
-l = getXapianWeiboByTopic(u'东盟,博览会')
 
-
-def repost_search(topic):
+def repost_search(topic, startts, endts):
     repost_list = []
     ts_arr = []
     if topic and topic != '':
-        topics = topic.strip().split(',')
-
         query_dict = {
-                '$or': [],
-                }
-        for topic_a in topics:
-            query_dict['$or'].append({'topics': topic_a})
+            "timestamp": {
+                "$gte": startts,
+                "$lte": endts
+            }
+        }
 
-        count,results = s.search(query = query_dict, sort_by = [SORT_FIELD], fields = RESP_ITER_KEYS)
+        count,results = xapian_search.search(query=query_dict, sort_by=[SORT_FIELD], fields=RESP_ITER_KEYS)
         print 'count',count
+
         for r in results():
             location_dict = results_gen(r, topic)
             if location_dict:
                 repost_list.append(location_dict)
                 ts_arr.append(r['timestamp'])
+
         print len(repost_list)
+
         save_rt_results(topic, repost_list)
+
     return sorted(list(set(ts_arr))), repost_list
 
 
@@ -64,8 +67,26 @@ def save_rt_results(topic, repost_list):
     print 'commited'
 
 
-
 def geo2city(geo):
+    province, city = geo.split()
+    if province in [u'内蒙古自治区', u'黑龙江省']:
+        province = province[:3]
+    else:
+        province = province[:2]
+
+    geo = province + ' ' + city
+
+    if isinstance(geo, unicode):
+        geo = geo.encode('utf-8')
+
+    if geo.split()[0] not in ['海外', '其他']:
+        geo = '中国 ' + geo
+
+    geo = '\t'.join(geo.split())
+
+    return geo
+
+    """
     try:
         city = IP.find(str(geo))
         if city:
@@ -75,6 +96,7 @@ def geo2city(geo):
     except Exception, e:
         print e
         return None
+    """
 
     return city
 
@@ -108,7 +130,7 @@ def results_gen(r, topic):
         # print 'retweeted_mid', r['retweeted_mid']
         repost_location = geo2city(r['geo'])
         if r['retweeted_mid']: # 过滤retweed_mid不完整的item
-            item = l.search_by_id(r['retweeted_mid'], fields = ['geo','_id'])
+            item = xapian_search.search_by_id(r['retweeted_mid'], fields = ['geo','_id'])
             if item:
                 origin_location = geo2city(item['geo'])
                 if check_location([origin_location, repost_location]):
@@ -134,5 +156,11 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    topic = u'东盟,博览会'
-    repost_search(topic)
+    START_TS = datetime2ts('2014-12-31')
+    END_TS = datetime2ts('2015-01-09')
+
+    topic = u'外滩踩踏' # u'东盟,博览会'
+    topic_id = getTopicByName(topic)['_id']
+
+    xapian_search = getXapianWeiboByTopic(topic_id)
+    repost_search(topic, START_TS, END_TS)

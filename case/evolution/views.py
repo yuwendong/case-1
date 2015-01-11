@@ -62,6 +62,26 @@ def acquire_user_by_id(uid):
 
 
 def geo2city(geo):
+    province, city = geo.split()
+    if province in [u'内蒙古自治区', u'黑龙江省']:
+        province = province[:3]
+    else:
+        province = province[:2]
+
+    city = city.strip(u'市').strip(u'区')
+
+    geo = province + ' ' + city
+
+    if isinstance(geo, unicode):
+        geo = geo.encode('utf-8')
+
+    if geo.split()[0] not in ['海外', '其他']:
+        geo = '中国 ' + geo
+
+    geo = '\t'.join(geo.split())
+
+    return geo
+    """
     try:
         city = IP.find(str(geo))
         if city:
@@ -72,6 +92,7 @@ def geo2city(geo):
         print e
         return None
     return city
+    """
 
 
 def info2map(infos, incremental = 0): # infos = {end_ts:map_data}, map_data={'count':{}, 'color':{}, 'summary':{}}
@@ -140,12 +161,14 @@ def ts2date(ts):
 
 def get_city_weibo(query, start_ts, end_ts):
     topic = query
+    from case.global_utils import getTopicByName
+    topicid = str(getTopicByName(topic)['_id'])
     weibos = []
     query_dict = {
         '$or': [{'message_type': 1}, {'message_type': 3}],
         'timestamp':{'$gt': start_ts, '$lt': end_ts}
     }
-    search_city_weibo = getXapianWeiboByTopic()
+    search_city_weibo = getXapianWeiboByTopic(topicid)
     count, get_results = search_city_weibo.search(query=query_dict, fields=RESP_ITER_KEYS)
     for r in get_results():
         #weibo = mongotable.find_one({'_id': int(r['_id'])})
