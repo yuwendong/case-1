@@ -30,6 +30,8 @@ SORT_FIELD = 'reposts_count'
 def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
     weibos = []
     for r in get_results():
+        weibos.append(r)
+        """
         try:
             weibo = getWeiboById(r['_id'])
             if weibo:
@@ -39,6 +41,7 @@ def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
             weibos.append(r)
         except:
             pass
+        """
     sorted_weibos = sorted(weibos, key=lambda k: k[SORT_FIELD], reverse=False)
     sorted_weibos = sorted_weibos[len(sorted_weibos)-top:]
     sorted_weibos.reverse()
@@ -157,11 +160,11 @@ def sentimentCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
 
 
 if __name__ == '__main__':
-    topic = 'APEC' # u'全军政治工作会议'
+    topic = u'外滩踩踏' # 'APEC' # u'全军政治工作会议'
     topic_id = getTopicByName(topic)['_id']
 
-    start_ts = datetime2ts('2014-11-01')
-    end_ts = datetime2ts('2014-11-20')
+    start_ts = datetime2ts('2014-12-31')
+    end_ts = datetime2ts('2015-01-09')
     duration = Fifteenminutes
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
 

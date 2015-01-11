@@ -31,6 +31,8 @@ SORT_FIELD = 'reposts_count'
 def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
     weibos = []
     for r in get_results():
+        weibos.append(r)
+        """
         try:
             weibo = getWeiboById(r['_id'])
             if weibo:
@@ -40,6 +42,7 @@ def top_weibos(get_results, top=TOP_WEIBOS_LIMIT):
             weibos.append(r)
         except:
             pass
+        """
     sorted_weibos = sorted(weibos, key=lambda k: k[SORT_FIELD], reverse=False)
     sorted_weibos = sorted_weibos[len(sorted_weibos)-top:]
     sorted_weibos.reverse()
@@ -123,27 +126,27 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
                 
                 count, results = xapian_search_weibo.search(query=query_dict, fields=fields_list)
 
-                mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
-                                                  max_offset=w_limit, mset_direct=True)
+                # mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
+                #                                  max_offset=w_limit, mset_direct=True)
 
-                kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
+                #kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
                 top_ws = top_weibos(results, top=w_limit)
 
-                mtype_count[v] = [end_ts, count]
-                mtype_kcount[v] = [end_ts, kcount]
+                #mtype_count[v] = [end_ts, count]
+                #mtype_kcount[v] = [end_ts, kcount]
                 mtype_weibo[v] = [end_ts, top_ws]
 
-            save_pc_results(topic, mtype_count, during)
-            save_kc_results(topic, mtype_kcount, during, k_limit)
+            # save_pc_results(topic, mtype_count, during)
+            # save_kc_results(topic, mtype_kcount, during, k_limit)
             save_ws_results(topic, mtype_weibo, during, w_limit)
 
 
 if __name__ == '__main__':
-    topic = u'APEC'
+    topic = u'外滩踩踏'
     topic_id = getTopicByName(topic)['_id']
 
-    start_ts = datetime2ts('2014-11-08')
-    end_ts = datetime2ts('2014-11-20')
+    start_ts = datetime2ts('2014-12-31')
+    end_ts = datetime2ts('2015-01-09')
     duration = Fifteenminutes
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
 

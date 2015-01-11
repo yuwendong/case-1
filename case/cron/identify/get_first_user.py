@@ -44,7 +44,7 @@ def uid2domain(user):
 
 
 
-def get_first_node(topic, start_date, date, windowsize):
+def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
     '''
     根据timestamp,获取top20的用户----微博可能就不只20条了
     根据微博获取对应的用户信息------可能会出现用户重复的情况，这里只取时间最早的那一个
@@ -52,7 +52,8 @@ def get_first_node(topic, start_date, date, windowsize):
     '''
     if topic and topic != '':
         datestr = start_date.replace('-','')
-        xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
+        #xapian_search_weibo = getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014')
+        xapian_search_weibo = getXapianWeiboByTopic(topic_id=topic_xapian_id)
         begin_ts = datetime2ts(start_date)
         end_ts = datetime2ts(date)
         topics = topic.strip().split(',')

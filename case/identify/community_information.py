@@ -9,10 +9,11 @@ from case.time_utils import ts2date, datetime2ts
 from case.model import Topics
 from case.extensions import db
 from case.global_config import xapian_search_user as user_search
+from case.global_config import GRAPH_PATH
 from utils import weiboinfo2url
 
 
-GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
@@ -147,7 +148,7 @@ def community_result(community_user_list, topic, date, windowsize):
    
     return sort_community_info, sort_top_keyword, new_sentiment_list, query_dict
 
-def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
+def getXapianWeiboByTopic(topic_id='54b1183331a94c73b51935da'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):

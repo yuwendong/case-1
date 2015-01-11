@@ -43,3 +43,4 @@ app.config['SECRET_KEY'] = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_ECHO'] = False
 db = SQLAlchemy(app)
+GRAPH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../graph/')
