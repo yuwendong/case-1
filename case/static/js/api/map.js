@@ -155,8 +155,6 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
             }
         });
     }
-
-
 }
 
 CaseMap.prototype.initPullDrawZone = function(sta){
@@ -532,7 +530,7 @@ function drawWholeMap(that, fdata, max_count, myChart_whole){
         },
         options: option_data_arr
     };
-
+    console.log(date_list);
     myChart_whole.setOption(option);
 }
 
