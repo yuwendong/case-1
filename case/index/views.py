@@ -39,10 +39,10 @@ def acquire_user_by_id(uid):
 comment = ['历史是不能改变的',]
 
 def get_default_timerange():
-    return u'20141231-20150109'
+    return u'20150123-20150131'
 
 def get_default_topic():
-    return u'外滩踩踏'
+    return u'高校思想宣传'
 
 def get_default_pointInterval():
     return {'zh': u'1天', 'en': 3600 * 24}
@@ -348,6 +348,25 @@ def topic1():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
+@mod.route('/network_news/')
+def network_news():
+    yaosu = 'netwwork_news'
+    topic = request.args.get('query', default_topic)
+    time_range = request.args.get('time_range', default_timerange)
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/network_news.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntegervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
+
+'''
 @mod.route('/network2/')
 def topic2():
         # 要素
@@ -372,7 +391,7 @@ def topic2():
     return render_template('index/network_direct_superior.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
-
+'''
 
 # 以下为新增内容
 @mod.route('/gaishu_data/', methods = ['GET', 'POST'])

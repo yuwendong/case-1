@@ -5,7 +5,8 @@ author:hxq
 '''
 import sys
 import networkx as nx
-
+from parameter import MODULE_T_S, TOPIC, START, END, MAX_SIZE, TOPK
+from parameter import weibo_topic2xapian
 from area import pagerank_rank, make_network, make_network_graph 
 from topicStatus import _topic_not_calc, _update_topic_status2Computing, \
         _update_topic_status2Completed
@@ -26,7 +27,7 @@ from area import _utf8_unicode
 from fu_tr import get_interval_count
 
 
-TOPK = 1000
+
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -34,32 +35,41 @@ SixHour = Hour * 6
 Day = Hour * 24
 gexf_type = 1
 ds_gexf_type = 2
-#GRAPH_PATH = u'/home/ubuntu4/huxiaoqian/mcase/graph/'
-topic_xapian_id = '54b1183331a94c73b51935da' # xapian topic id
+#topic_xapian_id = '54ccbfab5a220134d9fc1b37' 
 
-def main():
+def main(topic, start_ts, ens_ts):
+    '''
     topics = _topic_not_calc() # topics=[{id:x,module:x,status:x,topic:x,start:x,end:x,db_date:x}]
-    if topics and len(topics):
-        topic = topics[0] # 每次只计算一个----为了做一个缓冲，每个n时间才计算一个
-        print 'topic_id', topic.id
-        start_ts = topic.start
-        end_ts = topic.end
-        db_date = topic.db_date
-        topicname = topic.topic
+    '''
+    topic_status _info = db.session.query(TopicStatus).filter(TopicStatus.topic==topic ,\
+                                                                                              TopicStatus.start==start_ts ,\
+                                                                                              TopicStatus.end==end_ts ,\
+                                                                                              TopicStatus.module=='identify' ,\
+                                                                                              TopicStatus.status==-1).first()
+    if topic_status_info:
+        #topic = topics[0] # 每次只计算一个----为了做一个缓冲，每个n时间才计算一个
+        print 'topic_id', topic_status_info.id
+        start_ts = topic_status_info.start
+        end_ts = topic_status_info.end
+        db_date = topic_status_info.db_date
+        topicname = topic_name
         _update_topic_status2Computing(topicname, start_ts, end_ts, db_date)
         print 'update_status'
         topic_id = acquire_topic_id(topicname, start_ts, end_ts) # 重新获取id是因为TopicStatus中id是自增加的，进行更新后，id就不是原来的那一个了
         windowsize = (end_ts - start_ts) / Day # 确定时间跨度的大小
         date = ts2datetime(end_ts)
 
+        print 'start topic2xapianid'
+        topic_xapian_id = weibo_topic2xapian(topicname, start_ts, end_ts)
+        print 'topic_xapian_id:', topic_xapian_id
+        
         print 'start compute first_nodes'
         start_date = ts2datetime(start_ts) # used to compute the first user
-        #get_first_node(topicname, start_date, date, windowsize)
-        #get_first_node(topicname, start_date, date, windowsize, topic_xapian_id)
+        get_first_node(topicname, start_date, date, windowsize, topic_xapian_id)
         print 'end compute first_nodes'
 
         print 'start make network'
-        max_size = 100000
+        max_size = MAX_SIZE
         attribute_add = True
         g, gg, new_attribute_dict, ds_dg, ds_udg, ds_new_attribute_dict = make_network(topicname, date, windowsize, topic_xapian_id, max_size, attribute_add)
         print 'write gexf file'
@@ -68,9 +78,6 @@ def main():
             print 'the topic not exist'
             return None
         key = str(real_topic_id) + '_' + str(date) + '_' + str(windowsize) 
-        #print 'GRAPH_PATH:', GRAPH_PATH, type(GRAPH_PATH)
-        #print 'key:', type(key)
-        #print '_g_graph.gexf', type('_g_graph.gexf')
         print 'gexf_file:', str(GRAPH_PATH)+str(key)+'_g_graph.gexf'
         nx.write_gexf(g, str(GRAPH_PATH) + str(key) + '_g_graph.gexf')
         nx.write_gexf(gg, str(GRAPH_PATH) + str(key) + '_gg_graph.gexf')
@@ -84,10 +91,6 @@ def main():
         all_uid_pr, ds_all_uid_pr, data, ds_data = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
         print 'end PageRank'
 
-        #print 'start TrendSetter Rank'
-        #ds_all_uid_tr, ds_tr_data = trendsetter_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
-        #print 'end TrendSetter Rank'
-
         print 'start make network graph'
         topic_id = int(topic_id)
         windowsize = int(windowsize)
@@ -95,23 +98,25 @@ def main():
             gexf = ''
         else:
             gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, real_topic_id)
-            #gexf, ds_gexf = make_network_graph(date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, ds_all_uid_tr,ds_tr_data, real_topic_id) # 绘制gexf图--返回值是序列化字符串
         print 'save gexf'
         save_gexf_results(topicname, date, windowsize, gexf, gexf_type)
         save_gexf_results(topicname, date, windowsize, ds_gexf, ds_gexf_type)
-        #print 'start fu_tr'
-        #get_interval_count(topicname, date, windowsize, topic_xapian_id)
-        #print 'update_topic_end'
+        print 'start fu_tr'
+        get_interval_count(topicname, date, windowsize, topic_xapian_id)
+        print 'update_topic_end'
         _update_topic_status2Completed(topicname, start_ts, end_ts, db_date) 
     
 
 if __name__ == '__main__':
-    module_t_s = 'identify'
+    #module_t_s = 'identify'
     status = -1
-    topic = u'外滩踩踏'
-    start = datetime2ts('2014-12-31')
-    end = datetime2ts('2015-01-09') + Day
-
+    #topic = u'高校思想宣传'
+    #start = datetime2ts('2015-01-23')
+    #end = datetime2ts('2015-01-31') + Day
+    model_t_s = MODULE_T_S
+    topic = TOPIC
+    start = datetime2ts(START)
+    end = datetime2ts(END)
     save_topics = Topics(topic, start, end)
     save_topics_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
                                                         Topics.start_ts==start ,\
@@ -129,4 +134,4 @@ if __name__ == '__main__':
         db.session.delete(save_t_s_exist)
     db.session.add(save_t_s)
     db.session.commit()
-    main()
+    main(topic, start, end)

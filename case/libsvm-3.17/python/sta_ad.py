@@ -45,10 +45,10 @@ def cut_filter(text):
 
 def test(weibo,weibo_dict,flag):
     word_dict = dict()
-    reader = csv.reader(file('../libsvm-3.17/python/svm/new_feature.csv', 'rb'))
+    reader = csv.reader(file('../../libsvm-3.17/python/svm/new_feature.csv', 'rb'))
     for w,c in reader:
         word_dict[str(w)] = c 
-
+        print 'test'
     sw = load_scws()
     items = []
     for i in range(0,len(weibo)):
@@ -72,10 +72,12 @@ def test(weibo,weibo_dict,flag):
                 item = str(word_dict[k])+':'+str(row[k])
                 f_row = f_row + ' ' + str(item) 
         f_items.append(f_row)
-
-    with open('../libsvm-3.17/python/svm_test/test%s.txt' % flag, 'wb') as f:
+    #print 'test'
+    print 'len:', len(f_items)
+    with open('../../libsvm-3.17/python/svm_test/test%s.txt' % flag, 'wb') as f:
         writer = csv.writer(f)
         for i in range(0,len(f_items)):
+            print 'i_test'
             row = []
             row.append(f_items[i])
             writer.writerow((row))
@@ -83,10 +85,10 @@ def test(weibo,weibo_dict,flag):
     return items
     
 def choose_ad(flag):
-    y, x = svm_read_problem('../libsvm-3.17/python/svm/new_train.txt')
+    y, x = svm_read_problem('../../libsvm-3.17/python/svm/new_train.txt')
     m = svm_train(y, x, '-c 4')
 
-    y, x = svm_read_problem('../libsvm-3.17/python/svm_test/test%s.txt' % flag)
+    y, x = svm_read_problem('../../libsvm-3.17/python/svm_test/test%s.txt' % flag)
     p_label, p_acc, p_val  = svm_predict(y, x, m)
 
     return p_label

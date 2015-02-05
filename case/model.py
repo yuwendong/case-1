@@ -6,7 +6,8 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', 'PropagateKeywords', \
         'PropagateWeibos', 'AttentionCount', 'QuicknessCount', 'FirstUser','FirstDomainUser',\
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
-          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew']
+          'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew',\
+          'PropagateCountNews', 'FirstUserNews', 'TrendMakerNews', 'TrendPusherNews']
 
 
 class Topics(db.Model):
@@ -213,6 +214,23 @@ class PropagateCount(db.Model):
     @classmethod
     def _name(cls):
         return u'PropagateCount'
+
+class PropagateCountNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    dcount = db.Column(db.Text) # dcount={'other':count}领域对应的count···❯
+
+    def __init__(self, topic, range, end, dcount):
+        self.topic = topic
+        self.range = range
+        self.end = end
+        self.dcount = dcount
+
+    @classmethod
+    def _name(cls):
+        return u'PropagateCountNews'
 
 class AttentionCount(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -615,6 +633,71 @@ class FirstUser(db.Model):
     @classmethod
     def _name(cls):
         return u'FirstUser'
+
+class FirstUserNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, timestamp, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.timestamp = timestamp
+        self.news_info = news_info
+
+    @classmethod
+    def _name(cls):
+        return u'FirstUserNews'
+
+class TrendMakerNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    news_id = db.Column(db.Text)
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    weight = db.Column(db.Float)
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, news_id, timestamp, weight, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.news_id = news_id
+        self.timestamp = timestamp
+        self.weight = weight
+        self.news_info = news_info
+    
+    @classmethod
+    def _name(cls):
+        return u'TrendMakerNews'
+
+class TrendPusherNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    news_id = db.Column(db.Text)
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    comments_count = db.Column(db.Integer)
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, news_id, timestamp, comments_count, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.news_id = news_id
+        self.timestamp = timestamp
+        self.comments_count = comments_count
+        self.news_info = news_info
+
+    @classmethod
+    def _name(cls):
+        return u'TrendPusherNews'
 
 class FirstDomainUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

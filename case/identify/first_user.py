@@ -7,10 +7,11 @@ sys.setdefaultencoding('utf-8')
 from case.extensions import db
 from case.model import FirstUser, FirstDomainUser
 from utils import weiboinfo2url
-
+from parameter import domain_dict, domain_list
+'''
 domain_dict = {'folk':u'民众', 'media':u'媒体', 'opinion_leader':u'意见领袖', 'other':u'其他', 'oversea':u'海外'}
 domain_list = ['folk', 'media', 'opinion_leader','oversea', 'other']
-
+'''
 def ts2date(ts):
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
 
@@ -20,7 +21,7 @@ def time_top_user(topic, date, windowsize, rank_method):
     items = db.session.query(FirstUser).filter(FirstUser.topic==topic ,\
                                                FirstUser.date==date ,\
                                                FirstUser.windowsize==windowsize).all()
-    print 'len(items):', len(items)
+    #print 'len(items):', len(items)
     if items:
         for item in items:
             uid = item.uid
@@ -53,16 +54,16 @@ def time_top_user(topic, date, windowsize, rank_method):
             domain_name = domain_dict[user_domain]
             row = [uid, uname, location, domain_name, timestamp, text, profile_image_url, friends_count, followers_count, statuses_count, created_at,geo, source, weibo_link, _id]
             results.append(row)
-    print 'results:', results
+    #print 'results:', results
     sorted_results = []
-    print 'rank_method:', rank_method
+    #print 'rank_method:', rank_method
     if rank_method=='timestamp':
         sorted_results = sorted(results, key=lambda x:x[4])
     elif rank_method=='friends_count':
         sorted_results = sorted(results, key=lambda x:x[7], reverse=True)
     elif rank_method=='statuses_count':
         sorted_results = sorted(results, key=lambda x:x[9], reverse=True)
-    print 'sorted_results',sorted_results
+    #print 'sorted_results',sorted_results
     #print 'sorted_results[0]:', sorted_results[0]
     new_results = []
     for i in range(len(items)):

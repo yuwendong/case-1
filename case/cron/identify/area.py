@@ -21,7 +21,7 @@ from direct_superior_network import get_superior_userid # 获得直接上级转�
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
         is_in_trash_list, acquire_user_by_id, read_key_users, ds_read_key_users, \
         read_graph, read_attribute_dict
-
+#from ad_filter import ad_classifier
 reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.path.append('../../')
@@ -317,12 +317,12 @@ def make_network(topic, date, window_size, topic_xapian_id, max_size=100000, att
     gg = nx.Graph() # 为计算quota初始化一个无向图
     ds_dg = nx.DiGraph() # direct_superior_network 有向直接上级转发网络
     ds_udg = nx.Graph() # undirect_superior_network 无向直接上级转发网络
-    query_dict = {'timestamp':{'$gt': start_time, '$lt': end_time}, 'topics':[]}
+    query_dict = {'timestamp':{'$gt': start_time, '$lt': end_time}}
     #need repost index
-    
+    ''' 
     for ctopic in topics:
         query_dict['topics'].append(ctopic)
-    
+    '''
     print 'query_dict:', query_dict
     count, get_statuses_results = statuses_search.search(query=query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'], max_offset=max_size)
     print 'count_before_nad:', count

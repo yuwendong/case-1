@@ -11,6 +11,9 @@ from case.extensions import db
 from case.global_config import xapian_search_user as user_search
 from case.global_config import GRAPH_PATH
 from utils import weiboinfo2url
+from parameter import getXapianWeiboByTopic
+from parameter import weibo_fields_list, user_fields_list, emotions_kv, REDIS_HOST, REDIS_PORT,\
+                                    USER_DOMAIN, DOMAIN_LIST
 
 
 #GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
@@ -18,6 +21,7 @@ Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
 Day = Hour * 24
+'''
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
                             'followers_count', 'location', 'created_at','statuses_count']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
@@ -28,7 +32,7 @@ REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
 USER_DOMAIN = 'user_domain' # user domain hash
 DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
-
+'''
 def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
 
@@ -81,8 +85,10 @@ def get_community_info(topic, date, windowsize, uid, cid, network_type):
     return community_user_list, community_info, top_keyword, sentiment_dict, community_t_c
 
 def community_result(community_user_list, topic, date, windowsize):
-    #topic_id = get_topic_id(topic, date, windowsize)
-    xapian_search_weibo = getXapianWeiboByTopic()
+    #change
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - windowsize * Day
+    xapian_search_weibo = getXapianWeiboByTopic(topic, start_ts ,end_ts)
     query_dict = {
         '$or' : []
         }
@@ -147,8 +153,9 @@ def community_result(community_user_list, topic, date, windowsize):
         new_sentiment_list.append([sentiment_ch, num, ratio])
    
     return sort_community_info, sort_top_keyword, new_sentiment_list, query_dict
-
-def getXapianWeiboByTopic(topic_id='54b1183331a94c73b51935da'):
+'''
+# 公共函数 parameter
+def getXapianWeiboByTopic(topic_id='54ccbfab5a220134d9fc1b37'):
     XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):
@@ -158,7 +165,7 @@ def getXapianWeiboByTopic(topic_id='54b1183331a94c73b51935da'):
     else:
         print 'stub not exist'
         return None
-
+'''
 def get_community_user(g, uid, cid):
     # 中间存储的graph结构与后面进行生成xml文件的图结构不同
     # 中间存储结构是完整的图结构，而xml文件的图结构去除了零度节点、自环
@@ -179,9 +186,9 @@ def get_community_user(g, uid, cid):
 def get_timestamp_count(query_dict, topic, date, windowsize):
     during = 3600
     day = 24 * 3600
-    xapian_search_weibo = getXapianWeiboByTopic()
     end_ts = datetime2ts(date)
     start_ts = end_ts - windowsize * day
+    xapian_search_weibo = getXapianWeiboByTopic(topic, start_ts, end_ts)
     interval = (end_ts - start_ts) / during # 以小时作为统计粒度
     time_count = []
     #query_dict['timestamp'] = {'$gt':start_ts, '$lt':end_ts}
