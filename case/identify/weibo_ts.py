@@ -9,21 +9,22 @@ from case.extensions import db
 from case.model import Topics
 from case.global_config import xapian_search_user as user_search
 from case.global_config import GRAPH_PATH
-from community_information import get_community_user, getXapianWeiboByTopic
+from community_information import get_community_user
+from parameter import getXapianWeiboByTopic
+from parameter import user_fields_list, weibo_fields_list, emotions_kv
 
-
-#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
 Day = Hour * 24
+'''
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
                             'followers_count', 'location', 'created_at','statuses_count']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                                'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', \
                                'comments_count', 'sentiment', 'topics', 'message_type', 'terms']
 emotions_kv = {0:u'无倾向', 1:u'高兴', 2:u'愤怒', 3:u'悲伤', 4:u'新闻'}
-
+'''
 def acquire_real_topic_id(topic, date, windowsize):
     end_ts = datetime2ts(date)
     start_ts = end_ts - windowsize * Day
@@ -66,7 +67,10 @@ def c_weibo_by_ts(topic, date, windowsize, uid, network_type, cid, rank_method):
     community_user_list = get_community_user(g, uid, cid)
     # 考虑节点社区属性存放的位置
 
-    xapian_search_weibo = getXapianWeiboByTopic()
+    # change
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - Day * windowsize
+    xapian_search_weibo = getXapianWeiboByTopic(topic, start_ts, end_ts)
     query_dict = {
         '$or' : []
         }
@@ -134,7 +138,10 @@ def n_weibo_by_ts(topic, date, windowsize, uid, network_type, rank_method):
     g = nx.read_gexf(key)
     neighbor_list = g.neighbors(str(uid)) # 纯邻居节点组成的list
 
-    xapian_search_weibo = getXapianWeiboByTopic()
+    # change
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - Day * windowsize
+    xapian_search_weibo = getXapianWeiboByTopic(topic , start_ts, end_ts)
     query_dict = {
         '$or' : []
         }

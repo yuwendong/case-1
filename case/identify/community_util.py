@@ -8,7 +8,9 @@ from neighbor_util import get_neighbor_info
 from community_information import get_community_info, getXapianWeiboByTopic
 from case.global_config import xapian_search_user as user_search
 from utils import weiboinfo2url
-
+from parameter import weibo_fields_list, user_fields_list, emotions_kv, REDIS_HOST, REDIS_PORT
+from parameter import  USER_DOMAIN, DOMAIN_LIST, getXapianWeiboByTopic
+'''
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', \
                'comments_count', 'sentiment', 'topics', 'message_type']
@@ -19,7 +21,7 @@ REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
 USER_DOMAIN = 'user_domain' # user domain hash
 DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
-
+'''
 def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
 
@@ -49,8 +51,11 @@ def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
 '''
 
 def read_uid_weibos(topic, date, windowsize, uid):
-    # topic_id = get_topic_id(topic, start_ts, end_ts) 这里需要补充通过话题名称、时间范围获取topic id的代码
-    xapian_search_weibo = getXapianWeiboByTopic()
+    # change
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - Day * windowsize
+    xapian_search_weibo = getXapianWeiboByTopic(topic, start_ts ,end_ts)
+    
     query_dict = {
         'user':uid
             }

@@ -7,20 +7,20 @@ sys.setdefaultencoding('utf-8')
 from case.extensions import db
 from case.model import TrendMaker, TrendPusher
 from utils import weiboinfo2url
-
+'''
 domain_dict = {'folk':u'民众', 'media':u'媒体', 'opinion_leader':u'意见领袖', 'other':u'其他', 'oversea':u'海外'}
 domain_list = ['folk', 'media', 'opinion_leader','oversea', 'other']
-
+'''
 def ts2date(ts):
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
 
 def read_trend_maker(topic, date, windowsize, rank_method):
     results = []
-    print 'topic, date, windowsize:', topic.encode('utf-8'), date, windowsize
+    #print 'topic, date, windowsize:', topic.encode('utf-8'), date, windowsize
     items = db.session.query(TrendMaker).filter(TrendMaker.topic==topic ,\
                                                 TrendMaker.date==date ,\
                                                 TrendMaker.windowsize==windowsize).all()
-    print 'len(items):', len(items)
+    #print 'len(items):', len(items)
     if items:
         for item in items:
             uid= item.uid
@@ -71,7 +71,7 @@ def read_trend_maker(topic, date, windowsize, rank_method):
     elif rank_method == 'reposts_count':
         sort_result = sorted(results, key=lambda x:x[16], reverse=True)
         sort_result = deal_rank(sort_result)
-    print 'results:', sort_result
+    #print 'results:', sort_result
     return sort_result
 
 def deal_rank(result):
@@ -94,11 +94,11 @@ def deal_rank(result):
 
 def read_trend_pusher(topic, date, windowsize, rank_method):
     results = []
-    print 'topic, date, windowsize:', topic.encode('utf-8'), date, windowsize
+    #print 'topic, date, windowsize:', topic.encode('utf-8'), date, windowsize
     items = db.session.query(TrendPusher).filter(TrendPusher.topic==topic ,\
                                                  TrendPusher.date==date ,\
                                                  TrendPusher.windowsize==windowsize).all()
-    print 'len(items):', len(items)
+    #print 'len(items):', len(items)
     if items:
         for item in items:
             uid= item.uid
@@ -145,7 +145,7 @@ def read_trend_pusher(topic, date, windowsize, rank_method):
         sort_result = sorted(results, key=lambda x:x[10], reverse=True)
         sort_result = deal_rank(sort_result)
 
-    print 'results:', sort_result
+    #print 'results:', sort_result
     return sort_result
 
 def read_trend_user_table(topic, date, windowsize):
