@@ -22,7 +22,7 @@ from first_user import time_top_user, time_domain_top_user,read_table_fu
 from trend_user import read_trend_maker, read_trend_pusher, read_trend_user_table
 from community_util import read_uid_weibos, read_uid_neighbors, read_uid_community
 from weibo_ts import c_weibo_by_ts, n_weibo_by_ts
-
+from news_utils import get_news_first_user, get_news_trend_maker, get_news_trend_pusher
 
 TOPK = 1000
 Minute = 60
@@ -110,6 +110,7 @@ def trend_makers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_maker(topic, date, windowsize, rank_method)
+    print 'trend_maker:',results
     return json.dumps(results)
 
 @mod.route('/trend_pusher/')
@@ -123,6 +124,7 @@ def trend_pushers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_pusher(topic, date, windowsize, rank_method)
+    print 'trend_pusher:', results
     return json.dumps(results)
 
 @mod.route('/trend_user/')
@@ -135,7 +137,7 @@ def trend_user():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_user_table(topic,  date, windowsize)
-    
+    print 'trend_user:', results 
     return json.dumps(results)
     
     
@@ -401,7 +403,7 @@ def community_weibo_by_ts():
     windowsize = (end_ts - start_ts) / Day
     network_type = request.args.get('network_type', 'source_graph')
     community_id = request.args.get('community_id', '')
-    print 'community_id:', community_id
+    #print 'community_id:', community_id
     community_id = int(community_id)
     rank_method = request.args.get('rank_method', 'timestamp')
     results = c_weibo_by_ts(topic, date, windowsize, uid, network_type, community_id, rank_method)
@@ -423,5 +425,55 @@ def neighbor_weibo_by_ts():
     results = n_weibo_by_ts(topic, date, windowsize, uid, network_type, rank_method)
     return json.dumps(results)
 
+@mod.route('/first_user_news/')
+def news_first_user():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    # rank_method:timestamp(default), weight
+    rank_method = request.args.get('rank_method', 'timestamp')
+    news_skip = request.args.get('news_skip', 0)
+    news_skip = int(news_skip)
+    news_limit_count = request.args.get('news_limit_count', 10)
+    news_limit_count = int(news_limit_count)
+    results = get_news_first_user(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+
+    return json.dumps(results)
+
+@mod.route('/news_trend_maker/')
+def news_trend_maker():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    #rank_method:weight(default), timestamp
+    rank_method = request.args.get('rank_method', 'weight')
+    news_skip = reqeust.args.get('news_skip', '0')
+    news_skip = int(news_skip)
+    news_limit_count = request.args.get('news_limit_count', '10')
+    news_limit_count = int(news_limit_count)
+    results = get_news_trend_maker(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+
+    return json.dumps(results)
+
+@mod.route('/news_trend_pusher/')
+def news_trend_pusher():
+    topic = request.args.get('topic', '')
+    start_ts = request.args.get('start_ts', '')
+    start_ts = int(start_ts)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    # rank_method:comment_count(default), timestamp, weight
+    rank_method = request.args.get('rank_method', 'comments_count')
+    news_skip = request.args.get('news_skip', '0')
+    news_skip = int(news_skip)
+    news_limit_count = request.args.get('news_limit_count', '10')
+    news_limit_count = int(news_limit_count)
+    results = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+
+    return json.dumps(results)
     
 

@@ -10,13 +10,16 @@ from case.model import Topics
 from case.global_config import xapian_search_user as user_search
 from case.global_config import GRAPH_PATH
 from utils import weiboinfo2url
-from community_information import get_timestamp_count, getXapianWeiboByTopic
+from community_information import get_timestamp_count
+from parameter import getXapianWeiboByTopic
+from parameter import user_fields_list, weibo_fields_list, emotions_kv, REDIS_HOST, REDIS_PORT ,\
+                                     USER_DOMAIN, DOMAIN_LIST
 
-#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
 Day = Hour * 24
+'''
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
                             'followers_count', 'location', 'created_at','statuses_count']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
@@ -27,7 +30,7 @@ REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
 USER_DOMAIN = 'user_domain' # user domain hash
 DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
-
+'''
 def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
 
@@ -73,13 +76,14 @@ def get_neighbor_info(topic, date, windowsize, uid, network_type):
     u_neighbor_list = neighbor_list.append(uid) # 包含uid在内的节点list
     neighbor_num = len(neighbor_list)
     #获取邻居节点的信息
-    neighbor_info, top_keyword, sentiment_dict ,query_dict= get_info(neighbor_list)
+    neighbor_info, top_keyword, sentiment_dict ,query_dict= get_info(neighbor_list, topic, date, windowsize)
     neighbor_t_c = get_timestamp_count(query_dict, topic, date, windowsize)
     return neighbor_list, neighbor_info, top_keyword, sentiment_dict, neighbor_t_c
 
-def get_info(neighbor_list):
-    # topic_id = get_topic_id(topic, start_ts, end_ts) 这里需要补充通过话题名称、时间范围获取topic id的代码
-    xapian_search_weibo = getXapianWeiboByTopic()
+def get_info(neighbor_list, topic, date, windowsize):
+    end_ts = datetime2ts(date)
+    start_ts = end_ts - windowsize * Day
+    xapian_search_weibo = getXapianWeiboByTopic(topic, start_ts, end_ts)
     query_dict = {
         '$or' : []
         }

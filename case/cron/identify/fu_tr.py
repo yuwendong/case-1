@@ -5,14 +5,16 @@ import operator
 from peak_detection import detect_peaks
 from bottom_detect import detect_bottom
 from dynamic_xapian_weibo import getXapianWeiboByTopic
-from config import db
+from config import db, REDIS_HOST, REDIS_PORT, USER_DOMAIN, DOMAIN_LIST
 from config import xapian_search_user as user_search
+from parameter import user_fields_list, field_list, TOPIC, START, END
+from parameter import weibo_topic2xapian
 from bottom_detect import detect_bottom
 import sys
 sys.path.append('../../')
 from model import PropagateCount, PropagateKeywords, TrendKeyUser, TrendMaker, TrendPusher
 from time_utils import datetime2ts, ts2datetime, ts2date
-# from tr_tree import index # 用于计算转发树中children节点数最大的节点，认为其为趋势推动者
+
 
 
 Minute = 60
@@ -23,8 +25,10 @@ Day = Hour * 24
 MinInterval = Fifteenminutes
 during = Day
 
-domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
-field_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count','comments_count','terms']
+domain_list = DOMAIN_LIST
+'''
+field_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
+                  'reposts_count','comments_count','terms']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', \
                'comments_count', 'sentiment', 'topics', 'message_type']
@@ -34,7 +38,7 @@ REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
 USER_DOMAIN = 'user_domain' # user domain hash
 DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
-
+'''
 def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
 
@@ -523,9 +527,17 @@ def get_user_info(uid):
 
 
 if __name__=='__main__':
-    topic = u'外滩踩踏'
-    date = '2015-01-10'
-    windowsize = 10
-    topic_xapian_id = '54b1183331a94c73b51935da'
+    '''
+    topic = u'高校思想宣传'
+    date = '2015-02-01'
+    windowsize = 9
+    topic_xapian_id = '54ccbfab5a220134d9fc1b37'
+    '''
+    topic = TOPIC
+    date = END
+    start_ts = datetime2ts(START)
+    end_ts = datetime2ts(END)
+    windowsize = (end_ts - start_ts) / Day
+    topic_xapian_id = weibo_topic2xapian(topic, start_ts, end_ts)
     get_interval_count(topic, date, windowsize, topic_xapian_id)
     

@@ -173,6 +173,20 @@ class PropagateCount(db.Model):
         self.mtype = mtype
         self.dcount = dcount
 
+class PropagateCountNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    dcount = db.Column(db.Text) # dcount={'other':count}领域对应的count···❯
+
+    def __init__(self, topic, range, end, dcount):
+        self.topic = topic
+        self.range = range
+        self.end = end
+        self.dcount = dcount
+
+
 class AttentionCount(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -491,6 +505,59 @@ class FirstUser(db.Model):
         self.user_info = user_info
         self.weibo_info = weibo_info
         self.user_domain = user_domain
+
+class FirstUserNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, timestamp, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.timestamp = timestamp
+        self.news_info = news_info
+
+class TrendMakerNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    news_id = db.Column(db.Text)
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    weight = db.Column(db.Float)
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, news_id, timestamp, weight, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.news_id = news_id
+        self.timestamp = timestamp
+        self.weight = weight
+        self.news_info = news_info
+
+class TrendPusherNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    start_ts = db.Column(db.BigInteger(20, unsigned=True))
+    end_ts = db.Column(db.BigInteger(20, unsigned=True))
+    news_id = db.Column(db.Text)
+    timestamp = db.Column(db.BigInteger(20, unsigned=True))
+    comments_count = db.Column(db.Integer)
+    news_info = db.Column(db.Text)
+
+    def __init__(self, topic, start_ts, end_ts, news_id, timestamp, comments_count, news_info):
+        self.topic = topic
+        self.start_ts = start_ts
+        self.end_ts = end_ts
+        self.news_id = news_id
+        self.timestamp = timestamp
+        self. comments_count = comments_count
+        self.news_info = news_info
 
 class FirstDomainUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
