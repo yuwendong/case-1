@@ -23,7 +23,10 @@ from trend_user import read_trend_maker, read_trend_pusher, read_trend_user_tabl
 from community_util import read_uid_weibos, read_uid_neighbors, read_uid_community
 from weibo_ts import c_weibo_by_ts, n_weibo_by_ts
 from news_utils import get_news_first_user, get_news_trend_maker, get_news_trend_pusher
+from parameter import TOPK, Minute, Fifteenminutes, Hour, sixHour, Day,\
+        module, NOT_CALC_STATUS, IN_CALC_STATUS, COMPLETED_STATUS
 
+'''
 TOPK = 1000
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -32,11 +35,10 @@ SixHour = Hour * 6
 Day = Hour * 24
 module = 'identify'
 
-
 NOT_CALC_STATUS = -1
 IN_CALC_STATUS = 0
 COMPLETED_STATUS = 1
-
+'''
 mod = Blueprint('identify', __name__, url_prefix='/identify')
 
 def _utf8_unicode(s):
@@ -425,7 +427,7 @@ def neighbor_weibo_by_ts():
     results = n_weibo_by_ts(topic, date, windowsize, uid, network_type, rank_method)
     return json.dumps(results)
 
-@mod.route('/first_user_news/')
+@mod.route('/news_first_user/')
 def news_first_user():
     topic = request.args.get('topic', '')
     start_ts = request.args.get('start_ts', '')
@@ -451,7 +453,7 @@ def news_trend_maker():
     end_ts = int(end_ts)
     #rank_method:weight(default), timestamp
     rank_method = request.args.get('rank_method', 'weight')
-    news_skip = reqeust.args.get('news_skip', '0')
+    news_skip = request.args.get('news_skip', '0')
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)

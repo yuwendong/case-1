@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 import pymongo
 
+#views
+Minute = 60
+Fifteenminutes = 15 * Minute
+Hour = 3600
+sixHour = Hour * 6
+Day = Hour * 24
+module = 'identify'
+NOT_CALC_STATUS = -1
+IN_CALC_STATUS = 0
+COMPLETED_STATUS = 1
+TOPK = 1000
+
 # first_user
 domain_dict = {'folk':u'民众', 'media':u'媒体', 'opinion_leader':u'意见领袖', 'other':u'其他', 'oversea':u'海外'}
 domain_list = ['folk', 'media', 'opinion_leader','oversea', 'other']

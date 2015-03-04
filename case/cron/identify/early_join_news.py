@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import pymongo
-from config import db
-from model import FirstUserNews
+import sys
+#from config import db
+#from model import FirstUserNews
 from parameter import all_fields, filter_fields, first_news_count
+sys.path.append('../../')
+from global_config import db
+from model import FirstUserNews
+from time_utils import datetime2ts, ts2datetime
 '''
 all_fields = ['id', '_id', 'title', 'url', 'summary', 'timestamp', \
                    'datetime', 'date', 'thumbnail_url', 'user_id', 'user_url', \
@@ -25,33 +30,30 @@ def get_filter_dict():
 
 def early_join(topicname, start_ts, end_ts, collection):
     filter_fields_dict = get_filter_dict() # 筛选掉部分字段需要的字典的形成
-    first_user_list = collection.find({},filter_fields_dict).sort('timestamp').limit(first_news_count)
+    # pay attention
+    query_dict = {'timestamp':{'$gte':start_ts, '$lte':end_ts}}
+    print 'query_dict, first_news_count:', query_dict, first_news_count
+    first_user_list = collection.find(query_dict, filter_fields_dict).sort('timestamp').limit(first_news_count)
+    #first_user_list = collection.find({},filter_fields_dict).sort('timestamp').limit(first_news_count)
     rank = 0
+    # deal with the start_ts/end_ts is not the whole day
+    if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
+        start_ts = datetime2ts(ts2datetime(start_ts))
+    if end_ts - datetime2ts(ts2datetime(end_ts)) != 0:
+        end_ts = datetime2ts(ts2datetime(end_ts)) + 3600 * 24
+    
+    items_exist = db.session.query(FirstUserNews).filter(FirstUserNews.topic==topicname, \
+                                                         FirstUserNews.start_ts==start_ts ,\
+                                                         FirstUserNews.end_ts==end_ts).all()
+    for item_exist in items_exist:
+        db.session.delete(item_exist)
+    db.session.commit()
+
     for item in first_user_list:
         rank += 1
         timestamp = item['timestamp']
         save_item = FirstUserNews(topicname, start_ts, end_ts,timestamp, json.dumps(item))
-        save_first_news(save_item)
-    print 'success save_first_news'
-
-def save_first_news(item):
-    topic = item.topic
-    start_ts = item.start_ts
-    end_ts = item.end_ts
-    timestamp = item.timestamp
-    news_info = item.news_info
-    item_exist = db.session.query(FirstUserNews).filter(FirstUserNews.topic==topic ,\
-                                                        FirstUserNews.start_ts==start_ts ,\
-                                                        FirstUserNews.end_ts==end_ts).first() # 建表
-    if item_exist:
-        db.session.delete(item_exist)
-    db.session.add(item)
+        db.session.add(save_item)
+        print 'rank:', rank
     db.session.commit()
-    
-    
-        
-        
-    
-    
-    
-
+    print 'success save_first_news'

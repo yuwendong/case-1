@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
 import pymongo
-from config import db
-from model import TrendMakerNews, TrendPusherNews, PropagateCountNews
+#from config import db
+#from model import TrendMakerNews, TrendPusherNews, PropagateCountNews
 from peak_detection import detect_peaks
 from bottom_detect import detect_bottom
 from early_join_news import get_filter_dict
 from time_utils import ts2date, ts2datetime, datetime2ts
-from parameter import During, pusher_during, unit, maker_news_count, pusher_news_count
-
+from parameter import During, pusher_during, unit, interval_count_during ,\
+                  maker_news_count, pusher_news_count
+from parameter import Minute, Fifteenminutes, Hour, sixHour, Day
+from news_keywords import  cut_news, get_news_keywords, get_news_weight, get_top_weight_news
+sys.path.append('../../')
+from global_config import db
+from model import TrendMakerNews, TrendPusherNews, PropagateCountNews
+'''
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
 SixHour = Hour * 6
 Day = Hour * 24
-'''
 During = Day # 计算波峰波谷的时间粒度
 pusher_during = Hour # 计算推动者的时间粒度
 unit = 900
@@ -31,16 +37,15 @@ def trend_user(topic, start_ts, end_ts, news_collection, comment_collection):
     print 'news_bottom:', new_bottom
     # trend_maker
     trend_maker = get_maker(topic, new_peaks, new_bottom, ts_list, news_collection)
-    print 'trend_maker:', trend_maker
+    print 'len(trend_maker):', len(trend_maker)
     # trend_pusher
     trend_pusher = get_pusher(topic, new_peaks, new_bottom, ts_list, news_collection, comment_collection)
-    print 'trend_pusher:', trend_pusher
+    print 'len(trend_pusher):', len(trend_pusher)
 
     save_trend_maker(topic, start_ts, end_ts, trend_maker)
     save_trend_pusher(topic, start_ts, end_ts, trend_pusher)
     
-# 问题是weight和波峰波谷确定的时间不同？？！！
-#趋势制造者----以weight作为排序标准，由于相同新闻数无数据;weight是以cover关键词的个数确定的
+#趋势制造者----以weight作为排序标准,weight是以cover关键词的个数确定的
 def get_maker(topic, new_peaks, new_bottom, ts_list, collection):
     begin_ts = ts_list[new_bottom[0]]
     end_ts = ts_list[new_peaks[0]]
@@ -48,14 +53,30 @@ def get_maker(topic, new_peaks, new_bottom, ts_list, collection):
     print 'get_maker news_peak:', new_peaks[0]
     print 'get_maker ts_list:', ts2date(ts_list[0])
     print 'get_maker start_ts:', ts2date(begin_ts)
-    print 'get_pmaker end_ts:', ts2date(end_ts)
+    print 'get_maker end_ts:', ts2date(end_ts)
     if begin_ts > end_ts:
         begin_ts = ts_list[0]
-
+    
     begin_ts = begin_ts - Hour
-    query_dict = {'timestamp':{'$gte':begin_ts, '$lte':end_ts}}
     filter_dict = get_filter_dict()
+    query_dict = {'timestamp':{'$gte':begin_ts, '$lte':end_ts}}
+    '''
     maker_list = collection.find(query_dict, filter_dict).sort('weight').limit(maker_news_count)
+    if not maker_list:
+        return []
+    else:
+        return maker_list
+    '''
+    input_news_list = collection.find(query_dict, filter_dict)
+    # 第一个波段内所有新闻进行分词
+    news_cut_list = cut_news(input_news_list)
+    # 计算top50的关键词
+    keywords_list = get_news_keywords(news_cut_list)
+    # 计算波段内新闻的关键词占比weight
+    weight_list = get_news_weight(news_cut_list, keywords_list)
+    # 排序获取weight前20的news
+    maker_list = get_top_weight_news(weight_list)
+    
     if not maker_list:
         return []
     else:
@@ -76,9 +97,9 @@ def get_pusher(topic, new_peaks, new_bottom, ts_list, news_collection, comment_c
         over_ts = begin_ts + pusher_during
         p_ts_list.append(over_ts)
         items = db.session.query(PropagateCountNews).filter(PropagateCountNews.topic==topic ,\
-                                                                                               PropagateCountNews.end<=over_ts ,\
-                                                                                               PropagateCountNews.end>begin_ts ,\
-                                                                                               PropagateCountNews.range==unit).all()
+                                                            PropagateCountNews.end<=over_ts ,\
+                                                            PropagateCountNews.end>begin_ts ,\
+                                                            PropagateCountNews.range==unit).all()
         if items:
             result = Merge_propagate(items)
         else:
@@ -103,11 +124,16 @@ def get_pusher(topic, new_peaks, new_bottom, ts_list, news_collection, comment_c
 def get_interval_count(topic, start_ts, end_ts):
     results = [0]
     ts_list = []
-    unit = 900
-    during = Day
+    #unit = 900
+    #during = Day
+    during = interval_count_during
     start_ts = datetime2ts(ts2datetime(start_ts))
     ts_list.append(start_ts)
-    end_ts = datetime2ts(ts2datetime(end_ts))
+    #end_ts = datetime2ts(ts2datetime(end_ts))
+    # deal with the time is not the whole day
+    print 'before deal end_ts:', ts2date(end_ts)
+    if end_ts - datetime2ts(ts2datetime(end_ts))!= 0:
+        end_ts = datetime2ts(ts2datetime(end_ts)) + 3600 * 24
     print 'get_interval_count start_ts:', ts2date(start_ts)
     print 'get_interval_count end_ts:', ts2date(end_ts)
 
@@ -131,9 +157,14 @@ def get_interval_count(topic, start_ts, end_ts):
     return ts_list, results
 
 def save_trend_maker(topic, start_ts, end_ts, trend_maker):
+    # deal with the start_ts/end_ts is not the whole day
+    if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
+        start_ts = datetime2ts(ts2datetime(start_ts))
+    if end_ts - datetime2ts(ts2datetime(end_ts)) != 0:
+        end_ts = datetime2ts(ts2datetime(end_ts)) + 3600 * 24
     items_exist = db.session.query(TrendMakerNews).filter(TrendMakerNews.topic==topic ,\
-                                                                                               TrendMakerNews.start_ts==start_ts ,\
-                                                                                               TrendMakerNews.end_ts==end_ts).all()
+                                                          TrendMakerNews.start_ts==start_ts ,\
+                                                          TrendMakerNews.end_ts==end_ts).all()
     if items_exist:
         for item in items_exist:
             db.session.delete(item)
@@ -150,9 +181,14 @@ def save_trend_maker(topic, start_ts, end_ts, trend_maker):
     db.session.commit()
 
 def save_trend_pusher(topic, start_ts, end_ts, trend_pusher):
+    #deal with the start_ts/end_ts is not the whole day
+    if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
+        start_ts = datetime2ts(ts2datetime(start_ts))
+    if end_ts - datetime2ts(ts2datetime(end_ts)) != 0:
+        end_ts = datetime2ts(ts2datetime(end_ts)) + 3600 * 24
     items_exist = db.session.query(TrendPusherNews).filter(TrendPusherNews.topic==topic ,\
-                                                                                               TrendPusherNews.start_ts==start_ts ,\
-                                                                                               TrendPusherNews.end_ts==end_ts).all()
+                                                           TrendPusherNews.start_ts==start_ts ,\
+                                                           TrendPusherNews.end_ts==end_ts).all()
     if items_exist:
         for item in items_exist:
             db.session.delete(item)
@@ -244,10 +280,4 @@ def sort_news_by_comment(query_dict, news_collection, comment_collection):
     sort_results = sorted(results, key=lambda x:x['comments_count'], reverse=True)
     
     return sort_results
-        
-        
-    
- 
-    
-    
-    
+

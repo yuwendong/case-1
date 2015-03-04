@@ -6,14 +6,20 @@ news_identify的计算入口，主要由两部分组成：
 '''
 import time
 import pymongo
-from config import MONGODB_HOST, MONGODB_PORT, db
-from model import Topics, TopicStatus
+import sys
+#from config import MONGODB_HOST, MONGODB_PORT, db
+#from model import Topics, TopicStatus
 from early_join_news import early_join
 from trend_user_news import trend_user
 from topicStatus import _topic_not_calc, _update_topic_status2Computing, \
         _update_topic_status2Completed
 from parameter import NEWS_MODULE, NEWS_TOPIC, NEWS_START_TS, NEWS_END_TS
 from parameter import get_dynamic_mongo
+sys.path.append('../../')
+from global_config import MONGODB_HOST, MONGODB_PORT, db
+from model import Topics, TopicStatus
+from time_utils import datetime2ts, ts2datetime
+
 # host 46 port 27019
 '''
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
@@ -21,12 +27,12 @@ mongodb = conn['news']
 '''
 def main(topic, start_ts, end_ts):
     #在topic_status中获取还未进行计算的话题
-    topics = _topic_not_calc(status='-1', module='i-news')
+    topics = _topic_not_calc(status='-1', module='i_news')
     topic_status_info = db.session.query(TopicStatus).filter(TopicStatus.topic==topic ,\
-                                                                                             TopicStatus.start==start_ts ,\
-                                                                                             TopicStatus.end==end_ts ,\
-                                                                                             TopicStatus.module=='i-news' ,\
-                                                                                             TopicStatus.status==-1).first()
+                                                             TopicStatus.start==start_ts ,\
+                                                             TopicStatus.end==end_ts ,\
+                                                             TopicStatus.module=='i_news' ,\
+                                                             TopicStatus.status==-1).first()
     if topic_status_info:
         topic_id = topic_status_info.id
         start_ts = topic_status_info.start
@@ -34,7 +40,7 @@ def main(topic, start_ts, end_ts):
         topicname = topic_status_info.topic
         db_date = topic_status_info.db_date
             
-        _update_topic_status2Computing(topicname, start_ts, end_ts, db_date, 'i-news')
+        _update_topic_status2Computing(topicname, start_ts, end_ts, db_date, 'i_news')
         print 'update_status'
     
         #mongodb中topic对应的collection
@@ -48,7 +54,7 @@ def main(topic, start_ts, end_ts):
         trend_user(topicname, start_ts, end_ts, news_collection, comment_collection)
 
         print 'update_topic_end'
-        _update_topic_status2Completed(topicname, start_ts, end_ts, db_date, 'i-news') 
+        _update_topic_status2Completed(topicname, start_ts, end_ts, db_date, 'i_news') 
 
 '''    
 #通过topic, start_ts, end_ts获取news_topic中对应的object_id，然后找到对应的collection
@@ -82,13 +88,18 @@ if __name__=='__main__':
     topic = NEWS_TOPIC
     start_ts = NEWS_START_TS
     end_ts = NEWS_END_TS
-    
+    # deal with the start_ts/end_ts is not the whole day
+    if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
+        start_ts = datetime2ts(ts2datetime(start_ts))
+    if end_ts - datetime2ts(ts2datetime(end_ts)) != 0:
+        end_ts = datetime2ts(ts2datetime(end_ts)) + 3600 * 24
+    print 'start_ts, end_ts:', start_ts, end_ts
     db_date = int(time.time())
     # 创建topics中得话题
     save_t = Topics(topic, start_ts, end_ts)
     save_t_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
-                                                                             Topics.start_ts==start_ts ,\
-                                                                             Topics.end_ts==end_ts).first()
+                                                   Topics.start_ts==start_ts ,\
+                                                   Topics.end_ts==end_ts).first()
     if save_t_exist:
         db.session.delete(save_t_exist)
     db.session.add(save_t)
