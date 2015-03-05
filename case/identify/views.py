@@ -76,7 +76,8 @@ def network():
     print 'topic, end_ts, windowsize, network_type:', topic.encode('utf-8'), end, windowsize,network_type  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
     print 'graph_status:', topic_status
-    if topic_status == COMPLETED_STATUS:  
+    #if topic_status == COMPLETED_STATUS:  
+    if topic_status == 0:
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize) + '_' + network_type
         print 'key:', query_key.encode('utf-8')
         key = str(query_key)
@@ -471,6 +472,7 @@ def news_trend_pusher():
     # rank_method:comment_count(default), timestamp, weight
     rank_method = request.args.get('rank_method', 'comments_count')
     news_skip = request.args.get('news_skip', '0')
+    print 'news_trend_pusher news_skip:', news_skip
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)

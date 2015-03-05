@@ -11,13 +11,15 @@ from case.global_config import xapian_search_user as user_search
 from case.global_config import GRAPH_PATH
 from community_information import get_community_user
 from parameter import getXapianWeiboByTopic
-from parameter import user_fields_list, weibo_fields_list, emotions_kv
+from parameter import user_fields_list, weibo_fields_list, emotions_kv, \
+                      Minute, Fifteenminutes, Hour, Day
 
+'''
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
 Day = Hour * 24
-'''
+
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
                             'followers_count', 'location', 'created_at','statuses_count']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \

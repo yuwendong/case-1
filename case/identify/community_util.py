@@ -3,13 +3,14 @@ import json
 import os
 import redis
 from xapian_case.xapian_backend import XapianSearch
-from case.time_utils import ts2date
+from case.time_utils import ts2date, datetime2ts
 from neighbor_util import get_neighbor_info
 from community_information import get_community_info, getXapianWeiboByTopic
 from case.global_config import xapian_search_user as user_search
 from utils import weiboinfo2url
 from parameter import weibo_fields_list, user_fields_list, emotions_kv, REDIS_HOST, REDIS_PORT
 from parameter import  USER_DOMAIN, DOMAIN_LIST, getXapianWeiboByTopic
+from parameter import Day
 '''
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', \
