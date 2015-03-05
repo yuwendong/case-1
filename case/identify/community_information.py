@@ -13,15 +13,15 @@ from case.global_config import GRAPH_PATH
 from utils import weiboinfo2url
 from parameter import getXapianWeiboByTopic
 from parameter import weibo_fields_list, user_fields_list, emotions_kv, REDIS_HOST, REDIS_PORT,\
-                                    USER_DOMAIN, DOMAIN_LIST
+                    USER_DOMAIN, DOMAIN_LIST, Minute, Fifteenminutes, Hour, Day
 
 
 #GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+'''
 Minute = 60
 Fifteenminutes = 15 *Minute
 Hour = 3600
 Day = Hour * 24
-'''
 user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count', \
                             'followers_count', 'location', 'created_at','statuses_count']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
@@ -63,6 +63,8 @@ def acquire_real_topic_id(topic, date, windowsize):
 
 def get_community_info(topic, date, windowsize, uid, cid, network_type):
     real_topic_id = acquire_real_topic_id(topic, date, windowsize)
+    # test
+    real_topic_id = 282
     if not real_topic_id:
         return None, None, None
         # 该话题存在进行下面的计算
