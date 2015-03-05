@@ -40,8 +40,7 @@ def partition_time(ts_arr, data, interval = INTERVAL):
                 break
             data_cursor += 1
             group.append(d)
-        if len(group):
-            groups.append(group)
+        groups.append(group)
         ts_current += each_step
 
     while data_cursor < len(data) - 1: # 有剩余

@@ -25,15 +25,18 @@ fields_list=['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp
 
 
 def geo2city(geo): #将weibo中的'geo'字段解析为地址
-    province, city = geo.split()
-    if province in [u'内蒙古自治区', u'黑龙江省']:
-        province = province[:3]
-    else:
-        province = province[:2]
+    try:
+        province, city = geo.split()
+        if province in [u'内蒙古自治区', u'黑龙江省']:
+            province = province[:3]
+        else:
+            province = province[:2]
 
-    city = city.strip(u'市').strip(u'区')
+        city = city.strip(u'市').strip(u'区')
 
-    geo = province + ' ' + city
+        geo = province + ' ' + city
+    except:
+        pass
 
     if isinstance(geo, unicode):
         geo = geo.encode('utf-8')
@@ -61,17 +64,15 @@ def geo2city(geo): #将weibo中的'geo'字段解析为地址
 
 
 def save_rt_results(topic, mtype, results, during, first_item):
-    for k, v in results.iteritems():
-        mtype = k
-        ts, ccount = v
-        item = CityTopicCount(topic, during, ts, mtype, json.dumps(ccount), json.dumps(first_item))
-        item_exist = db.session.query(CityTopicCount).filter(CityTopicCount.topic==topic, \
-                                                                            CityTopicCount.range==during, \
-                                                                            CityTopicCount.end==ts, \
-                                                                            CityTopicCount.mtype==mtype).first()
-        if item_exist:
-            db.session.delete(item_exist)
-        db.session.add(item)
+    ts, ccount = results
+    item = CityTopicCount(topic, during, ts, mtype, json.dumps(ccount), json.dumps(first_item))
+    item_exist = db.session.query(CityTopicCount).filter(CityTopicCount.topic==topic, \
+                                                                        CityTopicCount.range==during, \
+                                                                        CityTopicCount.end==ts, \
+                                                                        CityTopicCount.mtype==mtype).first()
+    if item_exist:
+        db.session.delete(item_exist)
+    db.session.add(item)
     db.session.commit()
 
 
@@ -114,17 +115,18 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                         continue
                 mtype_ccount[v] = [end_ts, ccount]
 
-                save_rt_results(topic,v, mtype_ccount, during, first_item)
+                save_rt_results(topic,v, mtype_ccount[v], during, first_item)
 
 
 if __name__ == '__main__':
     # START_TS = datetime2ts('2013-09-02')
-    START_TS = datetime2ts('2014-12-31')
+    START_TS = datetime2ts('2015-01-23')
     # END_TS = datetime2ts('2013-09-08')
-    END_TS = datetime2ts('2015-01-09')
+    END_TS = datetime2ts('2015-02-03')
 
-    topic = u"外滩踩踏" # u"东盟,博览会"
-    topic_id = getTopicByName(topic)['_id']
+    topic = u'张灵甫遗骨疑似被埋羊圈' # u'东盟,博览会'
+    # topic_id = getTopicByName(topic)['_id']
+    topic_id = '54cf5ad9e8d7ce533b1160ec'   #'54ccbfab5a220134d9fc1b37'# 54cc9616a41513bb4fa6e262
 
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
     print 'topic: ', topic.encode('utf8')

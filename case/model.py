@@ -3,12 +3,12 @@
 from extensions import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-        'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityRepost', 'PropagateCount', \
+        'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityTopicCountNews', 'CityRepost', 'CityRepostNews','PropagateCount', \
         'PropagateCountNews', 'PropagateKeywords', 'PropagateKeywordsNews',\
         'PropagateWeibos', 'PropagateNews', 'AttentionCount', 'QuicknessCount', 'FirstUser','FirstDomainUser',\
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
           'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew',\
-          'PropagateCountNews', 'FirstUserNews', 'TrendMakerNews', 'TrendPusherNews']
+          'FirstUserNews', 'TrendMakerNews', 'TrendPusherNews']
 
 
 class Topics(db.Model):
@@ -175,6 +175,27 @@ class CityTopicCount(db.Model):
     def _name(cls):
         return u'CityTopicCount'
 
+class CityTopicCountNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))  #message_type:原创-1、转发-2
+    ccount = db.Column(db.Text)                      #city_count:{city:count}
+    first_item = db.Column(db.Text)          # 原创 初始微博 其他类型为空
+
+    def __init__(self, topic, range, end, mtype, ccount, first_item):
+        self.topic = query 
+        self.range = range
+        self.end = end
+        self.mtype = mtype
+        self.ccount = ccount
+        self.first_item = first_item
+
+    @classmethod
+    def _name(cls):
+        return u'CityTopicCountNews'
+
 class CityRepost(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     original = db.Column(db.Integer(1,unsigned = True))
@@ -195,6 +216,27 @@ class CityRepost(db.Model):
     @classmethod
     def _name(cls):
         return u'CityRepost'
+
+class CityRepostNews(db.Model):
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    original = db.Column(db.Integer(1,unsigned = True))
+    topic = db.Column(db.String(20))
+    mid = db.Column(db.String(20)) # 新闻ID
+    ts = db.Column(db.BigInteger(20, unsigned=True))
+    origin_location = db.Column(db.Text) # 原始新闻发布地点
+    repost_location = db.Column(db.Text) # 转发新闻发布地点
+
+    def __init__(self, original, topic, mid, ts, origin_location, repost_location ):
+        self.topic = topic
+        self.original = original
+        self.mid = mid
+        self.ts = ts
+        self.origin_location = origin_location
+        self.repost_location = repost_location
+
+    @classmethod
+    def _name(cls):
+        return u'CityRepostNews'
 
 #时间分析模块
 class PropagateCount(db.Model):
