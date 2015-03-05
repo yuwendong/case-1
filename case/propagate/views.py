@@ -4,6 +4,7 @@ import os
 import json
 from peak_detection import detect_peaks
 from read_quota import ReadPropagate, ReadIncrement, ReadPropagateKeywords, ReadPropagateWeibos  # ,ReadAttention, ReadPenetration, ReadQuickness 
+from read_quota_news import ReadPropagateNews, ReadPropagateKeywordsNews, ReadPropagateWeibosNews
 
 mtype_kv = {'origin': 1, 'comment': 2, 'forward': 3}
 
@@ -56,7 +57,7 @@ def increment():
     return json.dumps(results)
 
 @mod.route('/keywords/') 
-def prpagate_keywords():
+def propagate_keywords():
     topic = request.args.get('topic', '')
     mtype = request.args.get('style', '')
     mtype = int(mtype)
@@ -205,3 +206,102 @@ def ajax_quickness():
 
     return json.dumps(results)
 '''
+
+@mod.route('/total_news/')
+def ajax_propagate_news():
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    topic = request.args.get('topic', '')
+    during = request.args.get('during', 3600)
+    during = int(during)
+    end = request.args.get('end_ts', '')
+    end = int(end)
+
+    results_dict = {}
+    incre_results_dict = {}
+
+    if mtype == 1:
+        results = ReadPropagateNews(topic, end, during) #only 1 type
+        # incr_results = ReadIncrement(topic, end, during, v)
+        if results:
+            results_dict['news'] = sum(results['dcount'].values())
+        # if incr_results:
+        #    incre_results_dict[k] = incr_results['dincrement']['total']
+
+    return json.dumps({'count': results_dict, 'incre': incre_results_dict})
+
+@mod.route('/propagatepeak_news/')
+def PropagatePeakNews():
+    limit = request.args.get('limit', 10)
+    topic = request.args.get('topic', None)
+    if topic:
+        topic = topic.strip()
+    during = request.args.get('during', 900)
+    during = int(during)
+    mtype = request.args.get('mtype', '')
+    mtype = int(mtype)
+    lis = request.args.get('lis', '')
+
+    try:
+        lis = [float(da) for da in lis.split(',')]
+    except:
+        lis =[]
+    if not lis or not len(lis):
+        return 'Null Data'
+
+    ts_lis = request.args.get('ts', '')
+    ts_lis = [float(da) for da in ts_lis.split(',')]
+
+    new_zeros = detect_peaks(lis)
+
+    title = {'1': 'A', '2': 'B', '3': 'C', '5': 'D'}
+
+    time_lis = {}
+    for idx, point_idx in enumerate(new_zeros):
+        # print idx, point_idx
+        ts = ts_lis[point_idx]
+        end_ts = ts
+
+        v = mtype
+
+        time_lis[idx] = {
+            'ts': end_ts * 1000,
+            'title': title[str(mtype)] + str(idx),
+         }
+
+    return json.dumps(time_lis)
+
+@mod.route('/keywords_news/') 
+def propagate_keywordsNews():
+    topic = request.args.get('topic', '')
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    during = request.args.get('during', 900)
+    during = int(during)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    limit = request.args.get('limit', 50)
+    limit = int(limit)
+
+    results_dict = {}
+    if mtype == 1:
+        results_dict = ReadPropagateKeywordsNews(topic, end_ts, during, limit)
+
+    return json.dumps(results_dict)
+
+@mod.route('/weibos_news/') 
+def propagate_weibos_news():
+    topic = request.args.get('topic', '')
+    mtype = request.args.get('style', '')
+    mtype = int(mtype)
+    during = request.args.get('during', 900)
+    during = int(during)
+    end_ts = request.args.get('end_ts', '')
+    end_ts = int(end_ts)
+    limit = request.args.get('limit', 50)
+    limit = int(limit)
+    results_dict = {}
+
+    if mtype == 1:
+        results_dict['news']= ReadPropagateWeibosNews(topic, end_ts, during, limit)
+    return json.dumps(results_dict)

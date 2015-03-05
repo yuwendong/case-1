@@ -223,7 +223,7 @@ def _top_weibos(weibos_dict, top=TOP_READ):
         
         for k, v in results:
             #print '@@@@@@@@:',v[1]
-            results_list.append(v[1])
+            results_list.extend(v[1])
         for i in range(len(results_list)):
             results_list_new.append(results_list[len(results_list)-1-i])
     #print 'list:', results_list
@@ -295,12 +295,14 @@ def ReadPropagateWeibos(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, un
                                                          PropagateWeibos.limit==limit).all()
         for item in items:
             weibo_dict = parseWeibos(item.weibos)
-            #print 'weibo_dict:', weibo_dict
             for k ,v in weibo_dict.iteritems():
                 try:
-                    weibos_dict[k] += v
+                    weibos_dict[k][0] += v[0]
+                    weibos_dict[k][1].append(v[1])
                 except KeyError:
                     weibos_dict[k] = v
+                    weibos_dict[k][0] = v[0]
+                    weibos_dict[k][1] = [v[1]]
                 #print 'weibos_dict:', weibos_dict
     weibos_dict = _top_weibos(weibos_dict, top)
     return weibos_dict
