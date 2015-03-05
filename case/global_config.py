@@ -24,6 +24,9 @@ MONGODB_HOST = '219.224.135.46'
 MONGODB_PORT = 27019
 SSDB_PORT = 8888
 SSDB_HOST = '219.224.135.47' # SSDB服务器在47
+REDIS_HOST = '219.224.135.48'
+REDIS_PORT = 6379
+
 XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
 XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
 GRAPH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../graph/')
@@ -40,3 +43,15 @@ MASTER_TIMELINE_54API_WEIBO_DAILY_COLLECTION_PREFIX = 'master_timeline_weibo_wee
 MASTER_TIMELINE_54API_WEIBO_TOPIC_COLLECTION_PREFIX = 'master_timeline_weibo_topic_'
 MASTER_TIMELINE_54API_TOPIC_COLLECTION = 'master_timeline_topic'
 MASTER_TIMELINE_54API_WEIBO_REPOST_COLLECTION = 'master_timeline_weibo_repost'
+
+#增加的db
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+# Create application
+app = Flask('xxx')
+# Create dummy secrey key so we can use sessions
+app.config['SECRET_KEY'] = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+# Create database
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_ECHO'] = False
+db = SQLAlchemy(app)
+
