@@ -320,6 +320,6 @@ def getPeaks():
             'ts': end_ts * 1000,
             'title': title[emotion] + str(idx),
         }
-
+    print 'peak:', time_lis
     return json.dumps(time_lis)
 

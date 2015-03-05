@@ -8,7 +8,7 @@ __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', '
         'PropagateWeibos', 'PropagateNews', 'AttentionCount', 'QuicknessCount', 'FirstUser','FirstDomainUser',\
            'TopicStatus', 'TopicIdentification', 'OpinionTestRatio',\
           'OpinionTestTime', 'OpinionTestKeywords', 'OpinionTestWeibos', 'IndexTopic', 'OpinionWeibosNew',\
-          'PropagateCountNews', 'FirstUserNews', 'TrendMakerNews', 'TrendPusherNews']
+          'FirstUserNews', 'TrendMakerNews', 'TrendPusherNews']
 
 
 class Topics(db.Model):
