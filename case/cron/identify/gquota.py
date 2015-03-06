@@ -12,9 +12,14 @@ import numpy as np
 from collections import Counter
 
 from SSDB import SSDB 
-from config import db, SSDB_HOST, SSDB_PORT
-from model import DegreeCentralityUser, BetweenessCentralityUser, ClosenessCentralityUser ,\
-                  DsDegreeCentralityUser, DsBetweenessCentralityUser, DsClosenessCentralityUser
+#from config import db, SSDB_HOST, SSDB_PORT
+#from model import DegreeCentralityUser, BetweenessCentralityUser, ClosenessCentralityUser ,\
+#                  DsDegreeCentralityUser, DsBetweenessCentralityUser, DsClosenessCentralityUser
+sys.path.append('../../')
+from global_config import SSDB_HOST, SSDB_PORT, db
+from model import DegreeCentralityUser, BetweenessCentralityUser, \
+        ClosenessCentralityUser, DsDegreeCentralityUser, DsBetweenessCentralityUser ,\
+        DsClosenessCentralityUser
 
 def _utf8_unicode(s):
     if isinstance(s, unicode):

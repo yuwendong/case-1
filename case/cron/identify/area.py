@@ -14,33 +14,35 @@ from gquota import compute_quota
 from snowball1 import SnowballSampling
 # from hadoop_utils import generate_job_id
 from makegexf import make_gexf, make_ds_gexf
-from config import GRAPH_PATH
+# from config import GRAPH_PATH
 from spam.pagerank import pagerank
 from pagerank_config import PAGERANK_ITER_MAX # 默认值为1
 from direct_superior_network import get_superior_userid # 获得直接上级转发网络
 from utils import save_rank_results, save_ds_rank_results, acquire_topic_name, \
         is_in_trash_list, acquire_user_by_id, read_key_users, ds_read_key_users, \
         read_graph, read_attribute_dict
-#from ad_filter import ad_classifier
+from parameter import Minute, Fifteenminutes, Hour, Day,\
+        DEFAULT_INTERVAL, network_type, ds_network_type ,\
+        cut_degree
 reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.path.append('../../')
 from ad_filter import ad_classifier
 from time_utils import datetime2ts, window2time, ts2datetimestr
 from global_config import xapian_search_user as user_search
+from global_config import GRAPH_PATH
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 
-
+'''
 search_topic_id ='545f4c22cf198b18c57b8014'
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
 DEFAULT_INTERVAL = 1 * Hour
-SixHour = Hour * 6
 Day = Hour * 24
 network_type = 1
 ds_network_type = 2
-#GRAPH_PATH = '/home/ubuntu4/huxiaoqian/mcase/graph/'
+'''
 
 
 def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
@@ -142,11 +144,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     if key_user_labeled:
         key_users = read_key_users(current_date, window_size, topic, top_n=10)
         ds_key_users = ds_read_key_users(current_date, window_size, topic ,top_n=10)
-        #ds_tr_key_users = ds_tr_read_key_users(current_date, window_size, topic, top_n=10)
+        
     else:
         key_users = []
         ds_key_users = []
-        #ds_tr_key_users = []
     '''
     读取图结构，并从数据库中获取new_attribute_dict, ds_new_attribute_dict
     '''
@@ -176,10 +177,10 @@ def make_network_graph(current_date, topic_id, topic, window_size, all_uid_pr, p
     ds_udg.remove_edges_from(ds_udg.selfloop_edges())
 
     
-    G = cut_network(G, nx.degree(G), 1) # 筛选出度数大于等于1的节点数
-    gg = cut_network(gg, nx.degree(gg), 1)
-    ds_dg = cut_network(ds_dg, nx.degree(ds_dg), 1)
-    ds_udg = cut_network(ds_udg, nx.degree(ds_udg), 1)
+    G = cut_network(G, nx.degree(G), cut_degree) # 筛选出度数大于等于1的节点数
+    gg = cut_network(gg, nx.degree(gg), cut_degree)
+    ds_dg = cut_network(ds_dg, nx.degree(ds_dg), cut_degree)
+    ds_udg = cut_network(ds_udg, nx.degree(ds_udg), cut_degree)
     
     print 'after cut_network:'
     print 'len(G):', len(G)

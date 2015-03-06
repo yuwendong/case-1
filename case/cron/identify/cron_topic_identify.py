@@ -6,6 +6,7 @@ author:hxq
 import sys
 import networkx as nx
 from parameter import MODULE_T_S, TOPIC, START, END, MAX_SIZE, TOPK
+from parameter import Minute, Fifteenminutes, Hour, sixHour, Day, gexf_type, ds_gexf_type
 from parameter import weibo_topic2xapian
 from area import pagerank_rank, make_network, make_network_graph 
 from topicStatus import _topic_not_calc, _update_topic_status2Computing, \
@@ -17,17 +18,19 @@ from utils import acquire_topic_name, acquire_topic_id, \
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from time_utils import ts2datetime, datetime2ts
-from config import db, GRAPH_PATH #　用于测试期间，建立topicstatus这张表。待删
+#from config import db, GRAPH_PATH #　用于测试期间，建立topicstatus这张表。待删
 import time # 用于测试生成topicStatus入库时间，待删
-from model import TopicStatus, Topics # 用于测试，待删
+#from model import TopicStatus, Topics # 用于测试，待删
 from lxml import etree
 from get_first_user import get_first_node
-# from trendsetter_rank import trendsetter_rank
 from area import _utf8_unicode
 from fu_tr import get_interval_count
 
+sys.path.append('../../')
+from global_config import db, GRAPH_PATH
+from model import TopicStatus, Topics
 
-
+'''
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -35,6 +38,7 @@ SixHour = Hour * 6
 Day = Hour * 24
 gexf_type = 1
 ds_gexf_type = 2
+'''
 #topic_xapian_id = '54ccbfab5a220134d9fc1b37' 
 
 def main(topic, start_ts, ens_ts):
@@ -67,7 +71,7 @@ def main(topic, start_ts, ens_ts):
         start_date = ts2datetime(start_ts) # used to compute the first user
         get_first_node(topicname, start_date, date, windowsize, topic_xapian_id)
         print 'end compute first_nodes'
-
+#
         print 'start make network'
         max_size = MAX_SIZE
         attribute_add = True
