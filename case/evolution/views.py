@@ -62,16 +62,18 @@ def acquire_user_by_id(uid):
 
 
 def geo2city(geo):
-    province, city = geo.split()
-    if province in [u'内蒙古自治区', u'黑龙江省']:
-        province = province[:3]
-    else:
-        province = province[:2]
+    try:
+        province, city = geo.split()
+        if province in [u'内蒙古自治区', u'黑龙江省']:
+            province = province[:3]
+        else:
+            province = province[:2]
 
-    city = city.strip(u'市').strip(u'区')
+        city = city.strip(u'市').strip(u'区')
 
-    geo = province + ' ' + city
-
+        geo = province + ' ' + city
+    except:
+        pass
     if isinstance(geo, unicode):
         geo = geo.encode('utf-8')
 
@@ -196,7 +198,10 @@ def get_city_weibo(query, start_ts, end_ts):
             result['username'] = '未知'
         time = ts2date(result['timestamp'])
         result['time'] = time
-        city = geo2city(result['geo']).split('\t')[1]
+        try:
+            city = geo2city(result['geo']).split('\t')[1]
+        except:
+            city = ''
         result['weibo_link'] = weiboinfo2url(result['user'], result['_id'])
         #print 'city:', city
 

@@ -68,13 +68,16 @@ def save_rt_results(topic, repost_list):
 
 
 def geo2city(geo):
-    province, city = geo.split()
-    if province in [u'内蒙古自治区', u'黑龙江省']:
-        province = province[:3]
-    else:
-        province = province[:2]
+    try:
+        province, city = geo.split()
+        if province in [u'内蒙古自治区', u'黑龙江省']:
+            province = province[:3]
+        else:
+            province = province[:2]
 
-    geo = province + ' ' + city
+        geo = province + ' ' + city
+    except:
+        pass
 
     if isinstance(geo, unicode):
         geo = geo.encode('utf-8')
@@ -156,11 +159,12 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2014-12-31')
-    END_TS = datetime2ts('2015-01-09')
+    START_TS = datetime2ts('2015-01-23')
+    END_TS = datetime2ts('2015-02-03')
 
-    topic = u'外滩踩踏' # u'东盟,博览会'
-    topic_id = getTopicByName(topic)['_id']
+    topic = u'张灵甫遗骨疑似被埋羊圈' # u'东盟,博览会'
+    # topic_id = getTopicByName(topic)['_id']
+    topic_id = '54cf5ad9e8d7ce533b1160ec'   #'54ccbfab5a220134d9fc1b37'# 54cc9616a41513bb4fa6e262
 
     xapian_search = getXapianWeiboByTopic(topic_id)
     repost_search(topic, START_TS, END_TS)
