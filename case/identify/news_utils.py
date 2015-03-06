@@ -25,8 +25,11 @@ def get_news_first_user(topic, start_ts, end_ts, rank_method, news_skip, news_li
         row = []
         timestamp = item.timestamp
         news_info = json.loads(item.news_info)
-        print 'news_info:', news_info
+        #print 'news_info:', news_info
         news_id = news_info['id']
+        
+        news_id = deal_with(news_id)
+
         url = news_info['url']
         summary = news_info['summary']
         datetime = news_info['datetime']
@@ -35,6 +38,8 @@ def get_news_first_user(topic, start_ts, end_ts, rank_method, news_skip, news_li
         title = news_info['title']
         same_news_num = news_info['same_news_num']
         transmit_name = news_info['transmit_name']
+        #if len(transmit_name)==0:
+        #    transmit_name = u'未知'
         #weight = news_info['weight']
         row = [news_id, url, summary, timestamp ,datetime, source_from_name, content168, title, same_news_num, transmit_name]
         results.append(row)
@@ -59,6 +64,7 @@ def get_news_trend_maker(topic, start_ts, end_ts, rank_method, news_skip, news_l
     for item in items:
         row = []
         news_id = item.news_id
+        news_id = deal_with(news_id)
         timestamp = item.timestamp
         weight = item.weight
         news_info = json.loads(item.news_info)
@@ -70,7 +76,9 @@ def get_news_trend_maker(topic, start_ts, end_ts, rank_method, news_skip, news_l
         content168 = news_info['content168']
         title = news_info['title']
         same_news_num = news_info['same_news_num']
-        transmit_name = news_info['transmit_name']       
+        transmit_name = news_info['transmit_name']
+        #if len(transmit_name)==0:
+        #    transmit_name = u'未知'
         row = [news_id, url, summary, timestamp ,datetime, source_from_name, content168, title, same_news_num, transmit_name, weight]
         results.append(row)
         
@@ -96,6 +104,7 @@ def get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_
     for item in items:
         row = []
         news_id = item.news_id
+        news_id = deal_with(news_id)
         timestamp = item.timestamp
         comments_count = item.comments_count
         news_info = json.loads(item.news_info)
@@ -108,6 +117,8 @@ def get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_
         title = news_info['title']
         #weight = news_info['weight']
         transmit_name = news_info['transmit_name']
+        #if len(transmit_name)==0:
+        #    transmit_name = u'未知'
         same_news_num = news_info['same_news_num']
         row = [news_id, url, summary, timestamp ,datetime, source_from_name, content168, title, same_news_num, transmit_name, comments_count]
         results.append(row)
@@ -120,3 +131,9 @@ def get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_
     #    sort_results = sorted(results, key=lambda x:x[10], reverse=True) # 相关度逆序排序
 
     return sort_results[news_skip:news_limit_count+news_skip]
+
+def deal_with(news_id):
+    news_id = news_id.replace(':', '-')
+    news_id = news_id.replace('/', '-')
+    news_id = news_id.replace('.', '-')
+    return news_id

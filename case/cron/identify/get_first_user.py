@@ -7,6 +7,7 @@ sys.setdefaultencoding('utf-8')
 import redis
 from config import db, REDIS_HOST, REDIS_PORT, USER_DOMAIN, DOMAIN_LIST
 from parameter import fields_list, user_fields_list, TOPIC, START, END, first_user_count
+from parameter import Day, domain_list
 sys.path.append('../')
 from time_utils import ts2datetime, datetime2ts
 from dynamic_xapian_weibo import getXapianWeiboByTopic
@@ -14,8 +15,8 @@ from config import xapian_search_user as user_search
 from utils import acquire_user_by_id
 from model import FirstUser, FirstDomainUser# 时间在前20的user及其对应的微博信息
 
-Day = 3600 * 24
 '''
+Day = 3600 * 24
 fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', \
                'comments_count', 'sentiment', 'topics', 'message_type', 'terms']
@@ -75,8 +76,12 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
         else:
             #print 'time_top_nodes:', time_top_nodes
             s = 0
+            '''
             domain_count_list = {'folk':0, 'media':0, 'opinion_leader':0, 'oversea':0, 'other':0}
             domain_user_list = {'folk':[], 'media':[], 'opinion_leader':[], 'oversea':[], 'other':[]}
+            '''
+            domain_count_list, domain_user_list = init_domain_list()
+
             #print 'start_node:'
             for node in time_top_nodes[1]():
                 #print 'node:', node
@@ -90,9 +95,16 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
                         weibo_info = node
                         user_list.append(uid)
                         save_first_nodes(topic, date, windowsize, uid, timestamp, user_info, weibo_info, user_domain)
-                if domain_count_list == {'folk':first_user_count, 'media':first_user_count, 'opinion_leader':first_user_count, 'oversea':first_user_count, 'other':first_user_count}:
+                #if domain_count_list == {'folk':first_user_count, 'media':first_user_count, 'opinion_leader':first_user_count, 'oversea':first_user_count, 'other':first_user_count}:
+                #    break
+                stop_s = 0
+                for domain in domain_list:
+                    if domain_count_list[domain] = first_user_count:
+                        stop_s += 1
+                if stop_s == len(domain_list):
                     break
-                for domain in DOMAIN_LIST:
+
+                for domain in domain_list:
                     if domain_count_list[domain] >= first_user_count:
                         continue
                     elif user_domain==domain:
@@ -152,6 +164,14 @@ def save_first_nodes(topic, date, windowsize, uid, timestamp, user_info, weibo_i
         db.session.delete(item_exist)
     db.session.add(item)
     db.session.commit()
+
+def init_domain_list():
+    domain_count_list = {}
+    domain_user_list = {}
+    for domain in domain_list:
+        domain_count[domain] = 0
+        domain_user_list[domain] = []
+    return domain_count_list, domain_user_list
 
 
 if __name__=='__main__':

@@ -14,6 +14,7 @@ from case.index.views import mod as indexModule
 from case.evolution.views import mod as evolutionModule
 from case.identify.views import mod as identifyModule
 from case.quota_system.views import mod as quota_systemModule
+from case.dataout.views import mod as dataoutModule
 
 def create_app():
     app = Flask(__name__)
@@ -27,6 +28,7 @@ def create_app():
     app.register_blueprint(evolutionModule)
     app.register_blueprint(identifyModule)
     app.register_blueprint(quota_systemModule)
+    app.register_blueprint(dataoutModule)
 
     # the debug toolbar is only enabled in debug mode
     app.config['DEBUG'] = True
