@@ -1,16 +1,14 @@
-
-$(document).ready(function(){   //网页加载时执行下面函数
-           // gettext_data();
-            writ_text();
-            getindex_data();
-
-
-        })
+$(document).ready(function(){
+    //网页加载时执行下面函数
+    // gettext_data();
+    writ_text();
+    getindex_data();
+});
     // var query =QUERY;
     // var topic = query;
 
-    //     var start_ts = START_TS + 900;
-   
+    // var start_ts = START_TS + 900;
+
     // var end_ts =  END_TS;
     // var during = POINT_INTERVAL;
     var topic = QUERY;
@@ -21,7 +19,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
       var start_ts = START_TS;
     }
     var end_ts = END_TS;
-    
+
     function gettext_data() {
         var result=[];
         $.ajax({
@@ -33,10 +31,10 @@ $(document).ready(function(){   //网页加载时执行下面函数
                 bindTabClick();
                 $("#summary_tooltip").tooltip();
             }
-        });       
+        });
     }
-       function bindTabClick(){
-        
+
+   function bindTabClick(){
         $("#Tablebselect").children("a").unbind();
 
         $("#Tableselect").children("a").click(function() {
@@ -55,38 +53,7 @@ $(document).ready(function(){   //网页加载时执行下面函数
     }
 
     function writ_text(){
-        var html = '';
-        //data['tag']表示的是事件的标签
-        html += '<h4><b>事件标签:'+'东盟,博览会'+'</b></h4><br/>';
-        html += '<h4 style="padding-top:10px"><b>事件摘要</b></h4>';
-        html += '<i id=\"media_tooltip\" class=\"glyphicon glyphicon-question-sign\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"事件总体概述\"></i>&nbsp;&nbsp;'
-        // html += '<span class="pull-right" style="margin: -10px auto -10px auto;">';
-        // html += '<input type="checkbox" name="abs_rel_switch" checked></span>';
-        $('#title_text').append(html);
-        // var keyhtml = '';  
-
-        // keyhtml += '<h5 style="padding-top:5px;margin-left:20px"><b>时间关键字:</b>'
-        // // console.log(data['key_words']);
-        // for(var k in data['key_words']){
-        //     keyhtml += k+',';
-        // }
-        // keyhtml +='</h5>';        
-        // $('#tabkeywords').append(keyhtml);
-        
-        var content = '';
-        // var begin = new Date(parseInt(data['begin']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
-        // var end = new Date(parseInt(data['end']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'');
-        content += ' <p style="padding-top:25px ;text-indent:2em">该事件发生于' + '<b style="background:#ACD6FF  ">'+'2013-9-2'+'</b>' + '，事件发生地点为' +'<b style="background:#ACD6FF  ">广西南宁</b>'  + '。' ;
-        content += '该事件的舆情信息起始于' + '<b style="background:#ACD6FF  ">'+'2013-9-2'+'</b>' + '，终止于' + '<b style="background:#ACD6FF  ">'+'2013-9-7'+'</b>';
-        content += '，共' +'3000' + '人参与信息发布与传播，' + '舆情信息累计' + '200'+ '条。';
-        content += '参与人群集中于' + '<b style="background:#ACD6FF  ">'+'北京，上海，广州，广西，山东，浙江，江苏， 河南， 湖北， 湖南' +'</b>'+ '。';
-        content += ' 前' + '<b style="background:#ACD6FF  ">10</b>个关键词是：东盟，总理，高科技，中国，博览会，力量，李克强，国际，十年，合作';
-        content += '。';
-        content += '' + '网民情绪分布情况为：积极：60%，愤怒：23%，悲伤：17%' ;
-        content +=  '。</p>';
-        $("#keywords_text").append(content);
         identify_request() ;
-        //draw_line()画曲线的
     }
 
     function request_callback(data) {

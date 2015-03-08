@@ -11,16 +11,18 @@ from case.identify import utils as identifyModule
 import search as searchModule
 from case.time_utils import ts2datetime, ts2date
 from xapian_case.xapian_backend import XapianSearch
+from xapian_case.utils import cut, load_scws
 from case.dynamic_xapian_weibo import getXapianWeiboByTopic
+from case.global_config import XAPIAN_USER_DATA_PATH
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
+scws = load_scws()
 
 mod = Blueprint('case', __name__, url_prefix='/index')
 
 xapian_search_weibo = getXapianWeiboByTopic()
 
 def acquire_user_by_id(uid):
-    XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
     user_search = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
     result = user_search.search_by_id(int(uid), fields=['name', 'location', 'followers_count', 'friends_count', 'profile_image_url'])
     user = {}
@@ -33,7 +35,7 @@ def acquire_user_by_id(uid):
         user['profile_image_url'] = result['profile_image_url']
     else:
         return None
-    
+
     return user
 
 comment = ['历史是不能改变的',]
@@ -121,10 +123,10 @@ def user_weibo():
     tar_user_url = '#'
     uid = request.args.get('uid', None)
 
-    if uid:   
+    if uid:
         count, results = xapian_search_weibo.search(query={'user': int(uid)}, sort_by=['timestamp'], \
             fields=['id', 'user', 'text', 'reposts_count', 'comments_count', 'geo', 'timestamp'])
-        
+
         for r in results():
             r['weibo_url'] = 'http://weibo.com/'
             r['user_url'] = 'http://weibo.com/u/' + str(uid)
@@ -175,7 +177,7 @@ def moodlens():
 
 @mod.route('/semantic/')
 def meaning():
-        # 要素
+    # 要素
     yaosu = 'semantic'
 
     # 话题关键词
@@ -277,14 +279,18 @@ def shijian_news():
 
 @mod.route('/gaishu/')
 def gaishu():
-        # 要素
+    # 要素
     yaosu = 'gaishu'
 
     # 话题关键词
     topic = request.args.get('query', default_topic)
 
+    # 事件标签
+    event_label = cut(scws, topic)
+
     # 时间范围: 20130901-20130901
     time_range = request.args.get('time_range', default_timerange)
+    #print '---', time_range
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
@@ -298,11 +304,11 @@ def gaishu():
 
     return render_template('index/gaishu.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
-            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus, event_label=event_label)
 
 @mod.route('/zhibiao/')
 def zhibiao():
-        # 要素
+    # 要素
     yaosu = 'zhibiao'
 
     # 话题关键词

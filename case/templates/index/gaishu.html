@@ -61,7 +61,7 @@
         .blkUnit {
             position: relative;
             clear: both;
-            margin-top: 25px;
+            margin-top: 10px;
             background-color: #fff;
         }
         .blkUnit .titlBar {
@@ -283,27 +283,54 @@
 {% endblock head_js %}
 
 {% block content %}
-
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
-        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
-
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>事件标签</b></h4>
+            <i id="label_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件标签"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
             </div>
             <div class="tabConts">
-                <div style="width:1033px; height:100px">
-                    <div id="keywords_text"></div>                 
+                <div style="width:1033px; height: 40px; padding: 10px;">
+                    {% for label in event_label %}
+                        <span class="label label-default">{{ label }}</span>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+    <div class="blkUnit grpUnit" style="float:left;">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+            <h4><b>事件摘要</b></h4>
+            <i id="abstract_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体概述"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;"></div>
+            <div class="tabConts">
+                <div style="width:1033px; height:100px">
+                    <div id="keywords_text">
+                        <p style="padding-top:25px; text-indent:2em;"><!--该事件发生于
+                            <b style="background:#ACD6FF;">2013-9-2</b>
+                            ，事件发生地点为<b style="background:#ACD6FF;">广西南宁</b>。-->
+                            该事件的舆情信息起始于 <b style="background:#ACD6FF;">2013-9-2</b>
+                            ，终止于<b style="background:#ACD6FF;">2013-9-7</b>
+                            ，共3000人参与信息发布与传播，舆情信息累计200条.
+                            参与人群集中于<b style="background:#ACD6FF;">北京，上海，广州，广西，山东，浙江，江苏， 河南， 湖北， 湖南</b>。
+                            前<b style="background:#ACD6FF  ">10</b>个关键词是：东盟，总理，高科技，中国，博览会，力量，李克强，国际，十年，合作。
+                            网民情绪分布情况为：积极：60%，愤怒：23%，悲伤：17%。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>事件指标</b></h4>
-            <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体指标"></i>&nbsp;&nbsp;
+            <i id="zhibiao_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体指标"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
@@ -316,17 +343,15 @@
         </div>
     </div> 
 
-
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
-        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
             <h4><b>事件媒体报道</b></h4>
-        <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体相关报道"></i>&nbsp;&nbsp;
+            <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体相关报道"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
             </div>
             <div class="tabConts">
-                
                 <div id="main2" style="width:1033px">
                     <div class="panel-outer-d">
                       <div class="panel-nav-d"  style="left: 60px;">鱼骨图分析</div>
@@ -421,53 +446,7 @@
         </div>
 
         <div class="stmTabs tabUnit">
-            <!--
-            <div class="tabTitle" style="padding-top:1px;">
-                <div class="tabUI" id="guanjianproTabDiv">
-                    <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
-                        <div class="nmTab">关键传播用户</div>
-                        <div class="hvTab">关键传播用户</div>
-                    </a>
-            -->
-                    <!--
-                    <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
-                        <div class="nmTab">关键源头用户</div>
-                        <div class="hvTab">关键源头用户</div>
-                    </a>-->
-            <!--    </div>
-            </div>-->
-         <!--    <div class="control-pane"> -->
-<!--                 <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
-            </div> -->
-<!--             <div class="control-pane">
-                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
-            </div> -->
-
             <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
-                <!--
-                <div>
-                    <p>
-                        <a class="btn btn-small btn-success" href="#" id="out">
-                            <i class="icon-download-alt"></i> 导出
-                        </a>
-                        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
-                            <i class="icon-file"></i> 加入知识库
-                        </a>
-                        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
-                            <i class="icon-file"></i> 移出知识库
-                        </a>
-                        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
-                            <i class="icon-ban-circle"></i> 加入垃圾名单
-                        </a>
-                    </p>
-                </div>
-                -->
             <div class="tabConts">
                 <div id="rank_table" style="margin-top:5px">
                     <table class="table table-bordered"></table>
@@ -484,53 +463,7 @@
         </div>
 
         <div class="stmTabs tabUnit">
-            <!--
-            <div class="tabTitle" style="padding-top:1px;">
-                <div class="tabUI" id="guanjiansourceTabDiv">-->
-                    <!--
-                    <a key="propagate" class="tabLi gColor1 curr" href="javascript:;" style="display: block;">
-                        <div class="nmTab">关键传播用户</div>
-                        <div class="hvTab">关键传播用户</div>
-                    </a>
-                    --><!--
-                    <a key="source" class="tabLi gColor2" href="javascript:;" style="display: block;">
-                        <div class="nmTab">关键源头用户</div>
-                        <div class="hvTab">关键源头用户</div>
-                    </a>
-                </div>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='get_pagerank()' style="float: left;">PR值排名</button>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='get_centrelity()' style="float: left;">度中心性排名</button>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='betweeness_centrality_rank()' style="float: left;">介数排名</button>
-            </div>
-            <div class="control-pane">
-                <button class="btn btn-danger" onclick='closeness_centrality_rank()' style="float: left;">紧密中心性排名</button>
-            </div>
-            -->
             <span id="loading_current_data_source" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
-                <!--
-                <div>
-                    <p>
-                        <a class="btn btn-small btn-success" href="#" id="out">
-                            <i class="icon-download-alt"></i> 导出
-                        </a>
-                        <a id="add_kd" class="btn btn-small btn-info" href="#" title="将勾选的人加入知识库">
-                            <i class="icon-file"></i> 加入知识库
-                        </a>
-                        <a id="remove_kd" class="btn btn-small btn-info" href="#" title="将勾选的人移出知识库">
-                            <i class="icon-file"></i> 移出知识库
-                        </a>
-                        <a id="add_trash" class="btn btn-small btn-danger" href="#" title="将勾选的人加入垃圾名单">
-                            <i class="icon-ban-circle"></i> 加入垃圾名单
-                        </a>
-                    </p>
-                </div>
-                -->
             <div class="tabConts">
                 <div id="rank_table_source" style="margin-top:5px">
                     <table class="table table-bordered"></table>
@@ -540,11 +473,10 @@
         </div>
     </div>
 
-
-    <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
+    <div class="blkUnit grpUnit" style="float:left;">
         <div class="titlBar" id='title_text' style="padding-bottom:15px;">
             <h4><b>事件重要微博</b></h4>
-        <i id="folk_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="相关事件中的重要微博"></i>&nbsp;&nbsp;
+            <i id="folk_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="相关事件中的重要微博"></i>&nbsp;&nbsp;
         </div>
         <div class="tabUnit">
             <div class="tabTitle" style="padding-top:1px;">
