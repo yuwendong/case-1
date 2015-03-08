@@ -31,18 +31,11 @@
                  用户信息collection: master_timeline_user
               
       2) 输出数据说明:
-         话题（计算该模块前必须先存储话题信息）
-             存储路径: mysql(host=219.224.135.46) 
-             db: weibocase
-             存储形式: topics表
-         话题模块计算状态
+         
+         微博地域转发关系
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
-             存储形式: topic_status表
-         早期参与者（整体）
-             存储路径: mysql(host=219.224.135.46)
-             db: weibocase
-             存储形式: first_user表
+             存储形式: city_repost表
          早期参与者（分领域）
              存储路径: mysql
              存储形式: first_domain_user表
