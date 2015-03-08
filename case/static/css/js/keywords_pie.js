@@ -1,675 +1,204 @@
-$(document).ready(function(){
-    //网页加载时执行下面函数
-    // gettext_data();
-    writ_text();
-    getindex_data();
-});
-    // var query =QUERY;
-    // var topic = query;
+var topic = QUERY;
+if(topic == '中国'){
+  var start_ts = 1377964800 + 900;
+}
+else{
+  var start_ts = START_TS;
+}
+var end_ts = END_TS;
 
-    // var start_ts = START_TS + 900;
-
-    // var end_ts =  END_TS;
-    // var during = POINT_INTERVAL;
-    var topic = QUERY;
-    if(topic == '中国'){
-      var start_ts = 1377964800 + 900;
+function Opinion_timeline(query, start_ts, end_ts, pointInterval){
+    this.query = query;
+    this.start_ts = start_ts;
+    this.end_ts = end_ts;
+    this.pointInterval = pointInterval; // 图上一点的时间间隔
+    this.weibo_limit_count = 10; // 每次加载10条微博
+    this.weibo_skip = 0; // 当前页面已显示的微博数
+    this.weibo_sort = sort_weight; // 当前页面微博排序依据
+    this.eventriver_ajax_url = function(query, end_ts, during){
+        return "/news/eventriver/?query=" + query + "&during=" + during + "&ts=" + end_ts;
     }
-    else{
-      var start_ts = START_TS;
+    this.pie_ajax_url = function(query, end_ts, during, subevent){
+        return "/news/ratio/?query=" + query + "&subevent=" + subevent + "&during=" + during + "&ts=" + end_ts;
     }
-    var end_ts = END_TS;
-
-    function gettext_data() {
-        var result=[];
+    this.cloud_ajax_url = function(query, end_ts, during, subevent){
+        return "/news/keywords/?query=" + query + "&subevent=" + subevent + "&during=" + during + "&ts=" + end_ts;
+    }
+    this.weibo_ajax_url = function(query, end_ts, during, subevent, skip, limit, sort){
+        var url = "/news/weibos/?query=" + query + "&limit=" + limit + "&skip=" + skip + "&ts=" + end_ts + "&during=" + during + "&subevent=" + subevent + "&sort=" + sort;
+        return url
+    }
+    this.sub_weibo_ajax_url = function(query){
+        return "/news/sentiment/?query=" + query;
+    }
+    this.subevent_pie_ajax_url =  function(query){
+        return "/news/subeventpie/?query=" + query + "-微博";
+    }
+    this.sentiment_pie_ajax_url =  function(query){
+        return "/news/sentimentpie/?query=" + query + "-微博";
+    }
+    this.peak_ajax_url = function(data, ts_list, during, subevent){
+        return "/news/peak/?lis=" + data.join(',') + "&ts=" + ts_list + '&during=' + during + "&subevent=" + subevent;
+    }
+    this.ajax_method = "GET";
+    this.call_sync_ajax_request = function(url, method, callback){
         $.ajax({
-            url: "/index/gaishu_data/?query=" + query,
-            type: "GET",
-            dataType:"json",
-            success: function(data){
-                writ_text();
-                bindTabClick();
-                $("#summary_tooltip").tooltip();
-            }
-        });
+            url: url,
+            type: method,
+            dataType: "json",
+            async: false,
+            success: callback
+        })
     }
 
-   function bindTabClick(){
-        $("#Tablebselect").children("a").unbind();
+    this.trend_div_id = 'trend_div';
+    this.trend_title = '热度走势图';
+    this.trend_chart;
 
-        $("#Tableselect").children("a").click(function() {
-            console.log("abc");
-            var select_a = $(this);
-            var unselect_a = $(this).siblings('a');
-            if(!select_a.hasClass('curr')) {
-                select_a.addClass('curr');
-                unselect_a.removeClass('curr');
-                style = select_a.attr('value');
-              
-                // getweibos_data(style);
+    this.event_river_data; // 接收eventriver的数据
+    this.select_subevent = "global"; // 当前选择的subevent, global表示总体，subeventid表示各子事件
+    this.select_subevent_name = query;
 
-            }
-        });
-    }
-
-    function writ_text(){
-        identify_request() ;
-    }
-
-    function request_callback(data) {
-        rankdata = data;
-        var status = 'current finished';
-        var page_num = 10 ;
-        if (status == 'current finished') {
-            $("#current_process_bar").css('width', "100%")
-            $("#current_process").removeClass("active");
-            $("#current_process").removeClass("progress-striped");
-            current_data = data;
-            if (current_data.length) {
-                $("#loading_current_data").text("计算完成!");
-                if (current_data.length < page_num) {
-                    page_num = current_data.length
-                    create_current_table(current_data, 0, page_num, 'pro');
-                }
-                else {
-                    create_current_table(current_data, 0, page_num, 'pro');
-                    var total_pages = 0;
-                    if (current_data.length % page_num == 0) {
-                        total_pages = current_data.length / page_num;
-                    }
-                    else {
-                        total_pages = current_data.length / page_num + 1;
-                    }
-            
-                    $('#rank_page_selection').bootpag({
-                        total: total_pages,
-                        page: 1,
-                        maxVisible: 30
-                    }).on("page", function(event, num){
-                        start_row = (num - 1)* page_num;
-                        end_row = start_row + page_num;
-                        if (end_row > current_data.length)
-                            end_row = current_data.length;
-                            create_current_table(current_data, start_row, end_row, 'pro');
-                    });
-                }
-            }
-            else {
-                $("#loading_current_data").text("很抱歉，本期计算结果为空!");
-            }
-        }
-        else{
-            return
-        }
-    }
-
-function filter_node_in_network(node_uid){
-    show_network();
-    filter
-      .undo('filter_node')
-      .nodesBy(function(n) {
-        return n.label == String(node_uid);
-      }, 'filter_node')
-      .apply();
-}
-    
-    function create_current_table(data, start_row, end_row, type) {
-    if(type == 'pro'){
-      $("#rank_table").empty();
-    }
-    else{
-      $("#rank_table_source").empty();
-    }
-
-    var cellCount = 10;
-    var table = '<table class="table table-bordered">';
-    if (type == 'pro'){
-     var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID<th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>PR值  <b>↓</b></th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';   
-    }
-    else{
-    var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID<th>博主昵称</th><th>博主地域</th><th>粉丝数  <b>↓</b></th><th>关注数</th><th>PR值 </th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';    
-    }
-    
-    var tbody = '<tbody>';
-    console.log(data);
-    for (var i = start_row;i < end_row;i++) {
-      var tr = '<tr>';
-      for(var j = 0;j < cellCount;j++) {
-        if(j == 0) {
-          // rank status
-          var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
-        }
-        else if(j == 1){
-            var td = '<td style="display:none">'+data[i][j]+'</td>';
-        }
-        else if(j == 2){
-            var t = j-1;
-            var td = '<td><a href=\"http://weibo.com/u/' + data[i][t] + '\" >' + data[i][j] + '</a></td>';
-        }
-        else if(j == 3){
-            var td = '<td>' + data[i][j] + '</a></td>';
-        }
-        else if(j == 4){
-            var td = '<td>' + data[i][j] + '</a></td>';
-        }
-        else if(j == 5){
-            var td = '<td>' + data[i][j] + '</a></td>';
-        }
-        else{
-            var td = '<td>'+data[i][j].toFixed(3)+'</td>';
-        }
-        tr += td;
-      }
-      tr += '</tr>';
-      tbody += tr;
-    }
-    tbody += '</tbody>';
-    table += thead + tbody;
-    table += '</table>';
-
-    if(type == 'pro'){
-      $("#rank_table").html(table);
-    }
-    else{
-      console.log(table);
-      $("#rank_table_source").html(table);
-    }
-}
-
-
-function identify_request() {
-  var topn = 100;
-  $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
-}
-
-function identify_origin_request(){
-  $.get("/identify/origin/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts}, origin_request_callback, "json");
-}
-
-function origin_request_callback(data) {
-    rankdata = data;
-    var status = 'current finished';
-    var page_num = 10 ;
-    if (status == 'current finished') {
-        $("#current_process_bar").css('width', "100%")
-        $("#current_process").removeClass("active");
-        $("#current_process").removeClass("progress-striped");
-        current_data = data;
-        if (current_data.length) {
-            $("#loading_current_data_source").text("计算完成!");
-            if (current_data.length < page_num) {
-                page_num = current_data.length
-                create_current_table(current_data, 0, page_num, 'source');
-            }
-            else {
-                create_current_table(current_data, 0, page_num, 'source');
-                var total_pages = 0;
-                if (current_data.length % page_num == 0) {
-                    total_pages = current_data.length / page_num;
-                }
-                else {
-                    total_pages = current_data.length / page_num + 1;
-                }
-        
-                $('#rank_page_selection_source').bootpag({
-                    total: total_pages,
-                    page: 1,
-                    maxVisible: 30
-                }).on("page", function(event, num){
-                    start_row = (num - 1)* page_num;
-                    end_row = start_row + page_num;
-                    if (end_row > current_data.length)
-                        end_row = current_data.length;
-                        create_current_table(current_data, start_row, end_row, 'source');
-                });
-            }
-        }
-        else {
-            $("#loading_current_data_source").text("很抱歉，本期计算结果为空!");
-        }
-    }
-    else{
-        return
-    }
-}
-
-identify_request();
-identify_origin_request();
-
-
-    // function identify_request() {
-    //   var topn = 10;
-    //   $.get("/identify/rank/", {'topic': topic, 'start_ts': start_ts, 'end_ts': end_ts ,"topn" : topn}, request_callback, "json");
-    // }
-    
-    // function request_callback(data) {
-    //             console.log(data);
-    //     $("#rank_table").empty();
-    //     var cellCount = 10;
-    //     var table = '<table class="table table-bordered">';
-    //     var thead = '<thead><tr><th>排名</th><th style="display:none">博主ID</th><th>博主昵称</th><th>博主地域</th><th>粉丝数</th><th>关注数</th><th>Pagerank值</th><th>度中心性</th><th>介数中心性</th><th>紧密中心性</th></tr></thead>';
-    //     var tbody = '<tbody>';
-    //     console.log("123");
-    //     for (var i = 0;i < data.length;i++) {
-    //         var tr = '<tr>';
-    //               for(var j = 0;j < cellCount;j++) {
-    //         if(j == 0) {
-    //           // rank status
-    //           var td = '<td><span class="label label-important">'+data[i][j]+'</span></td>';
-    //       }
-    //       else if(j == 1){
-    //           var td = '<td style="display:none">'+data[i][j]+'</td>';
-    //       }
-    //       else if(j == 2){
-    //         // if(name == 'unknown'){
-    //         //     name = '未知';
-    //         // }
-       
-    //           var td = '<td><a target=\"_blank\" onclick=\"filter_node_in_network(' + data[i][1] + ')\">' + data[i][j] + '</a></td>';
-    //       }
-    //       else{
-    //           var td = '<td>'+data[i][j]+'</td>';
-    //       }
-    //       tr += td;
-    //               }
-    //         tr += '</tr>';
-    //         tbody += tr;
-    //     }
-    //     tbody += '</tbody>';
-    //     table += thead + tbody;
-    //     table += '</table>'
-    //     $("#rank_table").html(table);
-    // }
-
-    //开始画总量和消极情绪的曲线
-//             var happy_count = [];
-//             var sad_count = [];
-//             var angry_count = [];
-//             var total_count = [];
-//             var stramp_count = [];
-//             var stramp = [];
-//             var happy = [];
-//             var sad = [];
-//             var angry = [];
-
-
-//             var folk_value = [];
-//             var folk_count = [];
-//             var folk = [];
-           
-//             var media_value = [];
-//             var media_count = [];
-//             var media = [];
-
-//             var opinion_leader_value = [];
-//             var opinion_leader_count = [];
-//             var opinion_leader = [];
-
-//             var other_value = [];
-//             var other_count = [];
-//             var other = [];
-
-//             var oversea_value = [];
-//             var oversea_count = [];
-//             var oversea = [];
-
-//             var total = [];
-//             var total_allarea = [];
-//         function draw_line(){
-
-//             var emotion_type = "global";
-//             var names = {'happy': '高兴','angry': '愤怒','sad': '悲伤'};
-
-//             for( var time_s = 0;start_ts + time_s * during<end_ts; time_s++){
-//                 var ts = start_ts + time_s * during ;
-//                 var ajax_url = "/moodlens/data/?ts=" + ts + '&during=' + during + '&emotion=' + emotion_type + '&query=' + query;
-//                 $.ajax({
-//                     url: ajax_url,
-//                     type: "GET",
-//                     dataType:"json",
-//                     async:false,
-//                     success: function(data){
-//                         // console.log(data);
-//                         happy = data['happy'][1]; 
-//                         var ns =  data['happy'][0]; 
-//                         // console.log(ns);                   
-//                         stramp =  new Date(ns).toLocaleString().replace(/年|月/g, ".").replace(/日/g, " ").replace(/上午/g, "").replace(/下午/g, "").substring(5,20);                      
-//                         sad = data['sad'][1];
-//                         angry = data['angry'][1];
-//                         total =  sad + angry;
-//                          stramp_count.push(stramp);
-//                          happy_count.push(happy);
-//                          angry_count.push(angry);
-//                          sad_count.push(sad);
-//                          total_count.push(total); 
-//                         // for(var name in names){
-//                         //     var count = data[name][1];
-//                         //     if(name in data){
-                                
-//                         //         // console.log(name);
-   
-//                         //         if(name = 'happy'){
-//                         //         happy_count.push(count); 
-//                         //          // console.log(happy_count);                              
-//                         //     }
-//                         //         if(name = 'angry'){
-//                         //         angry_count.push(count);
-//                         //     }
-//                         //         if(name = 'sad'){
-//                         //         sad_count.push(count);
-//                         //     }
-//                         //         }                           
-//                         // }
-//                     }
-
-//                 });
-//            }
-//     var style;
-//     var style_list = [1,2,3];
-   
-//     for( var time_s = 0;start_ts + time_s * during<end_ts; time_s++){
-//          var ts = start_ts + time_s * during ;
-//              var all = 0;
-//         for (var i =0; i < style_list.length; i++){
-//             style = style_list[i];
-
-//         $.ajax({
-//             url: "/propagate/total/?end_ts=" + ts + "&style=" + style +"&during="+ during + "&topic=" + topic,
-//             type: "GET",
-//             dataType:"json",
-//             async:false,
-//             success: function(data){
-//                 console.log(data);
-
-//                 folk_value = data["dcount"];
-//                 folk = folk_value["folk"];
-
-
-//                 media_value = data["dcount"];
-//                 media = media_value["media"]; 
-             
-//                 opinion_leader_value = data["dcount"];
-//                 opinion_leader = opinion_leader_value["opinion_leader"]; 
-                        
-//                 other_value = data["dcount"];
-//                 other = other_value["other"];
-            
-//                 oversea_value = data["dcount"];
-//                 oversea = oversea_value["oversea"]; 
-                
-//             }
-//         });
-//         all_area = folk+media+opinion_leader+other+oversea;
-//         all += all_area;
-
-//         }
-//                 total_allarea.push(all);
-            
-//                   }
-//                   drawpicture(stramp_count,total_count,total_allarea);
-//    }
-//  function drawpicture(stramp_count,total_count,total_allarea){
-//     $('#line').highcharts({
-//         chart: {
-//             type: 'spline',
-         
-//         },
-//         title: {
-//             text: '',
-//             x: -20 //center
-//         },
-//         subtitle: {
-//             text: '',
-//             x: -20
-//         },
-//         xAxis: {
-//             title: {
-//                     enabled: true,
-//                 style: {
-//                     color: '#666',
-//                     fontWeight: 'bold',
-//                     fontSize: '12px',
-//                     fontFamily: 'Microsoft YaHei'
-//                         }  
-//                     }, 
-//             categories: stramp_count,
-
-                
-//             labels: {
-//                 step: 24//控制多少个点显示一个
-//             }
-//           },
-//         yAxis: {
-//             title: {
-//                 text: '条',
-//         style: {
-//                 color: '#666',
-//                 fontWeight: 'bold',
-//                 fontSize: '12px',
-//                 fontFamily: 'Microsoft YaHei'
-//                 }
-//             },
-//             plotLines: [{
-//                 value: 0,
-//                 width: 1,
-//                 color: '#808080'
-//             }]
-//         },
-//         plotOptions: {
-//           spline: {
-//               lineWidth: 2,
-//               states: {
-//                   hover: {
-//                       lineWidth: 3
-//                   }
-//               },
-//               marker: {
-//                   enabled: false
-//               },
-//             }
-//         },
-//         tooltip: {
-//             valueSuffix: '条'
-//         },
-//         legend: {
-//             layout: 'horizontal',
-//             align: 'center',
-//             verticalAlign: 'bottom',
-//             borderWidth: 0,
-//         itemStyle: {
-//             color: '#666',
-//             fontWeight: 'bold',
-//             fontSize: '12px',
-//             fontFamily: 'Microsoft YaHei'
-//             }
-//         },
-//         series: [{
-//             name: '消极',
-//             data: total_count
-//         },{
-//             name: '微博总数',
-//             data: total_allarea
-//         }]
-//     });
-// }
-
-//总量和消极情绪曲线结束
-
-
-    //开始微博分页
-
-    // function weibo_page(data){          //关键微博翻页函数
-    //     console.log(data);
-    //     var current_data = data;
-    //     var page_num = 10;
-    //     if (current_data['opinion'].length) {
-    //         if (current_data['opinion'].length < page_num) {
-    //             page_num = current_data['opinion'].length;
-    //             writ_opinion(current_data, 0 ,page_num);
-    //             //create_current_table(current_data, 0, page_num);
-    //         }
-    //         else {
-    //             writ_opinion(current_data, 0, page_num);
-    //             var total_pages = 0;
-    //             if (current_data['opinion'].length % page_num == 0) {
-    //                 total_pages = current_data['opinion'].length / page_num;
-    //             }
-    //             else {
-    //                 total_pages = current_data['opinion'].length / page_num + 1;
-    //             }
-    //             $('#rank_page_selection').bootpag({
-    //               total: total_pages,
-    //               page: 1,
-    //               maxVisible: 30
-    //             }).on("page", function(event, num){
-    //               var start_row = (num - 1)* page_num;
-    //               var end_row = start_row + page_num;
-    //               if (end_row > current_data['opinion'].length)
-    //                   end_row = current_data['opinion'].length;
-    //               writ_opinion(current_data, start_row, end_row);
-    //             });
-    //         }
-    //     }
-
-    // } 
-
-    //结束微博的分页
-    //开始读取微博
-    // function writ_opinion(data , begin, end ){
-
-    //     var opinion;
-    //     var html = "";
-    //     html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 66 * data.length  + 'px;">';
-    //     html += '<div class="tang-scrollpanel-content">';
-    //     html += '<ul id="weibo_ul">';
-
-    //     for (var op = begin ; op <= end ; op++){             //一条条读取微博
-    //             var sop = op.toString();
-
-    //             opinion= data['opinion'][sop];
-    //             var name = opinion['username'];
-    //             var mid = opinion['user'];
-    //             var ip = opinion['geo'];
-    //             var loc = ip;
-    //             var text = opinion['text'];
-    //             var comments_count = opinion['comments_count'];
-    //             // var timestamp = opinion['timestamp'];
-    //             // console.log(timestamp);
-    //             var timestamp = new Date(parseInt(opinion['timestamp']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ").replace(/上午/g,'')
-    //             var user_link = 'http://weibo.com/u/' + mid;
-    //             var user_image_link = opinion['profile_image_url'];
-    //             if (user_image_link == 'unknown'){
-    //                 user_image_link = '/static/img/unknown_profile_image.gif';
-    //             }
-    //             html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
-    //             html += '<img src="' + user_image_link + '">';
-    //             html += '</a></div>';
-    //             html += '<div class="weibo_detail">';
-    //             html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:' + mid + '&nbsp;&nbsp;于' + ip + '&nbsp;&nbsp;发布&nbsp;&nbsp;' + text + '</p>';
-    //             html += '<div class="weibo_info">';
-    //             html += '<div class="weibo_pz">';
-    //             html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
-    //             html += '<div class="m">';
-    //             html += '<a class="undlin" target="_blank">' + timestamp + '</a>&nbsp;-&nbsp;';
-    //             html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-    //             html += '<a target="_blank" href="' + user_link + '">用户页面</a>';
-    //             html += '</div>';
-    //             html += '</div>';
-    //             html += '</div>';
-    //             html += '</li>';
-    //         }            
-    //         html += '</ul>';
-    //         html += '</div>';
-    //         html += '</div>';
-    //         $("#opinion_text").empty();
-    //         $("#opinion_text").append(html);
-
-    //     }
-    //微博读取结束
- function draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved){  
- console.log();                                                            
-    $('#bar_div').highcharts({                                           
-        chart: {                                                           
-            type: 'bar'                                                    
-        },                                                                 
-        title: {                                                           
-            text: ''                    
-        },                                                                 
-        subtitle: {                                                        
-            text: ''                                  
-        },                                                                 
-        xAxis: {                                                           
-            categories: ['舆情指数', '事件敏感指数', '负面情绪指数','传播强度指数','主体敏感指数'],
-            title: {                                                       
-                text: null                                                 
-            }                                                              
-        },                                                                 
-        yAxis: {                                                           
-            min: 0,                                                        
-            title: {                                                       
-                text: '',                             
-                align: 'high'                                              
-            },                                                             
-            labels: {                                                      
-                overflow: 'justify'                                        
-            }                                                              
-        },                                                                 
-        tooltip: {                                                         
-            valueSuffix: ' '                                       
-        },        
-        plotOptions: {
-            series: {
-                pointWidth: 10,
-                pointPadding: 1,
-                groupPadding: 0,
-                borderWidth: 0,
-                shadow: false
-            }
-        },
-                                                                 
-        legend: {                                                          
-            layout: 'vertical',                                            
-            align: 'right',                                                
-            verticalAlign: 'top',                                          
-            x: -40,                                                        
-            y: 100,                                                        
-            floating: true,                                                
-            borderWidth: 1,                                                
-            backgroundColor: '#FFFFFF',                                    
-            shadow: true                                                   
-        },                                                                 
-        credits: {                                                         
-            enabled: false                                                 
-        },                                                                 
-        series: [{                                                         
-            name: '事件指标', 
-            // {'color':'blue','y':ast_index}, 
-            // {'color':'#FF2D2D','y':f_sensitivity}, 
-            // {'color':'#FF2D2D','y':f_sentiment}, 
-            // {'color':'#FF2D2D','y':f_transmission}, 
-            // {'color':'#FF2D2D','y':f_involved},                            
-            data: [last_index,f_sensitivity,f_sentiment,f_transmission,f_involved],
-            color: '#FF2D2D'                               
-        }]                                                                 
-    });                                                                    
-}
-   
-
-
-     function getindex_data(){
-        $.ajax({
-        url:"/quota_system/topic/?topic="+topic,
-        dataType: "json",
-        type: "GET",
-        success :function(data){            
-            console.log(data);
-             var last_index = data["last_index"]; 
-             var f_quota_evolution = data['f_quota_evolution'];           
-             var f_involved = f_quota_evolution['f_involved'][0];
-             var f_sensitivity = f_quota_evolution['f_sensitivity'][0];
-             var f_sentiment = f_quota_evolution['f_sentiment'][0];
-             var f_transmission = f_quota_evolution['f_transmission'][0];
-             draw_line(last_index,f_sensitivity,f_sentiment,f_transmission,f_involved);   
-        }       
+    this.click_status = 'global'; // 标识当前的状态，global表示全局，peak表示点击了某个拐点后的情况
+    var that = this;
+    $("#clickalltime").click(function(){
+        $("#cloudpie").css("display", "block");
+        drawStatusTip(that.select_subevent_name, "全时段", null);
+        that.drawTrendline();
+        that.pullDrawPiedata();
+        that.pullDrawClouddata();
+        that.pullDrawWeibodata();
     });
+
+    this.trend_count_obj = {
+        "ts": [],
+        "count": []
+    };
 }
+
+// 绘制eventriver
+Opinion_timeline.prototype.drawEventriver = function(){
+    drawEventstack(this.event_river_data); // 主题河
+}
+
+// pull eventriver data
+Opinion_timeline.prototype.pull_eventriver_data = function(){
+    var that = this; //向下面的函数传递获取的值
+    var ajax_url = this.eventriver_ajax_url(this.query, this.end_ts, this.end_ts - this.start_ts); //传入参数，获取请求的地址
+
+    this.call_sync_ajax_request(ajax_url, this.ajax_method, Timeline_function); //发起ajax的请求
+
+    function Timeline_function(data){    //数据的处理函数
+        that.event_river_data = data;
+        that.select_subevent = 'global'; // 默认处理总体
+        subevent_list = data['eventList'];
+    }
+}
+
+Opinion_timeline.prototype.drawFishbone = function(){
+    drawFishbone(this.event_river_data);
+}
+
+// 绘制鱼骨图
+function drawFishbone(data){
+    var html = '';
+    data['eventList'].sort(timestamp_comparator);
+    var eventListdata = data['eventList'];
+    $(function(){
+        $('#timeline1').b1njTimeline({
+            'height' : eventListdata.length / 2 * 114
+        });
+    });
+
+    for (var i=0; i < eventListdata.length; i++){
+        var keyword = eventListdata[i]['name'];
+        var news = eventListdata[i]['news'];
+        var summary = news['content168'].substring(0, 100) + '...';;
+        var datetime = news['datetime'];
+        var title = news['title'];
+        var source = news['transmit_name'];
+        html += "<li><time idx='" + i + "' " + "datetime='" + datetime + "'>" + datetime +"&nbsp;&nbsp;<span>"+keyword+"</span></time>";
+        html += "<p><b>【" + title + "】:</b>" + summary + "</p>";
+        html += "<span>转载于"+ source + "</span>&nbsp;&nbsp;<a target=\"_blank\" href=\"" + news["url"] + "\">新闻</a></li>";
+    }
+
+    $("#timeline1").append(html);
+    $("#page").css("height", eventListdata.length / 2 * 114 + 150);
+}
+
+function drawEventstack(data){
+    var x_data = data['dates'];
+    var data = data['eventList'];
+    var series_data = [];
+    var series_name = [];
+    var One_series_data = {};
+    var temp_data = [];
+    for (var k= 0; k < data.length; k++){
+        One_series_value = [];
+        One_series_time = [];
+        temp_data = [];
+        for(var i = 0; i < data[k]['evolution'].length; i++){
+            One_series_value.push(data[k]['evolution'][i]['value']);
+            temp_data.push(data[k]['evolution'][i]['value']);
+            One_series_time.push(data[k]['evolution'][i]['time']);
+        }
+        if(One_series_value.length < x_data.length){
+            for(var j = 0; j < x_data.length; j++){
+                One_series_value[j] = 0;
+                for(var m = 0; m < One_series_time.length; m++){
+                    if(x_data[j] == One_series_time[m]){
+                        One_series_value[j] = temp_data[m];
+                    }
+                }
+            }
+        }
+
+        One_series_data = {'name':data[k]['name'], 'type':'line', 'smooth':true,'itemStyle':{'normal': {'areaStyle': {'type': 'default'}}},  'data':One_series_value};
+        series_name.push(One_series_data['name']);
+        series_data.push(One_series_data);
+    }
+
+    var selected_series_count = 10;
+    if(selected_series_count > series_name.length){
+        selected_series_count = series_name.length;
+    }
+    var selected_series_dict = {};
+    for(var i = selected_series_count; i < series_name.length; i++){
+        selected_series_dict[series_name[i]] = false;
+    }
+
+    var option = {
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data: series_name, 
+            selected: selected_series_dict,
+            selectedMode : "multiple"
+        },
+        calculable : true,
+        xAxis : [
+            {type : 'category',
+            boundaryGap : false,
+            data : x_data
+            }
+        ],
+        yAxis : [
+            {type : 'value'}
+        ],
+        series : series_data
+    };
+    var myChart = echarts.init(document.getElementById('event_river'));
+    myChart.setOption(option); 
+}
+
+var query = QUERY;
+var start_ts = START_TS;
+var end_ts = END_TS;
+var pointInterval = 3600 * 24;
+var global_sub_weibos;
+var sort_weight = "weight";
+var opinion = new Opinion_timeline(query, start_ts, end_ts, pointInterval);
+opinion.pull_eventriver_data();
+opinion.drawEventriver();
+opinion.drawFishbone();

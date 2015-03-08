@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+{% block module_title %}概述分析{% endblock %}
+{% block head_css %}
+    <link type="text/css" rel="stylesheet" href="/static/css/css/justified-nav-detail.css">    <style type="text/css">
+        /* keywords tag cloud */
+    <style type="text/css">
+        /* keywords tag cloud */
+        hr {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+        #keywords_cloud_div {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0px auto 0
+        }
+
+        #keywords_cloud_div a {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-family: Microsoft YaHei;
+            color: #AD12C2;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 3px 6px;
+        }
+
+        #keywords_cloud_div a:hover {
+            border: 1px solid #eee;
+            background: #000;
+        }
+        #keywords_cloud_div .blue {
+            color: blue;
+        }
+        #keywords_cloud_div .red {
+            color: red;
+        }
+        #keywords_cloud_div .yellow {
+            color: yellow;
+        }
+
+        #trend_div {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        #trend_div1 {
+            height: 270px;
+            width: 100%;
+            float: left;
+            border: 1px solid #F0F0F0;
+            background: #F0F0F0;
+        }
+
+        .blkUnit {
+            position: relative;
+            clear: both;
+            margin-top: 10px;
+            background-color: #fff;
+        }
+        .blkUnit .titlBar {
+            z-index: 4;
+            position: relative;
+            height: 16px;
+            padding: 20px;
+            background-color: #f6f6f6;
+        }
+        .titlBar h4 {
+            display: inline-block;
+            margin-top: -5px;
+            padding-right: 0px;
+            font-size: 15px;
+            color: #666;
+        }
+        .titlBar .compInfo {
+            padding-right: 15px;
+            color: #858585;
+        }
+        .stmTabs{
+            padding: 20px;
+        }
+        .stmTabs .tabTitle {
+            height: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            height: 23px;
+            padding: 0 14px;
+            _float: left;
+        }
+        .stmTabs .tabLi {
+            display: block;
+            float: left;
+            text-decoration: none;
+            color: #666;
+        }
+        .stmTabs .tabLi .hvTab {
+            display: none;
+            color: #6e87d7;
+            height: 21px;
+            border-bottom: 2px solid #6e87d7;
+        }
+        .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
+            display: block
+        }
+        .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
+            display:none
+        }
+        .stmTabs .tabConts {
+            padding-bottom: 10px
+        }
+        .stmTabs .moreLnk {
+            float: right;
+            margin-bottom: -10px;
+            _position:relative
+        }
+        .stmTabs .moreLnk a {
+            text-decoration: none
+        }
+        .stmTabs .moreLnk a:hover {
+            text-decoration: underline
+        }
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap
+        }
+        .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
+            color: #6e87d7;
+            border-color: #6e87d7
+        }
+        .stmTabs .gColor1:hover .hvTab,.stmTabs .gColor1.curr .hvTab {
+            color: #11c897;
+            border-color: #11c897
+        }
+        .stmTabs .gColor2:hover .hvTab,.stmTabs .gColor2.curr .hvTab {
+            color: #fa7256;
+            border-color: #fa7256;
+        }
+        .stmTabs .gColor3:hover .hvTab,.stmTabs .gColor3.curr .hvTab {
+            color: #b172c5;
+            border-color: #b172c5
+        }
+        .stmTabs .gColor4:hover .hvTab,.stmTabs .gColor4.curr .hvTab {
+            color: #f367a7;
+            border-color: #f367a7
+        }
+        .weibo_list_height {
+            max-height: 670px;
+        }
+        .scrolls {
+            overflow: hidden;
+        }
+        .tang-scrollpanel {
+            overflow: hidden;
+        }
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-scrollpanel-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-slider {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0;
+        }
+        .tang-scrollpanel .tang-slider-vtl {
+            height: 100%;
+        }
+        li.item {
+            line-height: 18px;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 9px 10px 10px;
+            min-height: 55px;
+            _height: 55px;
+        }
+
+        .weibo_face {
+            position: relative;
+            float: left;
+            width: 50px;
+            margin-top: 2px;
+        }
+        .weibo_list a {
+            text-decoration: none;
+        }
+        .weibo_face img {
+            width: 50px;
+            height: 50px;
+        }
+        .weibo_detail {
+            margin-left: 65px;
+            height:71px;
+        }
+        .weibo_list a.undlin {
+            text-decoration: underline;
+        }
+        .weibo_info {
+            margin-top: 7px;
+            color: #666;
+        }
+        .weibo_info .weibo_pz {
+            float: right;
+            color: #858585;
+            height: 18px;
+            line-height: 18px;
+        }
+         a:hover {
+
+            color: #428bca
+        }
+        .weibo_info .m a {
+            color: #666;
+        }
+        .pagination ul {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-left: 0;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .pagination-centered {
+            text-align: center;
+        }
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination ul>li>a, .pagination ul>li>span {
+            float: left;
+            padding: 4px 12px;
+            line-height: 20px;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-left-width: 0;
+        }
+        .pagination ul>li {
+            display: inline;
+        }
+        .label-important, .badge-important {
+            background-color: #b94a48;
+        }
+    </style>
+{% endblock head_css %}
+
+{% block head_js %}
+    <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
+    <script src="/static/js/echarts-2.0.1/_build/echarts-plain.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/static/index/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/static/index/js/jquery.masonry.min.js"></script>
+    <script type="text/javascript" src="/static/index/js/amstock.js"></script>
+    <script type="text/javascript" src="/static/index/js/jquery.tagcanvas.min.js"></script>
+    <script src="/static/css/js/miaov.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/index/js/sentiment_report.js"></script>
+    <script src="/static/js/identify/jquery.bootpag.js"></script>
+{% endblock head_js %}
+
+{% block content %}
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>事件标签</b></h4>
+            <i id="label_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件标签"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div style="width:1033px; height: 40px; padding: 10px;">
+                    {% for label in event_label %}
+                        <span class="label label-default">{{ label }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+            <h4><b>事件摘要</b></h4>
+            <i id="abstract_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体概述"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;"></div>
+            <div class="tabConts">
+                <div style="width:1033px; height:100px">
+                    <div id="keywords_text">
+                        <p style="padding-top:25px; text-indent:2em;"><!--该事件发生于
+                            <b style="background:#ACD6FF;">2013-9-2</b>
+                            ，事件发生地点为<b style="background:#ACD6FF;">广西南宁</b>。-->
+                            该事件的舆情信息起始于 <b style="background:#ACD6FF;">2013-9-2</b>
+                            ，终止于<b style="background:#ACD6FF;">2013-9-7</b>
+                            ，共3000人参与信息发布与传播，舆情信息累计200条.
+                            参与人群集中于<b style="background:#ACD6FF;">北京，上海，广州，广西，山东，浙江，江苏， 河南， 湖北， 湖南</b>。
+                            前<b style="background:#ACD6FF  ">10</b>个关键词是：东盟，总理，高科技，中国，博览会，力量，李克强，国际，十年，合作。
+                            网民情绪分布情况为：积极：60%，愤怒：23%，悲伤：17%。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>事件指标</b></h4>
+            <i id="zhibiao_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="事件总体指标"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div style="width:1033px;height:400px;">
+                    <div id='bar_div'></div>
+                </div>
+            </div> 
+        </div>
+    </div> 
+
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" style="padding-bottom:15px;">
+            <h4><b>事件媒体报道</b></h4>
+            <i id="media_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="left" title="代表性媒体相关报道"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div id="main2" style="width:1033px">
+                    <div class="panel-outer-d">
+                      <div class="panel-nav-d"  style="left: 60px;">鱼骨图分析</div>
+                      <div id="panel-d" style="margin-left:20px;border:1px solid gray;width:950px">
+                        <div class="panel-outer"style="width:940px">
+                          <div id="container" >
+                            <!-- timeline导航 -->
+                            <div class="timeline_container" >
+                              <div class="timeline" >
+                                <div class="plus" ></div>
+                              </div>
+                            </div>
+                            <div class="tab-content">
+                              <div class="tab-pane active" id="wb">
+                                <div class="item" >
+                                  <div class="inner">
+                                    <span class="title">2013-09-03 10:34:17 2056573851：【南宁博览会首批展览品顺利通关】</span>
+                                    <hr style ='margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>8月24日上午，参加第十届中国—东盟博览会的首批展览品运抵南宁国际会展中心，首批展览品来自印尼、泰国等国家，共计5个货柜1852件展览品，价值约21.2986万美元，总重约35.268吨，展品种类主要有食品、化妆品和木质工艺品等。</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title">2013-09-03 15:20:07 2954906817：【南宁当选为中国“魅力之城”】</span>
+                                    <hr style ='margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>中国—东盟博览会10周年之际，博览会的举办地南宁市当选为第十届博览会中国“魅力之城”。8月17日，中国—东盟博览会秘书处和南宁市人民政府举行新闻发布会，介绍中国—东盟博览会及其举办地南宁市10年来取得的显著成就，通报第十届博览会“魅力之城”专题展筹备进展。</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title">2013-09-03 05:59:08 1640601392：  【李克强出席中国东盟博览会发表演讲视频回顾】</span>
+                                    <hr>
+                                    <span>第十届中国—东盟博览会和中国—东盟商务与投资峰会3日上午在广西南宁开幕，李克强出席开幕式并发表主旨演讲，强调双方应排除干扰，加强和深化合作，“中国东盟有能力打造合作的黄金十年，就有能力创造合作的钻石十年！”</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner">
+                                    <span class="title">2013-09-03 13:54:08  3085216761：【李克强东盟博览会讲话：对于南海争议 中国是有担当的】</span>
+                                    <hr style ='margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>李克强就进一步加强中国与东盟的合作提出五项倡议。一是打造中国—东盟自贸区升级版。双方应进一步降低关税，削减非关税措施，积极开展新一批服务贸易承诺谈判，推动投资领域的实质性开放，力争 </span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title"> 2013-09-04 11:56:06 3702913543 ：【菲总统称中国撤销其访华邀请 中方否认曾邀请】</span>
+                                    <hr style= 'margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>菲外交部对外宣称，中国8月28日晚撤销对菲总统的访华邀请。美联社称，中国此举是明显冷落菲律宾。不过，路透社昨日引述中国外交部的回应称，中国从未对菲总统发出访华邀请。专家称，菲总统所谓被中国拒绝参加东盟博览会更像是一场秀。</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title">2013-09-04 16:47:133517164684：【“台湾精品”展现高科技】</span>
+                                    <hr style ='margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>9月3日下午，第十届中国-东盟博览会“台湾精品”开展仪式在南宁国际会展中心举行，各类高科技产品让观众心动。据了解，此次“台湾精品”展不仅推介高科技的产品，更希望利用广西作为东盟门户的优势，将台湾优质产品推向东盟这个大市场，不断增强台湾对外经贸文化合作力量。</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title">2013-09-05 03:43:16  3735998501：【李克强:铺就面向东盟的海上丝绸之路】</span>
+                                    <hr style= 'margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>李克强在参观中国－东盟博览会展馆时强调铺就面向东盟的海上丝绸之路 打造带动腹地发展的战略支点新华网南宁</span>
+                                  </div>
+                                </div>
+                                <div class="item" >
+                                  <div class="inner" >
+                                    <span class="title">2013-09-05 08:35:07 3602721791 ：【李克强:铺就面向东盟的海上丝绸之路】</span>
+                                    <hr style ='margin-top: 0px;margin-bottom: 0px;'>
+                                    <span>8月20日消息，第十届中国—东盟博览会、中国—东盟商务投资峰会将于9月3日在南宁开幕，南宁安检站将面临巨大的航空安全保障工作压力，为全面动员各级人员、激昂精神、奋发斗志，南宁机场安检站于8月19日举行了航空安全保障工作誓师大会。</span></div>
+                                  </div>
+                                  <div class="item" >
+                                    <div class="inner" >
+                                      <span class="title">2013-09-07 07:13:00 1726660120：【公众开放日 市民淘宝忙】</span>
+                                      <hr style= 'margin-top: 0px;margin-bottom: 0px;'>
+                                      <span>公众开放日 市民淘宝忙本报南宁讯 （记者/苏必庆）9月6日，第十届中国-东盟博览会迎来公众开放日。当日，中国-东盟博览会的展区向公众全面开放，数以万计的观展者纷纷涌向主场馆南宁国际会展中心。</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键传播用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="stmTabs tabUnit">
+            <span id="loading_current_data" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+            <div class="tabConts">
+                <div id="rank_table" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well" style="width:1033px;margin-top:25px">
+        <div class="titlBar" style="padding-bottom:1px;">
+            <h4><b>关键源头用户</b></h4>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="关键用户"></i>&nbsp;&nbsp;
+        </div>
+
+        <div class="stmTabs tabUnit">
+            <span id="loading_current_data_source" class="alert alert-info" style="float:left;height: 33px;width: 508px;padding: 9px;">系统繁忙计算中，请稍后...</span>
+            <div class="tabConts">
+                <div id="rank_table_source" style="margin-top:5px">
+                    <table class="table table-bordered"></table>
+                </div>
+                <div id="rank_page_selection_source" class="pagination-centered" style="margin-top:5px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blkUnit grpUnit" style="float:left;">
+        <div class="titlBar" id='title_text' style="padding-bottom:15px;">
+            <h4><b>事件重要微博</b></h4>
+            <i id="folk_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="相关事件中的重要微博"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:1px;">
+            </div>
+            <div class="tabConts">
+                <div style="width:1033px;">
+                    <div id="opinion" style="  
+                        clear:left;float:left;position:relative">
+                        <div id="opinion_text">
+                            <div class="tang-scrollpanel-wrapper">
+                            <div class="tang-scrollpanel-content">
+                            <ul id="weibo_ul">
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:微博广西 <a class="undlin" target="_blank" href="#">UID:2060480445</a>&nbsp;&nbsp;发布&nbsp;&nbsp;我们这已经有人上了一个多星期早中晚了[书呆子][生病]我们这已经有十天没得休息了～今天中国东盟博览会[左哼哼]昨晚是我们国家的请东盟国家的吃饭[黑线]我想要到6号后才有可能得休息
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发10</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论5</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-02 23:37:16</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:扫月师太<a class="undlin" target="_blank" href="#">UID:2793540077</a>&nbsp;&nbsp;发布&nbsp;&nbsp;开学前两天刚好碰上中国-东盟博览会的召开，多了两天的假期，属于南宁孩子的特殊节日。
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发3</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论1</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-02 17:19:19</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:依奈妮 <a class="undlin" target="_blank" href="#">UID:1968206403</a>&nbsp;&nbsp;发布&nbsp;&nbsp;六点起[睡觉][睡觉]，七点到上班这😭😂，封路步行了好长一段路[泪]。服务东盟忙碌的第一天。早安，第十届中国东盟博览会❤。尽全力服务好它👏💪💪☀
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发3</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论0</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-02 23:41:08</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:吉士翰<a class="undlin" target="_blank" href="#">UID:1743390187</a>&nbsp;&nbsp;发布&nbsp;&nbsp;确实！有越南咖啡，拖鞋！泰国香米，榴莲。印度咖哩！一年一度的东盟博览会开幕啦，我要抽时间和我的小伙伴们一起去吃美食吃水果！感觉超级热闹，好多东南亚的水果啊[馋嘴]，诱人指数五颗星！[嘻嘻] 
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发2</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论1</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-03 12:20:52</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:Abby陆咿伊 <a class="undlin" target="_blank" href="#">UID:1288762221 </a>&nbsp;&nbsp;发布&nbsp;&nbsp;带20多位嘉宾进中国东盟博览会展馆，馆里的各种食品、饰品、烟洒、特产、服装……哎，这别样的土特产交易中心，年年岁岁都相似，看了两三个馆，提前离开了！
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发2</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论0</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-04 03:07:32 </a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="weibo_face">
+                                        <a target="_blank" href="#">
+                                            <img src="/static/img/unknown_profile_image.gif">
+                                        </a>
+                                    </div>
+                                    <div class="weibo_detail">
+                                        <p>昵称:徐依森不拔牙<a class="undlin" target="_blank" href="#">UID:2123157117 </a>&nbsp;&nbsp;发布&nbsp;&nbsp;为了证明今年还是去参观中国—东盟博览会了，拍了几张照片，虽说感觉展台一年比一年展简单，越来越没有吸引力了
+                                        </p>
+                                    <div class="weibo_info">
+                                        <div class="weibo_pz">
+                                            <a class="undlin" href="javascript:;" target="_blank">转发0</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a class="undlin" href="javascript:;" target="_blank">评论0</a>
+                                        </div>
+                                        <div class="m">
+                                            <a class="undlin">2013-09-04 05:17:57</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">新浪微博</a>&nbsp;-&nbsp;
+                                            <a target="_blank" href="#">用户页面</a>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    
+{% endblock content %}
+{% block tail_js %}
+    <script>
+        $("#summary_tooltip").tooltip();
+        $("#folk_tooltip").tooltip();
+        $("#media_tooltip").tooltip();
+    </script>
+    <script src="/static/css/js/keywords_pie_depreciated.js" type="text/javascript"></script>
+{% endblock tail_js %}
