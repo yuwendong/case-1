@@ -6,16 +6,31 @@
     1 微博通道
       1）数据来源说明:
         
+         微博话题名 --
+             mongodb (host=219.224.135.46 port=27019)
+                 db: 54api_weibo_v2
+                 话题名collection: master_timeline_topic  
+
          微博数据 -- 
              xapian (host=219.224.135.48)
                  路径: /home/xapian/xapian_weibo_topic
                  xapian名称形式: 'xapian_weibo_topic_' + weibo_topic_id
                                 （weibo_topic_id对应于mongodb中master_timeline_topic中话题id）
                  查询形式: 通过/home/xapian/xapian_weibo_topic/stub/ 中的stub文件获取
+ 
+             mongodb (host=219.224.135.46 port=27019) - (注：创建xapian用)
+                 db: 54api_weibo_v2
+                 话题名collection: 'master_timeline_weibo_topic_' + topic_id
+                                  (topic_id对应于master_timeline_topic中话题id)
+             
              
          微博用户信息 --
              xapian (host=219.224.135.48)
                  路径: /home/xapian/xapian_user/
+
+             mongodb (host=219.224.135.46 port=27019)
+                 db: 54api_weibo_v2
+                 用户信息collection: master_timeline_user
 
       2) 输出数据说明:
          微博数量统计
