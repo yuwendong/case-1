@@ -1,0 +1,173 @@
+文件结构说明
+
+    cron/identify文件夹为网络分析模块（包括微博和新闻两部分）后台计算的代码库，各文件内容及主要方法的说明如下：
+
+    folder: identify
+    1) 微博通道
+        file：cron_topic_identify.py - 微博通道计算的入口文件
+            func: main
+                input: 话题名及话题起止时间戳(topic, start_ts, end_ts)
+                output: 早期参与者、趋势发起人、源头转发网络及直接上级转发网络的计算结果
+                      （注: 在调用main方法前，必须在Topics和TopicStatus中存放需要计算的话题信息）
+        
+        file: get_first_user.py - 早期参与者的计算
+            func: get_first_node
+                input: 话题名及起止日期（'%Y-%m-%d'），天数，话题对应xapian的id
+                       （topic, start_date, date, windowsize, topic_xapian_id）
+                output: 早期参与者的计算结果
+
+        file: fu_tr.py - 趋势发起人计算
+            func: get_interval_count - 趋势发起人计算入口
+                input: 话题名，话题结束的日期（'%Y-%m-%d'），天数，话题对应xapian的id
+                      （topic, date, windowsize, topic_xapian_id）
+                output: 趋势制造者，趋势推动者的计算结果
+            func: get_makers - 计算趋势制造者
+                input: 话题名，波峰序列，波谷序列，时间戳序列，话题对应xapian的id
+                       （topic, new_peak, new_bottom, ts_list, topic_xapian_id）
+                output: 趋势制造者的计算结果（makers_list）
+            func: get_pushers - 计算趋势推动者
+                input: 话题名，波峰序列，波谷序列，时间戳序列，话题对应xapian的id
+                       (topic, new_peaks, new_bottom, ts_list, topic_xapian_id)
+                output: 趋势推动者的计算结果（pusher_list）
+            func: get_keyword - 计算波峰波谷间微博集的top关键词
+                input: 话题名，波谷点时间戳，波峰点时间戳，top值
+                       （topic, begin_ts, end_ts, top）
+                output: 波峰波谷间的top关键词序列（keyword_data）
+            func: get_max_k_timestamp - 计算时间趋势图上的最大斜率点
+                input: 时间趋势图中的微博量序列，时间戳序列
+                       （results, p_ts_list）
+                output:  最大斜率点的时间戳
+
+        file: peak_detectiton.py - 计算时间趋势图中波峰点
+            func: detect_peaks
+                input: 时间趋势中的微博量序列
+                output: 波峰点在时间戳序列中的位置
+        
+        file: bottom_detect.py - 计算时间趋势图中波谷点
+            func: detect_bottom
+                input: 时间趋势中的微博量序列
+                output: 波谷点在时间戳序列中的位置
+
+        file: area.py - 计算图结构及相关网络指标
+            func: make_network - 计算网络结构和节点属性
+                input: 话题名，结束日期，天数，话题对应xapian的id，微博量最大控制，计算节点的标识
+                       （topic, date, windowsize, topic_xapian_id, max_size, attribute_add）
+                output: 源头转发网络及直接上级转发网络结构（包括有向图和无向图两种），以及两种网络结构对应的节点属性字典
+                       （g, gg, new_attribute_dict, ds_dg, ds_udg, ds_new_attribute_dict）
+            func: pagerank_rank - 计算pagerank
+                input: pagerank值保留最大量控制，话题结束日期，TopicStatus表中话题对应id，话题名，Topics表中话题对应id
+                      （top_n, date, topic_id, window_size, topicname, real_topic_id）
+                output: 源头转发网络和直接上级转发网络中用户的pagerank值和排名
+                       （all_uid_pr, ds_all_uid_pr, data, ds_data）
+            func: make_network_graph - 生成显示网络图的gexf并计算网络指标
+                input: 话题结束日期，TopicStatus表中话题对应id，话题名，天数，两种网络结构的pagerank值和排名，Topics表中话题对应id
+                       （date, topic_id, topicname, windowsize, all_uid_pr, data, ds_all_uid_pr, ds_data, real_topic_id）
+                output: 显示网络图的gexf（gexf, ds_gexf）
+        
+        file: snowball1.py - 网络结构滚雪球抽样
+            func: SnowballSampling
+                input: 有向网络结构，无向网络结构，话题名，网络类型
+                       （G, gg, topic, network_type）
+                output: 抽样后的有向、无向网络结构（new_G, new_gg）
+
+        file: snowball_sampling.py - 控制滚雪球抽样的结束节点
+            func: snowballSamplingEndByNodes
+            func: multi_snowballSamplingEndByNodes
+     
+        file: makegexf.py - 生成显示源头转发网络的gexf
+            func: make_gexf - 生成源头转发网络的gexf
+                input: gexf作者名，网络类型名，有向网络结构，节点度字典，重要用户列表，用户对应pagerank字典，pagerank排名字典，社区划分字典，节点属性字典
+                       （gexf_name_1, gexf_name_2, G, node_degree, key_user, all_uid_pr, pr_data, partition, new_attribute_dict）
+                output: 显示源头转发网络图的gexf
+            func: make_ds_gexf - 生成直接上级转发网络的gexf
+                input: gexf作者名，网络类型名，有向网络结构，节点度字典，重要用户列表，用户对应pagerank字典，pagerank排名字典，社区划分字典，节点属性字典
+                       （gexf_name_1, gexf_name_2, G, node_degree, key_user, all_uid_pr, ds_pr_data, partition, ds_new_attribute_dict）
+                output: 显示源头转发网络图的gexf  
+
+        file: gquota.py - 计算网络指标
+            func: compute_quota
+                input: 网络有向图结构，无向图结构，话题延续天数，话题名，用户对应pagerank字典，网络类型
+                       （G, gg, windowsize, topic, all_uid_pr, network_type）
+                output: 各网络指标计算结果
+ 
+        file: direct_superior_network.py - 获取微博的直接转发上级用户
+            func: get_superior_userid - 获取转发微博的直接转发上级
+                input: 微博信息（status）
+                output: 直接转发上级的用户id（direct_superior_userid）
+            func: find_in_mongo - 在mongodb中查询用户名对应的id
+                input: 用户名（uname）
+                output: 用户id（uid）
+            func: find_by_scripy - 通过爬虫获取用户id
+                input: 用户名（uname）
+                output: 用户id（uid）      
+
+        file: dynamic_xapian_weibo.py - 获取微博对应的xapian
+            func: getXapianWeiboByTopic
+                input: 话题对应xapian的id（topic_id）
+                output: xapian对象（xapian_search_weibo）
+        
+        file: parameter.py - 参数表
+            func: weibo_topic2xapian - 获取话题对应的xapian名称
+                input: 话题名，话题起止时间戳
+                       （topic_name, start_ts, end_ts） 
+                output: 话题对应xapian的id（topic_weibo_id）
+            func: get_dynamic_mongo - 获取话题对应的新闻和评论在mongodb中的collection
+                input: 话题名，话题起止时间戳
+                       （topic, start_ts, end_ts）
+                output: 新闻的collection，评论的collection
+                       （topic_news_collection, topic_comment_collection）
+
+        file: topicStatus.py - 话题模块计算状态标识更改
+            func: _topic_not_calc - 查询还未计算某模块的话题
+            func: _topic_calculating - 查询正在计算某模块的话题
+            func: _topic_comleted - 查询已计算某模块的话题
+            func: _update_topic_status2Computing - 更改状态为正在计算
+            func: _update_topic_status2Completed - 更改状态为已完成计算
+
+        file: util.py - 公用函数
+            func: acquire_topic_id - 获取TopicStatus表中topic对应的id
+            func: acquire_real_topic_id - 获取Topics表中topic对应的id
+            func: acquire_topic_name - 获取话题TopicStatus中的name
+            func: acquire_user_by_id - 由uid获取用户信息
+            func: save_rank_results - 存储源头转发网络pagerank的计算结果
+            func: save_ds_rank_results - 存储直接上级转发网络pagerank的计算结果
+            func: read_key_users - 读取源头转发网络pagerank的计算结果
+            func: ds_read_key_users - 读取直接上级转发网络pagerank的计算结果
+            func: save_gexf_results - 保存gexf到SSDB
+            func: save_graph - 保存网络结构为本地文件
+            func: read_graph - 读取本地文件中的图结构
+            func: save_attribute_dict - 保存节点属性字典
+            func: read_attribute_dict - 读取节点属性字典
+            
+
+        file: SSDB.py - SSDB操作
+        file: mongodb_connection.py - 连接mongodb数据库
+        file: items.py - 爬虫文本转义
+        file: time_utils.py - 时间格式转换
+        file: config.py - 配置文件
+                
+
+    2）新闻通道
+        file: cron_news_identify.py - 新闻通道的计算入口文件
+            func: main
+                input: 话题名，起止时间戳
+                       （topic, start_ts, end_ts）
+                output: 早期参与媒体和趋势发起媒体的计算结果
+                       （注: 在调用main方法前，必须在Topics和TopicStatus中存放需要计算的话题信息）
+        file: early_join_news.py - 计算早期参与媒体
+             func: early_join
+                 input: 话题名，起止时间戳，话题存储在mongodb的collection
+                        (topicname, start_ts, end_ts, collection)
+                 output: 早期参与媒体序列
+        file: trend_user_news.py - 计算趋势发起媒体
+             func: get_maker - 计算趋势制造媒体
+                 input: 话题名，波峰序列，波谷序列，时间趋势图的时间戳序列，新闻存储的collection
+                        （topic, new_peaks, new_bottom, ts_list, collection）
+                 output: 趋势制造者的序列
+             func: get_pusher - 计算趋势推动媒体
+                 input: 话题名，波峰序列，波谷序列，时间趋势图的时间戳序列，新闻存储的collection，评论存储的collection
+                        (topic, new_peaks, new_bottom, ts_list, news_collection, comment_collection)
+                 output: 趋势推动者序列
+
+       
+	
