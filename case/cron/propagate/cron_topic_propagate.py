@@ -8,7 +8,7 @@ from xapian_case.utils import top_keywords, gen_mset_iter
 
 sys.path.append('../../')
 from global_config import mtype_kv
-from time_utils import datetime2ts, ts2HourlyTime
+from time_utils import datetime2ts, ts2HourlyTime, ts2datetimestr
 from global_utils import getWeiboById, getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from model import PropagateCount, PropagateKeywords, PropagateWeibos
@@ -126,27 +126,30 @@ def propagateCronTopic(topic, xapian_search_weibo, start_ts, over_ts, sort_field
                 
                 count, results = xapian_search_weibo.search(query=query_dict, fields=fields_list)
 
-                # mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
-                #                                  max_offset=w_limit, mset_direct=True)
+                mset = xapian_search_weibo.search(query=query_dict, sort_by=[sort_field], \
+                                                  max_offset=w_limit, mset_direct=True)
 
-                #kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
+                kcount = top_keywords(gen_mset_iter(xapian_search_weibo, mset, fields=['terms']), top=k_limit)
                 top_ws = top_weibos(results, top=w_limit)
 
-                #mtype_count[v] = [end_ts, count]
-                #mtype_kcount[v] = [end_ts, kcount]
+                mtype_count[v] = [end_ts, count]
+                mtype_kcount[v] = [end_ts, kcount]
                 mtype_weibo[v] = [end_ts, top_ws]
 
-            # save_pc_results(topic, mtype_count, during)
-            # save_kc_results(topic, mtype_kcount, during, k_limit)
+            save_pc_results(topic, mtype_count, during)
+            save_kc_results(topic, mtype_kcount, during, k_limit)
             save_ws_results(topic, mtype_weibo, during, w_limit)
 
 
 if __name__ == '__main__':
-    topic = u'外滩踩踏'
-    topic_id = getTopicByName(topic)['_id']
+    topic = sys.argv[1] # u'香港自由行' u'张灵甫遗骨疑似被埋羊圈' u'高校思想宣传' u'高校宣传思想工作' u'外滩踩踏' 'APEC' u'全军政治工作会议'
+    start_date = sys.argv[2] # '2015-02-23'
+    end_date = sys.argv[3] # '2015-03-02'
 
-    start_ts = datetime2ts('2014-12-31')
-    end_ts = datetime2ts('2015-01-09')
+    topic_id = getTopicByName(topic)['_id']
+    start_ts = datetime2ts(start_date)
+    end_ts = datetime2ts(end_date)
+
     duration = Fifteenminutes
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
 

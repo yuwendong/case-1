@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block module_title %}概述分析{% endblock %}
 {% block head_css %}
-    <link type="text/css" rel="stylesheet" href="/static/css/css/justified-nav-detail.css">    <style type="text/css">
-        /* keywords tag cloud */
+    <link type="text/css" rel="stylesheet" href="/static/css/css/justified-nav-detail.css">
+    <link rel="stylesheet" media="screen" href="/static/css/css/b1njTimeline.css">
+
     <style type="text/css">
         /* keywords tag cloud */
         hr {
@@ -260,11 +261,17 @@
             border: 1px solid #ddd;
             border-left-width: 0;
         }
+
         .pagination ul>li {
             display: inline;
         }
+
         .label-important, .badge-important {
             background-color: #b94a48;
+        }
+
+        .b1njTimeline {
+            box-sizing: content-box;
         }
     </style>
 {% endblock head_css %}
@@ -332,7 +339,7 @@
     <div class="blkUnit grpUnit" id="trendProfile">
         <div class="titlBar" style="padding-bottom:25px;">
             <h4>主题河</h4>
-            <i id="eventriver_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="时间轴：可视化信息中子话题起止时间"></i>&nbsp;&nbsp;
+            <i id="eventriver_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="主题河：可视化事件中子话题的热度分布"></i>&nbsp;&nbsp;
         </div>
 
         <div class="tabUnit">
@@ -348,7 +355,7 @@
     <div class="blkUnit grpUnit" id="trendfishbone">
         <div class="titlBar" style="padding-bottom:25px;">
             <h4>鱼骨图</h4>
-            <i id="timeline_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="时间轴：可视化信息中子话题起止时间"></i>&nbsp;&nbsp;
+            <i id="timeline_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="鱼骨图：可视化事件中子话题的代表性文本"></i>&nbsp;&nbsp;
         </div>
         <div id="page">
             <ol id="timeline1"></ol>
@@ -362,5 +369,6 @@
         $("#eventriver_tooltip").tooltip();
         $("#timeline_tooltip").tooltip();
     </script>
+    <script src="/static/css/js/jquery.b1njTimeline.js" type="text/javascript"></script>
     <script src="/static/css/js/keywords_pie.js" type="text/javascript"></script>
 {% endblock tail_js %}

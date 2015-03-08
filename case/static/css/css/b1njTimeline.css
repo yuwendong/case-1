@@ -1,0 +1,161 @@
+/* CSS Inspired by @csswizardry http://csswizardry.com/2011/03/coding-up-a-semantic-lean-timeline/ */
+.b1njTimeline {
+    background : url(f43059.gif
+        ) top center repeat-y;
+    width : 900px;
+    padding : 50px 0;
+    margin :0 auto 50px auto;
+    position: relative;
+}
+    .b1njTimeline ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .b1njTimeline * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .b1njTimeline .events:before, /* The dot */
+    .b1njTimeline .events:after { /* The arrow */
+        content: " ";
+        width: 10px;
+        height: 10px;
+        display: block;
+        background: #f43059;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -5px;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border-radius: 20px;
+    }
+    .b1njTimeline .events:after {
+        margin-left: -7px;
+        background: none;
+        border: 7px solid transparent;
+        border-top-color: #f43059;
+        width: 0;
+        height: 0;
+        top: auto;
+        bottom: -7px;
+        -webkit-border-radius:0;
+        -moz-border-radius:0;
+        border-radius:0;
+    }
+    .b1njTimeline .events li {
+        position: absolute;
+        width: 400px;
+        margin: 0 0 10px 0;
+        top: 0;
+        text-align:left;
+    }
+        .b1njTimeline .event {
+            position: absolute;
+            width: 400px;
+            padding: 5px;
+            background: #FFFFFF;
+            border: 1px solid #D0D0D0;
+            top: center;
+            margin: -1.5em 0 0 0;
+            border-radius: 5px;
+            -webkit-box-shadow: 1px -2px 1px #D0D0D0;
+            -moz-box-shadow: 1px -2px 1px #D0D0D0;
+            box-shadow: 1px -2px 0px #D0D0D0;
+            cursor: pointer;
+        }
+        .b1njTimeline .event:hover,
+        .b1njTimeline .event.open {
+            z-index: 100;
+            background: #f6f6f6;
+            border: 1px solid #9D9D9D;
+        }
+        .b1njTimeline time {
+            font-weight: bold;
+        }
+        .b1njTimeline .events p {
+            margin: 0;
+        }
+        .b1njTimeline .events li:before,
+        .b1njTimeline .events li:after {
+            content: " ";
+            width: 50px;
+            height: 1px;
+            background: #f43059;
+            position: absolute;
+            top: 0;
+            display: none;
+        }
+        .b1njTimeline .events li:nth-of-type(even) {
+            text-align: left;
+            right: 0;
+        }
+        .b1njTimeline .events li:nth-of-type(odd):before { /* Move branches */
+            display: block;
+            background: #d8d566;
+            background: -moz-linear-gradient(left, #d8d566 0%, #f43059 100%);
+            background: -webkit-gradient(linear, left top, right top, color-stop(0%,#d8d566), color-stop(100%,#f43059));
+            background: -webkit-linear-gradient(left, #d8d566 0%,#f43059 100%);
+            background: -o-linear-gradient(left, #d8d566 0%,#f43059 100%);
+            background: -ms-linear-gradient(left, #d8d566 0%,#f43059 100%);
+            background: linear-gradient(to right, #d8d566 0%,#f43059 100%);
+            left: 100%;
+        }
+        .b1njTimeline .events li:nth-of-type(even):after { /* Move branches */
+            display: block;
+            background: #f43059;
+            background: -moz-linear-gradient(left,  #f43059 0%, #d8d566 100%);
+            background: -webkit-gradient(linear, left top, right top, color-stop(0%,#f43059), color-stop(100%,#d8d566));
+            background: -webkit-linear-gradient(left,  #f43059 0%,#d8d566 100%);
+            background: -o-linear-gradient(left,  #f43059 0%,#d8d566 100%);
+            background: -ms-linear-gradient(left,  #f43059 0%,#d8d566 100%);
+            background: linear-gradient(to right,  #f43059 0%,#d8d566 100%);
+            right: 100%;
+        }
+        .b1njTimeline .description {
+            height: 0;
+            overflow: hidden;
+            text-align: left;
+        }
+        .b1njTimeline .description:before {
+            content: '+';
+            display: block;
+            width: 1em;
+            height: 1em;
+            position: absolute;
+            top: 0em;
+        }
+        .b1njTimeline .events li:nth-of-type(even) .description:before {
+            right: 0;
+        }
+            .b1njTimeline .open .description {
+                margin-top: 10px;
+                height: auto;
+                -moz-transition: 1s ease;
+            }
+            .b1njTimeline .open .description:before {
+                content: '-';
+            }
+    .b1njTimeline .timeline_dates li {
+        display: block;
+        position: absolute;
+        left: 50%;
+        width: 100px;
+        top: 0px;
+        margin-left: 10px;
+    }
+        .b1njTimeline .timeline_dates li div {
+            position: absolute;
+            margin-top: -.6em;
+        }
+        .b1njTimeline .timeline_dates li:before {
+            content: " ";
+            width: 5px;
+            height: 1px;
+            background: #f43059;
+            position: absolute;
+            top: 0;
+            margin-left: -10px;
+        }

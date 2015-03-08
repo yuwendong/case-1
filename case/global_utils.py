@@ -5,10 +5,10 @@ from weibo import Client
 from dogapi.utils import resp2item_search
 from dogapi.pipelines.mongodbPipeline import MongodbPipeline
 from global_config import API_HOST, API_PORT, MASTER_TIMELINE_54API_MONGOD_HOST, \
-MASTER_TIMELINE_54API_MONGOD_PORT, MASTER_TIMELINE_54API_WEIBO_DB, \
-MASTER_TIMELINE_54API_USER_COLLECTION, MASTER_TIMELINE_54API_WEIBO_DAILY_COLLECTION_PREFIX, \
-MASTER_TIMELINE_54API_WEIBO_TOPIC_COLLECTION_PREFIX, MASTER_TIMELINE_54API_TOPIC_COLLECTION, \
-MASTER_TIMELINE_54API_WEIBO_REPOST_COLLECTION
+        MASTER_TIMELINE_54API_MONGOD_PORT, MASTER_TIMELINE_54API_WEIBO_DB, \
+        MASTER_TIMELINE_54API_USER_COLLECTION, MASTER_TIMELINE_54API_WEIBO_DAILY_COLLECTION_PREFIX, \
+        MASTER_TIMELINE_54API_WEIBO_TOPIC_COLLECTION_PREFIX, MASTER_TIMELINE_54API_TOPIC_COLLECTION, \
+        MASTER_TIMELINE_54API_WEIBO_REPOST_COLLECTION
 
 
 def get_client(api_host=API_HOST, api_port=API_PORT):
@@ -16,13 +16,20 @@ def get_client(api_host=API_HOST, api_port=API_PORT):
 
 
 def _default_mongo(host=MASTER_TIMELINE_54API_MONGOD_HOST, \
-	port=MASTER_TIMELINE_54API_MONGOD_PORT, usedb=MASTER_TIMELINE_54API_WEIBO_DB):
+        port=MASTER_TIMELINE_54API_MONGOD_PORT, usedb=MASTER_TIMELINE_54API_WEIBO_DB):
     # 强制写journal，并强制safe
     connection = pymongo.MongoClient(host=host, port=port, j=True, w=1)
     db = connection.admin
     # db.authenticate('root', 'root')
     db = getattr(connection, usedb)
     return db
+
+
+def _default_mongo_db(host=MASTER_TIMELINE_54API_MONGOD_HOST, \
+        port=MASTER_TIMELINE_54API_MONGOD_PORT):
+    # 强制写journal，并强制safe
+    connection = pymongo.MongoClient(host=host, port=port, j=True, w=1)
+    return connection
 
 mongo = _default_mongo()
 weibo_client = get_client(API_HOST, API_PORT)

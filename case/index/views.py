@@ -13,6 +13,7 @@ from xapian_case.xapian_backend import XapianSearch
 from xapian_case.utils import cut, load_scws
 from case.dynamic_xapian_weibo import getXapianWeiboByTopic
 from case.global_config import XAPIAN_USER_DATA_PATH
+from case.Database import Event, EventManager
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
 scws = load_scws()
@@ -20,6 +21,8 @@ scws = load_scws()
 mod = Blueprint('case', __name__, url_prefix='/index')
 
 xapian_search_weibo = getXapianWeiboByTopic()
+
+em = EventManager()
 
 def acquire_user_by_id(uid):
     user_search = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
@@ -263,6 +266,28 @@ def shijian_news():
     return render_template('index/time_news.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
+
+@mod.route('/eventriver/')
+def eventriver():
+    """event river数据
+    """
+    topic_name = request.args.get('query', default_topic) # 话题名
+    sort = request.args.get('sort', 'tfidf') # weight, addweight, created_at, tfidf
+    end_ts = request.args.get('ts', None)
+    during = request.args.get('during', None)
+
+    if end_ts:
+        end_ts = int(end_ts)
+
+    if during:
+        during = int(during)
+        start_ts = end_ts - during
+
+    topicid = em.getEventIDByName(topic_name)
+    event = Event(topicid)
+    subeventlist, dates, total_weight = event.getEventRiverData(start_ts, end_ts, sort=sort)
+
+    return json.dumps({"dates": dates, "name": topic_name, "type": "eventRiver", "weight": total_weight, "eventList": subeventlist})
 
 @mod.route('/gaishu/')
 def gaishu():

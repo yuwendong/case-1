@@ -16,7 +16,7 @@ function Opinion_timeline(query, start_ts, end_ts, pointInterval){
     this.weibo_skip = 0; // 当前页面已显示的微博数
     this.weibo_sort = sort_weight; // 当前页面微博排序依据
     this.eventriver_ajax_url = function(query, end_ts, during){
-        return "/news/eventriver/?query=" + query + "&during=" + during + "&ts=" + end_ts;
+        return "/index/eventriver/?query=" + query + "&during=" + during + "&ts=" + end_ts;
     }
     this.pie_ajax_url = function(query, end_ts, during, subevent){
         return "/news/ratio/?query=" + query + "&subevent=" + subevent + "&during=" + during + "&ts=" + end_ts;
@@ -97,6 +97,10 @@ Opinion_timeline.prototype.pull_eventriver_data = function(){
 
 Opinion_timeline.prototype.drawFishbone = function(){
     drawFishbone(this.event_river_data);
+}
+
+function timestamp_comparator(a, b){
+    return parseInt(a.news.timestamp) - parseInt(b.news.timestamp);
 }
 
 // 绘制鱼骨图
