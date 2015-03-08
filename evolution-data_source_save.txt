@@ -21,7 +21,6 @@
                  话题名collection: 'master_timeline_weibo_topic_' + topic_id
                                   (topic_id对应于master_timeline_topic中话题id)
              
-             
          微博用户信息 --
              xapian (host=219.224.135.48)
                  路径: /home/xapian/xapian_user/
@@ -36,27 +35,10 @@
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
              存储形式: city_repost表
-         早期参与者（分领域）
-             存储路径: mysql
-             存储形式: first_domain_user表
-         趋势制造者
-             存储路径: mysql
-             存储形式: trend_maker表
-         趋势推动者
-             存储路径: mysql
-             存储形式: trend_pusher表
-         网络结构（中间存储数据 保留）
-             存储路径: case/graph/
-             存储形式: gexf文件
-         网络节点属性（中间存储数据 新数据替换）
-             存储路径: SSDB(host=219.224.135.47 port=8888)
-             key: 'g_attribute_dict' / 'ds_g_attribute_dict'
-         网络指标
-             存储路径: SSDB(host=219.224.135.47 port=8888)
-         网络xml文件
-             存储路径: SSDB(host=219.224.135.47 port=8888)
-             key: _utf8_unicode(topic) +'_' + str(identifyDate) + '_' + str(identifyWindow) + '_' + 'source_graph'
-                  _utf8_unicode(topic) +'_' + str(identifyDate) + '_' + str(identifyWindow) + '_' + 'direct_superior_graph'
+         热门微博（按地域）
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: city_topic_count表
     
     2 新闻通道
       1）数据来源说明:
@@ -69,13 +51,12 @@
                                 (news_id对应于一条新闻的id)
 
       2) 输出数据说明:
-         早期参与媒体（early_join_news）
-              存储路径: mysql(host=219.224.135.46)
-              存储形式: first_user_news表
-         趋势制造媒体（trend_maker_news）
-              存储路径: mysql(host=219.224.135.46)
-              存储形式: trend_maker_news表
-         趋势推动媒体（trend_pusher_news）
-              存储路径: mysql(host=219.224.135.46)
-              存储形式: trend_pusher_news表
+         新闻地域转发关系
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: city_repost_news表
+         热门新闻（按地域）
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: city_topic_count_news表
           
