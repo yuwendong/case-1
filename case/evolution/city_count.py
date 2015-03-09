@@ -7,7 +7,7 @@ import operator
 from sqlalchemy import func
 from case.extensions import db
 from case.time_utils import datetime2ts
-from case.model import CityTopicCount   #需要查询的表
+from case.model import CityTopicCount, CityTopicCountNews   #需要查询的表
 from BeautifulSoup import BeautifulSoup
 from city_color import province_color_map
 
@@ -79,14 +79,14 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
     if during <= unit: # 时间范围选择小于默认最小时间段15分钟，则默认为15分钟
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         if stylenum == 4: # 求所有的和
-            item=db.session.query(CityTopicCount).filter(SentimentCount.end==upbound, \
-                                              SentimentCount.range==unit, \
-                                              SentimentCount.topic==topic).first()
+            item=db.session.query(CityTopicCount).filter(CityTopicCount.end==upbound, \
+                                              CityTopicCount.range==unit, \
+                                              CityTopicCount.topic==topic).first()
         else:
-            item = db.session.query(CityTopicCount).filter(SentimentCount.end==upbound, \
-                                              SentimentCount.mtype==stylenum, \
-                                              SentimentCount.range==unit, \
-                                              SentimentCount.topic==topic).first() # 查询出匹配微博集
+            item = db.session.query(CityTopicCount).filter(CityTopicCount.end==upbound, \
+                                              CityTopicCount.mtype==stylenum, \
+                                              CityTopicCount.range==unit, \
+                                              CityTopicCount.topic==topic).first() # 查询出匹配微博集
         if item: # 若查询结果存在，计算ccount中属于同一个省份count和
             if not isinstance(item, list):
                 item = [item]
@@ -111,6 +111,56 @@ def Pcount(end_ts, during, stylenum, topic, unit=MinInterval):
                                                 CityTopicCount.mtype==stylenum, \
                                                 CityTopicCount.range==unit, \
                                                 CityTopicCount.topic==topic).all()
+
+        if item:
+            if not isinstance(item, list):
+                item = [item]
+            first_item = first_select(item, end_ts)
+            pcount=sum_pcount(item)
+        else:
+            pcount = {}
+            first_item = {}
+
+    return first_item, pcount
+
+def PcountNews(end_ts, during, stylenum, topic, unit=MinInterval):
+    pcount = {} # 省市对应count
+    first_item = {} # 源头微博
+    if during <= unit: # 时间范围选择小于默认最小时间段15分钟，则默认为15分钟
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        if stylenum == 3: # 求所有的和
+            item=db.session.query(CityTopicCountNews).filter(CityTopicCountNews.end==upbound, \
+                                              CityTopicCountNews.range==unit, \
+                                              CityTopicCountNews.topic==topic).first()
+        else:
+            item = db.session.query(CityTopicCountNews).filter(CityTopicCountNews.end==upbound, \
+                                              CityTopicCountNews.mtype==stylenum, \
+                                              CityTopicCountNews.range==unit, \
+                                              CityTopicCountNews.topic==topic).first() # 查询出匹配微博集
+        if item: # 若查询结果存在，计算ccount中属于同一个省份count和
+            if not isinstance(item, list):
+                item = [item]
+            first_item = first_select(item, end_ts)
+            pcount=sum_pcount(item)
+        else:
+            pcount={} # 查询结果为空
+            first_item = {}
+
+    else:                         #时间范围大于15分钟时，将其转化为15分钟的整数倍段
+        start_ts =end_ts - during
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        lowbound = (start_ts / unit) * unit
+        if stylenum == 3:
+            item = db.session.query(CityTopicCountNews).filter(CityTopicCountNews.end>lowbound, \
+                                                CityTopicCountNews.end<=upbound, \
+                                                CityTopicCountNews.range==unit, \
+                                                CityTopicCountNews.topic==topic).all()
+        else:
+            item = db.session.query(CityTopicCountNews).filter(CityTopicCountNews.end>lowbound, \
+                                                CityTopicCountNews.end<=upbound, \
+                                                CityTopicCountNews.mtype==stylenum, \
+                                                CityTopicCountNews.range==unit, \
+                                                CityTopicCountNews.topic==topic).all()
 
         if item:
             if not isinstance(item, list):
