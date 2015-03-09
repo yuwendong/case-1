@@ -28,7 +28,7 @@
 
         }
 
-        #trend_div {
+/*        #trend_div {
 
             height: 270px;
 
@@ -62,7 +62,7 @@
 
             color: #428bca;
 
-        }
+        }*/
 
 
 
@@ -106,13 +106,13 @@
 
         }
 
-        .titlBar .compInfo {
+        /*.titlBar .compInfo {
 
             padding-right: 15px;
 
             color: #858585;
 
-        }
+        }*/
 
         .stmTabs{
 
@@ -130,15 +130,16 @@
 
         }
 
-        .stmTabs .tabLi {
 
-            display: block;
+        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
 
-            float: left;
+            max-width: 130px;
 
-            text-decoration: none;
+            text-overflow: ellipsis;
 
-            color: #666
+            overflow: hidden;
+
+            white-space: nowrap;
 
         }
 
@@ -148,7 +149,19 @@
 
             padding: 0 14px;
 
-            _float:left
+            _float:left;
+
+        }
+
+        .stmTabs .tabLi {
+
+            display: block;
+
+            float: left;
+
+            text-decoration: none;
+
+            color: #666;
 
         }
 
@@ -160,23 +173,23 @@
 
             height: 21px;
 
-            border-bottom: 2px solid #6e87d7
+            border-bottom: 2px solid #6e87d7;
 
         }
 
         .stmTabs .tabLi:hover .hvTab,.stmTabs .tabLi.curr .hvTab {
 
-            display: block
+            display: block;
 
         }
 
         .stmTabs .tabLi:hover .nmTab,.stmTabs .tabLi.curr .nmTab {
 
-            display:none
+            display:none;
 
         }.stmTabs .tabConts {
 
-            padding-bottom: 10px
+            padding-bottom: 10px;
 
         }
 
@@ -186,39 +199,29 @@
 
             margin-bottom: -10px;
 
-            _position:relative
+            _position:relative;
 
         }
 
         .stmTabs .moreLnk a {
 
-            text-decoration: none
+            text-decoration: none;
 
         }
 
         .stmTabs .moreLnk a:hover {
 
-            text-decoration: underline
+            text-decoration: underline;
 
         }
 
-        .stmTabs .tabLi .nmTab, .stmTabs .tabLi .hvTab {
 
-            max-width: 130px;
-
-            text-overflow: ellipsis;
-
-            overflow: hidden;
-
-            white-space: nowrap
-
-        }
 
         .stmTabs .gColor0:hover .hvTab,.stmTabs .gColor0.curr .hvTab {
 
             color: #6e87d7;
 
-            border-color: #6e87d7
+            border-color: #6e87d7;
 
         }
 
@@ -226,7 +229,7 @@
 
             color: #11c897;
 
-            border-color: #11c897
+            border-color: #11c897;
 
         }
 
@@ -242,7 +245,7 @@
 
             color: #b172c5;
 
-            border-color: #b172c5
+            border-color: #b172c5;
 
         }
 
@@ -250,11 +253,16 @@
 
             color: #f367a7;
 
-            border-color: #f367a7
+            border-color: #f367a7;
 
         }
+        .title{
+            color: #02c874;
+            font-size: 15px;
+            border: 1px #000 dotted solid;
+        }
 
-        .sigma-expand {
+        /*.sigma-expand {
 
             position: absolute;
 
@@ -272,9 +280,9 @@
 
             background-color: #b94a48;
 
-        }
+        }*/
 
-        .mainSplit {
+        /*.mainSplit {
 
             top: 64px;
 
@@ -315,8 +323,8 @@
             background-repeat: no-repeat;
 
         }
-
-        .pagination ul {
+*/
+/*        .pagination ul {
 
             display: inline-block;
 
@@ -372,9 +380,9 @@
 
             display: inline;
 
-        }
+        }*/
 
-        .lrRadius {
+/*        .lrRadius {
 
             display: inline-block;
 
@@ -442,17 +450,17 @@
 
             text-align: left;
 
-        }
+        }*/
 
         td, th {
 
             display: table-cell;
 
-            vertical-align: inherit;
+            /*vertical-align: inherit;*/
 
-            padding-left: 65px;
+            /*padding-left: 65px;*/
 
-            width:80px;
+            width:120px;
 
         }
 
@@ -491,7 +499,7 @@
 
         .weibo_detail {
 
-            margin-left: 65px;
+            margin-left: 0px;
 
         }
 
@@ -533,8 +541,14 @@
 
         }
 
+        .scrolls {
 
-/*        .tang-scrollpanel {
+            overflow: hidden;
+
+        }
+
+
+        .tang-scrollpanel {
 
             overflow: hidden;
 
@@ -580,13 +594,9 @@
 
         }
 
-        .scrolls {
 
-            overflow: hidden;
 
-        }
 
-*/
 
         #lTools {
 
@@ -594,7 +604,7 @@
 
         }
 
-        .node-info-popup ul li a:link {
+        /*.node-info-popup ul li a:link {
 
             color: #000000;
 
@@ -604,9 +614,9 @@
 
             color: #00FFFF;
 
-        }
+        }*/
 
-        .control-pane{
+/*        .control-pane{
 
             position: relative;
 
@@ -694,9 +704,9 @@
 
             margin: 10px;
 
-        }
+        }*/
 
-        #cluster_panel {
+/*        #cluster_panel {
 
             top: 389px;
 
@@ -724,9 +734,9 @@
 
             margin: 10px;
 
-        }
+        }*/
 
-        .line {
+/*        .line {
 
             clear: both;
 
@@ -776,14 +786,24 @@
 
             font-weight: 700;
 
+        }*/
+
+        tr{
+            height:23px;
         }
 
-        .hidden {
+        /*.hidden {
 
             display: none;
 
             visibility: hidden;
 
+        }*/
+
+        a:-webkit-any-link {
+        color: -webkit-link;
+        text-decoration: underline;
+        cursor: auto;
         }
 
         .compOK {
@@ -812,44 +832,6 @@
 
         }
 
-        /*.modal{
-
-            width:100%;
-
-            position:fixed;
-
-            text-align:center;
-
-            margin: 0px auto;
-
-            top:0px;left:0px;
-
-            bottom: 0px;
-
-            right: 0px;
-
-            z-index: 1050px;
-
-        }
-
-        .modal_wrapper{
-
-            display: table;
-
-            height: 100%;
-
-            margin: 0px auto;
-
-        }
-
-        .modal-dialog{
-
-            display: table-cell;
-
-            vertical-align: middle;
-
-        }*/
-
 
 
         #firstuser_table td{
@@ -860,11 +842,6 @@
 
         }
 
-        .modal-body td{
-
-            padding-left: 23px;
-
-        }
 
         #trenduser_table td{
 
@@ -882,7 +859,7 @@
 
             height: 100%;
 
-            margin: 0px auto 0
+            margin: 0px auto 0;
 
         }
 
@@ -938,8 +915,13 @@
         .weibo_more {
             padding: 4px;
             text-align: center;
-            cursor: pointer;
-            
+            cursor: pointer;    
+        }
+        .first_user_table td{
+
+            padding-left:23px;
+
+            width:95px;
         }
 
 
@@ -967,16 +949,27 @@
         function switchTab(ProBox,id) {
         	
 
-            for (i = 1; i < 3; i++) {			
+            for (i = 1; i <3; i++) {			
 
             	$("#Tab"+i).removeClass("curr");
                 if ("con" + i == ProBox) {
                     document.getElementById(ProBox).style.display = "";
+                    if (i==1){
+                        div_id = 'firstuser_news_ul';
+                        $("#content_control_height_" + div_id).css("height", $("#" + div_id).css("height"));
+                    }
+                    else{
+                        div_id_1 = 'trend_maker_ul'; 
+                        $("#content_control_height_" + div_id_1).css("height", $("#" + div_id_1).css("height"));
+                        div_id_2 = 'trend_pusher_ul';
+                        $("#content_control_height_" + div_id_2).css("height", $("#" + div_id_2).css("height"));
+                    }
+                    
 
                 } else {
                 	if($("#Tab"+i))
                     document.getElementById("con" + i).style.display = "none";
-
+                     
 
                 }
 
@@ -1012,17 +1005,17 @@
 
                     <a status="end" class="tabLi gColor curr" href="javascript:;" id ="Tab1" onclick="switchTab('con1','Tab1')" style="display: block;">
 
-                        <div class="nmTab">早期参与者</div>
+                        <div class="nmTab">早期发布媒体</div>
 
-                        <div class="hvTab">早期参与者</div>
+                        <div class="hvTab">早期发布媒体</div>
 
                     </a>
 
                     <a status="wholemap" class="tabLi gColor1" href="javascript:;" id = "Tab2" onclick="switchTab('con2','Tab2')" style="display: block;">
 
-                        <div class="nmTab">趋势发起人</div>
+                        <div class="nmTab">趋势发起媒体</div>
 
-                        <div class="hvTab">趋势发起人</div>
+                        <div class="hvTab">趋势发起媒体</div>
 
                     </a>
 
@@ -1036,13 +1029,36 @@
 
 
 
-<div id="con1">
-<!-- 早期参与者的表格显示，待处理 -->
-    <div class="blkUnit grpUnit" style="float:left;" id="news_rec">
+<div id="con1" >
+
+        <!-- 显示表格 -->
+    <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="table1">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4>早期参与媒体概览</h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF;" data-toggle="tooltip" data-placement="right" title="早期参与媒体概览"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:11px;">
+            </div>
+            <div class="tabConts" style="padding-left:20px;">
+                <div id="first_user_table" style="width:1000px;">
+                    <table rules=rows frame= hsides class="altrowstable" id="first_user_alternatecolor">
+                        <tr style="margin-left:5px;height:30px;text-align:center;"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                     </table>
+                 </div>
+             </div>
+         </div>
+
+     </div>
+        <!-- 表格分割线 -->
+
+    <div class="blkUnit grpUnit" style="float:left;" id="news_rec1">
         <div class="titlBar" style="padding-bottom:25px;">
             <h4>首发新闻</h4>
-            <i id="weibo_tooltip1" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="首发新闻:最早发布的新闻"></i>&nbsp;&nbsp;
-            <span id="status_weibo_tooltip1"></span>
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="首发新闻:最早发布的新闻"></i>&nbsp;&nbsp;
         </div>
         <div class="stmTabs tabUnit" style="width:1033px;">
             <div class="tabTitle">
@@ -1052,7 +1068,7 @@
                             <div class="search_type clearfix">
                             </div>
                             <div id="sort_news1" class="r_v2" style="float: right;">
-                                <span id="sort_by_timestamp1" style="color: -webkit-link;cursor: pointer;">按时间</span> |
+                                <span id="sort_by_timestamp1" style="color: -webkit-link;cursor: pointer;">按时间</span>
                                 <!-- <span id="sort_by_weight1" style="color: #333; cursor: pointer;">按相关度</span> -->
                             </div>
                         </div>
@@ -1069,26 +1085,51 @@
                                     </ul>
                                 </div>
                             </div>
-                        <div>
+                        </div>
+                        <div class="more" style="width:100%; height:24px; text-align:center;">
+                            <span class="weibo_more" id="more_information1">加载更多</span>
+                        </div>
                     </div>
                 </div>
-                <div class="more" style="width:100%; height:24px; text-align:center;">
-                    <span class="weibo_more" id="more_information1">加载更多</span>
-                </div>
             </div>
+                
         </div>     
-    </div>
-
-        
+    </div>       
 </div>
 
 
 
+
 <div id="con2" style="display:none">
-    <div class="blkUnit grpUnit" style="float:left;" id="news_rec">
+
+    <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="table2">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>趋势制造媒体概览</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="趋势制造媒体概览"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:11px;">
+            </div>
+            <div class="tabConts" style="padding-left:20px;">
+                <div id="trend_maker_table" style="width:1000px;">
+                    <table rules=rows frame= hsides class="altrowstable" id="trend_maker_alternatecolor">
+                        <tr style="margin-left:5px;height:30px;text-align:center;"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                     </table>
+                 </div>
+             </div>
+         </div>
+
+     </div>
+        <!-- 表格分割线 -->
+
+
+    <div class="blkUnit grpUnit" style="float:left;" id="news_rec2">
         <div class="titlBar" style="padding-bottom:25px;">
             <h4>趋势制造新闻</h4>
-            <i id="weibo_tooltip2" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="趋势制造新闻:制造趋势的新闻"></i>&nbsp;&nbsp;
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="趋势制造新闻:制造趋势的新闻"></i>&nbsp;&nbsp;
             <span id="status_weibo_tooltip2"></span>
         </div>
         <div class="stmTabs tabUnit" style="width:1033px;">
@@ -1099,8 +1140,8 @@
                             <div class="search_type clearfix">
                             </div>
                             <div id="sort_news2" class="r_v2" style="float: right;">
-                                <span id="sort_by_timestamp2" style="color: -webkit-link;cursor: pointer;">按时间</span> |
-                                <span id="sort_by_weight2" style="color: #333; cursor: pointer;">按相关度</span>
+                                <span id="sort_by_weight2" style="color: -webkit-link;cursor: pointer;">按相关度</span> |
+                                <span id="sort_by_timestamp2" style="color: #333; cursor: pointer;">按时间</span>
                             </div>
                         </div>
                     </div>
@@ -1116,21 +1157,44 @@
                                     </ul>
                                 </div>
                             </div>
-                        <div>
+                        </div>
+                        <div class="more" style="width:100%; height:24px; text-align:center;">
+                            <span class="weibo_more" id="more_information2">加载更多</span>
+                        </div>
                     </div>
-                </div>
-                <div class="more" style="width:100%; height:24px; text-align:center;">
-                    <span class="weibo_more" id="more_information2">加载更多</span>
                 </div>
             </div>
         </div>     
     </div>
 
+    <div class="blkUnit grpUnit" style="width:1033px; float:left; margin-bottom:20px;" id="table3">
+
+        <div class="titlBar" style="padding-bottom:20px;">
+
+            <h4><b>趋势推动媒体概览</b></h4>
+
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign"style="color:#2894FF" data-toggle="tooltip" data-placement="right" title="趋势推动媒体概览"></i>&nbsp;&nbsp;
+        </div>
+        <div class="tabUnit">
+            <div class="tabTitle" style="padding-top:11px;">
+            </div>
+            <div class="tabConts" style="padding-left:20px;">
+                <div id="trend_pusher_table" style="width:1000px;">
+                    <table rules=rows frame= hsides class="altrowstable" id="trend_pusher_alternatecolor">
+                        <tr style="margin-left:5px;height:30px;text-align:center;"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                     </table>
+                 </div>
+             </div>
+         </div>
+
+     </div>
+        <!-- 表格分割线 -->
+
     
-    <div class="blkUnit grpUnit" style="float:left;" id="news_rec">
+    <div class="blkUnit grpUnit" style="float:left;" id="news_rec3">
         <div class="titlBar" style="padding-bottom:25px;">
             <h4>趋势推动新闻</h4>
-            <i id="weibo_tooltip3" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="趋势推动新闻:推动趋势发展的新闻"></i>&nbsp;&nbsp;
+            <i id="keyclient_tooltip" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="趋势推动新闻:推动趋势发展的新闻"></i>&nbsp;&nbsp;
             <span id="status_weibo_tooltip3"></span>
         </div>
         <div class="stmTabs tabUnit" style="width:1033px;">
@@ -1141,8 +1205,8 @@
                             <div class="search_type clearfix">
                             </div>
                             <div id="sort_news3" class="r_v2" style="float: right;">
-                                <span id="sort_by_comments_count" style="color: -webkit-link;cursor: pointer;">按评论数</span>
-                                <span id="sort_by_timestamp3" style="color: -webkit-link;cursor: pointer;">按时间</span> |
+                                <span id="sort_by_comments_count" style="color: -webkit-link;cursor: pointer;">按评论数</span> |
+                                <span id="sort_by_timestamp3" style="color: -webkit-link;cursor: pointer;">按时间</span> 
                                 <!-- <span id="sort_by_weight3" style="color: #333; cursor: pointer;">按相关度</span> -->
                             </div>
                         </div>
@@ -1159,11 +1223,11 @@
                                     </ul>
                                 </div>
                             </div>
-                        <div>
+                        </div>
+                        <div class="more" style="width:100%; height:24px; text-align:center;">
+                            <span class="weibo_more" id="more_information3">加载更多</span>
+                        </div>
                     </div>
-                </div>
-                <div class="more" style="width:100%; height:24px; text-align:center;">
-                    <span class="weibo_more" id="more_information3">加载更多</span>
                 </div>
             </div>
         </div>     
@@ -1186,6 +1250,7 @@
         $("#display_tooltip").tooltip();
 
         $("#frequency_tooltip").tooltip();
+
 
     </script>
 

@@ -7,6 +7,7 @@ sys.setdefaultencoding('utf-8')
 from case.extensions import db
 from case.model import TrendMaker, TrendPusher
 from utils import weiboinfo2url
+from parameter import domain_dict, domain_list
 '''
 domain_dict = {'folk':u'民众', 'media':u'媒体', 'opinion_leader':u'意见领袖', 'other':u'其他', 'oversea':u'海外'}
 domain_list = ['folk', 'media', 'opinion_leader','oversea', 'other']

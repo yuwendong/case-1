@@ -41,7 +41,6 @@ def ReadTopic(topic):
     f_quota_evolution = {'end_ts':[], 'f_sensitivity':[], 'f_sentiment':[], 'f_transmission':[], 'f_involved':[]}
     for i in range(compute_day-1):
         end_ts = start_ts + (i+1) * Day
-        print 'item:',item.topic.encode('utf-8'), item.start_ts, item.end_ts
         f_sensitivity = ReadFSensitivity(topic, start_ts, end_ts)
         f_sentiment = ReadFSentiment(topic, start_ts, end_ts)
         f_transmission = ReadFTransmission(topic, start_ts, end_ts)
@@ -54,7 +53,7 @@ def ReadTopic(topic):
         f_quota_evolution['f_sentiment'].append(f_sentiment)
         f_quota_evolution['f_transmission'].append(f_transmission)
         f_quota_evolution['f_involved'].append(f_involved)  # f_quota_evolution = {end_ts:[], quota1:[],.....}
-    
+
     last_index = index  # float
     system_dict = {} 
     class_sensitivity, word_sensitivity = ReadQuotaSensitivity(topic, start_ts ,end_ts)

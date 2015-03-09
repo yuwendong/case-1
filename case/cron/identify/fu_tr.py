@@ -5,18 +5,24 @@ import operator
 from peak_detection import detect_peaks
 from bottom_detect import detect_bottom
 from dynamic_xapian_weibo import getXapianWeiboByTopic
-from config import db, REDIS_HOST, REDIS_PORT, USER_DOMAIN, DOMAIN_LIST
-from config import xapian_search_user as user_search
-from parameter import user_fields_list, field_list, TOPIC, START, END
+#from config import db, REDIS_HOST, REDIS_PORT, USER_DOMAIN, DOMAIN_LIST
+#from config import xapian_search_user as user_search
+from parameter import user_fields_list, field_list, TOPIC, START, END ,\
+         domain_list, USER_DOMAIN, Minute, Fifteenminutes, Hour, Day ,\
+         MinInterval , fu_tr_during, trend_maker_count, trend_pusher_count ,\
+         fu_tr_unit, fu_tr_top_keyword, p_during
 from parameter import weibo_topic2xapian
 from bottom_detect import detect_bottom
 import sys
 sys.path.append('../../')
 from model import PropagateCount, PropagateKeywords, TrendKeyUser, TrendMaker, TrendPusher
 from time_utils import datetime2ts, ts2datetime, ts2date
+from global_config import db, REDIS_HOST, REDIS_PORT
+from global_config import xapian_search_user as user_search
 
-
-
+during = fu_tr_during
+unit = fu_tr_unit
+'''
 Minute = 60
 Fifteenminutes = 15 * Minute
 Hour = 3600
@@ -24,9 +30,7 @@ SixHour = Hour * 6
 Day = Hour * 24
 MinInterval = Fifteenminutes
 during = Day
-
 domain_list = DOMAIN_LIST
-'''
 field_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
                   'reposts_count','comments_count','terms']
 weibo_fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
@@ -74,7 +78,7 @@ def get_interval_count(topic, date, windowsize, topic_xapian_id):
     results = [0]
     ts_list = []
     start_date = ts2datetime(datetime2ts(date) - windowsize * Day)
-    unit = 900
+    #unit = 900
     print 'start_date:', start_date
     start_ts = datetime2ts(start_date)
     ts_list = [start_ts]
@@ -144,7 +148,7 @@ def save_trend_maker(topic, date, windowsize, trend_maker,topic_xapian_id):
         if uid in user_exist_list:
             continue
         user_exist_list.append(uid)
-        if rank>=20:
+        if rank>=trend_maker_count:
             break
         rank += 1
         wid = maker[1]
@@ -179,7 +183,7 @@ def save_trend_pusher(topic, date, windowsize, trend_pusher, topic_xapian_id):
         if uid in user_exist_list:
             continue
         user_exist_list.append(uid)
-        if rank>=20:
+        if rank>=trend_pusher_count:
             break
         rank += 1
         wid = pusher[1]
@@ -202,7 +206,7 @@ def get_makers(topic, new_peaks, new_bottom, ts_list, topic_xapian_id):
     if begin_ts > end_ts:
         begin_ts = ts_list[0]
 
-    keyword_data = get_keyword(topic, begin_ts, end_ts, top=50) # propagateKeywork
+    keyword_data = get_keyword(topic, begin_ts, end_ts, top=fu_tr_top_keyword) # propagateKeywork
     print 'keyword_data:', keyword_data # 权重最大的前50个terms
     makers = sort_makers(keyword_data, begin_ts, end_ts, ts_list, topic_xapian_id)
     makers_list = []
@@ -224,7 +228,7 @@ def parseKcount(kcount):
 
     return kcount_dict 
 
-def _top_keywords(kcount_dict, top=50):
+def _top_keywords(kcount_dict, top=fu_tr_top_keyword):
     results_list = []
 
     if kcount_dict != {}:
@@ -239,8 +243,9 @@ def _top_keywords(kcount_dict, top=50):
 # get top 50 keywords
 def get_keyword(topic, begin_ts, end_ts, top):
     kcounts_dict = {}
-    unit = 900 # PropagateKeywords unit=900
-    limit = 50
+    #unit = 900 # PropagateKeywords unit=900
+    #limit = 50
+    limit = fu_tr_top_keyword
     #print 'get_keywords begin_ts:', begin_ts
     #print 'get_keywords end_ts:', end_ts
     items = db.session.query(PropagateKeywords).filter(PropagateKeywords.end>begin_ts ,\
@@ -307,7 +312,7 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list, topic_xapian_id):
     weibo_term = {}
     for weibo in search_weibo():
         num += 1
-        if num > 50:
+        if num > fu_tr_top_keyword:
             break
         uid = weibo['user']
         wid = weibo['_id']
@@ -321,12 +326,12 @@ def sort_makers(keyword_data, begin_ts, end_ts, ts_list, topic_xapian_id):
                 key_term.append(term)
         weibo_term[uid] = [wid, key_term_count, key_term]
     sort_weibo_term = sorted(weibo_term.items(), key=lambda x:x[1][1], reverse=True)
-    return sort_weibo_term[:50]
+    return sort_weibo_term[:fu_tr_top_keyword]
 
 #trend_pusher
 def get_pushers(topic, new_peaks, new_bottom, ts_list, topic_xapian_id):
-    unit = 900
-    p_during = Hour
+    #unit = 900
+    #p_during = Hour
     p_ts_list = []
     results = []
     end_ts = ts_list[new_peaks[0]]

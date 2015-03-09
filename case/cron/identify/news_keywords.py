@@ -105,8 +105,9 @@ def get_top_weight_news(weight_list):
     sort_timestamp_news = sort_news[:50]
     print 'len(sort_timestamp_news):', len(sort_timestamp_news)
     sort_news = sorted(sort_timestamp_news, key = lambda a:a[1], reverse=True)
-    sort_weight_news = sort_news[:20]
-    maker_list = [news for news, weight, timestamp in sort_weight_news]
+    maker_list = [news for news, weight, timestamp in sort_news]
+    #sort_weight_news = sort_news[:20]
+    #maker_list = [news for news, weight, timestamp in sort_weight_news]
         
     return maker_list
 

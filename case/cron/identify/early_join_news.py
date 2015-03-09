@@ -33,8 +33,8 @@ def early_join(topicname, start_ts, end_ts, collection):
     # pay attention
     query_dict = {'timestamp':{'$gte':start_ts, '$lte':end_ts}}
     print 'query_dict, first_news_count:', query_dict, first_news_count
-    first_user_list = collection.find(query_dict, filter_fields_dict).sort('timestamp').limit(first_news_count)
-    #first_user_list = collection.find({},filter_fields_dict).sort('timestamp').limit(first_news_count)
+    #first_user_list = collection.find(query_dict, filter_fields_dict).sort('timestamp').limit(first_news_count)
+    first_user_list = collection.find(query_dict, filter_fields_dict).sort('timestamp')
     rank = 0
     # deal with the start_ts/end_ts is not the whole day
     if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
@@ -48,9 +48,22 @@ def early_join(topicname, start_ts, end_ts, collection):
     for item_exist in items_exist:
         db.session.delete(item_exist)
     db.session.commit()
-
+    # 媒体去重
+    media_list = []
     for item in first_user_list:
+        
+        meida_name = ''
+        transmit_name = item['transmit_name']
+        source_from_name = item['source_from_name']
+        if not transmit_name:
+            media_name = source_from_name
+        else:
+            media_name = transmit_name
+        if media_name in media_list:
+            continue
         rank += 1
+        media_list.append(media_name)
+        
         timestamp = item['timestamp']
         save_item = FirstUserNews(topicname, start_ts, end_ts,timestamp, json.dumps(item))
         db.session.add(save_item)

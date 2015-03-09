@@ -169,8 +169,22 @@ def save_trend_maker(topic, start_ts, end_ts, trend_maker):
         for item in items_exist:
             db.session.delete(item)
         db.session.commit()
-        
+    # 媒体名称去重
+    media_list = []
     for maker in trend_maker:
+        if len(media_list)==maker_news_count:
+            break
+        meida_name = ''
+        transmit_name = maker['transmit_name']
+        source_from_name = maker['source_from_name']
+        if not transmit_name:
+            media_name = source_from_name
+        else:
+            media_name = transmit_name
+        if media_name in media_list:
+            continue
+        media_list.append(media_name)
+        
         news_id = maker['id']
         timestamp = maker['timestamp']
         #same_news_num = maker['same_news_num']
@@ -193,8 +207,22 @@ def save_trend_pusher(topic, start_ts, end_ts, trend_pusher):
         for item in items_exist:
             db.session.delete(item)
         db.session.commit()
-
+    # 媒体名称去重
+    media_list = []
     for pusher in trend_pusher:
+        if len(media_list)==pusher_news_count:
+            break
+        media_name = ''
+        transmit_name = pusher['transmit_name']
+        source_from_name = pusher['source_from_name']
+        if not transmit_name:
+            media_name = source_from_name
+        else:
+            media_name = source_from_name
+        if media_name in media_list:
+            continue
+        media_list.append(media_name)
+        
         news_id = pusher['id']
         timestamp = pusher['timestamp']
         comments_count = pusher['comments_count']

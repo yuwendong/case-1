@@ -25,6 +25,8 @@ SSDB_PORT = 8888
 SSDB_HOST = '219.224.135.47' # SSDB服务器在47
 XAPIAN_USER_DATA_PATH = '/home/xapian/xapian_user/'
 XAPIAN_WEIBO_TOPIC_DATA_PATH = '/home/xapian/xapian_weibo_topic/'
+REDIS_HOST = '219.224.135.48'
+REDIS_PORT = 6379
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 API_SERVER_HOST = '219.224.135.46'

@@ -5,15 +5,18 @@ import pymongo # 需要easy_install pymongo
 import networkx as nx
 import urllib2
 from mongodb_connection import mongodb, collection
-from config import API_SERVER_HOST, API_SERVER_PORT
+#from config import API_SERVER_HOST, API_SERVER_PORT
 from items import UserItem_search
-from config import xapian_search_user as user_search
-
+#from config import xapian_search_user as user_search
+import sys
+sys.path.append('../../')
+from global_config import xapian_search_user as user_search
+from globla_config import API_HOST, API_PORT
 '''
 根据相关话题微博，通过正则表达式获取直接转发上级的昵称，并将其转化为userid
 '''
 
-BASE_URL_UID = 'http://%s:%s/queryWeiboUsers?users={user}&type=1' % (API_SERVER_HOST, API_SERVER_PORT)
+BASE_URL_UID = 'http://%s:%s/queryWeiboUsers?users={user}&type=1' % (API_HOST, API_PORT)
 
 
 def get_superior_userid(weibo):

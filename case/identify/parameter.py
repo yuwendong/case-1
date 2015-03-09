@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pymongo
-
+import os
+from xapian_case.xapian_backend import XapianSearch
 #views
 Minute = 60
 Fifteenminutes = 15 * Minute
@@ -44,7 +45,9 @@ def topic2xapian(topic, start_ts, end_ts):
         print 'this topic is not exist'
         return None
     else:
-        topic_weibo_id = topic_weibos['_id']
+        for topic_weibo in topic_weibos:
+            topic_weibo_id = topic_weibo['_id']
+            print 'topic_weibo_id', topic_weibo_id
         return topic_weibo_id
 
 def getXapianWeiboByTopic(topic, start_ts, end_ts):
