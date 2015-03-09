@@ -1,6 +1,6 @@
 var province_list = ["安徽", "北京", "重庆", "福建", "甘肃", "广东", "广西", "贵州", "海南", "河北", "黑龙江", "河南", "湖北", "湖南", "内蒙古", "江苏", "江西", "吉林", "辽宁", "宁夏", "青海", "山西", "山东", "上海", "四川", "天津", "西藏", "新疆", "云南", "浙江", "陕西", "台湾", "香港", "澳门"];
 var TOP_LIMIT = 10;
-var top_city_weibo;
+var top_city_news;
 var global_data;
 // var total_city_list;
 var topic = QUERY;
@@ -57,7 +57,7 @@ MapView.prototype.addSwitchTabListener = function(){
     });
 }
 MapView.prototype.whole_map_ajax_url = function(query, start_ts, end_ts, pointInterval){
-    return "/evolution/city_map_view/?topic=" + query + "&start_ts=" + start_ts + "&end_ts=" + end_ts + "&pointInterval=" + pointInterval;
+    return "/evolution/city_map_view_news/?topic=" + query + "&start_ts=" + start_ts + "&end_ts=" + end_ts + "&pointInterval=" + pointInterval;
 }
 MapView.prototype.call_sync_ajax_request = function(url, method, callback){
     $.ajax({
@@ -106,10 +106,11 @@ MapView.prototype.initPullDrawMap = function(){
         this.call_async_ajax_request(ajax_url, this.ajax_method, callback);
     }
     function callback(data){
+        console.log(data);
         myMap.hideLoading();
         that.myData = data;
         global_data = data; //全局
-        top_city_weibo = data["top_city_weibo"]; //全局
+        top_city_news = data["top_city_news"]; //全局
         drawWholeBaiduMap(that, 0);
     }
 }

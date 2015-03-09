@@ -5,6 +5,7 @@ import types
 import time
 import datetime
 import IP
+import random
 import pymongo
 from config import MONGODB_HOST, MONGODB_PORT, db
 from model import CityRepostNews
@@ -24,6 +25,8 @@ SORT_FIELD = 'timestamp'
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['news']
+
+PROVINCE_LIST = ['安徽','北京','重庆','福建','甘肃','山东','广东','贵州','河北','黑龙江']
 
 def datetime2ts(date):
     return int(time.mktime(time.strptime(date, '%Y-%m-%d')))
@@ -82,7 +85,8 @@ def save_rt_results(topic, repost_list):
 
 
 def media2city(media):
-    geo = '中国 ' + '北京'
+    idx = random.randint(0,9)
+    geo = '中国 ' + PROVINCE_LIST[idx]
 
     geo = '\t'.join(geo.split())
     return geo

@@ -199,7 +199,7 @@ def meaning():
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/area/')
-def newarea():
+def area():
     # 要素
     yaosu = 'area'
 
@@ -207,7 +207,8 @@ def newarea():
     topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
-    time_range = request.args.get('time_range', default_timerange)
+    # time_range = request.args.get('time_range', default_timerange)
+    time_range = u'20150123-20150124'
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
@@ -223,8 +224,35 @@ def newarea():
             topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
+@mod.route('/area_news/')
+def area_news():
+    # 要素
+    yaosu = 'area'
+
+    # 话题关键词
+    # topic = request.args.get('query', default_topic)
+    topic = u'全军政治工作会议'
+
+    # 时间范围: 20130901-20130901
+    # time_range = request.args.get('time_range', default_timerange)
+    time_range = u'20141101-20141115'
+
+    # 时间粒度: 3600
+    point_interval = request.args.get('point_interval', None)
+    if not point_interval:
+        point_interval = default_pointInterval
+    else:
+        for pi in pointIntervals:
+            if pi['en'] == int(point_interval):
+                point_interval = pi
+                break
+
+    return render_template('index/area_news.html', yaosu=yaosu, time_range=time_range, \
+            topic=topic, pointInterval=point_interval, pointIntervals=pointIntervals, \
+            gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
+
 @mod.route('/time/')
-def shijian():
+def time():
         # 要素
     yaosu = 'time'
 
@@ -249,7 +277,7 @@ def shijian():
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
 
 @mod.route('/time_news/')
-def shijian_news():
+def time_news():
         # 要素
     yaosu = 'time'
 
