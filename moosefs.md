@@ -14,17 +14,17 @@ https://github.com/linhaobuaa/case/blob/master/moosefs-step-by-step-tutorial-cn-
 
 ## 2 服务器部署
 
-### 2.2 概述
+### 2.1 概述
 
 我们假定使用的主机 ip 地址分配如下：
 
-主控服务器 Master server: 219.224.135.46
+* 主控服务器 Master server: 219.224.135.46
 
-主控备份服务器 Metalogger server: 未配备
+*主控备份服务器 Metalogger server: 未配备
 
-存储块服务器 Chunk servers: 219.224.135.45, 219.224.135.47, 219.224.135.48, 219.224.135.60, 219.224.135.126
+*存储块服务器 Chunk servers: 219.224.135.45, 219.224.135.47, 219.224.135.48, 219.224.135.60, 219.224.135.126
 
-客户端主机 clients: 219.224.135.x
+*客户端主机 clients: 219.224.135.x
 
 2，安装fuse最新版
 
