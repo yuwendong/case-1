@@ -1,21 +1,26 @@
 # MooseFS
 
-## 参考资料
+## 1 参考资料
 
-### 参考chenlijun evernote
+### 1.1 参考chenlijun evernote
 
 https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e37e962902489
 
+### 1.2 参考MooseFS官方文档
 
-1、两台服务器信息
-219.224.135.91
-ubuntu6
+http://www.moosefs.org/tl_files/manpageszip/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
 
+https://github.com/linhaobuaa/case/blob/master/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
 
-219.224.135.60
-ubuntu2
-Bh123456
-准备用126做主服务器，60做备份服务器
+## 2 服务器部署
+
+### 2.2 概述
+
+我们假定使用的主机 ip 地址分配如下：
+*主控服务器 Master server: 219.224.135.46
+*主控备份服务器 Metalogger server: 未配备
+*存储块服务器 Chunk servers: 219.224.135.45, 219.224.135.47, 219.224.135.48, 219.224.135.60, 219.224.135.126
+*客户端主机 clients: 219.224.135.x
 
 2，安装fuse最新版
 
