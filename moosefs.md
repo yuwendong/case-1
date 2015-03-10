@@ -40,7 +40,7 @@ MooseFS 的运行情况:
 * 查看集群监控信息：http://219.224.135.46:9425/
 
 ### 2.3 存储服务器
-1、新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
+1、使用新的整块磁盘做chunkserver的存储，新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
 ```
 mkdir -p /mnt/mfschunks1
 mount /dev/sdb
