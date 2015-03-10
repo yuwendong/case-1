@@ -50,6 +50,28 @@ mount /dev/sdb
 sudo mkfs -t ext3 /dev/sdb1
 ```
 
+2、修改chunkserver的挂载路径
+```
+vim /etc/mnt/mfshdd.cfg
+/mnt/mfschunks1
+```
+
+3、在启动 chunk server 前，需确保用户 mfs 有权限读写将要被挂接的分区（因为 chunk server 运
+行时要在此创建一个.lock 的文件）：
+```
+chown -R mfs:mfs /mnt/mfschunks1
+```
+
+4、类似地，修改/etc/hosts 文件，增加下面的行：
+```
+219.224.135.46 mfsmaster
+```
+
+5、开始启动 chunk server:
+```
+/usr/sbin/mfschunkserver start
+```
+
 ### 2.3 客户端主机
 1、安装fuse
 ```
@@ -85,16 +107,21 @@ mkdir -p /mnt/mfs
 ```
 /usr/bin/mfsmount /mnt/mfs -H mfsmaster
 ```
+* 成功挂载
+```
+root@ubuntu5:/mnt/mfs# /usr/bin/mfsmount /mnt/mfs -H mfsmaster
+mfsmaster accepted connection with parameters: read-write,restricted_ip ; root mapped to root:root
+```
 
-## 错误处理
-### 1 configure: error: zlib development library not found
+## 3 错误处理
+### 3.1 configure: error: zlib development library not found
 ```
 wget http://zlib.net/zlib-1.2.8.tar.gz
 ./configure
 make && make install
 ```
 
-### 2 can't open metadata file
+### 3.2 can't open metadata file
 /usr/sbin/mfsmaster start启动失败问题如下
 ```
 root@mirage:~# /usr/sbin/mfsmaster start
@@ -117,12 +144,17 @@ error occured during initialization - exiting
 /usr/sbin/mfsmetarestore -a
 ```
 
-### 3 aclocal-1.14: command not found
+### 3.3 aclocal-1.14: command not found
 ```
 LANG=C
 sudo apt-get install intltool
 ```
 
-修改chunkserver的挂载路径
-vim mfshdd.cfg
-/mnt/mfschunks1
+### 3.4 fuse: mountpoint is not empty
+```
+root@ubuntu4:/mnt/mfs# /usr/bin/mfsmount /mnt/mfs -H mfsmaster
+mfsmaster accepted connection with parameters: read-write,restricted_ip ; root mapped to root:root
+fuse: mountpoint is not empty
+fuse: if you are sure this is safe, use the 'nonempty' mount option
+error in fuse_mount
+```
