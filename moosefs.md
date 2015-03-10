@@ -151,10 +151,16 @@ sudo apt-get install intltool
 ```
 
 ### 3.4 fuse: mountpoint is not empty
+/usr/bin/mfsmount /mnt/mfs -H mfsmaster问题如下
 ```
 root@ubuntu4:/mnt/mfs# /usr/bin/mfsmount /mnt/mfs -H mfsmaster
 mfsmaster accepted connection with parameters: read-write,restricted_ip ; root mapped to root:root
 fuse: mountpoint is not empty
 fuse: if you are sure this is safe, use the 'nonempty' mount option
 error in fuse_mount
+```
+
+解决方案如下
+```
+umount /mnt/mfs
 ```
