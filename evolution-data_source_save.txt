@@ -35,10 +35,14 @@
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
              存储形式: city_repost表
-         热门微博（按地域）
+         微博数量（按地域）
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
              存储形式: city_topic_count表
+         热门微博
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: city_weibos表
     
     2 新闻通道
       1）数据来源说明:
@@ -55,8 +59,12 @@
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
              存储形式: city_repost_news表
-         热门新闻（按地域）
+         新闻数量（按地域）
              存储路径: mysql(host=219.224.135.46)
              db: weibocase
              存储形式: city_topic_count_news表
+         热门新闻
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: city_news表
           
