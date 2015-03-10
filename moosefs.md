@@ -1,28 +1,47 @@
 # MooseFS
 
 ## 1 参考资料
-
 ### 1.1 参考chenlijun evernote
-
 https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e37e962902489
 
 ### 1.2 参考MooseFS官方文档
-
-http://www.moosefs.org/tl_files/manpageszip/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
-
-https://github.com/linhaobuaa/case/blob/master/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
+参考资料列表
+* http://www.moosefs.org/tl_files/manpageszip/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
+* https://github.com/linhaobuaa/case/blob/master/moosefs-step-by-step-tutorial-cn-v.1.1.pdf
 
 ## 2 服务器部署
-
 ### 2.1 概述
-
 我们假定使用的主机 ip 地址分配如下：
 * 主控服务器 Master server: 219.224.135.46
 * 主控备份服务器 Metalogger server: 未配备
 * 存储块服务器 Chunk servers: 219.224.135.45, 219.224.135.47, 219.224.135.48, 219.224.135.60, 219.224.135.126
 * 客户端主机 clients: 219.224.135.x
 
-2，安装fuse最新版
+### 2.2 主控服务器
+
+### 2.3 存储服务器
+1、新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
+```
+mkdir -p /mnt/mfschunks1
+mount /dev/sdb
+```
+如果/dev/sdb没有进行格式化，用如下命令进行硬盘格式化，前提是/dev/sdb盘可以进行格式化
+```
+sudo mkfs -t ext3 /dev/sdb1
+```
+
+
+## 错误处理
+### configure: error: zlib development library not found
+```
+wget http://zlib.net/zlib-1.2.8.tar.gz
+./configure
+make && make install
+```
+
+
+
+安装fuse最新版
 
 在126上安装主控服务器 Master server
 为了操作方便，切换到root用户
