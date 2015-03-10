@@ -1,5 +1,9 @@
+# MooseFS
 
-https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e37e962902489
+## 参考资料
+
+### 参考chenlijun evernote：https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e37e962902489
+
 
 1、两台服务器信息
 219.224.135.91
