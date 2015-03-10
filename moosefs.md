@@ -76,13 +76,35 @@ mkdir -p /mnt/mfs
 ```
 
 ## 错误处理
-### configure: error: zlib development library not found
+### 1 configure: error: zlib development library not found
 ```
 wget http://zlib.net/zlib-1.2.8.tar.gz
 ./configure
 make && make install
 ```
 
+### 2 can't open metadata file
+/usr/sbin/mfsmaster start启动失败问题如下
+```
+root@mirage:~# /usr/sbin/mfsmaster start
+working directory: /var/lib/mfs
+lockfile created and locked
+initializing mfsmaster modules ...
+loading sessions ... ok
+sessions file has been loaded
+exports file has been loaded
+mfstopology configuration file (/etc/mfstopology.cfg) not found - using defaults
+loading metadata ...
+can't open metadata file
+if this is new instalation then rename /var/lib/mfs/metadata.mfs.empty as /var/lib/mfs/metadata.mfs
+init: file system manager failed !!!
+error occured during initialization - exiting
+```
+
+解决方案：重建meta数据
+```
+/usr/sbin/mfsmetarestore -a
+```
 
 
 安装fuse最新版
