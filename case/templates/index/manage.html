@@ -20,8 +20,6 @@
 <title>案例定制</title>
 
 <!-- Bootstrap core CSS -->
-
-
 <!-- Custom styles for this template -->
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/manage.css') }}">
@@ -30,18 +28,6 @@
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/font-awesome.min.css') }}">
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/cikonss.css') }}">
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-datetimepicker.min.css') }}">
-  <!--
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/jquery-ui-1.8.18.custom.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap-responsive.min.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/toggle_switch.css') }}">
-
--->
-
-
-
-
-
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -57,12 +43,12 @@
         }
       </style>
       <script>
-        function drop_menu(){<!-- 选择下拉菜单 -->
+        function drop_menu(){ //选择下拉菜单
           var lis = document.getElementById("drop_f");
           lis.style.display='block';
         }
 
-        function declear_all(){<!-- 全选 -->
+        function declear_all(){ // 全选
           $(document).ready(function(){
             var divs=$("input[name='field_f']");
             for(var i = 0;i<divs.length;i++)
@@ -72,7 +58,7 @@
           lis.style.display='none';
         }
 
-        function declear_re(){<!-- 反选 -->
+        function declear_re(){ // 反选
           $("[name='field_f']").each(function(){
             if(this.checked)
             {
@@ -88,8 +74,6 @@
           lis.style.display='none';
 
         }
-
-
       </script>
 
     </head>
