@@ -70,7 +70,7 @@ def city_map_view():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        print 'no results'
+        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
 
 
 @mod.route("/topic_ajax_spatial/")
@@ -169,7 +169,7 @@ def in_out_map():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        print 'no results'
+        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
 
 
 @mod.route('/city_map_view_news/')
@@ -215,7 +215,7 @@ def city_map_view_news():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        print 'no results'
+        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_news': top_city_news})
 
 @mod.route("/topic_ajax_spatial_news/")
 def ajax_spatial_news():
@@ -311,4 +311,4 @@ def in_out_map_news():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        print 'no results'
+        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_news': top_city_news})
