@@ -18,6 +18,12 @@ https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e
 * 客户端主机 clients: 219.224.135.x
 
 ### 2.2 主控服务器
+* 修改/etc/hosts，增加下面一行
+```
+219.224.135.46 mfsmaster
+```
+* 启动mfsmaster /usr/sbin/mfsmaster start
+* 查看集群监控信息：http://219.224.135.46:9425/mfs.cgi?CCdata=cpu§ions=IN
 
 ### 2.3 存储服务器
 1、新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
@@ -30,6 +36,41 @@ mount /dev/sdb
 sudo mkfs -t ext3 /dev/sdb1
 ```
 
+### 2.3 客户端主机
+1、安装fuse
+```
+cd /usr/src/
+wget http://iweb.dl.sourceforge.net/project/fuse/fuse-2.X/2.9.3/fuse-2.9.3.tar.gz
+tar zxvf fuse-2.9.3.tar.gz
+cd fuse-2.9.3/
+./configure
+make && make install
+```
+
+2、安装客户端软件 mfsmount
+```
+cd /usr/src/
+wget http://pro.hit.gemius.pl/hitredir/id=.WCbG2t.7Ln5k1s3Q9xPg8cPfX.wVMc5kyXfrKcJTDH.c7/url=moosefs.org/tl_files/mfscode/mfs-1.6.27-5.tar.gz
+tar zvxf mfs-1.6.27-5.tar.gz
+cd mfs-1.6.27/
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var/lib --with-default-user=mfs  --with-default-group=mfs --disable-mfsmaster  --disable-mfschunkserver --enable-mfsmount
+make && make install
+```
+
+3、修改文件/etc/hosts ，增加如下的文本行:
+```
+219.224.135.46 mfsmaster
+```
+
+4、假定客户端的挂接点是/mnt/mfs，我们将以下面的指令来使用 MooseFS 分布式共享文件系统:
+* 创建挂接点
+```
+mkdir -p /mnt/mfs
+```
+* 开始挂接操作
+```
+/usr/bin/mfsmount /mnt/mfs -H mfsmaster
+```
 
 ## 错误处理
 ### configure: error: zlib development library not found
