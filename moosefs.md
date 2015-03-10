@@ -22,7 +22,10 @@ https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e
 ```
 219.224.135.46 mfsmaster
 ```
-* 启动mfsmaster /usr/sbin/mfsmaster start
+* 启动mfsmaster 
+```
+/usr/sbin/mfsmaster start
+```
 * 查看集群监控信息：http://219.224.135.46:9425/mfs.cgi?CCdata=cpu§ions=IN
 
 ### 2.3 存储服务器
