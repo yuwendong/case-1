@@ -40,7 +40,7 @@ FrontPage.prototype.addDirectionChangeListener = function(){
     });
 }
 FrontPage.prototype.whole_map_ajax_url = function(query, start_ts, end_ts, pointInterval){
-    return "/evolution/in_out_map/?topic=" + query + "&start_ts=" + start_ts + "&end_ts=" + end_ts + "&pointInterval=" + pointInterval;
+    return "/evolution/in_out_map_news/?topic=" + query + "&start_ts=" + start_ts + "&end_ts=" + end_ts + "&pointInterval=" + pointInterval;
 }
 FrontPage.prototype.call_sync_ajax_request = function(url, method, callback){
     $.ajax({
@@ -92,7 +92,7 @@ FrontPage.prototype.initPullDrawMigration = function(){
         myMigration.hideLoading();
         that.myData = data;
         global_data = data;
-        top_city_weibo = data["top_city_weibo"];
+        top_city_news = data["top_city_news"];
         drawMigration(that, 0);
     }
 }

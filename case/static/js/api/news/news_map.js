@@ -54,7 +54,7 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
     }
 
     this.whole_map_ajax_url = function(query, start_ts, end_ts, pointInterval, style, incremental){
-        return "/evolution/topic_ajax_spatial/?start_ts=" + start_ts + "&end_ts=" + end_ts + '&pointInterval=' + pointInterval + '&topic=' + query + '&style=' + style + '&incremental=' + incremental
+        return "/evolution/topic_ajax_spatial_news/?start_ts=" + start_ts + "&end_ts=" + end_ts + '&pointInterval=' + pointInterval + '&topic=' + query + '&style=' + style + '&incremental=' + incremental
     }
     this.ajax_method = "GET";
     this.call_sync_ajax_request = function(url, method, callback){
@@ -78,8 +78,7 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
     this.status = {
         '1': '原创',
         '2': '转发',
-        '3': '评论',
-        '4': '总数'
+        '3': '总数'
     };
     // this.select_province_idx_list = [1, 5, 6, 14, 23, 30];
     this.myChart_whole;
@@ -100,9 +99,8 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
 
     this.Index2Idx = {
         'origin': 1,
-        'repost': 3,
-        'comment': 2,
-        'global': 4
+        'repost': 2,
+        'global': 3
     }
 
     this.Index2Incre = {
@@ -196,6 +194,7 @@ CaseMap.prototype.initPullDrawMap = function(){
     this.call_async_ajax_request(ajax_url, this.ajax_method, callback);
 
     function callback(data){
+        console.log(data);
         myChart_whole.hideLoading();
         var data_count = data["count"];
         var format_data = that.dataFormatter(data_count);
@@ -211,20 +210,19 @@ CaseMap.prototype.initPullDrawMap = function(){
         }
         drawWholeMap(that, format_data, max_count, myChart_whole);
 
-        if (!top_city_weibo){
-            top_city_weibo = data["top_city_weibo"];
+        if (!top_city_news){
+            top_city_news = data["top_city_news"];
         }
         drawtab(that.rank_city, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
     }
 }
 
 // 默认加载总数,默认加载增量
-var curIdxWhole = '4';
-var curIdxZone = '4';
+var curIdxWhole = '3';
+var curIdxZone = '3';
 var incrementalWhole = '0';
 var incrementalZone = '0';
 var casemap = new CaseMap(topic, START_TS, END_TS, POINT_INTERVAL);
-// casemap.showWholeMapChart(curIdx);
 casemap.addSwitchTabListener();
 casemap.addSwitchMyChartListener();
 
@@ -532,7 +530,6 @@ function drawWholeMap(that, fdata, max_count, myChart_whole){
         },
         options: option_data_arr
     };
-    console.log(date_list);
     myChart_whole.setOption(option);
 }
 

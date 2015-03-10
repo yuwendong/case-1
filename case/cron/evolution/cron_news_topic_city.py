@@ -5,6 +5,7 @@ import IP   #引入IP，对'geo'字段进行解析
 import json
 import datetime
 import pymongo
+import random
 from topics import _all_topics
 from config import MONGODB_HOST, MONGODB_PORT, db, mtype_kv_news
 from time_utils import datetime2ts, ts2HourlyTime
@@ -25,6 +26,8 @@ SORT_FIELD = 'timestamp'
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['news']
 
+PROVINCE_LIST = ['安徽','北京','重庆','福建','甘肃','山东','广东','贵州','河北','黑龙江']
+
 def get_filter_dict():
     fields_dict = {}
     for field in fields_list:
@@ -32,7 +35,8 @@ def get_filter_dict():
     return fields_dict
 
 def media2city(geo): #将weibo中的'geo'字段解析为地址
-    geo = '中国 ' + '北京'
+    idx = random.randint(0,9)
+    geo = '中国 ' + PROVINCE_LIST[idx]
 
     geo = '\t'.join(geo.split())
     return geo
