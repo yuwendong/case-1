@@ -500,6 +500,7 @@ function bindSentimentTabClick(that, data){
 }
 function bindmore_weibo(that, weibos_obj, weibo_num){
     var weibo_more_id = that.weibo_more_id;
+    var weibo_tab_id = that.select_div_id;
     var data = weibos_obj;
     $("#"+weibo_more_id).unbind();
     $("#"+weibo_more_id).click(function(){
