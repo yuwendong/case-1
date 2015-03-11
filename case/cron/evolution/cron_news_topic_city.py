@@ -11,7 +11,7 @@ from config import MONGODB_HOST, MONGODB_PORT, db, mtype_kv_news
 from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
-from model import CityTopicCountNews
+from model import CityTopicCountNews, CityNews
 
 
 Minute = 60
@@ -20,6 +20,7 @@ Hour = 3600
 SixHour = Hour * 6
 Day = Hour * 24
 
+TOP_NEWS_LIMIT = 50
 fields_list=['_id', 'url', 'timestamp', 'content168', 'relative_news', 'transmit_name', 'user_name', 'source_from_name', 'title', 'showurl']
 SORT_FIELD = 'timestamp'
 
@@ -76,8 +77,18 @@ def save_rt_results(topic, mtype, results, during, first_item):
     db.session.add(item)
     db.session.commit()
 
+def save_ns_results(topic, ts, during, n_limit, news):
+    item = CityNews(topic , ts, during, n_limit, json.dumps(news))
+    item_exist = db.session.query(CityNews).filter(CityNews.topic==topic, \
+                                                          CityNews.range==during, \
+                                                          CityNews.end==ts, \
+                                                          CityNews.limit==n_limit).first()
+    if item_exist:
+        db.session.delete(item_exist)
+    db.session.add(item)
+    db.session.commit()
 
-def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteenminutes):
+def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteenminutes, n_limit=TOP_NEWS_LIMIT):
     if topic and topic != '':
         start_ts = int(start_ts)
         over_ts = int(over_ts)
@@ -95,6 +106,7 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
             end_ts = begin_ts + during
             first_timestamp = end_ts
             first_item = {}
+            news = []
 
             query_dict = {
                 'timestamp': {'$gt': begin_ts, '$lt': end_ts},
@@ -131,9 +143,16 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
                 else:
                     continue
 
+                weibo_result['source_from_area'] = source # 添加区域字段
+                news.append(weibo_result)
+
             for k, v in mtype_kv_news.iteritems():
                 results = [end_ts, ccount_dict[k]]
                 save_rt_results(topic,v, results, during, first_item)
+
+            sorted_news = sorted(news, key=lambda k: k[SORT_FIELD], reverse=True)
+            sorted_news = sorted_news[:n_limit]
+            save_ns_results(topic, end_ts, during, n_limit, sorted_news)
 
 def get_dynamic_mongo(topic, start_ts, end_ts):
     topic_collection = mongodb.news_topic

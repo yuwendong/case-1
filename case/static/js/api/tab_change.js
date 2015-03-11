@@ -107,6 +107,9 @@ function drawMigration(that, par){
     var ldata = that.myData.draw_line_data;
     var sdata = that.myData.statistics_data;
     var cdata = that.myData.in_out_results;
+    if ((ldata.length < 1) || (sdata.length < 1) || (cdata.length < 1)){
+        return;
+    }
     var myMigration = that.myMigration;
     var lgroup = ldata[ldata.length - 1];
     var sgroup = sdata[sdata.length - 1];

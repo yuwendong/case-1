@@ -122,6 +122,9 @@ mapview.addSortChangeListener();
 function drawWholeBaiduMap(that, par){
     var ldata = that.myData.draw_line_data;
     var sdata = that.myData.statistics_data;
+    if ((ldata.length < 1) || (sdata.length < 1)){
+        return;
+    }
     var myMap = that.myMap;
     var lgroup = ldata[ldata.length - 1];
     var sgroup = sdata[sdata.length - 1];

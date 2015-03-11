@@ -3,7 +3,8 @@
 from config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
-           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityTopicCountNews', 'CityRepost', 'PropagateCount', 'CityRepostNews']
+           'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'CityTopicCountNews', \
+           'CityRepost', 'PropagateCount', 'CityRepostNews', 'CityWeibos', 'CityNews']
 
 
 class Topics(db.Model):
@@ -162,6 +163,44 @@ class CityRepostNews(db.Model):
         self.ts = ts
         self.origin_location = origin_location
         self.repost_location = repost_location
+
+class CityWeibos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    weibos = db.Column(db.Text) # weibos=[weibos]
+
+    def __init__(self, topic, end, range, limit, weibos):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.limit = limit
+        self.weibos = weibos
+
+    @classmethod
+    def _name(cls):
+        return u'CityWeibos'
+
+class CityNews(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(20))
+    end = db.Column(db.BigInteger(10, unsigned=True))
+    range = db.Column(db.BigInteger(10, unsigned=True))
+    limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
+    news = db.Column(db.Text) # news=[news]
+
+    def __init__(self, topic, end, range, limit, news):
+        self.topic = topic
+        self.end = end
+        self.range = range
+        self.limit = limit
+        self.news = news
+
+    @classmethod
+    def _name(cls):
+        return u'CityNews'
 
 #时间分析模块
 class PropagateCount(db.Model):

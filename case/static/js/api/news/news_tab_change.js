@@ -10,8 +10,9 @@ function FrontPage(topic, start_ts, end_ts, pointInterval){
     this.pointInterval = pointInterval;
     this.map_div_id = "migration";
     this.weibo_tab_id = "Tableselect_3";
-    this.weibo_cont_id = "vertical-ticker_3";
+    this.weibo_cont_id = "weibo_ul_3";
     this.weibo_more_id = "more_information_3";
+    this.weibo_height_id = "content_control_height_3";
     this.ajax_method = "GET";
     this.myMigration;
     this.myData;
@@ -107,6 +108,9 @@ function drawMigration(that, par){
     var ldata = that.myData.draw_line_data;
     var sdata = that.myData.statistics_data;
     var cdata = that.myData.in_out_results;
+    if ((ldata.length < 1) || (sdata.length < 1) || (cdata.length < 1)){
+        return;
+    }
     var myMigration = that.myMigration;
     var lgroup = ldata[ldata.length - 1];
     var sgroup = sdata[sdata.length - 1];
@@ -218,7 +222,7 @@ function drawMigration(that, par){
             ]
         }
         var city_list = work_legend(cgroup, option);
-        drawtab(city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
+        drawtab(city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id, that.weibo_height_id);
         work_series_data(lgroup, sgroup, option);
         myMigration.setOption(option);
 
