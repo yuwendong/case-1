@@ -65,7 +65,7 @@ def is_in_trash_list(uid):
 def save_rank_results(sorted_uids, identifyRange, method, date, window, topicname, all_uid_pr):
     '''存放源头转发网络pagerank的计算结果
     '''
-    print 'save_rank_results:', all_uid_pr
+    #print 'save_rank_results:', all_uid_pr
     data = {}
     rank = 1
     count = 0

@@ -195,11 +195,49 @@
         #control-pane-rightdown > div {
             margin: 10px;
         }
+        /*
+        .weibo_list_height {
+            max-height: 670px;
+        }
+        */
+        .scrolls {
+            overflow: hidden;
+        }
+        .tang-scrollpanel {
+            overflow: hidden;
+        }
+        .tang-scrollpanel .tang-scrollpanel-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-scrollpanel-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%!important;
+        }
+        .tang-scrollpanel .tang-slider {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0;
+        }
+        .tang-scrollpanel .tang-slider-vtl {
+            height: 100%;
+        }
+        .weibo_list li.item {
+            line-height: 18px;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 9px 10px 10px 0;
+            min-height: 55px;
+            _height: 55px;
+        }
         .weibo_face {
             position: relative;
             float: left;
             width: 50px;
-            margin-top: 2px;
+            margin-top: 3px;
         }
         .weibo_list a {
             text-decoration: none;
@@ -209,8 +247,7 @@
             height: 50px;
         }
         .weibo_detail {
-            margin-left: 65px;
-            height:80px;
+            margin-left: 0px;
         }
         .weibo_list a.undlin {
             text-decoration: underline;
@@ -227,6 +264,11 @@
         }
         a:hover {
             color: #428bca
+        }
+        a:-webkit-any-link {
+            color: -webkit-link;
+            text-decoration: underline;
+            cursor: auto;
         }
         .weibo_info .m a {
             color: #666;
@@ -389,9 +431,15 @@
                     </div>
                 </div>
                 <div class="tabConts">
-                    <div id="weibos_div_1" style="float:left;">
+                    <div id="weibos_div_1" style="float:left;width:100%;">
                         <div class="tabCon">
-                            <div class="cur" id="vertical-ticker_1"></div>
+                            <div id="weibo_list_1" class="weibo_list weibo_list_height scrolls tang-scrollpanel cur">
+                                <div id="content_control_height_1" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="weibo_ul_1"></ul>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
                                 <span>
                                     <h4 class="weibo_more" id="more_information_1"></h4>
@@ -471,9 +519,15 @@
                     </div>
                 </div>
                 <div class="tabConts">
-                    <div id="weibos_div_2" style="float:left;">
+                    <div id="weibos_div_2" style="float:left;width:100%;">
                         <div class="tabCon">
-                            <div class="cur" id="vertical-ticker_2"></div>
+                            <div id="weibo_list_2" class="weibo_list weibo_list_height scrolls tang-scrollpanel cur">
+                                <div id="content_control_height_2" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="weibo_ul_2"></ul>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
                                 <span>
                                     <h4 class="weibo_more" id="more_information_2"></h4>
@@ -515,9 +569,15 @@
                     </div>
                 </div>
                 <div class="tabConts">
-                    <div id="weibos_div_3" style="float:left;">
+                    <div id="weibos_div_3" style="float:left;width:100%;">
                         <div class="tabCon">
-                            <div class="cur" id="vertical-ticker_3"></div>
+                            <div id="weibo_list_3" class="weibo_list weibo_list_height scrolls tang-scrollpanel cur">
+                                <div id="content_control_height_3" class="tang-scrollpanel-wrapper">
+                                    <div class="tang-scrollpanel-content">
+                                        <ul id="weibo_ul_3"></ul>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="more" style = "width:100%; height:24px ;background-color:#F6F6F6;">
                                 <span>
                                     <h4 class="weibo_more" id="more_information_3"></h4>

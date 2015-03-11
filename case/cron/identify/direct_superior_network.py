@@ -11,7 +11,7 @@ from items import UserItem_search
 import sys
 sys.path.append('../../')
 from global_config import xapian_search_user as user_search
-from globla_config import API_HOST, API_PORT
+from global_config import API_HOST, API_PORT
 '''
 根据相关话题微博，通过正则表达式获取直接转发上级的昵称，并将其转化为userid
 '''

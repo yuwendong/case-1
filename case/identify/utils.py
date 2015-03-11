@@ -131,11 +131,11 @@ def read_topic_rank_results(topic, top_n, method, date, window, domain):
     return data
 
 
-def read_ds_topic_rank_results(topic, top_n, date, windowsize, domain):
+def read_ds_topic_rank_results(topic, top_n, date, windowsize, domain, method):
     data = []
     count = 0
     items = db.session.query(DsTopicIdentification).filter_by(topic=topic, identifyWindow=windowsize ,\
-                                                              identifyDate=date).order_by(DsTopicIdentification.rank.asc())
+                                                              identifyMethod=method, identifyDate=date).order_by(DsTopicIdentification.rank.asc())
     print 'len(items):', items.count()
     if not items.count():
         return None

@@ -1,15 +1,13 @@
 #-*- coding: utf-8 -*-
 import IP
+import math
 import time
-from xapian_case.xapian_backend import XapianSearch
-from case.global_utils import getTopicByName
-from case.dynamic_xapian_weibo import getXapianWeiboByTopic # 问题，待修改----应该在cron中完成
-
+from case.extensions import db
+from case.model import CityNews
 from city_count import Pcount, PcountNews
 # 根据count不同，给不同的城市不同的颜色
 from city_color import province_color_map
-from utils import weiboinfo2url
-from read_quota import geo2city, ts2date, acquire_user_by_id
+from read_quota import _json_loads, ts2date, acquire_user_by_id
 
 #mtype_kv={'original': 1, 'forward': 2, 'comment': 3,'sum':4}
 
@@ -20,43 +18,37 @@ SixHour = Hour * 6
 Day = Hour * 24
 MinInterval = Fifteenminutes
 
-DB_NAME = '54api_weibo_v2' 
-TB_NAME = 'master_timeline_weibo' 
 
-#mongoclient =  pymongo.MongoClient('219.224.135.46')
-#mongodb = mongoclient[DB_NAME] 
-#mongotable = mongodb[TB_NAME]
-
-SORT_FIELD = ['reposts_count']
-
-RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', \
-'bmiddle_pic', 'geo', 'comments_count', 'sentiment']
-
+TOP_NEWS_LIMIT = 50
 province_list = [u'安徽', u'北京', u'重庆', u'福建', u'甘肃', u'广东', u'广西', u'贵州', u'海南', \
                  u'河北', u'黑龙江', u'河南', u'湖北', u'湖南', u'内蒙古', u'江苏', u'江西', u'吉林', \
                  u'辽宁', u'宁夏', u'青海', u'山西', u'山东', u'上海', u'四川', u'天津', u'西藏', u'新疆', \
                  u'云南', u'浙江', u'陕西', u'台湾', u'香港', u'澳门']
 
-
-def get_city_news(query, start_ts, end_ts):
-    """
-    topic = query
-    topicid = str(getTopicByName(topic)['_id'])
+def get_city_news(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_NEWS_LIMIT):
     weibos = []
-    query_dict = {
-        '$or': [{'message_type': 1}, {'message_type': 3}],
-        'timestamp':{'$gt': start_ts, '$lt': end_ts}
-    }
-    search_city_weibo = getXapianWeiboByTopic(topicid)
-    count, get_results = search_city_weibo.search(query=query_dict, fields=RESP_ITER_KEYS)
-    for r in get_results():
-        #weibo = mongotable.find_one({'_id': int(r['_id'])})
-        weibo = None
-        if weibo:
-            r['reposts_count'] = int(weibo['reposts_count'])
-            r['comments_count'] = int(weibo['comments_count'])
-
-        weibos.append((r['reposts_count'], r))
+    if (end_ts - start_ts < unit):
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        item = db.session.query(CityNews).filter(CityNews.end==upbound, \
+                                                       CityNews.topic==topic, \
+                                                       CityNews.range==unit, \
+                                                       CityNews.limit==limit).first()
+        if item:
+            news = _json_loads(item.news)
+            for news_item in news:
+                weibos.append((1,news_item))
+    else:
+        upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
+        lowbound = (start_ts / unit) * unit
+        items = db.session.query(CityNews).filter(CityNews.end>lowbound, \
+                                                         CityNews.end<=upbound, \
+                                                         CityNews.topic==topic, \
+                                                         CityNews.range==unit, \
+                                                         CityNews.limit==limit).all()
+        for item in items:
+            news = _json_loads(item.news)
+            for news_item in news:
+                weibos.append((1,news_item))
 
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=True)
 
@@ -64,9 +56,9 @@ def get_city_news(query, start_ts, end_ts):
     k = 0
     for reposts_count, result in sorted_weibos:
         k += 1
-        if k > 1000:
+        if (k > 1000):
             break
-
+        """
         uid = result['user']
         user_info = acquire_user_by_id(uid)
         if user_info:
@@ -75,20 +67,17 @@ def get_city_news(query, start_ts, end_ts):
             result['username'] = '未知'
         time = ts2date(result['timestamp'])
         result['time'] = time
+        """
         try:
-            city = geo2city(result['geo']).split('\t')[1]
+            city = result['source_from_area'].split('\t')[1]
         except:
             city = ''
-        result['weibo_link'] = weiboinfo2url(result['user'], result['_id'])
-        #print 'city:', city
 
         if city in province_list:
             try:
                 city_dict[city].append(result)
             except:
                 city_dict[city] = [result]
-    """
-    city_dict = {}
     return city_dict
 
 def readNews(stylenum, topic, end_ts , during):

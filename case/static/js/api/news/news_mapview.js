@@ -15,8 +15,9 @@ function MapView(topic, start_ts, end_ts, pointInterval){
     this.pointInterval = pointInterval;
     this.map_div_id = "allmap";
     this.weibo_tab_id = "Tableselect_1";
-    this.weibo_cont_id = "vertical-ticker_1";
+    this.weibo_cont_id = "weibo_ul_1";
     this.weibo_more_id = "more_information_1";
+    this.weibo_height_id = "content_control_height_1";
     this.ajax_method = "GET";
     this.myMap;
     this.myData;
@@ -123,17 +124,20 @@ mapview.addSortChangeListener();
 function drawWholeBaiduMap(that, par){
     var ldata = that.myData.draw_line_data;
     var sdata = that.myData.statistics_data;
+    if ((ldata.length < 1) || (sdata.length < 1)){
+        return;
+    }
     var myMap = that.myMap;
     var lgroup = ldata[ldata.length - 1];
     var sgroup = sdata[sdata.length - 1];
 
     if (par == 1){
         var city_list = work_list(sgroup);
-        drawtab(city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
+        drawtab(city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id, that.weibo_height_id);
     }
     else if(par == 0){
         var total_city_list = work_list(sgroup);
-        drawtab(total_city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
+        drawtab(total_city_list, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id, that.weibo_height_id);
         var total_list = sgroup[2];
         var cities;
         var max_repost = 0;
@@ -377,7 +381,7 @@ function work_list(sgroup){
     return city_list;
 }
 
-function drawtab(rank_city, weibo_tab_id, weibo_cont_id, weibo_more_id){
+function drawtab(rank_city, weibo_tab_id, weibo_cont_id, weibo_more_id, weibo_height_id){
     var flag = 0;
     var html = '';
     var weibo_num = 10;
@@ -387,7 +391,7 @@ function drawtab(rank_city, weibo_tab_id, weibo_cont_id, weibo_more_id){
             html += '<a topic='+ rank_city[m] + ' ' +'class=\"tabLi gColor0 curr\" href="javascript:;" style="display: block;">';
             html += '<div class="nmTab">'+rank_city[m]+ '</div>';
             html += '<div class="hvTab">'+rank_city[m]+'</div></a>';
-            show_weibo(rank_city[m], weibo_tab_id, weibo_cont_id, weibo_num, weibo_more_id);
+            show_weibo(rank_city[m], weibo_tab_id, weibo_cont_id, weibo_height_id, weibo_num, weibo_more_id);
         }
         else{
             html += '<a topic='+rank_city[m] + ' class="tabLi gColor0" href="javascript:;" style="display: block;">';
@@ -397,9 +401,9 @@ function drawtab(rank_city, weibo_tab_id, weibo_cont_id, weibo_more_id){
         flag ++;
     }
     $("#"+weibo_tab_id).append(html);
-    bindTabClick(weibo_tab_id, weibo_cont_id, weibo_more_id);
+    bindTabClick(weibo_tab_id, weibo_cont_id, weibo_more_id, weibo_height_id);
 }
-function bindTabClick(weibo_tab_id, weibo_cont_id, weibo_more_id){
+function bindTabClick(weibo_tab_id, weibo_cont_id, weibo_more_id, weibo_height_id){
     var weibo_num = 10;
     $("#"+weibo_tab_id).children("a").unbind();
     $("#"+weibo_tab_id).children("a").click(function(){
@@ -409,12 +413,12 @@ function bindTabClick(weibo_tab_id, weibo_cont_id, weibo_more_id){
             select_a.addClass('curr');
             unselect_a.removeClass('curr');
             current_city = select_a.attr('topic');
-            show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_more_id);
+            show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_height_id, weibo_num, weibo_more_id);
         }
     });
 }
 
-function bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id){
+function bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id, weibo_height_id){
     $("#"+weibo_more_id).unbind();
 
     $("#"+weibo_more_id).click(function(){
@@ -424,14 +428,14 @@ function bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id){
             var select_a = $(this);
             if (select_a.hasClass('curr')){
                 current_city = select_a.attr('topic');
-                show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_more_id);
+                show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_height_id, weibo_num, weibo_more_id);
                 return false;
             }
         });
     });
 }
 
-function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_more_id){
+function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_height_id, weibo_num, weibo_more_id){
     $("#"+weibo_cont_id).empty();
     // console.log('empty');
 
@@ -453,49 +457,79 @@ function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_
     else{
         var more_html = '加载更多&gt;&gt;';
         $("#"+weibo_more_id).html(more_html).addClass("more_display");
-        bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id);
+        bindmore_weibo(weibo_num, weibo_tab_id, weibo_cont_id, weibo_more_id, weibo_height_id);
         // console.log('append');
     }
 
-    html += '<div class="tang-scrollpanel-wrapper" style="height: ' + 80 * weibo_num  + 'px;">';
-    html += '<div class="tang-scrollpanel-content">';
-    html += '<ul id="weibo_ul">';
-
     for(var i = 0; i < weibo_num; i++){
         var da = weibo_data[i];
-        var text = da['text'];
-        var user = da['user'];
-        var name = da['username'];
+        var text = da['content168'].substring(0,168) + '...';
+        if (da['relative_news'] == undefined){
+            var same_text_count = 0;
+        }
+        else{
+            var same_text_count = da['relative_news'].length;
+        }
+        var user_name;
+        var source_from_name;
+        if (da['transmit_name'] != null){
+            user_name = da['transmit_name'];
+        }
+        else{
+            user_name = da['user_name'];
+        }
+        if (da['source_from_name'] != null){
+            source_from_name = da['source_from_name'];
+        }
+        else{
+            source_from_name = da['user_name'];
+        }
+        var url;
+        if (da["url"] != null){
+            url = da["url"];
+        }
+        else{
+            url = da["showurl"];
+        }
         var _id = da['_id'];
-        var reposts_count = da['reposts_count'];
-        var comments_count = da['comments_count'];
-        var timestamp = da['timestamp'];
-        var data = new Date(timestamp * 1000).format("yyyy年MM月dd日 hh:mm:ss");
-        var user_link = 'http://weibo.com/u/' + user;
-        var user_image_link = da['bmiddle_pic'];
-        var ip = da['geo'];
-        var weibo_link = da['weibo_link'];
         
-        html += '<li class="item"><div class="weibo_face"><a target="_blank" href="' + user_link + '">';
-        html += '<img src="' + user_image_link + '">';
-        html += '</a></div>';
-        html += '<div class="weibo_detail">';
-        html += '<p>昵称:<a class="undlin" target="_blank" href="' + user_link  + '">' + name + '</a>&nbsp;&nbsp;UID:&nbsp;&nbsp;'  + user + '&nbsp;&nbsp;于' + ip +'发布&nbsp;&nbsp;' + text + '</p>';
+        html += '<li class="item" style="width:1010px">';
+        html += '<div class="weibo_detail" >';
+        html += '<p>媒体:<a class="undlin" target="_blank" href="javascript;;">' + source_from_name + '</a>&nbsp;&nbsp;发布:';
+        html += '<span class="title" style="color:#0000FF" id="' + da['_id'] + '"><b>[' + da['title'] + ']</b></span>';
+        html += '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;<span id="content_summary_' + da['_id'] + '">' + text + '</span>';
+        html += '<span style="display: none;" id="content_' + da['_id'] + '">' + da['content168'] + '&nbsp;&nbsp;</span>';
+        html += '</p>';
         html += '<div class="weibo_info">';
-        html += '<div class="weibo_pz">';
-        html += '<a class="undlin" href="javascript:;" target="_blank">转发(' + reposts_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
-        html += '<a class="undlin" href="javascript:;" target="_blank">评论(' + comments_count + ')</a></div>';
+        html += '<div class="weibo_pz" style="margin-right:10px;">';
+        html += '<span id="detail_' + da['_id'] + '"><a class="undlin" href="javascript:;" target="_blank" onclick="detail_text(\'' + da['_id'] + '\',\''+ weibo_cont_id + '\',\'' + weibo_height_id + '\')";>阅读全文</a></span>&nbsp;&nbsp;&nbsp;&nbsp;';
+        //html += '<a class="undlin" href="javascript:;" target="_blank" onclick="open_same_list(\'' + da['_id'] + '\')";>相似新闻(' + same_text_count + ')</a>&nbsp;&nbsp;|&nbsp;&nbsp;';
+        //html += '<a href="javascript:;" target="_blank">相关度(' + weight + ')</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+        //html += '<a href="javascript:;" target="_blank" onclick="check_comments(\'' + da['_id'] + '\')">评论分析</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+        html += "</div>";
         html += '<div class="m">';
-        html += '<a class="undlin" target="_blank" href="' + weibo_link + '">' + data + '</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="http://weibo.com">新浪微博</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + user_link + '">用户页面</a>&nbsp;-&nbsp;';
-        html += '<a target="_blank" href="' + weibo_link + '">微博页面</a>&nbsp;&nbsp;';
+        html += '<a>' + da['timestamp']+ '</a>&nbsp;-&nbsp;';
+        html += '<a>转载于'+ user_name +'</a>&nbsp;&nbsp;';
+        html += '<a target="_blank" href="'+ url +'">新闻</a>&nbsp;&nbsp;';
         html += '</div>';
-        html += '</div>';
+        html += '</div>'
         html += '</div>';
         html += '</li>';
     }
-    html += '</ul>';
-    html += '</div>';
     $("#"+weibo_cont_id).append(html);
+    $("#"+weibo_height_id).css("height", $("#"+weibo_cont_id).css("height"));
+}
+
+function summary_text(text_id, weibo_cont_id, weibo_height_id){
+    $("#content_summary_" + text_id).css("display", "inline");
+    $("#content_" + text_id).css("display", "none");
+    $("#detail_" + text_id).html("<a href= 'javascript:;' target='_blank' onclick=\"detail_text(\'" + text_id + "\',\'" + weibo_cont_id + "\',\'" + weibo_height_id + "\');\">阅读全文</a>&nbsp;&nbsp;");
+    $("#"+weibo_height_id).css("height", $("#"+weibo_cont_id).css("height"));
+}
+function detail_text(text_id, weibo_cont_id, weibo_height_id){
+    console.log(weibo_height_id, weibo_cont_id);
+    $("#content_summary_" + text_id).css("display", "none");
+    $("#content_" + text_id).css("display", "inline");
+    $("#detail_" + text_id).html("<a href= 'javascript:;' target='_blank' onclick=\"summary_text(\'" + text_id + "\',\'" + weibo_cont_id + "\',\'" + weibo_height_id + "\');\">阅读概述</a>&nbsp;&nbsp;");
+    $("#"+weibo_height_id).css("height", $("#"+weibo_cont_id).css("height"));
 }

@@ -35,8 +35,9 @@ function CaseMap(topic, start_ts, end_ts, pointInterval){
     this.map_div_id_whole = 'map_div_whole';
     this.map_div_id_zone = 'map_div_zone';
     this.weibo_tab_id = 'Tableselect_2';
-    this.weibo_cont_id = 'vertical-ticker_2';
+    this.weibo_cont_id = "weibo_ul_2";
     this.weibo_more_id = 'more_information_2';
+    this.weibo_height_id = "content_control_height_2";
 
     this.pList = ['安徽', '北京', '重庆', '福建', '甘肃', '广东','广西','贵州','海南','河北','黑龙江','河南','湖北','湖南','内蒙古','江苏','江西','吉林','辽宁','宁夏','青海','山西','山东','上海','四川','天津','西藏','新疆','云南','浙江','陕西','台湾','香港','澳门'];
     this.dataFormatter = function(obj){
@@ -213,7 +214,7 @@ CaseMap.prototype.initPullDrawMap = function(){
         if (!top_city_news){
             top_city_news = data["top_city_news"];
         }
-        drawtab(that.rank_city, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id);
+        drawtab(that.rank_city, that.weibo_tab_id, that.weibo_cont_id, that.weibo_more_id, that.weibo_height_id);
     }
 }
 

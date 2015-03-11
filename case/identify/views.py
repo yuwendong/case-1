@@ -76,8 +76,7 @@ def network():
     print 'topic, end_ts, windowsize, network_type:', topic.encode('utf-8'), end, windowsize,network_type  
     topic_status = get_topic_status(topic, start_ts, end_ts, module)
     print 'graph_status:', topic_status
-    #if topic_status == COMPLETED_STATUS:  
-    if topic_status == 0:
+    if topic_status == COMPLETED_STATUS:
         query_key =_utf8_unicode(topic) + '_' + str(end) + '_' + str(windowsize) + '_' + network_type
         print 'key:', query_key.encode('utf-8')
         key = str(query_key)
@@ -156,7 +155,7 @@ def network_rank():
     topn = int(topn)
     domain = request.args.get('domain', 'all')
     date = ts2datetime(end_ts)
-    rank_method = 'pagerank'
+    rank_method = 'spark_pagerank'
     results = read_topic_rank_results(topic, topn, rank_method, date, windowsize, domain)
     return json.dumps(results)
 
@@ -172,8 +171,8 @@ def ds_network_pr_rank():
     topn = int(topn)
     domain = request.args.get('domain','all')
     date = ts2datetime(end_ts)
-
-    results = read_ds_topic_rank_results(topic, topn, date, windowsize, domain)
+    rank_method = 'spark_pagerank'
+    results = read_ds_topic_rank_results(topic, topn, date, windowsize, domain, rank_method)
     return json.dumps(results)
 
 @mod.route('/ds_degree_centrality_rank/')
@@ -476,7 +475,7 @@ def news_trend_pusher():
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)
-    results = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+    aesults = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
 
     return json.dumps(results)
     
