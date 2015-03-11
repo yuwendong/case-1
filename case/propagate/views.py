@@ -7,6 +7,7 @@ from read_quota import ReadPropagate, ReadIncrement, ReadPropagateKeywords, Read
 from read_quota_news import ReadPropagateNews, ReadPropagateKeywordsNews, ReadPropagateWeibosNews
 
 mtype_kv = {'origin': 1, 'comment': 2, 'forward': 3}
+mtype_kv_news = {'origin': 1, 'forward': 2}
 
 
 mod = Blueprint('propagate', __name__, url_prefix='/propagate')
@@ -220,13 +221,24 @@ def ajax_propagate_news():
     results_dict = {}
     incre_results_dict = {}
 
-    if mtype == 1:
-        results = ReadPropagateNews(topic, end, during) #only 1 type
-        # incr_results = ReadIncrement(topic, end, during, v)
-        if results:
-            results_dict['news'] = sum(results['dcount'].values())
-        # if incr_results:
-        #    incre_results_dict[k] = incr_results['dincrement']['total']
+    if mtype == 4:
+        count = 0
+        for k, v in mtype_kv_news.iteritems():
+            results = ReadPropagateNews(topic, end, during, v)
+            # incr_results = ReadIncrement(topic, end, during, v)
+            if results:
+                results_dict[k] = sum(results['dcount'].values())
+                count +=  results_dict[k]
+        results_dict['total'] = count
+
+    if mtype == 3:
+        for k, v in mtype_kv_news.iteritems():
+            results = ReadPropagateNews(topic, end, during, v)
+            # incr_results = ReadIncrement(topic, end, during, v)
+            if results:
+                results_dict[k] = sum(results['dcount'].values())
+            # if incr_results:
+            #    incre_results_dict[k] = incr_results['dincrement']['total']
 
     return json.dumps({'count': results_dict, 'incre': incre_results_dict})
 
@@ -254,7 +266,8 @@ def PropagatePeakNews():
 
     new_zeros = detect_peaks(lis)
 
-    title = {'1': 'A', '2': 'B', '3': 'C', '5': 'D'}
+    title_text = {'origin': [], 'forward': [], 'total':[]}
+    title = {'1': 'A', '2': 'B', '3': 'C', '4': 'D'}
 
     time_lis = {}
     for idx, point_idx in enumerate(new_zeros):
@@ -284,8 +297,16 @@ def propagate_keywordsNews():
     limit = int(limit)
 
     results_dict = {}
-    if mtype == 1:
-        results_dict = ReadPropagateKeywordsNews(topic, end_ts, during, limit)
+    if mtype == 3 or mtype == 4:
+        for k, v in mtype_kv_news.iteritems():
+            results = ReadPropagateKeywordsNews(topic, end_ts, during, v, limit)
+            for keyword, count in results.iteritems():
+                try:
+                    results_dict[keyword] += count
+                except KeyError:
+                    results_dict[keyword] = count
+    else:
+        results_dict = ReadPropagateKeywordsNews(topic, end_ts, during, mtype, limit)
 
     return json.dumps(results_dict)
 
@@ -302,6 +323,15 @@ def propagate_weibos_news():
     limit = int(limit)
     results_dict = {}
 
-    if mtype == 1:
-        results_dict['news']= ReadPropagateWeibosNews(topic, end_ts, during, limit)
+    if mtype == 3 or mtype == 4:
+        weibos = []
+        for k, v in mtype_kv_news.iteritems():
+            results_dict[k] = ReadPropagateWeibosNews(topic, end_ts, during, v, limit)
+            weibos.extend(results_dict[k])
+        sorted_weibos = sorted(weibos, key=lambda k:k['timestamp'], reverse=False)
+        sorted_weibos = sorted_weibos[len(sorted_weibos)-50:]
+        sorted_weibos.reverse()
+        results_dict['total'] = sorted_weibos
+    else:
+        results_dict[mtype]= ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit)
     return json.dumps(results_dict)

@@ -28,10 +28,13 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.pointInterval = pointInterval; // 图上一点的时间间隔
     this.during = end_ts - start_ts; // 整个时间范围
     this.statusEng2Int = {
-        'news': '1'
+        'origin': '1',
+        'forward': '2',
+        'all':'3',
+        'total': '4'
     }
     this.pie_ajax_url = function(query, end_ts, during, emotion){
-        return "/propagate/total/?end_ts=" + end_ts + "&style=" + this.statusEng2Int[emotion] +"&during="+ during + "&topic=" + query;
+        return "/propagate/total_news/?end_ts=" + end_ts + "&style=" + this.statusEng2Int[emotion] +"&during="+ during + "&topic=" + query;
     }
     this.keywords_ajax_url = function(query, end_ts, during, emotion){
         var limit = 50;
@@ -63,6 +66,9 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
             success: callback
         })
     }
+    this.pie_title = '类别饼图';
+    this.pie_series_title = '各类占比';
+    this.pie_div_id = 'pie_div';
     this.keywords_div_id = 'keywords_cloud_div';
     this.weibos_div_id = 'weibo_ul';
     this.weibo_more_id = 'more_information';
@@ -74,7 +80,9 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
     this.trend_div_id = 'trend_div_whole';
     this.trend_chart;
     this.names = {
-        'news': '新闻',
+        'origin': '原创',
+        'forward': '转发',
+        'total': '全量'
     }
     this.trend_count_obj = {
         'ts': [], // 时间数组
@@ -84,12 +92,38 @@ function TrendsLine(query, start_ts, end_ts, pointInterval){
         this.trend_count_obj['count'][name] = [];
     }
 }
+
+// instance method, 初始化时获取整个时间段的饼图数据并绘制
+TrendsLine.prototype.initPullDrawPie = function(){
+    var that = this;
+    var names = this.names;
+    var ajax_url = this.pie_ajax_url(this.query, this.end_ts, this.during, 'all'); // style = 4;
+    this.call_async_ajax_request(ajax_url, this.ajax_method, range_count_callback);
+    function range_count_callback(data){
+        var data = data['count'];
+        var pie_data = [];
+        for (var status in data){ // 3 statuses
+            var count = data[status];
+            pie_data.push({
+                value: count,
+                name: names[status]
+            });
+        }
+        var legend_data = [];
+        for (var name in names){
+            if (name != 'total'){ // 3 counts
+                legend_data.push(names[name]);
+            }
+        }
+        refreshDrawPie(that, pie_data, legend_data);
+    }
+}
 // instance method, 获取数据并绘制趋势图
 TrendsLine.prototype.pullDrawTrend = function(){
     var xAxisTitleText = '时间';
     var yAxisTitleText = '数量';
     var series_data = [{
-        name: '新闻',
+        name: '原创',
         data: [],
         id: 'origin',
         color: '#11c897',
@@ -97,7 +131,23 @@ TrendsLine.prototype.pullDrawTrend = function(){
             enabled : false,
         }
     },{
-        name: '拐点-新闻',
+        name: '转发',
+        data: [],
+        id: 'forward',
+        color: '#fa7256',
+        marker : {
+            enabled : false,
+        }
+    },{
+        name: '全量',
+        data: [],
+        id: 'total',
+        color: '#b172c5',
+        marker : {
+            enabled : false,
+        }
+    },{
+        name: '拐点-原创',
         type : 'flags',
         data : [],
         cursor: 'pointer',
@@ -105,6 +155,28 @@ TrendsLine.prototype.pullDrawTrend = function(){
         shape : 'circlepin',
         width : 2,
         color: '#11c897',
+        visible: true, // 默认显示存量
+        showInLegend: true
+    },{
+        name: '拐点-转发',
+        type : 'flags',
+        data : [],
+        cursor: 'pointer',
+        onSeries : 'forward',
+        shape : 'circlepin',
+        width : 2,
+        color: '#fa7256',
+        visible: true, // 默认显示存量
+        showInLegend: true
+    },{
+        name: '拐点-全量',
+        type : 'flags',
+        data : [],
+        cursor: 'pointer',
+        onSeries : 'total',
+        shape : 'circlepin',
+        width : 2,
+        color: '#b172c5',
         visible: true, // 默认显示存量
         showInLegend: true
     }];
@@ -116,7 +188,7 @@ TrendsLine.prototype.pullDrawTrend = function(){
 TrendsLine.prototype.initPullDrawKeywords = function(){
     var that = this;
     var names = this.names;
-    var emotion = 'news';
+    var emotion = 'all';
     var ajax_url = this.keywords_ajax_url(this.query, this.end_ts, this.during, emotion);
     this.call_async_ajax_request(ajax_url, this.ajax_method, range_keywords_callback);
     function range_keywords_callback(data){
@@ -142,10 +214,11 @@ TrendsLine.prototype.initPullWeibos = function(){
 }
 // instance method, 初始化绘制关键微博列表
 TrendsLine.prototype.initDrawWeibos = function(){
-    var select_name = 'news';
+    var select_name = 'origin';
     var that = this;
     var weibo_num = 10;
     refreshDrawWeibos(that, that.range_weibos_data, select_name, weibo_num);
+    bindSentimentTabClick(that, that.range_weibos_data);
 }
 function display_trend(that, series_data, xAxisTitleText, yAxisTitleText){
     Highcharts.setOptions({
@@ -172,11 +245,11 @@ function display_trend(that, series_data, xAxisTitleText, yAxisTitleText){
                     var idx = 0;
                     for(var name in names){
                         count_series[name] = this.series[idx];
-                        count_peak_series[name] = this.series[idx+1];
+                        count_peak_series[name] = this.series[idx+3];
                         // incre_peak_series[name] = this.series[idx+2];
                         idx += 1;
                     }
-                    pull_emotion_count(that, 'news', times_init, count_series, count_peak_series);
+                    pull_emotion_count(that, 'total', times_init, count_series, count_peak_series);
                 }
             }
         },
@@ -384,23 +457,64 @@ function call_peak_ajax(that, series, data_list, ts_list, emotion){
         }
     }
     function peakPullDrawWeibos(click_ts, emotion, title){
-        var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, 'news', that.top_weibos_limit);
+        var ajax_url = that.weibos_ajax_url(that.query, click_ts, that.pointInterval, 'all', that.top_weibos_limit);
         that.call_async_ajax_request(ajax_url, that.ajax_method, callback);
         function callback(data){
             var weibo_num = 10;
-            //refreshWeiboTab(emotion);
+            refreshWeiboTab(emotion);
             refreshDrawWeibos(that, data, emotion, weibo_num);
+            bindSentimentTabClick(that, data);
         }
     }
+    function refreshWeiboTab(emotion){
+        $("#Tableselect").children("a").each(function() {
+            var select_a = $(this);
+            var select_a_sentiment = select_a.attr('value');
+            if (select_a_sentiment == emotion){
+                if(!select_a.hasClass('curr')) {
+                    select_a.addClass('curr');
+                }
+            }
+            else{
+                if(select_a.hasClass('curr')) {
+                    select_a.removeClass('curr');
+                }
+            }
+        });
+    }
+}
+function bindSentimentTabClick(that, data){
+    var select_div_id = that.select_div_id;
+    var weibo_num = 10;
+    $("#"+select_div_id).children("a").unbind();
+    $("#"+select_div_id).children("a").click(function() {
+        var select_a = $(this);
+        var unselect_a = $(this).siblings('a');
+        if(!select_a.hasClass('curr')) {
+            select_a.addClass('curr');
+            unselect_a.removeClass('curr');
+            var select_sentiment = select_a.attr('value');
+            refreshDrawWeibos(that, data, select_sentiment, weibo_num);
+        }
+    });
 }
 function bindmore_weibo(that, weibos_obj, weibo_num){
     var weibo_more_id = that.weibo_more_id;
+    var weibo_tab_id = that.select_div_id;
     var data = weibos_obj;
     $("#"+weibo_more_id).unbind();
     $("#"+weibo_more_id).click(function(){
         weibo_num = weibo_num + 10;
-        var select_sentiment = 'news';
-        refreshDrawWeibos(that, data, select_sentiment, weibo_num);
+        var current_city;
+        $("#"+weibo_tab_id).children("a").each(function(){
+            var select_a = $(this);
+            var select_sentiment;
+            if (select_a.hasClass('curr')){
+                select_sentiment = select_a.attr('value');
+                refreshDrawWeibos(that, data, select_sentiment, weibo_num);
+                return false;
+            }
+        });
     });
 }
 function refreshDrawWeibos(that, data, select_name, weibo_num){
@@ -530,10 +644,9 @@ function refreshDrawKeywords(that, keywords_data, emotion){
             words_count_obj[keyword] = count;
         }
         var colors = {
-            'news': '#666',
+            'all': '#666',
             'origin': '#11c897',
             'forward': '#fa7256',
-            'comment': '#6e87d7'
         }
         var color = colors[emotion];
         for(var keyword in words_count_obj){
@@ -552,8 +665,99 @@ function defscale(count, mincount, maxcount, minsize, maxsize){
         return minsize + 1.0 * (maxsize - minsize) * Math.pow((count / maxcount), 2)
     }
 }
+
+// 绘制饼图方法
+function refreshDrawPie(that, pie_data, legend_data) {
+    for (var i in pie_data){
+        pie_data[i]['name'] += pie_data[i]['value'];
+    }
+    var pie_title = that.pie_title;
+    var pie_series_title = that.pie_series_title;
+    var pie_div_id = that.pie_div_id;
+    var option = {
+        backgroundColor: '#FFF',
+        color: ['#11c897', '#fa7256', '#6e87d7', '#b172c5'],
+        title : {
+            text: pie_title,
+            x: 'center',
+            textStyle:{
+                fontWeight: 'lighter',
+                fontSize: 13
+            }
+        },
+        toolbox: {
+            show: true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                //magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
+        },
+        legend: {
+            orient:'vertical',
+            x : 'left',
+            data: legend_data,
+            textStyle: {
+                fontWeight: 'bold',
+                fontFamily: 'Microsoft YaHei'
+            }
+        },
+        calculable : true,
+        series : [
+        {
+            name: pie_series_title,
+            type: 'pie',
+            radius : '50%',
+            center: ['50%', '60%'],
+            /*itemStyle: {
+                normal: {
+                    label: {
+                        position: 'inner',
+                        formatter: "{d}%",
+                        textStyle: {
+                            fontWeight: 'bold',
+                            fontFamily: 'Microsoft YaHei'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        formatter: "{b}\n{d}%",
+                        textStyle: {
+                            fontWeight: 'bold',
+                            fontFamily: 'Microsoft YaHei'
+                        }
+                    }
+                }
+            },*/
+            data: pie_data
+        }
+        ],
+        textStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'Microsoft YaHei'
+        }
+    };
+    var myChart = echarts.init(document.getElementById(pie_div_id));
+    myChart.setOption(option);
+}
 tl = new TrendsLine(QUERY, START_TS, END_TS, POINT_INTERVAL);
 tl.pullDrawTrend();
+tl.initPullDrawPie();
 tl.initPullDrawKeywords();
 tl.initPullWeibos();
 tl.initDrawWeibos();

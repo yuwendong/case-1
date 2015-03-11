@@ -19,6 +19,7 @@ DOMAIN_LIST = ['culture', 'education', 'entertainment', 'fashion', 'finance', 'm
                'lawyer', 'politician', 'mediaworker', 'activer', 'grassroot', 'other']
 mtype_kv = {'origin':1, 'forward':3, 'comment':2, 'sum':4}
 mtype_kv_news = {'origin':1, 'forward':2, 'sum':3}
+MEDIA_FILE = 'media.txt'
 
 IS_PROD = 3
 

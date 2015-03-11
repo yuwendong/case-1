@@ -12,7 +12,7 @@ from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from model import CityTopicCountNews, CityNews
-
+from news_city_repost_search import media_dict_init
 
 Minute = 60
 Fifteenminutes = 15 * 60
@@ -27,7 +27,6 @@ SORT_FIELD = 'timestamp'
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['news']
 
-PROVINCE_LIST = ['安徽','北京','重庆','福建','甘肃','山东','广东','贵州','河北','黑龙江']
 
 def get_filter_dict():
     fields_dict = {}
@@ -35,35 +34,14 @@ def get_filter_dict():
         fields_dict[field] = 1
     return fields_dict
 
-def media2city(geo): #将weibo中的'geo'字段解析为地址
-    idx = random.randint(0,9)
-    geo = '中国 ' + PROVINCE_LIST[idx]
-
-    geo = '\t'.join(geo.split())
+def media2city(media): #解析为地址
+    media = media.split('-')[0]
+    if media in media_dict:
+        geo = u'中国 ' + media_dict[media]
+        geo = '\t'.join(geo.split())
+    else:
+        geo = None
     return geo
-    '''
-    try:
-        province, city = geo.split()
-        if province in [u'内蒙古自治区', u'黑龙江省']:
-            province = province[:3]
-        else:
-            province = province[:2]
-
-        geo = province + ' ' + city
-    except:
-        pass
-
-    if isinstance(geo, unicode):
-        geo = geo.encode('utf-8')
-
-    if geo.split()[0] not in ['海外', '其他']:
-        geo = '中国 ' + geo
-
-    geo = '\t'.join(geo.split())
-
-    return geo
-    '''
-
 
 def save_rt_results(topic, mtype, results, during, first_item):
     ts, ccount = results
@@ -122,24 +100,26 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
 
                 if weibo_result['source_from_name'] and weibo_result['transmit_name']:
                     source = media2city(weibo_result['source_from_name'])
-                    try:
-                        ccount_dict['forward'][source] += 1
-                    except KeyError:
-                        ccount_dict['forward'][source] = 1
-                    try:
-                        ccount_dict['sum'][source] += 1
-                    except KeyError:
-                        ccount_dict['sum'][source] = 1
+                    if source:
+                        try:
+                            ccount_dict['forward'][source] += 1
+                        except KeyError:
+                            ccount_dict['forward'][source] = 1
+                        try:
+                            ccount_dict['sum'][source] += 1
+                        except KeyError:
+                            ccount_dict['sum'][source] = 1
                 elif weibo_result['source_from_name']:
                     source = media2city(weibo_result['source_from_name'])
-                    try:
-                        ccount_dict['origin'][source] += 1
-                    except KeyError:
-                        ccount_dict['origin'][source] = 1
-                    try:
-                        ccount_dict['sum'][source] += 1
-                    except KeyError:
-                        ccount_dict['sum'][source] = 1
+                    if source:
+                        try:
+                            ccount_dict['origin'][source] += 1
+                        except KeyError:
+                            ccount_dict['origin'][source] = 1
+                        try:
+                            ccount_dict['sum'][source] += 1
+                        except KeyError:
+                            ccount_dict['sum'][source] = 1
                 else:
                     continue
 
@@ -171,6 +151,7 @@ if __name__ == '__main__':
     start_ts = 1415030400
     end_ts = 1415750400
     topic =  u'全军政治工作会议'# u"外滩踩踏"
+    media_dict = media_dict_init()
     mongo_collection = get_dynamic_mongo(topic, start_ts, end_ts)
 
     print 'topic: ', topic.encode('utf8'), 'from %s to %s' % (start_ts, end_ts)
