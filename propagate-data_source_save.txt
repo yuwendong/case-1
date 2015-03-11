@@ -1,0 +1,71 @@
+
+数据来源及数据存储形式说明
+
+    cron/propagate代码库完成了时间模块的计算，其数据来源以及输出数据存储形式、路径说明如下：
+    
+    1 微博通道
+      1）数据来源说明:
+        
+         微博话题名 --
+             mongodb (host=219.224.135.46 port=27019)
+                 db: 54api_weibo_v2
+                 话题名collection: master_timeline_topic  
+
+         微博数据 -- 
+             xapian (host=219.224.135.48)
+                 路径: /home/xapian/xapian_weibo_topic
+                 xapian名称形式: 'xapian_weibo_topic_' + weibo_topic_id
+                                （weibo_topic_id对应于mongodb中master_timeline_topic中话题id）
+                 查询形式: 通过/home/xapian/xapian_weibo_topic/stub/ 中的stub文件获取
+ 
+             mongodb (host=219.224.135.46 port=27019) - (注：创建xapian用)
+                 db: 54api_weibo_v2
+                 话题名collection: 'master_timeline_weibo_topic_' + topic_id
+                                  (topic_id对应于master_timeline_topic中话题id)
+             
+             
+         微博用户信息 --
+             xapian (host=219.224.135.48)
+                 路径: /home/xapian/xapian_user/
+
+             mongodb (host=219.224.135.46 port=27019)
+                 db: 54api_weibo_v2
+                 用户信息collection: master_timeline_user
+
+      2) 输出数据说明:
+         微博数量统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_count表
+         微博关键词统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_keywords表
+         热门微博统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_weibos表
+         
+    2 新闻通道
+      1）数据来源说明:
+         mongodb (host=219.224.135.46 port=27019)
+         db: news
+         新闻话题名称collection: news_topic
+         话题新闻内容collection: 'post_' + news_topic_id
+                                (news_topic_id对应于news_topic中话题id)
+         话题评论内容collection: 'comment_' + news_id
+                                (news_id对应于一条新闻的id)
+
+      2) 输出数据说明:
+         新闻数量统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_count_news表
+         新闻关键词统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_keywords_news表
+         热门新闻统计
+             存储路径: mysql(host=219.224.135.46)
+             db: weibocase
+             存储形式: propagate_news表

@@ -15,11 +15,6 @@
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/style.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/justified-nav.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/timeline.css') }}">
-
-
-
-
-
     <!-- Custom styles for this template -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -34,267 +29,78 @@
     <script src="/static/index/js/highcharts-more.js"></script>
     <script src="/static/index/js/timeline.js"></script>
 
-
-
-
-
     <style type="text/css">
         body {
           font: 10pt;
           font-family: verdana, sans, arial, sans-serif;
-         }
+          background-color: hsl(0, 0%, 95%);
+        }
+        .reveal-modal-bg { 
+            position: fixed; 
+            height: 100%; 
+            width: 100%; 
+            z-index: 100; 
+            display: none; 
+            top: 0; 
+            left: 0; 
+            background:hsla(0, 0%, 0%, 0.8); 
+        }
+        .reveal-modal { 
+            visibility: hidden; 
+            top: 150px; 
+            left: 50%; 
+            margin-left: -300px; 
+            width: 520px; 
+            position: absolute; 
+            z-index: 101; 
+            padding: 30px 40px 34px; 
+            -moz-border-radius: 5px; 
+            -webkit-border-radius: 5px; 
+            border-radius: 5px; 
+            -moz-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); 
+            -webkit-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); 
+            -box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); 
+            background-color: hsl(0, 0%, 100%);
+        }
+        .reveal-modal.small { 
+            width: 200px; 
+            margin-left: -140px;
+        }
+        .reveal-modal.medium { 
+            width: 400px; 
+            margin-left: -240px;
+        }
+        .reveal-modal.large { 
+            width: 600px; 
+            margin-left: -340px;
+        }
+        .reveal-modal.xlarge { 
+            width: 800px; 
+            margin-left: -440px;
+        }
+        .reveal-modal .close-reveal-modal { 
+            font-size: 22px; 
+            line-height: 0.5; 
+            position: absolute; 
+            top: 8px; 
+            right: 11px; 
+            color: hsl(0, 0%, 20%); 
+            text-shadow: 0 -1px 1px rbga(0,0,0,.6); 
+            font-weight: bold; 
+            cursor: pointer;
+        } 
     </style>
 
     <script type="text/javascript">
         $("#search_all").click(function() {
         window.location.href = "meaning.html#";
         });
-        var OPINION_TIMELINE = ('');
-        console.log(OPINION_TIMELINE);
-        google.load("visualization", "1");
-        google.setOnLoadCallback(drawVisualization);
-        var timeline;
-        var data;
-        function getSelectedRow(){
-            var row = undefined;
-            var sel = timeline.getSelection();
-            if (sel.length){
-                if (sel[0].row != undefined){
-                    row = sel[0].row;
-                }
-            }
-            return row;
-        }
-        // Called when the Visualization API is loaded.
-        function drawVisualization() {
-            // Create a JSON data table
-            data = [
-                {
-                    'start': new Date(2014,6,26),
-                    'end': new Date(2014,7,2),
-                    'content': '钓鱼岛 +20% -20% |60%'
-                },
-                {
-                    'start': new Date(2014,7,26),
-                    'end': new Date(2014,8,2),
-                    'content': '日货 +20% -20% |60%'
-                },
-                {
-                    'start': new Date(2014,7,13),
-                    'end': new Date(2014,7,20),
-                    'content': '九一八 +20% -20% |60%'
-                },
-                {
-                    'start': new Date(2014,7,31),
-                    'end': new Date(2014,8,3),
-                    'content': '国耻 +20% -20% |60%'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '历史 +20% -20% |60%'
-                },
-            ];
-            // specify options
-            var options = {
-                'width':  '100%',
-                'height': '300px',
-                'editable': false,   // enable dragging and editing events
-                'style': 'box',
-                'timeChangeable': false,
-                'unselectable': false,
-                'groupChangeable': false,
-                'timeChangeable': false
-            };
-            // Instantiate our timeline object.
-            timeline = new links.Timeline(document.getElementById('mytimeline'));
-            google.visualization.events.addListener(timeline, 'select', onadd);
-            // Draw our timeline with the created data and options
-            timeline.draw(data, options);
-        }
-        var onadd = function(){
-            var row = getSelectedRow();
-            $.colorbox({inline:true, href:"#area"});
-            // document.getElementById("info").innerHTML += "item " + row + " created<br>";
-            // $.colorbox({inline: true, onComplete:function(){
-            //     area();
-            // }});
-            // function area() {
-            //     $('#area').highcharts({
-            //         chart: {
-            //             type: 'area',
-            //             spacingBottom: 30
-            //         },
-            //         title: {
-            //             text: '簇缩放图'
-            //         },
-            //         legend: {
-            //             layout: 'vertical',
-            //             align: 'left',
-            //             verticalAlign: 'top',
-            //             x: 150,
-            //             y: 100,
-            //             floating: true,
-            //             borderWidth: 1,
-            //             backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
-            //         },
-            //         xAxis: {
-            //             categories: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月']
-            //         },
-            //         yAxis: {
-            //             title: {
-            //                 text: '大小'
-            //             },
-            //             labels: {
-            //                 formatter: function() {
-            //                     return this.value;
-            //                 }
-            //             }
-            //         },
-            //         tooltip: {
-            //             formatter: function() {
-            //                 return '<b>'+ this.series.name +'</b><br/>'+
-            //                 this.x +': '+ this.y;
-            //             }
-            //         },
-            //         plotOptions: {
-            //             area: {
-            //                 fillOpacity: 0.5
-            //             }
-            //         },
-            //         credits: {
-            //             enabled: false
-            //         },
-            //         series: [{
-            //             name: '观点1',
-            //             data: [0, 1, 4, 4, 5, 2, 3, 7]
-            //         }, {
-            //             name: '观点2',
-            //             data: [1, 0, 3, 5, 3, 1, 2, 1]
-            //         }]
-            //     });
-            // };
-        }
     </script>
-
-     <script type="text/javascript">
-        var timeline;
-        var data;
-
-        // Called when the Visualization API is loaded.
-        function drawVisualization() {
-            // Create a JSON data table
-            data = [
-                {
-                    'start': new Date(2014,7,23),
-                    'content': '九一八'
-                },
-                {
-                    'start': new Date(2014,7,23,23,0,0),
-                    'end': new Date(2014,7,2,10,10,0),
-                    'content': '日货'
-                },
-                {
-                    'start': new Date(2014,6,26),
-                    'end': new Date(2014,7,2),
-                    'content': '教科书修订'
-                },
-                {
-                    'start': new Date(2014,7,26),
-                    'end': new Date(2014,8,2),
-                    'content': '日本'
-                },
-                {
-                    'start': new Date(2014,7,13,23,0,0),
-                    'end': new Date(2014,7,20,10,10,0),
-                    'content': '正义'
-                },
-                {
-                    'start': new Date(2014,7,29),
-                    'content': '钓鱼岛'
-                },
-                {
-                    'start': new Date(2014,7,31),
-                    'end': new Date(2014,8,3),
-                    'content': '耻辱'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '收复钓鱼岛'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '靖国神社'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '中国'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '历史'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '民族'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '责任'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '面对'
-                },
-                {
-                    'start': new Date(2014,8,31),
-                    'end': new Date(2014,9,3),
-                    'content': '史实'
-                }
-            ];
-
-            // specify options
-            var options = {
-                'width':  '100%',
-                'height': '300px',
-                'editable': true,   // enable dragging and editing events
-                'style': 'box'
-            };
-
-            // Instantiate our timeline object.
-            timeline = new links.Timeline(document.getElementById('mytimeline'));
-
-            // Draw our timeline with the created data and options
-            timeline.draw(data, options);
-        }
-    </script>
-    <script type="text/javascript" src="js/reveal/jquery.reveal.js"></script>
-    <style type="text/css">
-    .reveal-modal-bg { position: fixed; height: 100%; width: 100%; z-index: 100; display: none; top: 0; left: 0; background:hsla(0, 0%, 0%, 0.8) }
-
-    .reveal-modal { visibility: hidden; top: 150px; left: 50%; margin-left: -300px; width: 520px; position: absolute; z-index: 101; padding: 30px 40px 34px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); -webkit-box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); -box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4); background-color: hsl(0, 0%, 100%);      }
-    .reveal-modal.small         { width: 200px; margin-left: -140px;}
-    .reveal-modal.medium        { width: 400px; margin-left: -240px;}
-    .reveal-modal.large         { width: 600px; margin-left: -340px;}
-    .reveal-modal.xlarge        { width: 800px; margin-left: -440px;}
-    .reveal-modal .close-reveal-modal { font-size: 22px; line-height: 0.5; position: absolute; top: 8px; right: 11px; color: hsl(0, 0%, 20%); text-shadow: 0 -1px 1px rbga(0,0,0,.6); font-weight: bold; cursor: pointer;      } 
-body { background-color: hsl(0, 0%, 95%); }
-
-</style>
-
-
+    <!--<script type="text/javascript" src="js/reveal/jquery.reveal.js"></script>-->
 
   </head>
 
-  <body onload="drawVisualization();">
-
+  <body>
    <div class="navbar navbar-fixed-top">
    <div class="navbar-inner">
       <div class="container">
@@ -339,11 +145,6 @@ body { background-color: hsl(0, 0%, 95%); }
         </div>
       </div>
       </div>
-
-      <div class="row">
-          <div id="mytimeline"></div>
-          <hr class="soften">
-        </div>
 
       <!-- Example row of columns -->
       <div class="row">
