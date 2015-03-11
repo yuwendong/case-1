@@ -80,11 +80,12 @@ def Merge_propagate(items):
     return results
 
 
-def ReadPropagateNews(topic, end, during, unit=MinInterval):
+def ReadPropagateNews(topic, end, during, mtype, unit=MinInterval):
     if during <= unit:
         upbound = int(math.ceil(end / (unit * 1.0)) * unit)
         item = db.session.query(PropagateCountNews).filter(PropagateCountNews.topic==topic, \
                                                        PropagateCountNews.end==upbound, \
+                                                       PropagateCountNews.mtype==mtype, \
                                                        PropagateCountNews.range==unit).all()
     else:
         start = end - during
@@ -92,6 +93,7 @@ def ReadPropagateNews(topic, end, during, unit=MinInterval):
         lowbound = (start / unit) * unit
         item = db.session.query(PropagateCountNews).filter(PropagateCountNews.topic==topic, \
                                                        PropagateCountNews.range==unit, \
+                                                       PropagateCountNews.mtype==mtype, \
                                                        PropagateCountNews.end<=upbound, \
                                                        PropagateCountNews.end>lowbound).all()
     if item:
@@ -150,7 +152,7 @@ def _top_keywords(kcount_dict, top=TOP_READ):
 
 
 
-def ReadPropagateKeywordsNews(topic, end_ts, during, limit=TOP_KEYWORDS_LIMIT, unit=MinInterval, top=TOP_READ):
+def ReadPropagateKeywordsNews(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_LIMIT, unit=MinInterval, top=TOP_READ):
     kcounts_dict = {}
     # print '*'*5
     # print topic, end_ts, during, mtype
@@ -161,6 +163,7 @@ def ReadPropagateKeywordsNews(topic, end_ts, during, limit=TOP_KEYWORDS_LIMIT, u
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         item = db.session.query(PropagateKeywordsNews).filter(PropagateKeywordsNews.end==upbound, \
                                                           PropagateKeywordsNews.topic==topic, \
+                                                          PropagateKeywordsNews.mtype==mtype, \
                                                           PropagateKeywordsNews.range==unit, \
                                                           PropagateKeywordsNews.limit==limit).first()
         if item:
@@ -175,6 +178,7 @@ def ReadPropagateKeywordsNews(topic, end_ts, during, limit=TOP_KEYWORDS_LIMIT, u
         items = db.session.query(PropagateKeywordsNews).filter(PropagateKeywordsNews.end>lowbound, \
                                                          PropagateKeywordsNews.end<=upbound, \
                                                          PropagateKeywordsNews.topic==topic, \
+                                                         PropagateKeywordsNews.mtype==mtype, \
                                                          PropagateKeywordsNews.range==unit, \
                                                          PropagateKeywordsNews.limit==limit).all()
         for item in items:
@@ -235,7 +239,7 @@ def parseNews(news):
     #print 'there :', news_dict
     return news_dict
 
-def ReadPropagateWeibosNews(topic, end_ts, during, limit=TOP_WEIBOS_LIMIT, unit=MinInterval, top=TOP_READ):
+def ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, unit=MinInterval, top=TOP_READ):
     results_dict = {}
     print end_ts, during
     #print '*'*5
@@ -245,6 +249,7 @@ def ReadPropagateWeibosNews(topic, end_ts, during, limit=TOP_WEIBOS_LIMIT, unit=
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         item =db.session.query(PropagateNews).filter(PropagateNews.end==upbound, \
                                                        PropagateNews.topic==topic, \
+                                                       PropagateNews.mtype==mtype, \
                                                        PropagateNews.range==unit, \
                                                        PropagateNews.limit==limit).first()
         if item:
@@ -260,6 +265,7 @@ def ReadPropagateWeibosNews(topic, end_ts, during, limit=TOP_WEIBOS_LIMIT, unit=
         items = db.session.query(PropagateNews).filter(PropagateNews.end>lowbound, \
                                                          PropagateNews.end<=upbound, \
                                                          PropagateNews.topic==topic, \
+                                                         PropagateNews.mtype==mtype, \
                                                          PropagateNews.range==unit, \
                                                          PropagateNews.limit==limit).all()
         for item in items:

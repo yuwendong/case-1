@@ -19,6 +19,7 @@ DOMAIN_LIST = ['culture', 'education', 'entertainment', 'fashion', 'finance', 'm
                'lawyer', 'politician', 'mediaworker', 'activer', 'grassroot', 'other']
 
 mtype_kv = {'origin':1, 'comment': 2, 'forward':3}
+mtype_kv_news = {'origin':1, 'forward':2}
 IS_PROD = 3
 
 if IS_PROD == 1:

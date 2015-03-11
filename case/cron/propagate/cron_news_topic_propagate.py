@@ -4,7 +4,7 @@ import sys
 import json
 import pymongo
 
-from config import MONGODB_HOST, MONGODB_PORT, db
+from config import MONGODB_HOST, MONGODB_PORT, db, mtype_kv_news
 from xapian_case.utils import load_scws, cut
 
 sys.path.append('../../')
@@ -66,11 +66,12 @@ def top_news_keywords(get_results, news_top=TOP_NEWS_LIMIT, keywords_top=TOP_KEY
     kcount = kcount[:keywords_top] # [(k,v),]
     return count, kcount, sorted_news
 
-def save_pc_news_results(topic, results, during):
+def save_pc_news_results(topic, mtype, results, during):
     ts, dcount = results
-    item = PropagateCountNews(topic, during, ts, json.dumps({'other': dcount}))
+    item = PropagateCountNews(topic, during, ts, mtype, json.dumps({'other': dcount}))
     item_exist = db.session.query(PropagateCountNews).filter(PropagateCountNews.topic==topic, \
                                                          PropagateCountNews.range==during, \
+                                                         PropagateCountNews.mtype==mtype, \
                                                          PropagateCountNews.end==ts).first()
     if item_exist:
         db.session.delete(item_exist)
@@ -78,11 +79,12 @@ def save_pc_news_results(topic, results, during):
     db.session.commit()
 
 
-def save_kc_news_results(topic, results, during, k_limit):
+def save_kc_news_results(topic, mtype, results, during, k_limit):
     ts, kcount = results
-    item = PropagateKeywordsNews(topic, ts, during, k_limit, json.dumps(kcount))
+    item = PropagateKeywordsNews(topic, ts, during, mtype, k_limit, json.dumps(kcount))
     item_exist = db.session.query(PropagateKeywordsNews).filter(PropagateKeywordsNews.topic==topic, \
                                                             PropagateKeywordsNews.range==during, \
+                                                            PropagateKeywordsNews.mtype==mtype, \
                                                             PropagateKeywordsNews.end==ts, \
                                                             PropagateKeywordsNews.limit==k_limit).first()
     if item_exist:
@@ -91,11 +93,12 @@ def save_kc_news_results(topic, results, during, k_limit):
     db.session.commit()
 
 
-def save_ws_news_results(topic, results, during, n_limit):
+def save_ws_news_results(topic, mtype, results, during, n_limit):
     ts, top_ns = results
-    item = PropagateNews(topic , ts, during, n_limit, json.dumps(top_ns))
+    item = PropagateNews(topic , ts, during, mtype, n_limit, json.dumps(top_ns))
     item_exist = db.session.query(PropagateNews).filter(PropagateNews.topic==topic, \
                                                           PropagateNews.range==during, \
+                                                          PropagateNews.mtype==mtype, \
                                                           PropagateNews.end==ts, \
                                                           PropagateNews.limit==n_limit).first()
     if item_exist:
@@ -127,16 +130,26 @@ def propagateCronNewsTopic(topic, mongo_collection, start_ts, over_ts, sort_fiel
 
             results_list = mongo_collection.find(query_dict, fields_dict)
 
+            origin_forward_dict = {'origin':[], 'forward':[]}
+            for weibo_result in results_list:
+                if weibo_result['source_from_name'] and weibo_result['transmit_name']:
+                    origin_forward_dict['forward'].append(weibo_result)
+                elif weibo_result['source_from_name']:
+                    origin_forward_dict['origin'].append(weibo_result)
+                else:
+                    continue
 
-            count, kcount, top_ns = top_news_keywords(results_list, news_top=n_limit, keywords_top = k_limit)
+            for k, v_list in origin_forward_dict.iteritems():
+                mtype = mtype_kv_news[k]
+                count, kcount, top_ns = top_news_keywords(v_list, news_top=n_limit, keywords_top = k_limit)
 
-            news = [end_ts, top_ns]
-            news_count = [end_ts, count]
-            news_kcount = [end_ts, kcount]
+                news = [end_ts, top_ns]
+                news_count = [end_ts, count]
+                news_kcount = [end_ts, kcount]
 
-            save_ws_news_results(topic, news, during, n_limit)
-            save_pc_news_results(topic, news_count, during)
-            save_kc_news_results(topic, news_kcount, during, k_limit)
+                save_ws_news_results(topic, mtype, news, during, n_limit)
+                save_pc_news_results(topic, mtype, news_count, during)
+                save_kc_news_results(topic, mtype, news_kcount, during, k_limit)
 
 def get_dynamic_mongo(topic, start_ts, end_ts):
     topic_collection = mongodb.news_topic
