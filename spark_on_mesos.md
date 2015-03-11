@@ -88,6 +88,9 @@ sudo apt-get update
 2.E: Sub-process /usr/bin/dpkg returned an error code (1)
 参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
 
+3.no space on device
+http://blog.csdn.net/pang040328/article/details/40041821
+
 四、mesos启动
 
 参考http://mesos.apache.org/documentation/latest/deploy-scripts/
