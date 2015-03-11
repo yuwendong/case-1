@@ -13,12 +13,12 @@ Day = Hour * 24
 #cron_topic_identify
 MODULE_T_S = 'identify'
 TOPIC = u'外滩踩踏'
-START = '2015-01-31'
-END = '2015-02-10'
+START = '2014-12-31'
+END = '2015-01-10'
 MONGODB_WEIBO = '54api_weibo_v2'
 MONGODB_WEIBO_TOPIC_COLLECTION = 'master_timeline_topic'
-MAX_SIZE = 10000
-TOPK = 1000
+MAX_SIZE = 100000
+TOPK = 100000
 gexf_type = 1
 ds_gexf_type = 2
 
@@ -32,7 +32,8 @@ user_fields_list = ['_id', 'name', 'gender', 'profile_image_url', 'friends_count
 first_user_count = 20
 domain_list = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 domain_en2ch = {'folk': u'民众', 'media': u'媒体', 'opinion_leader': u'意见领袖', 'oversea': u'海外', 'other': u'其他'}
-
+USER_DOMAIN = 'user_domain' # user domain hash
+DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 #area
 DEFAULT_INTERVAL = Hour
 network_type = 1

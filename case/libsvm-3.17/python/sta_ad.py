@@ -48,7 +48,7 @@ def test(weibo,weibo_dict,flag):
     reader = csv.reader(file('../../libsvm-3.17/python/svm/new_feature.csv', 'rb'))
     for w,c in reader:
         word_dict[str(w)] = c 
-        print 'test'
+        #print 'test'
     sw = load_scws()
     items = []
     for i in range(0,len(weibo)):
@@ -73,11 +73,11 @@ def test(weibo,weibo_dict,flag):
                 f_row = f_row + ' ' + str(item) 
         f_items.append(f_row)
     #print 'test'
-    print 'len:', len(f_items)
+    #print 'len:', len(f_items)
     with open('../../libsvm-3.17/python/svm_test/test%s.txt' % flag, 'wb') as f:
         writer = csv.writer(f)
         for i in range(0,len(f_items)):
-            print 'i_test'
+            #print 'i_test'
             row = []
             row.append(f_items[i])
             writer.writerow((row))

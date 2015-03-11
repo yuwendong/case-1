@@ -5,7 +5,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import redis
-from config import db, REDIS_HOST, REDIS_PORT, USER_DOMAIN, DOMAIN_LIST
+#from config import db, REDIS_HOST, REDIS_PORT
+from parameter import USER_DOMAIN, DOMAIN_LIST
 from parameter import fields_list, user_fields_list, TOPIC, START, END, first_user_count
 from parameter import Day, domain_list
 sys.path.append('../')
@@ -14,7 +15,7 @@ from dynamic_xapian_weibo import getXapianWeiboByTopic
 from config import xapian_search_user as user_search
 from utils import acquire_user_by_id
 from model import FirstUser, FirstDomainUser# 时间在前20的user及其对应的微博信息
-
+from global_config import db, REDIS_HOST, REDIS_PORT
 '''
 Day = 3600 * 24
 fields_list = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', \
@@ -60,9 +61,11 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
         topics = topic.strip().split(',')
         
         query_dict = {
-            'timestamp': {'$gt': begin_ts, '$lt': end_ts},
+            'timestamp': {'$gte': begin_ts, '$lte': end_ts},
             '$or': [{'message_type':1},{'message_type':3}]
             }
+        
+        #query_dict = {'$or':[{'message_type':1}, {'message_type':3}]}
         print 'first_user_query:', query_dict
         # 这里只选取原创和转发微博进行计算
         '''
@@ -82,9 +85,9 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
             '''
             domain_count_list, domain_user_list = init_domain_list()
 
-            #print 'start_node:'
+            print 'start_node:'
             for node in time_top_nodes[1]():
-                #print 'node:', node
+                print 'node:', node
                 uid = node['user']
                 user_domain = uid2domain(uid)
                 timestamp = node['timestamp']
@@ -99,7 +102,7 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
                 #    break
                 stop_s = 0
                 for domain in domain_list:
-                    if domain_count_list[domain] = first_user_count:
+                    if domain_count_list[domain] == first_user_count:
                         stop_s += 1
                 if stop_s == len(domain_list):
                     break
@@ -169,7 +172,7 @@ def init_domain_list():
     domain_count_list = {}
     domain_user_list = {}
     for domain in domain_list:
-        domain_count[domain] = 0
+        domain_count_list[domain] = 0
         domain_user_list[domain] = []
     return domain_count_list, domain_user_list
 
