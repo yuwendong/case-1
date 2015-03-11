@@ -65,7 +65,8 @@ def pagerank_rank(top_n, date, topic_id, window_size, topicname, real_topic_id):
     print 'pagerank_direct_superior_network'
     ds_sorted_uids, ds_all_uid_pr = pagerank(iter_count, ds_input_tmp_path, ds_top_n)
     print 'top_n:', top_n
-    #print 'len(sorted_uid):', len(sorted_uids)
+    print 'len(sorted_uid):', len(ds_sorted_uids)
+    print 'len(ds_all_uid_pr):', len(ds_all_uid_pr)
     print 'ds_top_n:', ds_top_n
     topicname = acquire_topic_name(topic_id)
     print 'topicname:', topicname
@@ -110,23 +111,26 @@ def prepare_data_for_pr(topic_id, date, window_size, topicname, real_topic_id):
     return tmp_file, N, ds_tmp_file, ds_N
 
 def write_tmp_file(tmp_file, g, N):
+    count = 0
     for node in g.nodes():
-        outlinks = g.out_edges(nbunch=[node]) # outlinks=[(node,node1),(node,node2)...] 这里不涉及方向，node1是与node联通的店
-        outlinks = map(str, [n2 for n1, n2 in outlinks]) # [str(node1),str(node2),str(node3)]
+        outlinks = g.in_edges(nbunch=[node]) # outlinks=[(node,node1),(node,node2)...] 这里不涉及方向，node1是与node联通的店
+        outlinks = map(str, [n1 for n1, n2 in outlinks]) # [str(node1),str(node2),str(node3)]
         if not outlinks:
-            pass
+            tmp_file.write('%s\t%s\n' % (node, node))
             # value = 'pr_results,%s,%s' % (1.0/N, N) # 虚构出强连通图，影响力1/n
             # tmp_file.write('%s\t%s\n' % (node, value))
         else:
+            
             for outlink in outlinks:
-                tmp_file.write('%s\t%s\n' % (node, outlink))
+                count += 1
+                tmp_file.write('%s\t%s\n' % (outlink, node))
             # outlinks_str = ','.join(outlinks)
             # value = 'pr_results,%s,%s,' % (1.0/N, N)
             # value += outlinks_str # value=pr_results,1/n,n,str(uid1),str(uid2)
             # tmp_file.write('%s\t%s\n' % (node, value))
 
     tmp_file.flush() # 强制提交内存中还未提交的内容
-
+    print 'write tmp line count:', count
     return tmp_file   
 
 def _utf8_unicode(s):
@@ -475,7 +479,7 @@ def make_network(topic, date, window_size, topic_xapian_id, max_size=100000, att
                 new_attribute_dict[rresult['user']] = [[text_add, reposts_count_add, comment_count_add, attitude_count_add, timestamp_add, ruid_add]]
         #print 'map_dict:', map_dict
         new_attribute_dict = check_attribute(new_attribute_dict, new_query_dict, map_dict) # 对query_dict中没有查询到的r_mid,在new_attribute_dict中进行补全处理
-        print 'quer_dict:', ds_new_query_dict
+        #print 'quer_dict:', ds_new_query_dict
         print 'len(ds_new_attribute_dict):', len(ds_new_attribute_dict)
         if query_dict!={'$or':[]}:
             ds_ruid_count, ds_r_results = statuses_search.search(query=ds_new_query_dict, fields=['_id', 'user', 'timestamp', 'retweeted_mid','retweeted_uid', 'text', 'reposts_count', 'comments_count', 'attitude_count'])
