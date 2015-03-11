@@ -14,6 +14,7 @@ from xapian_case.utils import cut, load_scws
 from case.dynamic_xapian_weibo import getXapianWeiboByTopic
 from case.global_config import XAPIAN_USER_DATA_PATH
 from case.Database import Event, EventManager
+from case.topic_manage import topics_name_start_end
 from flask import Blueprint, url_for, render_template, request, abort, flash, session, redirect, make_response
 
 scws = load_scws()
@@ -71,7 +72,8 @@ deep_yaosus = get_deep_yaosus()
 def loading():
     """舆情案例首页（前台）,用户可以查看相应的案例，进入相应案例的分析页面
     """
-    return render_template('index/gl.html')
+    topics_list = topics_name_start_end()
+    return render_template('index/gl.html', topics_list=topics_list)
 
 
 @mod.route('/manage/')
