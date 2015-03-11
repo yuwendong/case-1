@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="bootstrap/assets/ico/favicon.png">
 
-    <title>管理界面</title>
+    <title>與情案例提取及管理系统</title>
 
     <!-- Bootstrap core CSS -->
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/css/bootstrap.css') }}">
@@ -90,195 +90,53 @@
             cursor: pointer;
         } 
     </style>
-
-    <script type="text/javascript">
-        $("#search_all").click(function() {
-        window.location.href = "meaning.html#";
-        });
-    </script>
-    <!--<script type="text/javascript" src="js/reveal/jquery.reveal.js"></script>-->
-
   </head>
-
   <body>
-   <div class="navbar navbar-fixed-top">
-   <div class="navbar-inner">
-      <div class="container">
-       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand brand-title" href="#"><strong>案例管理</strong></a>
-       <form class="navbar-form navbar-right" role="search">
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="按案例关键字">
-      </div>
-      <button type="submit" class="btn btn-default">搜索</button>
-    </form>
-      </div>
-      </div>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a class="brand" href="/index/"><strong><font size="+2">與情案例提取及管理系统</font></strong></a></li>
+                        <li><a class="brand"><small><font size="+1"> > </font></small></a></li>
+                        <li><a class="brand" href="/index/"><strong><font size="+1">首页</font></strong></a></li>
+                    </ul>
+                    &nbsp;&nbsp;
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a class="source" href="http://219.224.135.47:10000/cms/" target="_blank">案例图谱</a></li>
+                        <li><a class="source" href="http://219.224.135.47:10000/cms/index.php?route=case/search" target="_blank">案例搜索</a></li>
+                        <li><a class="source" href="/index/manage/" target="_blank">话题配置管理</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="container">
-      <div class="row">
-        <div class="col-lg-1">
+        <div class="row">
+            <div class="tab-content">
+                <div class="tab-pane active" id="home">
+                    {% for topic_name, start_date, end_date in topics_list %}
+                        <div class="col-lg-4 col-sm-6">
+                            <h2><a href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">{{topic_name}}</a></h2>
+                            <span>{{start_date}}-{{end_date}}</span>
+                            <p>
+                            <a style="font-size:12px;" class="btn btn-default" href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">时间分析 &raquo;</a>
+                            <a style="font-size:12px;" class="btn btn-default" href="/index/area/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">地域分析 &raquo;</a>
+                            <a style="font-size:12px;" class="btn btn-default" href="/index/moodlens/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">情绪分析 &raquo;</a>
+                            <a style="font-size:12px;" class="btn btn-default" href="/index/network/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">网络分析 &raquo;</a>
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="nav nav-tabs nav-btn">
-        <div class="col-lg-2">
-          <a href="#home" data-toggle="tab"><button type="button"  class="btn btn-lg btn-primary btn-block">最新案例</button></a>
-        </div>
-        <div class="col-lg-1">
-        </div>
-        <div class="col-lg-2">
-          <a href="#hotanli" data-toggle="tab"><button type="button"  class="btn btn-lg btn-primary btn-block">热点案例</button></a>
-        </div>
-        <div class="col-lg-1">
-        </div>
-        <div class="col-lg-2">
-          <a href="#newcomments" data-toggle="tab"><button type="button" class="btn btn-lg btn-primary btn-block">新闻评论</button></a>
-        </div>
-        <div class="col-lg-1">
-        </div>
-        <div class="col-lg-2">
-          <a href="#hotweibo" data-toggle="tab"><button type="button" class="btn btn-lg btn-primary btn-block">微博热点</button></a>
-        </div>
-      </div>
-      </div>
-
-      <!-- Example row of columns -->
-      <div class="row">
-      <div class="tab-content">
-      <div class="tab-pane active" id="home">
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">两会</a></h2>
-          <p>“两会”代指“全国人民代表大会”和“中国人民政治协商会议”，由于两场会议于每年3月份先后召开全体会议，大部分会议进程基本上同时进行，故简称做“两会”。 </p>
-          <p><a class="btn btn-default" href="./detail.html">查看详细 &raquo;</a></p>
-        </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">韩德强掌掴老人</a></h2>
-          <p>18日，北京宣布队伍集合时，一位老对打出“毛主席我们想念您”这个口号提出了反对，他说：“将这种维护国家尊严和民族大义的愿望集寄托在毛泽东身上是错误的，也是不可能实现的。”一年轻人听后上去就给了老人两耳光，说这是在侮辱毛主席。两人互骂对方是汉奸</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-       </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">钓鱼岛事件</a></h2>
-          <p>近年来，日本政府在钓鱼岛问题上不断挑起事端，特别是今年以来姑息纵容右翼势力掀起“购岛”风波，以为自己出面“购岛”铺路搭桥。人们有理由认为，日方在钓鱼岛问题上的所作所为绝不是偶然的，它所反映出来的政治趋向是很值得警惕的。我们不禁要问，日本到底要向何处去？日本未来走向能让人放心吗？</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        </div>
-        <div class="tab-pane" id="hotanli">
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">新浪微博上市</a></h2>
-          <p>北京时间4月18日，新浪旗下微博(Nasdaq：WB)正式登陆美国纳斯达克股票交易所。微博首日收盘股价大涨3.24美元，收于20.24美元，涨幅达19.06%，这也使得微博总市值超过了40亿美元。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">奶茶刘强东</a></h2>
-          <p>我只想说：我们每个人都有选择和决定自己生活的权利。小天是我见过最单纯善良的人，很遗憾自己没能保护好她。感谢大家关心，只求以后可以正常牵手而行。祝大家幸福！</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-       </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">文章姚笛</a></h2>
-          <p>时至今日都是我咎由自取，错就是错，与任何人无关。演艺事业的平顺，造就了我狂妄自大，骄傲蛮横的脾气，导致今日岌岌可危的地步，我今天愿意承担一切后果。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        </div>
-        <div class="tab-pane " id="newcomments">
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">广州火车站砍人</a></h2>
-          <p>2014年5月6日中午，广州火车站广场发生一起砍人事件，导致6名群众受伤，目前均暂无生命危险。持刀犯罪嫌疑人被当场制服，其身份仍在进一步核实中。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">Twitter股价遭重挫</a></h2>
-          <p>北京时间5月7日凌晨消息，社交网络公司Twitter(32.35, -6.40, -16.50%)(TWTR)周二股价重挫逾11%，原因是该公司内部人士所持数亿股股票的禁售期到期，已可在公开市场上出售。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-       </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">转基因大豆</a></h2>
-          <p>美国农业部部长办公室生物技术协调员迈克尔·沙克曼6日在北京表示，美国种植的大豆和玉米90%以上是转基因品种。转基因农作物在美国的消费非常普遍，如用转基因大豆做动物饲料、豆油，用转基因玉米做乙醇、饲料和加工食品等。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        </div>
-        <div class="tab-pane " id="hotweibo">
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">深泉学院</a></h2>
-          <p>大陆学子被比哈佛牛的深泉学院录取！成为中国大陆第三个被录取的学生！深泉学院坐落在美国加州的死亡谷。每年招收13名男生，学制两年，学费和生活费全免……你有没有立马膝盖跪肿的冲动？</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">我得了五月病</a></h2>
-          <p>五月病，又称季节性懒惰症候群，在此时节不少人意气消沉、郁闷，苦恼忧伤，不但抵触上学上班，还整日慵懒倦怠，难以提起兴致。好多事要忙，却又什么都不想做；情绪低落，总提不起精神，白天犯困，晚上失眠。医生建议：多晒太阳多运动，多吃水果，适当吃些甜食</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-       </div>
-        <div class="col-lg-4 col-sm-6">
-          <h2><a href="/index/detail/">晚安</a></h2>
-          <p>夜已深，听一首晚安曲，向你的城市、你的朋友、和自己，道声晚安吧。发微博：#晚安#+晚安语，愿每个人都有好梦。</p>
-          <p><a class="btn btn-default" href="/index/detail/">查看详细 &raquo;</a></p>
-        </div>
-        </div>
-        </div>
-      </div>
-
-
-      <script type=text/javascript>
-  $(function() {
-    var submit_form = function(e) {
-      $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
-        a: $('input[name="a"]').val(),
-        b: $('input[name="b"]').val()
-      }, function(data) {
-        $('#result').text(data.result);
-        $('input[name=a]').focus().select();
-      });
-      return false;
-    };
-
-    $('a#calculate').bind('click', submit_form);
-
-    $('input[type=text]').bind('keydown', function(e) {
-      if (e.keyCode == 13) {
-        submit_form(e);
-      }
-    });
-
-    $('input[name=a]').focus();
-  });
-
-
-  function add_field(){<!-- 添加按钮 -->
-
-               var fl=prompt("请输入新的垃圾用户ID","");
-               if(fl)
-               {
-                  $.ajax({
-                    type:"POST",
-                    url:"/index/alter_tag",
-                    dataType: "json",
-                    async:false,
-                    data:{topic : fl},
-                    success: function(data){
-                      if(data=='Right') {
-                                alert("添加垃圾用户成功！");
-                                location.reload();
-                              }
-                      else{
-                        alert("您输入的ID有误，请重新输入！");
-                      }
-                    }
-                  });
-               }
-}
-
-</script>
-      <!-- Site footer -->
-      <div class="footer">
-        <p>&copy; IDEC 2014</p>
-      </div>
-    </div> <!-- /container -->
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
+    </div>
   </body>
 </html>

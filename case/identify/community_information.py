@@ -63,8 +63,6 @@ def acquire_real_topic_id(topic, date, windowsize):
 
 def get_community_info(topic, date, windowsize, uid, cid, network_type):
     real_topic_id = acquire_real_topic_id(topic, date, windowsize)
-    # test
-    real_topic_id = 282
     if not real_topic_id:
         return None, None, None
         # 该话题存在进行下面的计算

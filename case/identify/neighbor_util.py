@@ -62,8 +62,6 @@ def acquire_real_topic_id(topic, date, windowsize):
 def get_neighbor_info(topic, date, windowsize, uid, network_type):
     # 为读取graph结构，需要获取topic对应id
     real_topic_id = acquire_real_topic_id(topic, date, windowsize)
-    # test
-    real_topic_id = 282
     if not real_topic_id:
         return None, None, None
     # 该话题存在进行下面的计算
