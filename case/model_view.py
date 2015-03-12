@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import codecs
-
 from flask.ext import login
 from flask.ext.admin.contrib import sqlamodel
+from flask_admin.contrib.mongoengine import ModelView
 
 # Create customized model view class
 class SQLModelView(sqlamodel.ModelView):
@@ -24,4 +24,14 @@ class SQLModelView(sqlamodel.ModelView):
 
     def is_accessible(self):
         return True
-        # return login.current_user.is_authenticated()
+
+"""
+# Customized admin views
+class MongoDBView(ModelView):
+    def __init__(self, model, name=None, category=None, endpoint=None, url=None):
+        super(MongoDBView, self).__init__(model, name=name, category=category, endpoint=endpoint, url=url)
+
+    def is_accessible(self):
+        return True
+"""
+

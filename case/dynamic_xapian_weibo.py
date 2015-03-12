@@ -8,22 +8,18 @@ def getXapianWeiboByDate(datestr):
     # datestr: 20130908    
     stub_file = path + datestr
     if os.path.exists(stub_file):
-        print 'step--stub exist'
         xapian_search_weibo = XapianSearch(stub=stub_file, schema_version='5')
         return xapian_search_weibo
     else:
-        print 'stub not exist'
         return None
 
 
 def getXapianWeiboByTopic(topic_id='545f4c22cf198b18c57b8014'):
     stub_file = XAPIAN_WEIBO_TOPIC_DATA_PATH + 'stub/xapian_weibo_topic_stub_' + str(topic_id)
     if os.path.exists(stub_file):
-        print 'stub exist'
         xapian_search_weibo = XapianSearch(stub=stub_file, schema_version='5')
         return xapian_search_weibo
     else:
-        print 'stub not exist'
         return None
 
 def getXapianWeiboByDuration(datestr_list):
