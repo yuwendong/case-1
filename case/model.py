@@ -302,12 +302,14 @@ class PropagateCountNews(db.Model):
     topic = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))   
     dcount = db.Column(db.Text) # dcount={'other':count}领域对应的count                      
 
-    def __init__(self, topic, range, end, dcount):
+    def __init__(self, topic, range, end, mtype, dcount):
         self.topic = topic 
         self.range = range
         self.end = end
+        self.mtype = mtype
         self.dcount = dcount
 
     @classmethod
@@ -359,7 +361,7 @@ class QuicknessCount(db.Model):
     @classmethod
     def _name(cls):
         return u'QuicknessCount'
-    
+
 class PropagateKeywords(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(20))
@@ -386,14 +388,16 @@ class PropagateKeywordsNews(db.Model):
     topic = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
     limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
     kcount = db.Column(db.Text) # kcount=[terms]
 
-    def __init__(self, topic, end, range, limit, kcount):
+    def __init__(self, topic, end, range, mtype, limit, kcount):
         self.topic = topic
         self.end = end
         self.range = range
         self.limit = limit
+        self.mtype = mtype
         self.kcount = kcount
 
     @classmethod
@@ -426,13 +430,15 @@ class PropagateNews(db.Model):
     topic = db.Column(db.String(20))
     end = db.Column(db.BigInteger(10, unsigned=True))
     range = db.Column(db.BigInteger(10, unsigned=True))
+    mtype = db.Column(db.Integer(1, unsigned=True))
     limit = db.Column(db.BigInteger(10, unsigned=True), primary_key=True)
     news = db.Column(db.Text) # news=[news]
 
-    def __init__(self, topic, end, range, limit, news):
+    def __init__(self, topic, end, range, mtype, limit, news):
         self.topic = topic
         self.end = end
         self.range = range
+        self.mtype = mtype
         self.limit = limit
         self.news = news
 

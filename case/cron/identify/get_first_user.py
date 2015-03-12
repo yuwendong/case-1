@@ -87,7 +87,7 @@ def get_first_node(topic, start_date, date, windowsize, topic_xapian_id):
 
             print 'start_node:'
             for node in time_top_nodes[1]():
-                print 'node:', node
+                #print 'node:', node
                 uid = node['user']
                 user_domain = uid2domain(uid)
                 timestamp = node['timestamp']

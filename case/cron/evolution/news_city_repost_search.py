@@ -1,13 +1,15 @@
 # -*- coding:utf-8 -*-
 
 import os
+import sys
 import types
 import time
 import datetime
 import IP
+import json
 import random
 import pymongo
-from config import MONGODB_HOST, MONGODB_PORT, db
+from config import MONGODB_HOST, MONGODB_PORT, db, MEDIA_FILE
 from model import CityRepostNews
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
@@ -25,8 +27,6 @@ SORT_FIELD = 'timestamp'
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['news']
-
-PROVINCE_LIST = ['安徽','北京','重庆','福建','甘肃','山东','广东','贵州','河北','黑龙江']
 
 def datetime2ts(date):
     return int(time.mktime(time.strptime(date, '%Y-%m-%d')))
@@ -84,42 +84,24 @@ def save_rt_results(topic, repost_list):
     print 'commited'
 
 
-def media2city(media):
-    idx = random.randint(0,9)
-    geo = '中国 ' + PROVINCE_LIST[idx]
-
-    geo = '\t'.join(geo.split())
+def media2city(media): #解析为地址
+    media = media.split('-')[0]
+    if media in media_dict:
+        geo = u'中国 ' + media_dict[media]
+        geo = '\t'.join(geo.split())
+        print media.encode('utf-8'),geo.encode('utf-8')
+    else:
+        geo = None
+        print media.encode('utf-8'),geo
     return geo
-    '''
-    try:
-        province, city = geo.split()
-        if province in [u'内蒙古自治区', u'黑龙江省']:
-            province = province[:3]
-        else:
-            province = province[:2]
-
-        geo = province + ' ' + city
-    except:
-        pass
-
-    if isinstance(geo, unicode):
-        geo = geo.encode('utf-8')
-
-    if geo.split()[0] not in ['海外', '其他']:
-        geo = '中国 ' + geo
-
-    geo = '\t'.join(geo.split())
-
-    return geo
-    '''
 
 def check_location(locations):
     for location in locations:
-        if location == '':
+        if (location == '') or (location == None):
             return False
         try:
             tokens = location.split('\t')
-            if tokens[0] == u'中国'.encode('utf-8'):
+            if tokens[0] == u'中国':
                 if len(tokens) == 1:
                     return False
 
@@ -156,6 +138,17 @@ def results_gen(r):
 
     return None
 
+def media_dict_init():
+    f = open(MEDIA_FILE, 'r')
+    media_dict = dict()
+    for line in f:
+        line = line.lstrip().lstrip('"').rstrip().rstrip('",')
+        media, geo = line.split('":"')
+        media = media.decode('gb18030')
+        geo = geo.decode('gb18030')
+        media_dict[media] = geo
+    return media_dict
+
 def get_dynamic_mongo(topic, start_ts, end_ts):
     topic_collection = mongodb.news_topic
     topic_news = topic_collection.find_one({'topic':topic, 'startts':{'$lte':start_ts}, 'endts':{'$gte':end_ts}})
@@ -180,8 +173,8 @@ if __name__ == '__main__':
     # topic_id = getTopicByName(topic)['_id']
     # topic_id = '54cf5ad9e8d7ce533b1160ec'   #'54ccbfab5a220134d9fc1b37'# 54cc9616a41513bb4fa6e262
     # duration = Fifteenminutes
+    media_dict = media_dict_init()
     mongo_collection = get_dynamic_mongo(topic, start_ts, end_ts)
 
     print 'topic: ', topic.encode('utf8'), 'from %s to %s' % (start_ts, end_ts)
     news_repost_search(topic, mongo_collection, start_ts, end_ts)
-

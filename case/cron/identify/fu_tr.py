@@ -11,7 +11,7 @@ from parameter import user_fields_list, field_list, TOPIC, START, END ,\
          domain_list, USER_DOMAIN, Minute, Fifteenminutes, Hour, Day ,\
          MinInterval , fu_tr_during, trend_maker_count, trend_pusher_count ,\
          fu_tr_unit, fu_tr_top_keyword, p_during
-from parameter import weibo_topic2xapian
+from parameter import weibo_topic2xapian, weibo_fields_list
 from bottom_detect import detect_bottom
 import sys
 sys.path.append('../../')

@@ -41,22 +41,22 @@ ds_gexf_type = 2
 '''
 #topic_xapian_id = '54ccbfab5a220134d9fc1b37' 
 
-def main(topic, start_ts, ens_ts):
+def main(topic, start_ts, end_ts):
     '''
     topics = _topic_not_calc() # topics=[{id:x,module:x,status:x,topic:x,start:x,end:x,db_date:x}]
     '''
-    topic_status _info = db.session.query(TopicStatus).filter(TopicStatus.topic==topic ,\
-                                                                                              TopicStatus.start==start_ts ,\
-                                                                                              TopicStatus.end==end_ts ,\
-                                                                                              TopicStatus.module=='identify' ,\
-                                                                                              TopicStatus.status==-1).first()
+    topic_status_info = db.session.query(TopicStatus).filter(TopicStatus.topic==topic ,\
+                                                             TopicStatus.start==start_ts ,\
+                                                             TopicStatus.end==end_ts ,\
+                                                             TopicStatus.module=='identify' ,\
+                                                             TopicStatus.status==-1).first()
     if topic_status_info:
         #topic = topics[0] # 每次只计算一个----为了做一个缓冲，每个n时间才计算一个
         print 'topic_id', topic_status_info.id
         start_ts = topic_status_info.start
         end_ts = topic_status_info.end
         db_date = topic_status_info.db_date
-        topicname = topic_name
+        topicname = topic
         _update_topic_status2Computing(topicname, start_ts, end_ts, db_date)
         print 'update_status'
         topic_id = acquire_topic_id(topicname, start_ts, end_ts) # 重新获取id是因为TopicStatus中id是自增加的，进行更新后，id就不是原来的那一个了
@@ -93,6 +93,7 @@ def main(topic, start_ts, ens_ts):
 
         print 'start PageRank'
         all_uid_pr, ds_all_uid_pr, data, ds_data = pagerank_rank(TOPK, date, topic_id, windowsize, topicname, real_topic_id)
+        print 'len(all_uid_pr):', len(all_uid_pr)
         print 'end PageRank'
 
         print 'start make network graph'
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     #topic = u'高校思想宣传'
     #start = datetime2ts('2015-01-23')
     #end = datetime2ts('2015-01-31') + Day
-    model_t_s = MODULE_T_S
+    module_t_s = MODULE_T_S
     topic = TOPIC
     start = datetime2ts(START)
     end = datetime2ts(END)
