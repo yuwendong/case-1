@@ -113,10 +113,10 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
             save_ws_results(topic, end_ts, during, n_limit, sorted_weibos)
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2015-01-23')
-    END_TS = datetime2ts('2015-02-02')
+    START_TS = datetime2ts('2014-10-31')
+    END_TS = datetime2ts('2014-11-15')
 
-    topic = u'张灵甫遗骨疑似被埋羊圈'
+    topic = u'全军政治工作会议'
     topic_id = getTopicByName(topic)['_id']
     print topic_id, START_TS, END_TS
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
