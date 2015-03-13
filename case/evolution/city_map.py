@@ -35,7 +35,7 @@ def partition_time(ts_arr, data, interval = INTERVAL):
         ts_series.append([s_ts, f_ts])
         group = []
         for d in data[data_cursor + 1:]:
-            ts = d['ts']
+            ts = d.ts
             if ts >= f_ts:
                 break
             data_cursor += 1

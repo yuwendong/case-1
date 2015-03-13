@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import IP
 import json
 import os
 import time
@@ -7,12 +8,12 @@ import datetime
 import operator
 import numpy as np
 from sqlalchemy import func
-from case.time_utils import datetime2ts
 
 try:
     from case.extensions import db
     from case.model import SentimentCount, SentimentKeywords, SentimentWeibos
     from case.global_config import xapian_search_user, emotions_kv
+    from case.time_utils import datetime2ts
 except Exception, e:
     print e
     print 'warning:not in web environment, /moodlens/utils111.py'
@@ -29,6 +30,7 @@ TOP_KEYWORDS_LIMIT = 50
 TOP_WEIBOS_LIMIT = 50
 
 ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 
 
 def timeit(method):
@@ -340,7 +342,43 @@ def save_rt_results(calc, query, results, during, klimit=TOP_KEYWORDS_LIMIT, wli
         
         db.session.commit()
 
+def geo2city(geo):
+    try:
+        province, city = geo.split()
+        if province in [u'内蒙古自治区', u'黑龙江省']:
+            province = province[:3]
+        else:
+            province = province[:2]
+
+        city = city.strip(u'市').strip(u'区')
+
+        geo = province + ' ' + city
+    except:
+        pass
+    if isinstance(geo, unicode):
+        geo = geo.encode('utf-8')
+
+    if geo.split()[0] not in ['海外', '其他']:
+        geo = '中国 ' + geo
+
+    geo = '\t'.join(geo.split())
+
+    return geo
+
+
+def IP2city(geo):
+    try:
+        city=IP.find(str(geo))
+        if city:
+            city=city.encode('utf-8')
+        else:
+            return None
+    except Exception,e:
+        return None
+
+    return city
 
 if __name__ == '__main__':
     print mid2str(3618955195344752)
     print mid_to_url(3617699454295114L)
+    print IP2city('180.136.202.119')
