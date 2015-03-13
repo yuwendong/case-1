@@ -153,7 +153,7 @@ def propagateCronNewsTopic(topic, mongo_collection, start_ts, over_ts, sort_fiel
 
 def get_dynamic_mongo(topic, start_ts, end_ts):
     topic_collection = mongodb.news_topic
-    topic_news = topic_collection.find_one({'topic':topic, 'startts':{'$lte':start_ts}, 'endts':{'$gte':end_ts}})
+    topic_news = topic_collection.find_one({'topic':topic})
     if not topic_news:
         print 'no this topic'
         return None
@@ -166,13 +166,13 @@ def get_dynamic_mongo(topic, start_ts, end_ts):
 
 
 if __name__ == '__main__':
-    topic =  u'全军政治工作会议' # u'外滩踩踏'
-    # topic_id = getTopicByName(topic)['_id']
+    topic = sys.argv[1] # u'香港自由行' u'张灵甫遗骨疑似被埋羊圈' u'高校思想宣传' u'高校宣传思想工作' u'外滩踩踏' 'APEC' u'全军政治工作会议'
+    start_date = sys.argv[2] # '2015-02-23'
+    end_date = sys.argv[3] # '2015-03-02'
 
-    # start_ts = datetime2ts('2014-12-31')
-    # end_ts = datetime2ts('2015-01-09')
-    start_ts = 1415030400
-    end_ts = 1415750400
+    start_ts = datetime2ts(start_date)
+    end_ts = datetime2ts(end_date)
+
     duration = Fifteenminutes
     mongo_collection = get_dynamic_mongo(topic, start_ts, end_ts)
 
