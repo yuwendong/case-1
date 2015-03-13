@@ -97,14 +97,24 @@ def results_gen(r, topic):
     message_type = r['message_type']
     if message_type == 3: # 转发
         # print 'retweeted_mid', r['retweeted_mid']
-        # repost_location = geo2city(r['geo'])
-        repost_location = IP2city(r['geo'])
+        try:
+            if (len(r['geo'].split('.')) == 4):
+                repost_location = IP2city(r['geo'])
+            else:
+                repost_location = geo2city(r['geo'])
+        except:
+            return None
         if check_location([repost_location]): # 过滤不能解析的item
             if r['retweeted_mid']: # 过滤retweed_mid不完整的item
                 item = xapian_search.search_by_id(r['retweeted_mid'], fields = ['geo','_id'])
                 if item:
-                    # origin_location = geo2city(item['geo'])
-                    origin_location = IP2city(item['geo'])
+                    try:
+                        if (len(item['geo'].split('.')) == 4):
+                            origin_location = IP2city(item['geo'])
+                        else:
+                            origin_location = geo2city(item['geo'])
+                    except:
+                        return None
                     if check_location([origin_location]):
                         location_dict['original'] = 0
                         location_dict['mid'] = r['_id']
@@ -115,8 +125,13 @@ def results_gen(r, topic):
                         return location_dict
 
     elif message_type == 1: # 原创
-        # origin_location = geo2city(r['geo'])
-        origin_location = IP2city(r['geo'])
+        try:
+            if (len(r['geo'].split('.')) == 4):
+                origin_location = IP2city(r['geo'])
+            else:
+                origin_location = geo2city(r['geo'])
+        except:
+            return None
         if check_location([origin_location]):
             location_dict['original'] = 1
             location_dict['mid'] = r['_id']
@@ -129,10 +144,10 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2013-09-02')
-    END_TS = datetime2ts('2013-09-07')
+    START_TS = datetime2ts('2015-01-23')
+    END_TS = datetime2ts('2015-02-02')
 
-    topic = u'东盟,博览会'
+    topic = u'张灵甫遗骨疑似被埋羊圈'
     topic_id = getTopicByName(topic)['_id']
     print 'topic: ', topic.encode('utf8')
     print topic_id, START_TS, END_TS
