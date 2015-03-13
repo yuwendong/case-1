@@ -201,8 +201,7 @@ def area():
     topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
-    # time_range = request.args.get('time_range', default_timerange)
-    time_range = u'20150123-20150124'
+    time_range = request.args.get('time_range', default_timerange)
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
