@@ -17,8 +17,8 @@ fields_id = {'culture': 1, 'education': 2, 'entertainment': 3, 'fashion': 4, 'fi
 DOMAIN_LIST = ['culture', 'education', 'entertainment', 'fashion', 'finance', 'media', 'sports', 'technology', 'oversea', \
                'university', 'homeadmin', 'abroadadmin', 'homemedia', 'abroadmedia', 'folkorg', \
                'lawyer', 'politician', 'mediaworker', 'activer', 'grassroot', 'other']
-mtype_kv = {'origin':1, 'forward':3, 'comment':2, 'sum':4}
-mtype_kv_news = {'origin':1, 'forward':2, 'sum':3}
+mtype_kv = {'origin':1, 'forward':3, 'comment':2}
+mtype_kv_news = {'origin':1, 'forward':2}
 MEDIA_FILE = 'media.txt'
 
 IS_PROD = 3

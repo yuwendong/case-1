@@ -165,8 +165,8 @@ def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_L
                                                        CityWeibos.range==unit, \
                                                        CityWeibos.limit==limit).first()
         if item:
-            weibos = _json_loads(item.weibos)
-            for weibo_item in weibos:
+            news = _json_loads(item.weibos)
+            for weibo_item in news:
                 weibos.append((weibo_item['reposts_count'],weibo_item))
     else:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
@@ -177,10 +177,12 @@ def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_L
                                                          CityWeibos.range==unit, \
                                                          CityWeibos.limit==limit).all()
         for item in items:
-            weibos = _json_loads(item.weibos)
-            for weibo_item in weibos:
-                weibos.append((weibo_item['reposts_count'],weibo_item))
-
+            news = _json_loads(item.weibos)
+            for weibo_item in news:
+                try:
+                    weibos.append((weibo_item['reposts_count'],weibo_item))
+                except:
+                    continue
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=True)
 
     city_dict = {}

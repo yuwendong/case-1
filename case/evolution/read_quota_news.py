@@ -47,9 +47,11 @@ def get_city_news(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_NEWS_LIMI
                                                          CityNews.limit==limit).all()
         for item in items:
             news = _json_loads(item.news)
-            for news_item in news:
-                weibos.append((1,news_item))
-
+            try:
+                for news_item in news:
+                    weibos.append((1,news_item))
+            except:
+                continue
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=True)
 
     city_dict = {}
