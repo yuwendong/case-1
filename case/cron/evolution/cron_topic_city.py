@@ -80,20 +80,26 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
                     if (weibo_result['timestamp'] <= first_timestamp ):
                         first_timestamp = weibo_result['timestamp']
                         first_item = weibo_result
-
-                    """
-                    if geo2city(weibo_result['geo']):
-                        try:
-                            ccount[geo2city(weibo_result['geo'])] += 1   
-                        except KeyError:
-                            ccount[geo2city(weibo_result['geo'])] = 1    
-                    """
-                    if IP2city(weibo_result['geo']):
-                        try:
-                            ccount[IP2city(weibo_result['geo'])] += 1   
-                        except KeyError:
-                            ccount[IP2city(weibo_result['geo'])] = 1    
-                    else:
+                    try:
+                        if (len(weibo_result['geo'].split('.')) == 4):
+                            city = IP2city(weibo_result['geo'])
+                            if city:
+                                try:
+                                    ccount[city] += 1   
+                                except KeyError:
+                                    ccount[city] = 1    
+                            else:
+                                continue
+                        else:
+                            city = geo2city(weibo_result['geo'])
+                            if city:
+                                try:
+                                    ccount[city] += 1   
+                                except KeyError:
+                                    ccount[city] = 1    
+                            else:
+                                continue
+                    except:
                         continue
 
                     if (v == 1) or (v == 3): # 只存储原创和转发
@@ -107,10 +113,10 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
             save_ws_results(topic, end_ts, during, n_limit, sorted_weibos)
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2013-09-02')
-    END_TS = datetime2ts('2013-09-07')
+    START_TS = datetime2ts('2015-01-23')
+    END_TS = datetime2ts('2015-02-02')
 
-    topic = u'东盟,博览会'
+    topic = u'张灵甫遗骨疑似被埋羊圈'
     topic_id = getTopicByName(topic)['_id']
     print topic_id, START_TS, END_TS
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)
