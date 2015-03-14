@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+import csv
 import json
 import pymongo
 from flask import Blueprint , url_for, render_template, request, abort, flash, make_response, session, redirect
@@ -6,6 +7,7 @@ from flask import Blueprint , url_for, render_template, request, abort, flash, m
 from case.propagate.read_quota import ReadPropagate, ReadPropagateKeywords
 from case.propagate.peak_detection import detect_peaks
 
+from case.identify.first_user import read_table_fu
 from case.identify.trend_user import read_trend_user_table
 from case.identify.utils import read_topic_rank_results
 
@@ -17,7 +19,7 @@ from case.moodlens.peak_detection import detect_peaks
 
 from case.time_utils import ts2datetime, datetime2ts
 from case.global_config import MONGODB_HOST, MONGODB_PORT
-from util import get_info_num
+from util import get_info_num, get_dynamic_mongo
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['54api_weibo_v2']
@@ -31,6 +33,9 @@ MinInterval = Fifteenminutes
 During = Day
 mtype_kv = {'origin':1, 'comment':2, 'forward':3}
 emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3, 'news': 4}
+excel_line = ['topic_id', 'topic_status', 'topic_name', 'start_ts', 'end_ts', 'topic_area',\
+                     'topic_subject', 'identify_firstuser', 'identify_trendpusher', 'identify_pagerank',\
+                     'moodlens_sentiment', 'topic_abstract', 'propagate_peak']
 
 mod = Blueprint('dataout', __name__, url_prefix='/dataout')
 
@@ -77,6 +82,18 @@ def get_propagate_keywords(topic, start_ts, end_ts):
 
     return results
 
+def get_identify_firstuser(topic, start_ts, end_ts):
+    results = []
+    windowsize = (end_ts - start_ts) / Day
+    date = ts2datetime(end_ts)
+    top_n = 20
+    firstuser_table = read_table_fu(topic, date, windowsize, top_n)
+    if len(firstuser_table)==1:
+        return []
+    results = firstuser_table[0]
+    
+    return results
+
 def get_identify_trendpusher(topic, start_ts, end_ts):
     results = []
     windowsize = (end_ts - start_ts) / Day
@@ -91,7 +108,7 @@ def get_identify_trendpusher(topic, start_ts, end_ts):
 def get_identify_pagerank(topic, start_ts, end_ts):
     results = {}
     topn = 10
-    rank_method = 'pagerank'
+    rank_method = 'spark_pagerank'
     domain = 'all'
     windowsize = (end_ts - start_ts) / Day
     date = ts2datetime(end_ts)
@@ -291,6 +308,7 @@ def get_data():
     result = {}
     result['propagate_peak'] = get_propagate_peak(topic, start_ts, end_ts)
     result['propagate_keywords'] = get_propagate_keywords(topic, start_ts, end_ts)
+    result['identify_firstuser'] = get_identify_firstuser(topic, start_ts, end_ts)
     result['identify_trendpusher'] = get_identify_trendpusher(topic, start_ts, end_ts)
     result['identify_pagerank'] = get_identify_pagerank(topic, start_ts, end_ts)
     result['evolution_topcity'] = get_evolution_topcity(topic, start_ts, end_ts)
@@ -303,11 +321,15 @@ def get_data():
 
 def get_topic_data(topic, start_ts, end_ts):
     result = {}
-    result['topic_name'] = topic
+    if topic=='APEC':
+        result['topic_name'] = 'APEC2014'
+    else:
+        result['topic_name'] = topic
     result['start_ts'] = ts2datetime(start_ts)
-    result['end_ts'] = ts2datetime(end_ts)
+    result['end_ts'] = ts2datetime(end_ts - 3600 * 24)
     result['propagate_peak'] = get_propagate_peak(topic, start_ts, end_ts)
     result['propagate_keywords'] = get_propagate_keywords(topic, start_ts, end_ts)
+    result['identify_firstuser'] = get_identify_firstuser(topic, start_ts, end_ts)
     result['identify_trendpusher'] = get_identify_trendpusher(topic, start_ts, end_ts)
     result['identify_pagerank'] = get_identify_pagerank(topic, start_ts, end_ts)
     result['evolution_topcity'] = get_evolution_topcity(topic, start_ts, end_ts)
@@ -336,3 +358,41 @@ def get_all_data():
         result_list.append(result)
         
     return json.dumps(result_list)
+
+def write_topic_excel(topic, start_ts, end_ts):
+    result = get_topic_data(topic, start_ts, end_ts)
+    result['topic_id'] = get_dynamic_mongo(topic)
+    result['topic_status'] = '1'
+    result['topic_area'] = u'北京'
+    result['topic_subject'] = u'习近平'
+    result['identify_firstuser'] = get_identify_firstuser(topic, start_ts, end_ts)
+    if topic==u'APEC':
+        topic = u'APEC2014'
+    csvfile = file(topic + '.csv', 'wb')
+    count = 0
+    line = []
+    for item in excel_line:
+        write_cell = result[item]
+        line.append(write_cell)
+        count += 1
+    writer = csv.writer(csvfile)
+    writer.writerow(excel_line)
+    writer.writerow(line)
+    csvfile.close()
+
+@mod.route('/save_csv/')
+def save_csv():
+    topic_list = [u'东盟,博览会', u'全军政治工作会议', u'外滩踩踏', u'高校思想宣传', \
+                       u'APEC', u'张灵甫遗骨疑似被埋羊圈']
+    time_range_list = [('2013-09-02', '2013-09-07'), ('2014-10-31', '2014-11-15'), ('2014-12-31', '2015-01-09'),\
+                                 ('2015-01-23', '2015-02-02'), ('2014-11-01', '2014-11-10'), ('2015-01-23', '2015-02-02')]
+    for i in range(len(topic_list)):
+        topic = topic_list[i]
+        start_date = time_range_list[i][0]
+        start_ts = datetime2ts(start_date)
+        end_date = time_range_list[i][1]
+        end_ts = datetime2ts(end_date) + 3600 * 24
+        write_topic_excel(topic, start_ts, end_ts)
+        print 'success write topic:', topic
+    return 'success save'
+

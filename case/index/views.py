@@ -42,7 +42,7 @@ def acquire_user_by_id(uid):
     return user
 
 def get_default_timerange():
-    return u'20150123-20150203'
+    return u'20150123-20150202'
 
 def get_default_topic():
     return u'张灵甫遗骨疑似被埋羊圈'
@@ -246,7 +246,7 @@ def area_news():
 
 @mod.route('/time/')
 def time():
-        # 要素
+    # 要素
     yaosu = 'time'
 
     # 话题关键词
@@ -271,16 +271,14 @@ def time():
 
 @mod.route('/time_news/')
 def time_news():
-        # 要素
+    # 要素
     yaosu = 'time'
 
     # 话题关键词
-    # topic = request.args.get('query', default_topic)
-    topic = u'全军政治工作会议'
+    topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
-    # time_range = request.args.get('time_range', default_timerange)
-    time_range = u'20141101-20141115'
+    time_range = request.args.get('time_range', default_timerange)
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
@@ -435,9 +433,11 @@ def network_news():
                 point_interval = pi
                 break
 
+    """
     time_range = u'20141104-20141112'
     topic = u'全军政治工作会议'
     point_interval = 3600 * 24 
+    """
 
     return render_template('index/network_news.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntegervals=pointIntervals, \
