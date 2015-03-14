@@ -112,7 +112,7 @@ def trend_makers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_maker(topic, date, windowsize, rank_method)
-    print 'trend_maker:',results
+    #print 'trend_maker:',results
     return json.dumps(results)
 
 @mod.route('/trend_pusher/')
@@ -126,7 +126,7 @@ def trend_pushers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_pusher(topic, date, windowsize, rank_method)
-    print 'trend_pusher:', results
+    #print 'trend_pusher:', results
     return json.dumps(results)
 
 @mod.route('/trend_user/')
@@ -139,7 +139,7 @@ def trend_user():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_user_table(topic,  date, windowsize)
-    print 'trend_user:', results 
+    #print 'trend_user:', results 
     return json.dumps(results)
     
     
@@ -361,7 +361,7 @@ def network_uid_weibos():
 @mod.route('/uid_neighbor/')
 def network_uid_neighbor():
     uid = request.args.get('uid', '')
-    print 'uid:', uid
+    #print 'uid:', uid
     uid = int(uid)
     topic = request.args.get('topic', '')
     start_ts = request.args.get('start_ts', '')
@@ -471,7 +471,7 @@ def news_trend_pusher():
     # rank_method:comment_count(default), timestamp, weight
     rank_method = request.args.get('rank_method', 'comments_count')
     news_skip = request.args.get('news_skip', '0')
-    print 'news_trend_pusher news_skip:', news_skip
+    #print 'news_trend_pusher news_skip:', news_skip
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)

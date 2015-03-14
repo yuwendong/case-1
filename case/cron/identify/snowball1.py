@@ -9,11 +9,11 @@ from snowball_sampling import snowballSamplingEndByNodes, multi_snowballSampling
 def SnowballSampling(di_g, g, topic, network_type):
     if network_type==1:
         items_pr = db.session.query(TopicIdentification).filter(TopicIdentification.topic==topic ,\
-                                                                TopicIdentification.rank<=10000).all()
+                                                                TopicIdentification.rank<=4000).all()
         print 'len(items_pr):', len(items_pr)
     else:
         items_pr = db.session.query(DsTopicIdentification).filter(DsTopicIdentification.topic==topic ,\
-                                                                  DsTopicIdentification.rank<=10000).all()
+                                                                  DsTopicIdentification.rank<=4000).all()
         print 'len(items_pr):', len(items_pr)
     di_centerids = [str(item.userId) for item in items_pr if di_g.has_node(str(item.userId))]
     print 'len(di_g):', len(di_g)
@@ -29,8 +29,8 @@ def SnowballSampling(di_g, g, topic, network_type):
     taboo_set = set()
     
     di_taboo_set = multi_snowballSamplingEndByNodes(sample_di_g, di_g, di_centerids, set(di_g.nodes()), taboo_set=di_taboo_set)
-    taboo_set = multi_snowballSamplingEndByNodes(sample_g, g, centerids, set(g.nodes()), taboo_set=taboo_set)
-
+    #taboo_set = multi_snowballSamplingEndByNodes(sample_g, g, centerids, set(g.nodes()), taboo_set=taboo_set)
+    sample_g = sample_di_g.to_undirected()
     print len(sample_di_g.nodes()), len(sample_di_g.edges())
     print len(sample_g.nodes()), len(sample_g.edges())
 
