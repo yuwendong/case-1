@@ -146,6 +146,7 @@ if __name__ == '__main__':
     start_date = sys.argv[2] # '2015-02-23'
     end_date = sys.argv[3] # '2015-03-02'
 
+    topic = topic.decode('utf-8')
     topic_id = getTopicByName(topic)['_id']
     start_ts = datetime2ts(start_date)
     end_ts = datetime2ts(end_date)

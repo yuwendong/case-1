@@ -1867,6 +1867,7 @@ function tr_pusher_request_callback(data,start_row,end_row){
     html += '</div>'
     html += '</li>'
    } 
+    console.log('here');
    $("#trend_pusher_ul").append(html);
    $("#pusher_content_control_height").css("height", $("#weibo_ul").css("height"));
    trendpusher_more(data,start_row,end_row);
@@ -2149,7 +2150,7 @@ function get_trend_pusher(rank_method){
     type:"Get",
     async:false,
     success:function(data){
-      //console.log(data);
+      console.log(data);
       var start_row = 0; var end_row = 5;
       tr_pusher_request_callback(data,start_row,end_row);
     }
