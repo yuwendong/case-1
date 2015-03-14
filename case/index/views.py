@@ -244,7 +244,7 @@ def area_news():
 
 @mod.route('/time/')
 def time():
-        # 要素
+    # 要素
     yaosu = 'time'
 
     # 话题关键词
@@ -269,16 +269,14 @@ def time():
 
 @mod.route('/time_news/')
 def time_news():
-        # 要素
+    # 要素
     yaosu = 'time'
 
     # 话题关键词
-    # topic = request.args.get('query', default_topic)
-    topic = u'全军政治工作会议'
+    topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
-    # time_range = request.args.get('time_range', default_timerange)
-    time_range = u'20141101-20141115'
+    time_range = request.args.get('time_range', default_timerange)
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
