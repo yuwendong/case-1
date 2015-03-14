@@ -475,7 +475,7 @@ def news_trend_pusher():
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)
-    aesults = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+    results = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
 
     return json.dumps(results)
     

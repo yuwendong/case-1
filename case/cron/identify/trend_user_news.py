@@ -108,8 +108,8 @@ def get_pusher(topic, new_peaks, new_bottom, ts_list, news_collection, comment_c
 
     max_k_timestamp = get_max_k_timestamp(results , p_ts_list)
 
-    end = max_k_timestamp
-    start = max_k_timestamp - pusher_during
+    start = max_k_timestamp
+    end = max_k_timestamp + pusher_during
     query_dict = {'timestamp':{'$gte':start, '$lte':end}}
     #pusher的排序两种方案：相同新闻数/新闻评论数---前者没有数据，忽略
     # 下面按照相同新闻数进行倒叙排列
