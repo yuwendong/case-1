@@ -38,30 +38,41 @@ def city_map_view():
     start_ts = request.args.get('start_ts', '')
     start_ts = long(start_ts)
     ts_arr = []
-    # results = []
+    results = []
     print time.time(), topic.encode('utf-8'), during, end_ts, start_ts
     top_city_weibo = get_city_weibo(topic, start_ts, end_ts)
     # top_city_weibo = {city:[weibo1,weibo2...],...}
     print time.time(), 'get weibo done'
     items = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
     print time.time(), 'get repost done'
+    """
+    if (topic == u'张灵甫遗骨疑似被埋羊圈'):
+        tempfile = open('zhanglingfu.txt', 'r')
+        items = json.loads(tempfile.read())
+        tempfile.close()
+        print time.time(), 'read done'
+    """
+
     if items:
         for item in items:
-            """
+            r = {}
             r['original'] = item.original
             r['topic'] = item.topic
             r['mid'] = item.mid
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
-            """
 
-            ts_arr.append(item.ts)
+            ts_arr.append(r['ts'])
             ts_arr = sorted(list(set(ts_arr)))
-            # results.append(r)
+            results.append(r)
+        if (topic == u'张灵甫遗骨疑似被埋羊圈'):
+            tempfile = open('zhanglingfu.txt', 'w')
+            tempfile.write(json.dumps(results))
+            tempfile.close()
+            print time.time(), 'write done'
         print time.time(), 'endfor'
-        raw_ts_series, raw_groups = partition_time(ts_arr, items, during)
-        # raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
+        raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         print time.time(), 'step 1 done'
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         print time.time(), 'step 2 done'
