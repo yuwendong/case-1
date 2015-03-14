@@ -124,7 +124,7 @@
                 <div class="tab-pane active" id="home">
                     {% for topic_name, start_date, end_date in topics_list %}
                         <div class="col-lg-4 col-sm-6">
-                            <h2><a href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">{{topic_name}}</a></h2>
+                            <h2><a href="/index/gaishu/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">{{topic_name}}</a></h2>
                             <span>{{start_date}}-{{end_date}}</span>
                             <p>
                                 <a style="font-size:12px;" class="btn btn-default" href="/index/gaishu/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">概述分析 &raquo;</a>
