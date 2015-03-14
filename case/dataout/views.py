@@ -17,9 +17,9 @@ from case.moodlens.counts import  search_topic_counts
 from case.moodlens.keywords import search_topic_keywords
 from case.moodlens.peak_detection import detect_peaks
 
-from case.time_utils import ts2datetime, datetime2ts
+from case.time_utils import ts2datetime, datetime2ts, ts2date
 from case.global_config import MONGODB_HOST, MONGODB_PORT
-from util import get_info_num, get_dynamic_mongo
+from util import get_info_num, get_dynamic_mongo, json2str
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['54api_weibo_v2']
@@ -33,7 +33,7 @@ MinInterval = Fifteenminutes
 During = Day
 mtype_kv = {'origin':1, 'comment':2, 'forward':3}
 emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3, 'news': 4}
-excel_line = ['topic_id', 'topic_status', 'topic_name', 'start_ts', 'end_ts', 'topic_area',\
+excel_line = ['topic_id', 'topic_status', 'topic_name', 'propagate_keywords' ,'start_ts', 'end_ts', 'topic_area',\
                      'topic_subject', 'identify_firstuser', 'identify_trendpusher', 'identify_pagerank',\
                      'moodlens_sentiment', 'topic_abstract', 'propagate_peak']
 
@@ -51,7 +51,7 @@ def get_propagate_peak(topic, start_ts, end_ts):
             if dcount:
                 count += sum(dcount['dcount'].values())
         lis.append(float(count))
-        ts_lis.append(ts)
+        ts_lis.append(ts2date(ts))
 
     if not lis or not len(lis):
         return {}
@@ -281,7 +281,7 @@ def creat_abstract(results):
             abstract += '：'
             abstract += str(round(ratio * 100, 2))
             abstract += '%，'
-    return {'abstract':abstract, 'abstract_result':results}
+    return {'abstract':abstract}
 
 @mod.route('/get_topic_list/')
 def get_topic_list():
@@ -328,17 +328,21 @@ def get_topic_data(topic, start_ts, end_ts):
     result['start_ts'] = ts2datetime(start_ts)
     result['end_ts'] = ts2datetime(end_ts - 3600 * 24)
     result['propagate_peak'] = get_propagate_peak(topic, start_ts, end_ts)
-    result['propagate_keywords'] = get_propagate_keywords(topic, start_ts, end_ts)
-    result['identify_firstuser'] = get_identify_firstuser(topic, start_ts, end_ts)
-    result['identify_trendpusher'] = get_identify_trendpusher(topic, start_ts, end_ts)
-    result['identify_pagerank'] = get_identify_pagerank(topic, start_ts, end_ts)
+    propagate_keywords = get_propagate_keywords(topic, start_ts, end_ts)
+    result['propagate_keywords'] = json2str('propagate_keywords' , propagate_keywords)
+    identify_firstuser = get_identify_firstuser(topic, start_ts, end_ts)
+    result['identify_firstuser'] = json2str('identify_firstuser', identify_firstuser)
+    identify_trendpusher = get_identify_trendpusher(topic, start_ts, end_ts)
+    result['identify_trendpusher'] = json2str('identify_trendpusher', identify_trendpusher)
+    identify_pagerank = get_identify_pagerank(topic, start_ts, end_ts)
+    result['identify_pagerank'] = json2str('identify_pagerank', identify_pagerank)
     result['evolution_topcity'] = get_evolution_topcity(topic, start_ts, end_ts)
     result['moodlens_sentiment'] = get_moodlens_sentiment(topic, start_ts, end_ts)
     result['moodlens_keywords'] = get_moodlens_keywords(topic, start_ts, end_ts)
     result['moodlens_peak'] = get_moodlens_peak(topic, start_ts, end_ts)
     #result['news_fishbone'] = get_news_fishbone()
-    result['topic_abstract'] = get_topic_abstract(topic, start_ts, end_ts, result['moodlens_sentiment'], result['propagate_keywords'], result['evolution_topcity'])
-
+    topic_abstract = get_topic_abstract(topic, start_ts, end_ts, result['moodlens_sentiment'], propagate_keywords, result['evolution_topcity'])
+    result['topic_abstract'] = topic_abstract['abstract']
     return result
 
 @mod.route('/get_all_data/')
@@ -365,19 +369,21 @@ def write_topic_excel(topic, start_ts, end_ts):
     result['topic_status'] = '1'
     result['topic_area'] = u'北京'
     result['topic_subject'] = u'习近平'
-    result['identify_firstuser'] = get_identify_firstuser(topic, start_ts, end_ts)
+    identify_firstuser = get_identify_firstuser(topic, start_ts, end_ts)
+    result['identify_firstuser'] = json2str('identify_firstuser', identify_firstuser)
     if topic==u'APEC':
         topic = u'APEC2014'
     csvfile = file(topic + '.csv', 'wb')
     count = 0
-    line = []
+    
     for item in excel_line:
+        line = [item]
         write_cell = result[item]
         line.append(write_cell)
         count += 1
-    writer = csv.writer(csvfile)
-    writer.writerow(excel_line)
-    writer.writerow(line)
+        writer = csv.writer(csvfile)
+        #writer.writerow(excel_line)
+        writer.writerow(line)
     csvfile.close()
 
 @mod.route('/save_csv/')

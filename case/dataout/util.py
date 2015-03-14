@@ -45,5 +45,47 @@ def getXapianWeiboByTopic(topic_id):
     else:
         print 'stub not exist'
         return None
-        
+
+def json2str(key, items):
+    result = ''
+
+    #print 'key, items:', key, items
+    if key== 'propagate_keywords':
+        for item in items:
+            result += str(item)
+            result += '|'
+    elif key== 'identify_firstuser':
+        items = items[1:]
+        for item in items:
+            print 'item:', item
+            result += str(item[0])
+            result += ','
+            result += str(item[1])
+            result += ', , |'
+    elif key== 'identify_trendpusher':
+        for item in items:
+            result += str(item[0])
+            result += ','
+            result += str(item[1])
+            result += ', , |'
+    elif key=='identify_pagerank':
+        for item in items:
+            result += str(item[1])
+            result += ','
+            result += str(item[2])
+            result += ', , |'
+    elif key=='identify_firstuser':
+        items = items[1:]
+        for item in items:
+            result += str(item[0])
+            result += ','
+            result += str(item[1])
+            result += ','
+            result += str(item[2])
+            result += ', |'
+    n = len(result)
+    result = result[:n-1]
+    print 'key:', key
+    print 'result:', result
+    return result
     

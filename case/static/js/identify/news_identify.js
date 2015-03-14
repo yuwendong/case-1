@@ -502,7 +502,12 @@ function draw_fu_table(div_id, data){
             else{
                 media_name = transmit_name;
             }
+            if (media_name.length>=6){
+            html += '<td align="center;" style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center;"> <div class="fu_table_td" style="float:none;"><a title="'+ media_name + '">'+ media_name.substring(0, 6) + '...' +'<a></div></td>';
+            }
+            else{
             html += '<td align="center;" style="width:70px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align:center;"> <div class="fu_table_td" style="float:none;"><a title="'+ media_name + '">'+ media_name +'<a></div></td>';
+            }
         }
         html += '</tr>';
     }

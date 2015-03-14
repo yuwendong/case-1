@@ -86,8 +86,8 @@ if __name__=='__main__':
     '''
     module = NEWS_MODULE
     topic = NEWS_TOPIC
-    start_ts = NEWS_START_TS
-    end_ts = NEWS_END_TS
+    start_ts = datetime2ts(NEWS_START_TS)
+    end_ts = datetime2ts(NEWS_END_TS)
     # deal with the start_ts/end_ts is not the whole day
     if start_ts - datetime2ts(ts2datetime(start_ts)) != 0:
         start_ts = datetime2ts(ts2datetime(start_ts))

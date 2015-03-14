@@ -126,7 +126,7 @@ def trend_pushers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_pusher(topic, date, windowsize, rank_method)
-    #print 'trend_pusher:', results
+    print 'trend_pusher:', results
     return json.dumps(results)
 
 @mod.route('/trend_user/')
@@ -475,7 +475,7 @@ def news_trend_pusher():
     news_skip = int(news_skip)
     news_limit_count = request.args.get('news_limit_count', '10')
     news_limit_count = int(news_limit_count)
-    aesults = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
+    results = get_news_trend_pusher(topic, start_ts, end_ts, rank_method, news_skip, news_limit_count)
 
     return json.dumps(results)
     
