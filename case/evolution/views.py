@@ -54,6 +54,8 @@ def city_map_view():
             r['repost_location'] = item.repost_location
             if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
                 continue
+            if (r['origin_location'] == u'海外') or (r['repost_location'] == u'海外'):
+                continue
 
             ts_arr.append(r['ts'])
             results.append(r)
@@ -159,6 +161,10 @@ def in_out_map():
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
+            if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
+                continue
+            if (r['origin_location'] == u'海外') or (r['repost_location'] == u'海外'):
+                continue
 
             ts_arr.append(r['ts'])
             results.append(r)
@@ -205,6 +211,10 @@ def city_map_view_news():
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
+            if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
+                continue
+            if (r['origin_location'] == u'海外') or (r['repost_location'] == u'海外'):
+                continue
 
             ts_arr.append(r['ts'])
             results.append(r)
@@ -301,6 +311,10 @@ def in_out_map_news():
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
+            if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
+                continue
+            if (r['origin_location'] == u'海外') or (r['repost_location'] == u'海外'):
+                continue
 
             ts_arr.append(r['ts'])
             results.append(r)

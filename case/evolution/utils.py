@@ -32,6 +32,12 @@ TOP_WEIBOS_LIMIT = 50
 ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
+def deal_with(news_id):
+    news_id = news_id.replace(':', '-')
+    news_id = news_id.replace('/', '-')
+    news_id = news_id.replace('.', '-')
+    return news_id
+
 
 def timeit(method):
     def timed(*args, **kw):

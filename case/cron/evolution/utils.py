@@ -1,7 +1,31 @@
 # -*- coding:utf-8 -*-
 
 import IP   #引入IP，对'geo'字段进行解析
+from config import MEDIA_FILE
 
+def media_dict_init():
+    f = open(MEDIA_FILE, 'r')
+    media_dict = dict()
+    for line in f:
+        line = line.lstrip().lstrip('"').rstrip().rstrip('",')
+        media, geo = line.split('":"')
+        media = media.decode('gb18030')
+        geo = geo.decode('gb18030')
+        media_dict[media] = geo
+    return media_dict
+
+def get_dynamic_mongo(mongodb, topic, start_ts, end_ts):
+    topic_collection = mongodb.news_topic
+    topic_news = topic_collection.find_one({'topic':topic})
+    if not topic_news:
+        print 'no this topic'
+        return None
+    else:
+        print 'exists'
+        topic_news_id = topic_news['_id']
+        news_collection_name = 'post_' + str(topic_news_id)
+        topic_news_collection = mongodb[news_collection_name]
+    return topic_news_collection
 
 def geo2city(geo): #将weibo中的'geo'字段解析为地址
     try:
