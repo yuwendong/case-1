@@ -369,14 +369,14 @@
         $("#weibo_tooltip").tooltip();
         function get_urlweibo(){
             current_url = window.location.href;
-            currenturl = current_url.replace('time', 'time_news');
-            window.open(currenturl);
+            currenturl = current_url.replace('time_news', 'time');
+            window.location.href = currenturl;
         }
 
         function get_urlnews(){
             current_url = window.location.href;
             currenturl = current_url.replace('time', 'time_news');
-            window.open(currenturl);
+            window.location.href = currenturl;
         }
 
         $("#select_qudao").change(function(){ //事件發生 

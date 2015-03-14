@@ -556,14 +556,14 @@
         $("#weibo_tooltip_3").tooltip();
         function get_urlweibo(){
             current_url = window.location.href;
-            currenturl = current_url.replace('area', 'area_news');
-            window.open(currenturl);
+            currenturl = current_url.replace('area_news', 'area');
+            window.location.href = currenturl;
         }
 
         function get_urlnews(){
             current_url = window.location.href;
             currenturl = current_url.replace('area', 'area_news');
-            window.open(currenturl);
+            window.location.href = currenturl;
         }
 
         $("#select_qudao").change(function(){ //事件發生 
