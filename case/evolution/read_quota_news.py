@@ -8,6 +8,7 @@ from city_count import Pcount, PcountNews
 # 根据count不同，给不同的城市不同的颜色
 from city_color import province_color_map
 from read_quota import _json_loads, ts2date, acquire_user_by_id
+from utils import deal_with
 
 #mtype_kv={'original': 1, 'forward': 2, 'comment': 3,'sum':4}
 
@@ -36,7 +37,7 @@ def get_city_news(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_NEWS_LIMI
         if item:
             news = _json_loads(item.news)
             for news_item in news:
-                weibos.append((1,news_item))
+                weibos.append((news_item['timestamp'],news_item))
     else:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         lowbound = (start_ts / unit) * unit
@@ -49,7 +50,7 @@ def get_city_news(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_NEWS_LIMI
             news = _json_loads(item.news)
             try:
                 for news_item in news:
-                    weibos.append((1,news_item))
+                    weibos.append((news_item['timestamp'],news_item))
             except:
                 continue
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=True)
@@ -74,6 +75,7 @@ def get_city_news(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_NEWS_LIMI
             city = result['source_from_area'].split('\t')[1]
         except:
             city = ''
+        result['_id'] = deal_with(result['_id'])
 
         if city in province_list:
             try:

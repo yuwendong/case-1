@@ -508,7 +508,7 @@ function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_height_id, 
         //html += '<a href="javascript:;" target="_blank" onclick="check_comments(\'' + da['_id'] + '\')">评论分析</a>&nbsp;&nbsp;&nbsp;&nbsp;';
         html += "</div>";
         html += '<div class="m">';
-        html += '<a>' + da['timestamp']+ '</a>&nbsp;-&nbsp;';
+        html += '<a>' + new Date(da['timestamp'] * 1000).format("yyyy年MM月dd日 hh:mm:ss") + '</a>&nbsp;-&nbsp;';
         html += '<a>转载于'+ user_name +'</a>&nbsp;&nbsp;';
         html += '<a target="_blank" href="'+ url +'">新闻</a>&nbsp;&nbsp;';
         html += '</div>';
