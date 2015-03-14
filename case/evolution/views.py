@@ -41,18 +41,8 @@ def city_map_view():
     results = []
     print time.time(), topic.encode('utf-8'), during, end_ts, start_ts
     top_city_weibo = get_city_weibo(topic, start_ts, end_ts)
-    # top_city_weibo = {city:[weibo1,weibo2...],...}
-    print time.time(), 'get weibo done'
     items = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
     print time.time(), 'get repost done'
-    """
-    if (topic == u'张灵甫遗骨疑似被埋羊圈'):
-        tempfile = open('zhanglingfu.txt', 'r')
-        items = json.loads(tempfile.read())
-        tempfile.close()
-        print time.time(), 'read done'
-    """
-
     if items:
         for item in items:
             r = {}
@@ -62,15 +52,12 @@ def city_map_view():
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
+            if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
+                continue
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
-        if (topic == u'张灵甫遗骨疑似被埋羊圈'):
-            tempfile = open('zhanglingfu.txt', 'w')
-            tempfile.write(json.dumps(results))
-            tempfile.close()
-            print time.time(), 'write done'
+        ts_arr = sorted(list(set(ts_arr)))
         print time.time(), 'endfor'
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         print time.time(), 'step 1 done'
@@ -91,7 +78,7 @@ def city_map_view():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
+            return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
 
 
 @mod.route("/topic_ajax_spatial/")
@@ -174,8 +161,8 @@ def in_out_map():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)
@@ -220,8 +207,8 @@ def city_map_view_news():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)
@@ -316,8 +303,8 @@ def in_out_map_news():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)
