@@ -223,12 +223,12 @@ def area_news():
     yaosu = 'area'
 
     # 话题关键词
-    # topic = request.args.get('query', default_topic)
-    topic = u'全军政治工作会议'
+    topic = request.args.get('query', default_topic)
+    # topic = u'全军政治工作会议'
 
     # 时间范围: 20130901-20130901
-    # time_range = request.args.get('time_range', default_timerange)
-    time_range = u'20141101-20141115'
+    time_range = request.args.get('time_range', default_timerange)
+    # time_range = u'20141101-20141115'
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
