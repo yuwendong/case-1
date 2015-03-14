@@ -2,6 +2,7 @@
 
 import os
 import IP
+import time
 import json
 import pymongo
 from BeautifulSoup import BeautifulSoup
@@ -38,11 +39,10 @@ def city_map_view():
     start_ts = long(start_ts)
     ts_arr = []
     results = []
-    print topic.encode('utf-8'), during, end_ts, start_ts
+    print time.time(), topic.encode('utf-8'), during, end_ts, start_ts
     top_city_weibo = get_city_weibo(topic, start_ts, end_ts)
-    # top_city_weibo = {city:[weibo1,weibo2...],...}
-
     items = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
+    print time.time(), 'get repost done'
     if items:
         for item in items:
             r = {}
@@ -52,16 +52,24 @@ def city_map_view():
             r['ts'] = item.ts
             r['origin_location'] = item.origin_location
             r['repost_location'] = item.repost_location
+            if (r['origin_location'] == u'未知') or (r['repost_location'] == u'未知'):
+                continue
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
+        print time.time(), 'endfor'
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
+        print time.time(), 'step 1 done'
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
+        print time.time(), 'step 2 done'
         # draw_circle_data = map_circle_data(groups, True)
         max_repost_num, draw_line_data = map_line_data(groups, True)
+        print time.time(), 'step 3 done'
         in_out_results = work_in_out(draw_line_data)
+        print time.time(), 'step 4 done'
         repost_series, origin_series, post_series, statistic_data = statistics_data(groups, draw_line_data, True)
+        print time.time(), 'step 5 done'
         return json.dumps({'draw_line_data': draw_line_data, 'in_out_results': in_out_results,'statistics_data': statistic_data, 'top_city_weibo': top_city_weibo})
 
         '''
@@ -70,7 +78,7 @@ def city_map_view():
                 'repost_series':repost_series, 'origin_series':origin_series, 'post_series':post_series, 'statistics_data':statistic_data})
         '''
     else:
-        return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
+            return json.dumps({'draw_line_data': [], 'in_out_results': [],'statistics_data': [], 'top_city_weibo': top_city_weibo})
 
 
 @mod.route("/topic_ajax_spatial/")
@@ -153,8 +161,8 @@ def in_out_map():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)
@@ -199,8 +207,8 @@ def city_map_view_news():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)
@@ -295,8 +303,8 @@ def in_out_map_news():
             r['repost_location'] = item.repost_location
 
             ts_arr.append(r['ts'])
-            ts_arr = sorted(list(set(ts_arr)))
             results.append(r)
+        ts_arr = sorted(list(set(ts_arr)))
         raw_ts_series, raw_groups = partition_time(ts_arr, results, during)
         ts_series, groups = select_groups(raw_ts_series, raw_groups, start_ts, end_ts)
         # draw_circle_data = map_circle_data(groups, True)

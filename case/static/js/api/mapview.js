@@ -443,8 +443,8 @@ function show_weibo(current_city, weibo_tab_id, weibo_cont_id, weibo_num, weibo_
     }
 
     var html = '';
-    if (current_city in top_city_news){
-        var weibo_data = top_city_news[current_city];
+    if (current_city in top_city_weibo){
+        var weibo_data = top_city_weibo[current_city];
     }
     else{
         var weibo_data = [];

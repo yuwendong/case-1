@@ -6,6 +6,7 @@ import time
 import datetime
 import IP
 from config import db
+from utils import geo2city, IP2city
 from model import CityRepost
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
@@ -67,41 +68,6 @@ def save_rt_results(topic, repost_list):
     print 'commited'
 
 
-def geo2city(geo):
-    try:
-        province, city = geo.split()
-        if province in [u'内蒙古自治区', u'黑龙江省']:
-            province = province[:3]
-        else:
-            province = province[:2]
-
-        geo = province + ' ' + city
-    except:
-        pass
-
-    if isinstance(geo, unicode):
-        geo = geo.encode('utf-8')
-
-    if geo.split()[0] not in ['海外', '其他']:
-        geo = '中国 ' + geo
-
-    geo = '\t'.join(geo.split())
-
-    return geo
-
-    """
-    try:
-        city = IP.find(str(geo))
-        if city:
-            city = city.encode('utf-8')
-        else:
-            return None
-    except Exception, e:
-        print e
-        return None
-    """
-
-    return city
 
 def check_location(locations):
     for location in locations:
@@ -131,22 +97,41 @@ def results_gen(r, topic):
     message_type = r['message_type']
     if message_type == 3: # 转发
         # print 'retweeted_mid', r['retweeted_mid']
-        repost_location = geo2city(r['geo'])
-        if r['retweeted_mid']: # 过滤retweed_mid不完整的item
-            item = xapian_search.search_by_id(r['retweeted_mid'], fields = ['geo','_id'])
-            if item:
-                origin_location = geo2city(item['geo'])
-                if check_location([origin_location, repost_location]):
-                    location_dict['original'] = 0
-                    location_dict['mid'] = r['_id']
-                    location_dict['topic'] = topic
-                    location_dict['ts'] = r['timestamp']
-                    location_dict['origin_location'] = origin_location.split('\t')[1]
-                    location_dict['repost_location'] = repost_location.split('\t')[1]
-                    return location_dict
+        try:
+            if (len(r['geo'].split('.')) == 4):
+                repost_location = IP2city(r['geo'])
+            else:
+                repost_location = geo2city(r['geo'])
+        except:
+            return None
+        if check_location([repost_location]): # 过滤不能解析的item
+            if r['retweeted_mid']: # 过滤retweed_mid不完整的item
+                item = xapian_search.search_by_id(r['retweeted_mid'], fields = ['geo','_id'])
+                if item:
+                    try:
+                        if (len(item['geo'].split('.')) == 4):
+                            origin_location = IP2city(item['geo'])
+                        else:
+                            origin_location = geo2city(item['geo'])
+                    except:
+                        return None
+                    if check_location([origin_location]):
+                        location_dict['original'] = 0
+                        location_dict['mid'] = r['_id']
+                        location_dict['topic'] = topic
+                        location_dict['ts'] = r['timestamp']
+                        location_dict['origin_location'] = origin_location.split('\t')[1]
+                        location_dict['repost_location'] = repost_location.split('\t')[1]
+                        return location_dict
 
     elif message_type == 1: # 原创
-        origin_location = geo2city(r['geo'])
+        try:
+            if (len(r['geo'].split('.')) == 4):
+                origin_location = IP2city(r['geo'])
+            else:
+                origin_location = geo2city(r['geo'])
+        except:
+            return None
         if check_location([origin_location]):
             location_dict['original'] = 1
             location_dict['mid'] = r['_id']
@@ -159,12 +144,22 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2015-01-23')
-    END_TS = datetime2ts('2015-02-03')
+    START_TS = datetime2ts('2014-10-31')
+    END_TS = datetime2ts('2014-11-15')
 
-    topic = u'张灵甫遗骨疑似被埋羊圈' # u'东盟,博览会'
-    # topic_id = getTopicByName(topic)['_id']
-    topic_id = '54cf5ad9e8d7ce533b1160ec'   #'54ccbfab5a220134d9fc1b37'# 54cc9616a41513bb4fa6e262
+    topic = u'全军政治工作会议'
+    topic_id = getTopicByName(topic)['_id']
+    print 'topic: ', topic.encode('utf8')
+    print topic_id, START_TS, END_TS
 
     xapian_search = getXapianWeiboByTopic(topic_id)
     repost_search(topic, START_TS, END_TS)
+    """
+    item_exist = db.session.query(CityRepost).filter(CityRepost.topic == topic).all()
+
+    if item_exist:
+        for item in item_exist:
+            db.session.delete(item)
+    db.session.commit()
+    print 'commited'
+    """

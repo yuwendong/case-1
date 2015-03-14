@@ -8,7 +8,7 @@ from xapian_case.utils import top_keywords, gen_mset_iter
 
 sys.path.append('../../')
 from global_config import mtype_kv
-from time_utils import datetime2ts, ts2HourlyTime, ts2datetimestr
+from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getWeiboById, getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from model import PropagateCount, PropagateKeywords, PropagateWeibos

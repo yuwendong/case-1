@@ -111,7 +111,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li><a class="source" href="http://219.224.135.47:10000/cms/" target="_blank">案例图谱</a></li>
                         <li><a class="source" href="http://219.224.135.47:10000/cms/index.php?route=case/search" target="_blank">案例搜索</a></li>
-                        <li><a class="source" href="/index/manage/" target="_blank">话题配置管理</a></li>
+                        <!--<li><a class="source" href="/index/manage/" target="_blank">话题配置管理</a></li>-->
                     </ul>
                 </div>
             </div>
@@ -127,10 +127,11 @@
                             <h2><a href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">{{topic_name}}</a></h2>
                             <span>{{start_date}}-{{end_date}}</span>
                             <p>
-                            <a style="font-size:12px;" class="btn btn-default" href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">时间分析 &raquo;</a>
-                            <a style="font-size:12px;" class="btn btn-default" href="/index/area/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">地域分析 &raquo;</a>
-                            <a style="font-size:12px;" class="btn btn-default" href="/index/moodlens/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">情绪分析 &raquo;</a>
-                            <a style="font-size:12px;" class="btn btn-default" href="/index/network/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">网络分析 &raquo;</a>
+                                <a style="font-size:12px;" class="btn btn-default" href="/index/gaishu/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">概述分析 &raquo;</a>
+                                <a style="font-size:12px;" class="btn btn-default" href="/index/time/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">时间分析 &raquo;</a>
+                                <a style="font-size:12px;" class="btn btn-default" href="/index/area/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">地域分析 &raquo;</a>
+                                <a style="font-size:12px;" class="btn btn-default" href="/index/moodlens/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">情绪分析 &raquo;</a>
+                                <a style="font-size:12px;" class="btn btn-default" href="/index/network/?query={{topic_name}}&time_range={{start_date}}-{{end_date}}" target="_blank">网络分析 &raquo;</a>
                             </p>
                         </div>
                     {% endfor %}

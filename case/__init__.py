@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import model
+import mongodb_model
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
-from extensions import db, admin, mongo
-from global_config import MYSQL_HOST, MYSQL_USER, MYSQL_DB, MONGODB_HOST, MONGODB_PORT
+from extensions import db, admin, mongo, mongo_engine
+from global_config import MYSQL_HOST, MYSQL_USER, MYSQL_DB, MONGODB_HOST, MONGODB_PORT, MASTER_TIMELINE_54API_WEIBO_DB
 from model_view import SQLModelView
 from case.root.views import mod as rootModule
 from case.moodlens.views import mod as moodlensModule
@@ -59,19 +60,34 @@ def create_app():
     app.config['MONGO_HOST'] = MONGODB_HOST
     app.config['MONGO_PORT'] = MONGODB_PORT
 
+    app.config['MONGODB_SETTINGS'] = {
+        'db': MASTER_TIMELINE_54API_WEIBO_DB,
+        'host': MONGODB_HOST,
+        'port': MONGODB_PORT
+    }
+
     # Create mysql database
     db.init_app(app)
     with app.test_request_context():
         db.create_all()
 
-    # # Create mysql database admin, visit via url: http://HOST:PORT/admin/
+    # Create mongo_engine
+    mongo_engine.init_app(app)
+
     admin.init_app(app)
+    """
+    # Create mysql database admin, visit via url: http://HOST:PORT/admin/
     for m in model.__all__:
         m = getattr(model, m)
         n = m._name()
         admin.add_view(SQLModelView(m, db.session, name=n))
-    
+
+    for m in mongodb_model.__all__:
+        admin.add_view(MongoDBView(m))
+    """
+
     # init mongo
     mongo.init_app(app)
 
     return app
+

@@ -1083,6 +1083,15 @@
 
 
 {% block content %}
+    <div style="float: left;margin-left:20px;margin-top:40px">
+                <form>
+                    渠道选择：
+                    <select id="select_qudao" name="source">
+                        <option value="weibo" selected="selected">微博</option>
+                        <option value="news">新闻</option>
+                    </select>
+                </form>
+    </div>
 
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
 
@@ -3797,6 +3806,29 @@
         $("#frequency_tooltip").tooltip();
 
         $("#power_law_distribution_tooltip").tooltip();
+
+        function get_urlweibo(){
+            current_url = window.location.href;
+            currenturl = current_url.replace('network_news', 'network');
+            window.location.href = currenturl;
+        }
+
+        function get_urlnews(){
+            current_url = window.location.href;
+            currenturl = current_url.replace('network', 'network_news');
+            window.location.href = currenturl;
+        }
+
+        $("#select_qudao").change(function(){ //事件發生 
+            jQuery('option:selected', this).each(function(){ //印出選到多個值 
+            if (this.value=="weibo"){
+                get_urlweibo();
+            }
+            else{
+                get_urlnews();
+            }
+            }); 
+            });
 
         $("#layout_controller").click(function(){
 

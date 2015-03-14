@@ -10,7 +10,7 @@ from case.model import CityWeibos
 from city_count import Pcount
 # 根据count不同，给不同的城市不同的颜色
 from city_color import province_color_map
-from utils import weiboinfo2url
+from utils import weiboinfo2url, geo2city, IP2city
 
 #mtype_kv={'original': 1, 'forward': 2, 'comment': 3,'sum':4}
 
@@ -121,40 +121,6 @@ def info2map(infos, incremental = 0): # infos = {end_ts:map_data}, map_data={'co
 
     return data
 
-def geo2city(geo):
-    try:
-        province, city = geo.split()
-        if province in [u'内蒙古自治区', u'黑龙江省']:
-            province = province[:3]
-        else:
-            province = province[:2]
-
-        city = city.strip(u'市').strip(u'区')
-
-        geo = province + ' ' + city
-    except:
-        pass
-    if isinstance(geo, unicode):
-        geo = geo.encode('utf-8')
-
-    if geo.split()[0] not in ['海外', '其他']:
-        geo = '中国 ' + geo
-
-    geo = '\t'.join(geo.split())
-
-    return geo
-    """
-    try:
-        city = IP.find(str(geo))
-        if city:
-            city = city.encode('utf-8')
-        else:
-            return None
-    except Exception, e:
-        print e
-        return None
-    return city
-    """
 
 def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_LIMIT):
     weibos = []
@@ -165,8 +131,8 @@ def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_L
                                                        CityWeibos.range==unit, \
                                                        CityWeibos.limit==limit).first()
         if item:
-            weibos = _json_loads(item.weibos)
-            for weibo_item in weibos:
+            news = _json_loads(item.weibos)
+            for weibo_item in news:
                 weibos.append((weibo_item['reposts_count'],weibo_item))
     else:
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
@@ -177,10 +143,12 @@ def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_L
                                                          CityWeibos.range==unit, \
                                                          CityWeibos.limit==limit).all()
         for item in items:
-            weibos = _json_loads(item.weibos)
-            for weibo_item in weibos:
-                weibos.append((weibo_item['reposts_count'],weibo_item))
-
+            news = _json_loads(item.weibos)
+            for weibo_item in news:
+                try:
+                    weibos.append((weibo_item['reposts_count'],weibo_item))
+                except:
+                    continue
     sorted_weibos = sorted(weibos, key=lambda k: k[0], reverse=True)
 
     city_dict = {}
@@ -199,12 +167,15 @@ def get_city_weibo(topic, start_ts, end_ts, unit=MinInterval, limit=TOP_WEIBOS_L
         time = ts2date(result['timestamp'])
         result['time'] = time
         try:
-            city = geo2city(result['geo']).split('\t')[1]
+            if (len(result['geo'].split('.')) == 4):
+                full_area = IP2city(result['geo'])
+                result['geo'] = full_area
+                city = full_area.split('\t')[1]
+            else:
+                city = geo2city(result['geo']).split('\t')[1]
         except:
             city = ''
         result['weibo_link'] = weiboinfo2url(result['user'], result['_id'])
-        #print 'city:', city
-
         if city in province_list:
             try:
                 city_dict[city].append(result)

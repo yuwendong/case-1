@@ -318,7 +318,15 @@
 {% endblock head_js %}
 
 {% block content %}
-
+    <div style="float: left;margin-left:20px;margin-top:40px">
+                <form>
+                    渠道选择：
+                    <select id="select_qudao" name="source">
+                        <option value="weibo" selected="selected">微博</option>
+                        <option value="news">新闻</option>
+                    </select>
+                </form>
+    </div>
     <div class="blkUnit grpUnit" style="float:left;" id="cloudpie">
         <div class="titlBar" style="padding-bottom:15px;width:1033px;">
             <h4>地域分析</h4>
@@ -546,6 +554,28 @@
         $("#weibo_tooltip_1").tooltip();
         $("#weibo_tooltip_2").tooltip();
         $("#weibo_tooltip_3").tooltip();
+        function get_urlweibo(){
+            current_url = window.location.href;
+            currenturl = current_url.replace('area_news', 'area');
+            window.location.href = currenturl;
+        }
+
+        function get_urlnews(){
+            current_url = window.location.href;
+            currenturl = current_url.replace('area', 'area_news');
+            window.location.href = currenturl;
+        }
+
+        $("#select_qudao").change(function(){ //事件發生 
+            jQuery('option:selected', this).each(function(){ //印出選到多個值 
+            if (this.value=="weibo"){
+                get_urlweibo();
+            }
+            else{
+                get_urlnews();
+            }
+            }); 
+            }); 
     </script>
     <script src="/static/js/api/tab_change.js" type="text/javascript"></script>"
     <script src="/static/js/api/map.js" type="text/javascript"></script>"
