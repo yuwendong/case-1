@@ -126,7 +126,7 @@ def trend_pushers():
     date = ts2datetime(end_ts)
     windowsize = (end_ts - start_ts) / Day
     results = read_trend_pusher(topic, date, windowsize, rank_method)
-    #print 'trend_pusher:', results
+    print 'trend_pusher:', results
     return json.dumps(results)
 
 @mod.route('/trend_user/')
