@@ -368,16 +368,14 @@
         $("#cloud_pie_tooltip").tooltip();
         $("#weibo_tooltip").tooltip();
         function get_urlweibo(){
-            host = window.location.host;
-            current_url = "/index/time/";
-            currenturl = "http://" + host + current_url;
+            current_url = window.location.href;
+            currenturl = current_url.replace('time', 'time_news');
             window.open(currenturl);
         }
 
         function get_urlnews(){
-            host = window.location.host;
-            current_url = "/index/time_news/";
-            currenturl = "http://" + host + current_url;
+            current_url = window.location.href;
+            currenturl = current_url.replace('time', 'time_news');
             window.open(currenturl);
         }
 

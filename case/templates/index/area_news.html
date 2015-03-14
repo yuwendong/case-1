@@ -609,16 +609,14 @@
         $("#weibo_tooltip_2").tooltip();
         $("#weibo_tooltip_3").tooltip();
         function get_urlweibo(){
-            host = window.location.host;
-            current_url = "/index/time/";
-            currenturl = "http://" + host + current_url;
+            current_url = window.location.href;
+            currenturl = current_url.replace('area_news', 'area');
             window.open(currenturl);
         }
 
         function get_urlnews(){
-            host = window.location.host;
-            current_url = "/index/time_news/";
-            currenturl = "http://" + host + current_url;
+            current_url = window.location.href;
+            currenturl = current_url.replace('area_news', 'area');
             window.open(currenturl);
         }
 
