@@ -433,12 +433,6 @@ def network_news():
                 point_interval = pi
                 break
 
-    """
-    time_range = u'20141104-20141112'
-    topic = u'全军政治工作会议'
-    point_interval = 3600 * 24 
-    """
-
     return render_template('index/network_news.html', yaosu=yaosu, time_range=time_range, \
             topic=topic, pointInterval=point_interval, pointIntegervals=pointIntervals, \
             gaishu_yaosus=gaishu_yaosus, deep_yaosus=deep_yaosus)
