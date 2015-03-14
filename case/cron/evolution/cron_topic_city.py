@@ -5,6 +5,7 @@ import json
 import datetime
 from topics import _all_topics
 
+sys.path.append('../../')
 from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
@@ -113,10 +114,10 @@ def cityCronTopic(topic, xapian_search_weibo, start_ts, over_ts, during=Fifteenm
             save_ws_results(topic, end_ts, during, n_limit, sorted_weibos)
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2014-10-31')
-    END_TS = datetime2ts('2014-11-15')
+    START_TS = datetime2ts('2015-03-02')
+    END_TS = datetime2ts('2015-03-15')
 
-    topic = u'全军政治工作会议'
+    topic = u'两会2015'
     topic_id = getTopicByName(topic)['_id']
     print topic_id, START_TS, END_TS
     xapian_search_weibo = getXapianWeiboByTopic(topic_id)

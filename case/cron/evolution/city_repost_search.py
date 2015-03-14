@@ -144,10 +144,10 @@ def results_gen(r, topic):
     return None
 
 if __name__ == '__main__':
-    START_TS = datetime2ts('2014-10-31')
-    END_TS = datetime2ts('2014-11-15')
+    START_TS = datetime2ts('2015-03-02')
+    END_TS = datetime2ts('2015-03-15')
 
-    topic = u'全军政治工作会议'
+    topic = u'两会2015'
     topic_id = getTopicByName(topic)['_id']
     print 'topic: ', topic.encode('utf8')
     print topic_id, START_TS, END_TS

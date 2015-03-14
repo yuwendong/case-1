@@ -10,6 +10,8 @@ import json
 import random
 import pymongo
 from config import MONGODB_HOST, MONGODB_PORT, db
+
+sys.path.append('../../')
 from time_utils import datetime2ts
 from model import CityRepostNews
 from global_utils import getTopicByName
@@ -139,9 +141,10 @@ def results_gen(r):
 
 
 if __name__ == '__main__':
-    start_ts = datetime2ts('2014-11-01')
-    end_ts = datetime2ts('2014-11-10')
-    topic =  u'APEC'
+    start_ts = datetime2ts('2015-03-02')
+    end_ts = datetime2ts('2015-03-15')
+
+    topic = u'两会2015'
     media_dict = media_dict_init()
     mongo_collection = get_dynamic_mongo(mongodb, topic, start_ts, end_ts)
 

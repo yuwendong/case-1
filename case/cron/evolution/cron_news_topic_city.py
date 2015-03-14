@@ -7,6 +7,8 @@ import pymongo
 import random
 from topics import _all_topics
 from config import MONGODB_HOST, MONGODB_PORT, db, mtype_kv_news
+
+sys.path.append('../../')
 from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
@@ -139,9 +141,10 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
 
 
 if __name__ == '__main__':
-    start_ts = datetime2ts('2014-11-01')
-    end_ts = datetime2ts('2014-11-10')
-    topic =  u'APEC'
+    start_ts = datetime2ts('2015-03-02')
+    end_ts = datetime2ts('2015-03-15')
+
+    topic = u'两会2015'
     media_dict = media_dict_init()
     mongo_collection = get_dynamic_mongo(mongodb, topic, start_ts, end_ts)
 
