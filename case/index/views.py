@@ -42,7 +42,7 @@ def acquire_user_by_id(uid):
     return user
 
 def get_default_timerange():
-    return u'20150123-20150203'
+    return u'20150123-20150202'
 
 def get_default_topic():
     return u'张灵甫遗骨疑似被埋羊圈'
@@ -223,12 +223,10 @@ def area_news():
     yaosu = 'area'
 
     # 话题关键词
-    # topic = request.args.get('query', default_topic)
-    topic = u'全军政治工作会议'
+    topic = request.args.get('query', default_topic)
 
     # 时间范围: 20130901-20130901
-    # time_range = request.args.get('time_range', default_timerange)
-    time_range = u'20141101-20141115'
+    time_range = request.args.get('time_range', default_timerange)
 
     # 时间粒度: 3600
     point_interval = request.args.get('point_interval', None)
