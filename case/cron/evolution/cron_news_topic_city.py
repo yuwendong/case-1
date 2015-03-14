@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import IP   #引入IP，对'geo'字段进行解析
 import json
@@ -12,7 +11,7 @@ from time_utils import datetime2ts, ts2HourlyTime
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
 from model import CityTopicCountNews, CityNews
-from news_city_repost_search import media_dict_init
+from utils import get_dynamic_mongo, media_dict_init
 
 Minute = 60
 Fifteenminutes = 15 * 60
@@ -105,10 +104,12 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
                             ccount_dict['forward'][source] += 1
                         except KeyError:
                             ccount_dict['forward'][source] = 1
+                        """
                         try:
                             ccount_dict['sum'][source] += 1
                         except KeyError:
                             ccount_dict['sum'][source] = 1
+                        """
                 elif weibo_result['source_from_name']:
                     source = media2city(weibo_result['source_from_name'])
                     if source:
@@ -116,10 +117,12 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
                             ccount_dict['origin'][source] += 1
                         except KeyError:
                             ccount_dict['origin'][source] = 1
+                        """
                         try:
                             ccount_dict['sum'][source] += 1
                         except KeyError:
                             ccount_dict['sum'][source] = 1
+                        """
                 else:
                     continue
 
@@ -134,25 +137,13 @@ def cityCronTopicNews(topic, mongo_collection, start_ts, over_ts, during=Fifteen
             sorted_news = sorted_news[:n_limit]
             save_ns_results(topic, end_ts, during, n_limit, sorted_news)
 
-def get_dynamic_mongo(topic, start_ts, end_ts):
-    topic_collection = mongodb.news_topic
-    topic_news = topic_collection.find_one({'topic':topic, 'startts':{'$lte':start_ts}, 'endts':{'$gte':end_ts}})
-    if not topic_news:
-        print 'no this topic'
-        return None
-    else:
-        print 'exists'
-        topic_news_id = topic_news['_id']
-        news_collection_name = 'post_' + str(topic_news_id)
-        topic_news_collection = mongodb[news_collection_name]
-    return topic_news_collection
 
 if __name__ == '__main__':
-    start_ts = 1415030400
-    end_ts = 1415750400
-    topic =  u'全军政治工作会议'# u"外滩踩踏"
+    start_ts = datetime2ts('2014-11-01')
+    end_ts = datetime2ts('2014-11-10')
+    topic =  u'APEC'
     media_dict = media_dict_init()
-    mongo_collection = get_dynamic_mongo(topic, start_ts, end_ts)
+    mongo_collection = get_dynamic_mongo(mongodb, topic, start_ts, end_ts)
 
     print 'topic: ', topic.encode('utf8'), 'from %s to %s' % (start_ts, end_ts)
     cityCronTopicNews(topic, mongo_collection, start_ts=start_ts, over_ts=end_ts, during=Fifteenminutes)

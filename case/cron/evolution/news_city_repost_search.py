@@ -9,10 +9,12 @@ import IP
 import json
 import random
 import pymongo
-from config import MONGODB_HOST, MONGODB_PORT, db, MEDIA_FILE
+from config import MONGODB_HOST, MONGODB_PORT, db
+from time_utils import datetime2ts
 from model import CityRepostNews
 from global_utils import getTopicByName
 from dynamic_xapian_weibo import getXapianWeiboByTopic
+from utils import get_dynamic_mongo, media_dict_init
 
 SECOND = 1
 TENSECONDS = 10 * SECOND
@@ -27,9 +29,6 @@ SORT_FIELD = 'timestamp'
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['news']
-
-def datetime2ts(date):
-    return int(time.mktime(time.strptime(date, '%Y-%m-%d')))
 
 def get_filter_dict():
     fields_dict = {}
@@ -89,7 +88,7 @@ def media2city(media): #解析为地址
     if media in media_dict:
         geo = u'中国 ' + media_dict[media]
         geo = '\t'.join(geo.split())
-        print media.encode('utf-8'),geo.encode('utf-8')
+        # print media.encode('utf-8'),geo.encode('utf-8')
     else:
         geo = None
         print media.encode('utf-8'),geo
@@ -138,43 +137,13 @@ def results_gen(r):
 
     return None
 
-def media_dict_init():
-    f = open(MEDIA_FILE, 'r')
-    media_dict = dict()
-    for line in f:
-        line = line.lstrip().lstrip('"').rstrip().rstrip('",')
-        media, geo = line.split('":"')
-        media = media.decode('gb18030')
-        geo = geo.decode('gb18030')
-        media_dict[media] = geo
-    return media_dict
-
-def get_dynamic_mongo(topic, start_ts, end_ts):
-    topic_collection = mongodb.news_topic
-    topic_news = topic_collection.find_one({'topic':topic, 'startts':{'$lte':start_ts}, 'endts':{'$gte':end_ts}})
-    if not topic_news:
-        print 'no this topic'
-        return None
-    else:
-        print 'exists'
-        topic_news_id = topic_news['_id']
-        news_collection_name = 'post_' + str(topic_news_id)
-        topic_news_collection = mongodb[news_collection_name]
-    return topic_news_collection
 
 if __name__ == '__main__':
-    start_ts = 1415030400
-    end_ts = 1415750400
-    topic =  u'全军政治工作会议'# u"外滩踩踏"
-    # START_TS = datetime2ts('2015-01-23')
-    # END_TS = datetime2ts('2015-02-03')
-
-    # topic = u'张灵甫遗骨疑似被埋羊圈' # u'东盟,博览会'
-    # topic_id = getTopicByName(topic)['_id']
-    # topic_id = '54cf5ad9e8d7ce533b1160ec'   #'54ccbfab5a220134d9fc1b37'# 54cc9616a41513bb4fa6e262
-    # duration = Fifteenminutes
+    start_ts = datetime2ts('2014-11-01')
+    end_ts = datetime2ts('2014-11-10')
+    topic =  u'APEC'
     media_dict = media_dict_init()
-    mongo_collection = get_dynamic_mongo(topic, start_ts, end_ts)
+    mongo_collection = get_dynamic_mongo(mongodb, topic, start_ts, end_ts)
 
     print 'topic: ', topic.encode('utf8'), 'from %s to %s' % (start_ts, end_ts)
     news_repost_search(topic, mongo_collection, start_ts, end_ts)
