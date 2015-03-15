@@ -22,6 +22,7 @@ var y_data;
 
 function get_network_infor(){
 var  name = ['number_edges', 'number_nodes','ave_degree'];
+
   for ( var key in name){
     $.ajax({
         url: "/identify/quota/?topic="+ topic +'&start_ts=' + start_ts +'&end_ts=' + end_ts +'&quota=' + name[key] + '&network_type=' + network_type1,
@@ -29,6 +30,8 @@ var  name = ['number_edges', 'number_nodes','ave_degree'];
         type : 'GET',
         async: false,
         success: function(data){
+            console.log('data'+data);
+            console.log(name[key]);
             quota[name[key]] = data;
         }
 
@@ -79,17 +82,11 @@ var  name = ['number_edges', 'number_nodes','ave_degree_centrality', 'ave_betwee
   $("#mstable1").append(html);
 }
 
-
-$(document).ready(function(){
+get_network_infor();
+//$(document).ready(function(){
     //获取网络指标
-    get_network_infor();
-    //获取最短路径分布
-    // getnetwork_line();
-    // drawpicture(index,value);
-    //获取首发者信息
-    // drawpicture(index,value);
-    // switch_curr_add();
-})
+//    get_network_infor();
+//})
 // Date format
 Date.prototype.format = function(format) { 
     var o = { 

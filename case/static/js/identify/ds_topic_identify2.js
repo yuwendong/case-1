@@ -1813,7 +1813,6 @@ function tr_pusher_request_callback(data,start_row,end_row){
   if (data.length){
    $("#loading_current_data5").text("计算完成!");
   }
-  
   //注意这里的翻页还要做处理
     N=data.length;
    
@@ -1828,6 +1827,7 @@ function tr_pusher_request_callback(data,start_row,end_row){
     var timestamp = firstuser_item[5]
     var text = firstuser_item[6]
     var profile_image_url = firstuser_item[7]
+    
     if (profile_image_url == 'no'){
       profile_image_url = '/static/img/unknown_profile_image.gif';
     }
@@ -1839,6 +1839,7 @@ function tr_pusher_request_callback(data,start_row,end_row){
     if (geo==null){
       geo = '未知';
     }
+    //console.log('here');
     var source = firstuser_item[13]
     var weibo_link = firstuser_item[14]
     var mid = firstuser_item[15]
