@@ -371,7 +371,7 @@ def zhibiao():
 
 @mod.route('/network/')
 def topic():
-        # 要素
+    # 要素
     yaosu = 'network'
 
     # 话题关键词
