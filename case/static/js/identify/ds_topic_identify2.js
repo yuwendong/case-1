@@ -1814,11 +1814,11 @@ function tr_pusher_request_callback(data,start_row,end_row){
    $("#loading_current_data5").text("计算完成!");
   }
   
-  var html = "";
   //注意这里的翻页还要做处理
     N=data.length;
    
    for(var i = start_row; i < end_row; i += 1){
+    var html = "";
     var firstuser_item = data[i]
     var rank = firstuser_item[0]
     var uid = firstuser_item[1]
@@ -1866,9 +1866,8 @@ function tr_pusher_request_callback(data,start_row,end_row){
     html += '</div>'
     html += '</div>'
     html += '</li>'
+    $("#trend_pusher_ul").append(html);
    } 
-    console.log('here');
-   $("#trend_pusher_ul").append(html);
    $("#pusher_content_control_height").css("height", $("#weibo_ul").css("height"));
    trendpusher_more(data,start_row,end_row);
 

@@ -450,7 +450,6 @@ function network_request_callback(data) {
                   $("#group_user_list").empty();
                   var html = "";
                   for(var n in nodes){
-                      console.log(n);
                       $("#group_user_list").append("<span>" + n.attributes.name + "(" + n.attributes.pagerank + ")于" + n.attributes.timestamp + " 发布 " + n.attributes.text + "</span>");
                   }
               }
@@ -506,8 +505,6 @@ function network_request_callback(data) {
                   //$('#weibo_text').html(node_text);
                   //$('#weibo_reposts_count').html(node_reposts_count);
                   //$('#weibo_comments_count').html(node_comments_count);
-                  // console.log(node_uid);
-                  // console.log(node_community);
                   $('#community_detail_a').html('<button onclick="network_uid_community(' + node_community +','+ node_uid +',' + graph_type +')">' + '社团' + '</button>');
                   $('#user_weibo').html('<button onclick="network_weibolist(' + node_uid + ',' + graph_type +')">' + '微博' + '</button>');
                   $('#neighbourhood_detail_a').html('<button onclick="network_uid_neighbor(' + node_uid + ',' + graph_type +')">' + '邻居' + '</button>');
