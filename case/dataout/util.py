@@ -61,31 +61,58 @@ def json2str(key, items):
             result += str(item[0])
             result += ','
             result += str(item[1])
+            if item[1]==u'未知':
+                result += '('
+                result += str(item[0])
+                result += ')'
             result += ', , |'
     elif key== 'identify_trendpusher':
         for item in items:
             result += str(item[0])
             result += ','
             result += str(item[1])
+            if item[1]==u'未知':
+                result += '('
+                result += str(item[0])
+                result += ')'
             result += ', , |'
     elif key=='identify_pagerank':
         for item in items:
             result += str(item[1])
             result += ','
             result += str(item[2])
+            if item[2]==u'未知':
+                result += '('
+                result += str(item[1])
+                result += ')'
             result += ', , |'
-    elif key=='identify_firstuser':
-        items = items[1:]
-        for item in items:
-            result += str(item[0])
-            result += ','
-            result += str(item[1])
-            result += ','
-            result += str(item[2])
-            result += ', |'
     n = len(result)
     result = result[:n-1]
     print 'key:', key
     print 'result:', result
     return result
-    
+
+def json2list(key, items):
+    result = []
+    if key=='propagate_peak':
+        kind = u'微博'
+    elif key=='propagate_peak_news':
+        kind = u'新闻'
+    count_list = items['count_list']
+    ts_list = items['ts']
+    peaks = items['peak']
+    peak_list = []
+    for peak in peaks:
+        peak_dict = peaks[peak]
+        peak_list.append(peak_dict['ts'])
+    for n in range(len(count_list)):
+        item = []
+        count = count_list[n]
+        ts = ts_list[n]
+        if ts in peak_list:
+            peak = 1
+        else:
+            peak = 0
+        item = [count, ts, str(kind), peak]
+        result.append(item)
+    return result

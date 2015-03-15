@@ -20,7 +20,7 @@ from case.moodlens.peak_detection import detect_peaks
 
 from case.time_utils import ts2datetime, datetime2ts, ts2date
 from case.global_config import MONGODB_HOST, MONGODB_PORT
-from util import get_info_num, get_dynamic_mongo, json2str
+from util import get_info_num, get_dynamic_mongo, json2str, json2list
 
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 mongodb = conn['54api_weibo_v2']
@@ -355,8 +355,10 @@ def get_topic_data(topic, start_ts, end_ts):
         result['topic_name'] = topic
     result['start_ts'] = ts2datetime(start_ts)
     result['end_ts'] = ts2datetime(end_ts - 3600 * 24)
-    result['propagate_peak'] = get_propagate_peak(topic, start_ts, end_ts)
-    result['propagate_peak_news'] = get_propagate_peak_news(topic, start_ts, end_ts)
+    propagate_peak = get_propagate_peak(topic, start_ts, end_ts)
+    result['propagate_peak'] = json2list('propagate_peak', propagate_peak)
+    propagate_peak_news = get_propagate_peak_news(topic, start_ts, end_ts)
+    result['propagate_peak_news'] = json2list('propagate_peak_news', propagate_peak_news)
     propagate_keywords = get_propagate_keywords(topic, start_ts, end_ts)
     result['propagate_keywords'] = json2str('propagate_keywords' , propagate_keywords)
     identify_firstuser = get_identify_firstuser(topic, start_ts, end_ts)
@@ -418,9 +420,10 @@ def write_topic_excel(topic, start_ts, end_ts):
 @mod.route('/save_csv/')
 def save_csv():
     topic_list = [u'东盟,博览会', u'全军政治工作会议', u'外滩踩踏', u'高校思想宣传', \
-                       u'APEC', u'张灵甫遗骨疑似被埋羊圈']
+                       u'APEC', u'张灵甫遗骨疑似被埋羊圈', u'两会2015']
     time_range_list = [('2013-09-02', '2013-09-07'), ('2014-10-31', '2014-11-15'), ('2014-12-31', '2015-01-09'),\
-                                 ('2015-01-23', '2015-02-02'), ('2014-11-01', '2014-11-10'), ('2015-01-23', '2015-02-02')]
+                                 ('2015-01-23', '2015-02-02'), ('2014-11-01', '2014-11-10'), ('2015-01-23', '2015-02-02') ,\
+                                 ('2015-03-02', '2015-03-15')]
     for i in range(len(topic_list)):
         topic = topic_list[i]
         start_date = time_range_list[i][0]
