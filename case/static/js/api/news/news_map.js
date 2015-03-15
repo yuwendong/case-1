@@ -355,7 +355,7 @@ function drawWholeMap(that, fdata, max_count, myChart_whole){
     }
     var get_map_series_data_ele = function(markPointData, data) {
         return {
-            name:'微博数量',
+            name:'新闻数量',
             type: 'map',
             mapType: 'china',
             roam: false,

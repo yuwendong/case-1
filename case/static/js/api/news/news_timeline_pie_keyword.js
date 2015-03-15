@@ -528,7 +528,7 @@ function refreshDrawWeibos(that, data, select_name, weibo_num){
         // console.log('remove');
     }
     if (!select_name in weibos_obj){
-        $("#"+weibos_div_id).append('<li class="item">关键微博为空！</li>');
+        $("#"+weibos_div_id).append('<li class="item">关键新闻为空！</li>');
         return;
     }
     var data = weibos_obj[select_name];
@@ -576,7 +576,7 @@ function refreshDrawWeibos(that, data, select_name, weibo_num){
         }
         html += '<li class="item" style="width:1010px">';
         html += '<div class="weibo_detail" >';
-        html += '<p>媒体:<a class="undlin" target="_blank" href="javascript;;">' + source_from_name + '</a>&nbsp;&nbsp;发布:';
+        html += '<p>媒体:<span class="undlin">' + source_from_name + '</span>&nbsp;&nbsp;发布:';
         html += '<span class="title" style="color:#0000FF" id="' + da['_id'] + '"><b>[' + da['title'] + ']</b></span>';
         html += '&nbsp;&nbsp;发布内容：&nbsp;&nbsp;<span id="content_summary_' + da['_id'] + '">' + text + '</span>';
         html += '<span style="display: none;" id="content_' + da['_id'] + '">' + da['content168'] + '&nbsp;&nbsp;</span>';

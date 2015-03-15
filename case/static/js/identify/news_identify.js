@@ -397,7 +397,7 @@ function news_display(data, div_id){
         }
         html += '<li class="item" style="width:1010px">';
         html += '<div class="weibo_detail" >';
-        html += '<p>媒体:<a class="undlin" target="_blank" href="javascript;;">' + source_from_name + '</a>&nbsp;&nbsp;发布:';
+        html += '<p>媒体:<span class="undlin">' + source_from_name + '</span>&nbsp;&nbsp;发布:';
         html += '<span class="title" style="color:#0000FF" id="'+ div_id + '_' +news_id + '"><b>[' + title + ']</b></span>';
         html += '&nbsp;&nbsp;发布内容: &nbsp;&nbsp;<span id="content_summary_'+ div_id + '_' + news_id + '">' + content_summary + '</span>';
         html += '<span style="display: none;" id="content_' + div_id + '_' + news_id + '">' + content168 + '&nbsp;&nbsp;</span>';
