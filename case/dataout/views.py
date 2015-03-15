@@ -6,6 +6,7 @@ from flask import Blueprint , url_for, render_template, request, abort, flash, m
 
 from case.propagate.read_quota import ReadPropagate, ReadPropagateKeywords
 from case.propagate.peak_detection import detect_peaks
+from case.propagate.read_quota_news import ReadPropagateNews
 
 from case.identify.first_user import read_table_fu
 from case.identify.trend_user import read_trend_user_table
@@ -35,7 +36,7 @@ mtype_kv = {'origin':1, 'comment':2, 'forward':3}
 emotions_kv = {'happy': 1, 'angry': 2, 'sad': 3, 'news': 4}
 excel_line = ['topic_id', 'topic_status', 'topic_name', 'propagate_keywords' ,'start_ts', 'end_ts', 'topic_area',\
                      'topic_subject', 'identify_firstuser', 'identify_trendpusher', 'identify_pagerank',\
-                     'moodlens_sentiment', 'topic_abstract', 'propagate_peak']
+                     'moodlens_sentiment', 'topic_abstract', 'propagate_peak', 'propagate_peak_news']
 
 mod = Blueprint('dataout', __name__, url_prefix='/dataout')
 
@@ -48,6 +49,33 @@ def get_propagate_peak(topic, start_ts, end_ts):
         count = 0
         for k, v in mtype_kv.iteritems():
             dcount = ReadPropagate(topic, ts, During, v)
+            if dcount:
+                count += sum(dcount['dcount'].values())
+        lis.append(float(count))
+        ts_lis.append(ts2date(ts))
+
+    if not lis or not len(lis):
+        return {}
+
+    new_zeros = detect_peaks(lis)
+    time_lis = {}
+    for idx, point_idx in enumerate(new_zeros):
+        timestamp = ts_lis[point_idx]
+        time_lis[idx] = {
+            'ts': timestamp,
+            'title': 'E'+str(idx)
+            }
+    return {'ts':ts_lis, 'count_list':lis, 'peak': time_lis}
+
+def get_propagate_peak_news(topic, start_ts, end_ts):
+    lis = []
+    ts_lis = []
+    total_days = (end_ts - start_ts) / During
+    for i in range(total_days+1):
+        ts = start_ts + During * i
+        count = 0
+        for k, v in mtype_kv.iteritems():
+            dcount = ReadPropagateNews(topic, ts, During, v)
             if dcount:
                 count += sum(dcount['dcount'].values())
         lis.append(float(count))
@@ -328,6 +356,7 @@ def get_topic_data(topic, start_ts, end_ts):
     result['start_ts'] = ts2datetime(start_ts)
     result['end_ts'] = ts2datetime(end_ts - 3600 * 24)
     result['propagate_peak'] = get_propagate_peak(topic, start_ts, end_ts)
+    result['propagate_peak_news'] = get_propagate_peak_news(topic, start_ts, end_ts)
     propagate_keywords = get_propagate_keywords(topic, start_ts, end_ts)
     result['propagate_keywords'] = json2str('propagate_keywords' , propagate_keywords)
     identify_firstuser = get_identify_firstuser(topic, start_ts, end_ts)
