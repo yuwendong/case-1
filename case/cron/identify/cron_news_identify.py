@@ -96,6 +96,7 @@ if __name__=='__main__':
     print 'start_ts, end_ts:', start_ts, end_ts
     db_date = int(time.time())
     # 创建topics中得话题
+    '''
     save_t = Topics(topic, start_ts, end_ts)
     save_t_exist = db.session.query(Topics).filter(Topics.topic==topic ,\
                                                    Topics.start_ts==start_ts ,\
@@ -104,7 +105,7 @@ if __name__=='__main__':
         db.session.delete(save_t_exist)
     db.session.add(save_t)
     db.session.commit()
-    
+    '''
     save_t_s = TopicStatus(module, status, topic, start_ts, end_ts, db_date)
     save_t_s_exist = db.session.query(TopicStatus).filter(TopicStatus.module==module, \
                                                                                           TopicStatus.start==start_ts, \

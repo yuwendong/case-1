@@ -206,7 +206,7 @@ def get_timestamp_count(query_dict, topic, date, windowsize):
         #print 'end, count:', end, count
         #new_end = ts2date(end)
         time_count.append([end, count])
-    print 'time_count:', time_count
+    #print 'time_count:', time_count
     return time_count
 
     

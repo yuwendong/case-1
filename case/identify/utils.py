@@ -405,7 +405,7 @@ def read_betweeness_centrality_rank(topic, top_n, date, windowsize, domain):
     count =0
     items = db.session.query(BetweenessCentralityUser).filter_by(topic=topic,  \
                                                             windowsize=windowsize, date=date).order_by(BetweenessCentralityUser.rank.asc())
-    print 'items_count:', items.count()  
+    #print 'items_count:', items.count()  
     if items.count():
         for item in items:
             if count >= top_n:
@@ -449,7 +449,7 @@ def read_ds_betweeness_centrality_rank(topic, top_n, date, windowsize, domain):
     count = 0
     items = db.session.query(DsBetweenessCentralityUser).filter_by(topic=topic, windowsize=windowsize ,\
                                                                    date=date).order_by(DsBetweenessCentralityUser.rank.asc())
-    print 'items_count:', items.count()
+    #print 'items_count:', items.count()
     if not items.count():
         return None
     else:
@@ -501,7 +501,7 @@ def read_closeness_centrality_rank(topic, top_n, date, windowsize, domain):
     count = 0
     items = db.session.query(ClosenessCentralityUser).filter_by(topic=topic,  \
                                                             windowsize=windowsize, date=date).order_by(ClosenessCentralityUser.rank.asc())
-    print 'items_count:', items.count()  
+    #print 'items_count:', items.count()  
     if items.count():
         for item in items:
             if count >= top_n:
@@ -547,7 +547,7 @@ def read_ds_closeness_centrality_rank(topic, top_n, date, windowsize, domain):
     count  = 0
     items = db.session.query(DsClosenessCentralityUser).filter_by(topic=topic, date=date,\
                                                                   windowsize=windowsize).order_by(DsClosenessCentralityUser.rank.asc())
-    print 'len(items):', items.count()
+    #print 'len(items):', items.count()
     if not items.count():
         return None
     else:
@@ -790,7 +790,7 @@ def mid_to_url(midint):
 
 def mid2str(mid):
     mid = str(mid)
-    print 'mid:', mid
+    #print 'mid:', mid
     s1 = base62_encode(int(mid[:2]))
     s2 = base62_encode(int(mid[2:9]))
     try:
