@@ -33,9 +33,13 @@ ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 def deal_with(news_id):
-    news_id = news_id.replace(':', '-')
-    news_id = news_id.replace('/', '-')
-    news_id = news_id.replace('.', '-')
+    news_id = news_id.replace(':', '')
+    news_id = news_id.replace('/', '')
+    news_id = news_id.replace('.', '')
+    news_id = news_id.replace('%', '')
+    news_id = news_id.replace('&', '')
+    news_id = news_id.replace('?', '')
+    news_id = news_id.replace('=', '')
     return news_id
 
 
