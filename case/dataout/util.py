@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 import os
+import json
 import pymongo
 from case.global_config import MONGODB_HOST, MONGODB_PORT
 from xapian_case.xapian_backend import XapianSearch
@@ -57,7 +58,7 @@ def json2str(key, items):
     elif key== 'identify_firstuser':
         items = items[1:]
         for item in items:
-            print 'item:', item
+            #print 'item:', item
             result += str(item[0])
             result += ','
             result += str(item[1])
@@ -88,8 +89,8 @@ def json2str(key, items):
             result += ', , |'
     n = len(result)
     result = result[:n-1]
-    print 'key:', key
-    print 'result:', result
+    #print 'key:', key
+    #print 'result:', result
     return result
 
 def json2list(key, items):
@@ -113,6 +114,6 @@ def json2list(key, items):
             peak = 1
         else:
             peak = 0
-        item = [count, ts, str(kind), peak]
+        item = [count, ts, peak]
         result.append(item)
     return result
