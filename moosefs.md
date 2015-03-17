@@ -12,7 +12,7 @@ https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e
 ## 2 服务器部署
 ### 2.1 概述
 我们假定使用的主机 ip 地址分配如下：
-* 主控服务器 Master server: 219.224.135.46
+* 主控服务器 Master server: 219.224.135.47
 * 主控备份服务器 Metalogger server: 未配备
 * 存储块服务器 Chunk servers: 219.224.135.45, 219.224.135.47, 219.224.135.48, 219.224.135.60, 219.224.135.126
 * 客户端主机 clients: 219.224.135.x
@@ -26,7 +26,7 @@ https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e
 
 * 修改/etc/hosts，增加下面一行
 ```
-219.224.135.46 mfsmaster
+219.224.135.47 mfsmaster
 ```
 * 启动mfsmaster 
 ```
@@ -37,7 +37,7 @@ MooseFS 的运行情况:
 ```
 /usr/sbin/mfscgiserv
 ```
-* 查看集群监控信息：http://219.224.135.46:9425/
+* 查看集群监控信息：http://219.224.135.47:9425/
 
 ### 2.3 存储服务器
 1、使用新的整块磁盘做chunkserver的存储，新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
@@ -64,7 +64,7 @@ chown -R mfs:mfs /mnt/mfschunks1
 
 4、类似地，修改/etc/hosts 文件，增加下面的行：
 ```
-219.224.135.46 mfsmaster
+219.224.135.47 mfsmaster
 ```
 
 5、开始启动 chunk server:
@@ -95,7 +95,7 @@ make && make install
 
 3、修改文件/etc/hosts ，增加如下的文本行:
 ```
-219.224.135.46 mfsmaster
+219.224.135.47 mfsmaster
 ```
 
 4、假定客户端的挂接点是/mnt/mfs，我们将以下面的指令来使用 MooseFS 分布式共享文件系统:
