@@ -27,7 +27,7 @@ SORT_FIELD = 'reposts_count'
 DB_NAME = '54api_weibo_v2' 
 TB_NAME = 'master_timeline_weibo' 
 
-mongoclient =  pymongo.MongoClient('219.224.135.46')
+mongoclient =  pymongo.MongoClient('219.224.135.92')
 mongodb = mongoclient[DB_NAME] 
 mongotable = mongodb[TB_NAME]
 
