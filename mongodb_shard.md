@@ -292,4 +292,7 @@ sudo apt-get install ntp
 use boat
 db.boat.ensureIndex({"id": "hashed"})
 
+(7) 
+mongodump --host 219.224.135.46 -d news -o news
 
+mongorestore --host 219.224.135.92 --db news --directoryperdb news/news/
