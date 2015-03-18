@@ -17,11 +17,11 @@ DOMAIN_ZH_LIST = [u'文化', u'教育', u'娱乐', u'时尚', u'财经', u'媒�
                   u'高校微博', u'境内机构', u'境外机构', u'境内媒体', u'境外媒体', u'民间组织', u'律师', \
                   u'政府官员', u'媒体人士', u'活跃人士', u'草根', u'其它']
 
-MYSQL_HOST = '219.224.135.46'
+MYSQL_HOST = '219.224.135.47'
 MYSQL_USER = 'root'
 MYSQL_DB = 'weibocase'
-MONGODB_HOST = '219.224.135.46'
-MONGODB_PORT = 27019
+MONGODB_HOST = '219.224.135.92'
+MONGODB_PORT = 27017
 SSDB_PORT = 8888
 SSDB_HOST = '219.224.135.47' # SSDB服务器在47
 REDIS_HOST = '219.224.135.48'
@@ -33,10 +33,10 @@ GRAPH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../graph/
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 
-API_HOST = '219.224.135.46'
+API_HOST = '219.224.135.47'
 API_PORT = 9115
-MASTER_TIMELINE_54API_MONGOD_HOST = '219.224.135.46'
-MASTER_TIMELINE_54API_MONGOD_PORT = 27019
+MASTER_TIMELINE_54API_MONGOD_HOST = '219.224.135.92'
+MASTER_TIMELINE_54API_MONGOD_PORT = 27017
 # weibo db collection
 MASTER_TIMELINE_54API_WEIBO_DB = '54api_weibo_v2'
 MASTER_TIMELINE_54API_USER_COLLECTION = 'master_timeline_user'
@@ -52,7 +52,7 @@ EVENTS_NEWS_COLLECTION_PREFIX = "post_"
 SUB_EVENTS_FEATURE_COLLECTION = "news_subevent_feature"
 
 #增加的db
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
 # Create application
 app = Flask('xxx')
 # Create dummy secrey key so we can use sessions
