@@ -80,21 +80,7 @@ $ source /etc/environment
 
 三、可能遇到的问题
 
-1.cannot locate package
-先检查package名字是否输入错误(注意字母l和数字1）
-```
-sudo apt-get update
-```
-2.E: Sub-process /usr/bin/dpkg returned an error code (1)
-参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
-
-3.no space on device
-参考http://blog.csdn.net/pang040328/article/details/40041821
-
-4.ubuntu encountered a section with no package header
-参考http://blog.csdn.net/hs794502825/article/details/7835902
-
-5.编译mesos时可能会遇到could not find the main class: org.codehaus.plexus.classworlds.launcher.Launcher. Program will exit，原因是maven环境没有配置好
+１.编译mesos时可能会遇到could not find the main class: org.codehaus.plexus.classworlds.launcher.Launcher. Program will exit，原因是maven环境没有配置好
 
 配置maven环境变量
 在/etc/environment中添加以下语句：
@@ -123,6 +109,21 @@ $ sudo apt-get install oracle-jdk7-installer
 ```
 $ CLASSPATH=/usr/lib/jvm/java-7-oracle/lib
 $ JAVA_HOME=/usr/lib/jvm/java-7-oracle
+```
+
+2.E: Sub-process /usr/bin/dpkg returned an error code (1)
+参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
+
+3.no space on device
+参考http://blog.csdn.net/pang040328/article/details/40041821
+
+4.ubuntu encountered a section with no package header
+参考http://blog.csdn.net/hs794502825/article/details/7835902
+
+５.cannot locate package
+先检查package名字是否输入错误(注意字母l和数字1）
+```
+sudo apt-get update
 ```
 
 6.初始化月份字符串错误error initializing month string
