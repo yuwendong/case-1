@@ -30,9 +30,9 @@ mkdir /var/lib/mongodb_rs0
 mkdir /var/lib/mongodb_rs1
 mkdir /var/log/mongodb
 ```
-同理在46,47,48,126,60上分别创建上述文件目录
+同理在47,48,126,60上分别创建上述文件目录
 
-219.224.135.46
+219.224.135.60
 ```
 mkdir /var/lib/mongodb_config_server
 ```
@@ -101,14 +101,14 @@ rs.status();
 ```
 
 3.3 config server
-分别在46,47,48上作如下配置：
+分别在60,47,48上作如下配置：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ./mongod --configsvr --dbpath /var/lib/mongodb_config --port 27018 --logpath /var/log/mongodb/config.log --logappend --fork
 ```
 
 3.4 mongos
-在46,47,48config server上分别执行：
+在60,47,48config server上分别执行：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 ./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
@@ -117,7 +117,7 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 3.5 shard cluster
 连接到其中一个mongos进程，并切换到admin数据库进行如下配置：
 ```
-mongo --port 27019 --host 219.224.135.46
+mongo --port 27019 --host 219.224.135.47
 >use admin;
 >db.runCommand({addshard:'rs0/mirage:27017,219.224.135.47:27017'}); 
 #这里可能会出现问题，由于在设置replication #set时primary节点的host默认为用户名，而不是ip。这个可以通过rs.status();进行查看
@@ -295,9 +295,9 @@ db.boat.ensureIndex({"id": "hashed"})
 (7) mongodump 备份 与 mongorestore 恢复
 ```
 cd /home/ubuntu3/linhao/mongodump/
-mongodump --host 219.224.135.46 --port 27019 -d news -o ./
+mongodump --host 219.224.135.47 --port 27019 -d news -o ./
 mongorestore --host 219.224.135.92 --db news --directoryperdb news/
-mongodump --host 219.224.135.46 --port 27019 -d 54api_weibo_v2 -o ./
+mongodump --host 219.224.135.47 --port 27019 -d 54api_weibo_v2 -o ./
 mongorestore --host 219.224.135.92 --db news --directoryperdb 54api_weibo_v2/
 ```
 
