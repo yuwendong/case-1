@@ -13,14 +13,14 @@ adduser mongodb
 
 
 ##2 mongodb_shard结构说明
-本次配置涉及到4台服务器，45，46，47，48，构成2个shard
+本次配置涉及到6台服务器，45，46，47，48，60, 126构成3个shard
 需要存在的结构：replication sets，mongod，mongod config sever，mongos。
 45,48————shard1（rs0）
 46,47————shard2（rs1）
 126,60————shard3(rs2)
 replication sets:（45,48），（46,47）,(126,60)一主一从即primary，secondary
-mongod config sever:46,47,48
-mongos:46,47,48
+mongod config sever:47,48,60
+mongos:47,48,60
 
 ##3 具体配置
 3.1 创建文件目录
@@ -243,14 +243,14 @@ Totals
 查看'raw'是否有'rs0','rs1'的相关信息
 
 ##4 相关问题
-1)在进入mongo时出现问题，使用以下语句：
+(1)在进入mongo时出现问题，使用以下语句：
 ```
 export LC_ALL='C'
 ```
-2)在添加shard后一定要启动对应数据库的shard，即enablesharding。
+(2)在添加shard后一定要启动对应数据库的shard，即enablesharding。
 否则在此后的collection中，不能成功给collection分片
 
-3)/var/log/mongodb/config.log
+(3)/var/log/mongodb/config.log
 accept() returns -1 errno:24 Too many open files
 
 solution: vim /etc/bash.bashrc
@@ -259,7 +259,7 @@ source /etc/bash.bashrc
 
 mongodb修改最大连接数参考http://blog.163.com/ji_1006/blog/static/1061234120121120114047464/
 
-4)重要：MongoDB要求文件系统对目录支持fsync()。所以例如HGFS和Virtual Box的共享目录不支持这个操作。
+(4)重要：MongoDB要求文件系统对目录支持fsync()。所以例如HGFS和Virtual Box的共享目录不支持这个操作。
 　　
 　推荐配置
 　
@@ -300,3 +300,20 @@ mongorestore --host 219.224.135.92 --db news --directoryperdb news/
 mongodump --host 219.224.135.46 --port 27019 -d 54api_weibo_v2 -o ./
 mongorestore --host 219.224.135.92 --db news --directoryperdb 54api_weibo_v2/
 ```
+
+##5 mongodb服务迁移
+（1）迁移原因描述：46服务器不稳定，因此需要将46服务器上相应的mongod、mongos服务移动到60服务器上
+
+（2）config server迁移，将config server由46 47 48 变为 47 48 60
+
+参考http://docs.mongodb.org/manual/tutorial/migrate-config-servers-with-different-hostnames/
+
+重点是Disable the Balancer，将46上config db的数据考到60上，启动60上config server，restart the Balancer
+
+（3）mongos服务迁移，将mongos server由46 47 48 变为 47 48 60，配置好上面config server后在47 48 60服务器上运行
+```
+./mongos --configdb 219.224.135.60:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
+```
+
+（4）shard服务迁移
+TODO
