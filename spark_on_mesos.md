@@ -110,8 +110,8 @@ $ source /etc/environment
 ```
 $ mvn -version
 ```
-若仍有错误，则java配置有问题，继续执行以下步骤
-参考http://www.linuxdiyf.com/linux/2788.html，将当前机器java版本设置成java-7-oracle
+若仍有错误，则java配置有问题，继续执行以下步骤。
+将当前机器java版本设置成java-7-oracle，参考http://www.linuxdiyf.com/linux/2788.html
 若未安装java7则进行安装
 ```
 $ sudo apt-get install python-software-properties
