@@ -106,6 +106,27 @@ $ M2=/usr/share/maven/bin
 ```
 $ source /etc/environment
 ```
+输入以下命令检查maven是否配置完成
+```
+$ mvn -version
+```
+若仍有错误，则java配置有问题，继续执行以下步骤
+参考http://www.linuxdiyf.com/linux/2788.html，将当前机器java版本设置成java-7-oracle
+若未安装java7则进行安装
+```
+$ sudo apt-get install python-software-properties
+$ sudo add-apt-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install oracle-jdk7-installer
+```
+并在/etc/environment中添加环境变量，重新登录后生效
+```
+$ CLASSPATH=/usr/lib/jvm/java-7-oracle/lib
+$ JAVA_HOME=/usr/lib/jvm/java-7-oracle
+```
+
+6.初始化月份字符串错误error initializing month string
+参考http://blog.csdn.net/plunger2011/article/details/25806133
 
 四、mesos启动
 
