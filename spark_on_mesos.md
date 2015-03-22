@@ -94,6 +94,19 @@ sudo apt-get update
 4.ubuntu encountered a section with no package header
 参考http://blog.csdn.net/hs794502825/article/details/7835902
 
+5.编译mesos时可能会遇到could not find the main class: org.codehaus.plexus.classworlds.launcher.Launcher. Program will exit，原因是maven环境没有配置好
+
+配置maven环境变量
+在/etc/environment中添加以下语句：
+```
+$ M2_HOME=/usr/share/maven
+$ M2=/usr/share/maven/bin
+```
+在命令行输入以下语句，并重新登录服务器，使修改生效
+```
+$ source /etc/environment
+```
+
 四、mesos启动
 
 参考http://mesos.apache.org/documentation/latest/deploy-scripts/
