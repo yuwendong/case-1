@@ -316,4 +316,5 @@ mongorestore --host 219.224.135.92 --db news --directoryperdb 54api_weibo_v2/
 ```
 
 （4）shard服务迁移
-TODO
+
+参考http://docs.mongodb.org/manual/tutorial/migrate-sharded-cluster-to-new-hardware/
