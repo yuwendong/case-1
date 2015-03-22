@@ -8,7 +8,7 @@ from pymongo.errors import BulkWriteError
 from datetime import datetime
 from xapian_case.xapian_backend import XapianSearch
 
-MASTER_TIMELINE_54API_MONGOD_HOST = "219.224.135.46"
+MASTER_TIMELINE_54API_MONGOD_HOST = "219.224.135.47"
 MASTER_TIMELINE_54API_MONGOD_PORT = 27019
 MASTER_TIMELINE_54API_WEIBO_DB = "54api_weibo_v2"
 XAPIAN_USER_FIELDS = ['_id', 'province', 'city', 'verified', 'name', 'friends_count', \
@@ -145,9 +145,8 @@ def test_xapian_user_save2mongo(xapian_search_user):
                 print '[%s] total deliver %s, cost: %s sec [avg: %sper/sec]' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), count, te - tb, count / (te - tb))
             ts = te
 
-mongos_host_port = ['219.224.135.46:27019', '219.224.135.47:27019', \
-        '219.224.135.48:27019', '219.224.135.60:27019', \
-        '219.224.135.126:27019']
+mongos_host_port = ['219.224.135.60:27019', '219.224.135.47:27019', \
+        '219.224.135.48:27019']
 
 mongos_list = []
 for mongo in mongos_host_port:
@@ -241,7 +240,7 @@ def gen_key(key):
 from sqlalchemy import Table, Column, BigInteger, String, Float, MetaData, create_engine
 
 MYSQL_USER = 'root'
-MYSQL_HOST = '219.224.135.46'
+MYSQL_HOST = '219.224.135.47'
 #MYSQL_PORT = 8066
 MYSQL_PORT = 3306
 #MYSQL_DB = 'production_cobar_schema'
