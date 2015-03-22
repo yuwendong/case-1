@@ -5,7 +5,7 @@
     1 微博通道
       1）数据来源说明:
          微博话题名 --
-             mongodb (host=219.224.135.46 port=27019)
+             mongodb (host=219.224.135.47 port=27019)
                  db: 54api_weibo_v2
                  话题名collection: master_timeline_topic  
 
@@ -16,7 +16,7 @@
                                 （weibo_topic_id对应于mongodb中master_timeline_topic中话题id）
                  查询形式: 通过/home/xapian/xapian_weibo_topic/stub/ 中的stub文件获取
  
-             mongodb (host=219.224.135.46 port=27019) - (注：创建xapian用)
+             mongodb (host=219.224.135.47 port=27019) - (注：创建xapian用)
                  db: 54api_weibo_v2
                  话题名collection: 'master_timeline_weibo_topic_' + topic_id
                                   (topic_id对应于master_timeline_topic中话题id)
@@ -25,28 +25,28 @@
              xapian (host=219.224.135.48)
                  路径: /home/xapian/xapian_user/
 
-             mongodb (host=219.224.135.46 port=27019)
+             mongodb (host=219.224.135.47 port=27019)
                  db: 54api_weibo_v2
                  用户信息collection: master_timeline_user
               
       2) 输出数据说明:
          
          微博地域转发关系
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_repost表
          微博数量（按地域）
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_topic_count表
          热门微博
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_weibos表
     
     2 新闻通道
       1）数据来源说明:
-         mongodb (host=219.224.135.46 port=27019)
+         mongodb (host=219.224.135.47 port=27019)
          db: news
          新闻话题名称collection: news_topic
          话题新闻内容collection: 'post_' + news_topic_id
@@ -56,15 +56,15 @@
 
       2) 输出数据说明:
          新闻地域转发关系
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_repost_news表
          新闻数量（按地域）
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_topic_count_news表
          热门新闻
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: city_news表
           

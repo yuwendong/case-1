@@ -5,7 +5,7 @@ PUT /_river/guba_post/_meta
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "guba", 
     "collection": "post"
@@ -22,7 +22,7 @@ PUT /_river/guba_stock/_meta
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "guba", 
     "collection": "stock"
@@ -55,7 +55,7 @@ PUT /_river/test_river_master_timeline_weibo_topic_545f4c22cf198b18c57b8014/_met
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "54api_weibo_v2", 
     "collection": "master_timeline_weibo_topic_545f4c22cf198b18c57b8014"
@@ -72,7 +72,7 @@ PUT /_river/test_river_master_timeline_user/_meta
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "54api_weibo_v2", 
     "collection": "master_timeline_user"
@@ -89,7 +89,7 @@ PUT /_river/test_river_master_timeline_weibo_topic_545f2cbecf198b18c57b8013/_met
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "54api_weibo_v2", 
     "collection": "master_timeline_weibo_topic_545f2cbecf198b18c57b8013"
@@ -106,7 +106,7 @@ PUT /_river/test_river_master_timeline_weibo_topic_5460e65501d4a554d8b00894/_met
   "mongodb": { 
     "servers":
     [
-      { "host": "219.224.135.46", "port": "27019" }
+      { "host": "219.224.135.47", "port": "27019" }
     ],
     "db": "54api_weibo_v2", 
     "collection": "master_timeline_weibo_topic_5460e65501d4a554d8b00894"

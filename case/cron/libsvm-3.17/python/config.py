@@ -56,7 +56,7 @@ elif IS_PROD == 3:
     LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
     REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
     REDIS_PORT = 6379
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_'
     
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
@@ -69,7 +69,7 @@ app = Flask('xxx')
 app.config['SECRET_KEY'] = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 # Create database
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_ECHO'] = False
 db = SQLAlchemy(app)
