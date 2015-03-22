@@ -91,6 +91,9 @@ sudo apt-get update
 3.no space on device
 参考http://blog.csdn.net/pang040328/article/details/40041821
 
+4.ubuntu encountered a section with no package header
+参考http://blog.csdn.net/hs794502825/article/details/7835902
+
 四、mesos启动
 
 参考http://mesos.apache.org/documentation/latest/deploy-scripts/
