@@ -111,7 +111,7 @@ cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
 在60,47,48config server上分别执行：
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
-./mongos --configdb 219.224.135.46:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
+./mongos --configdb 219.224.135.60:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
 ```
 
 3.5 shard cluster
