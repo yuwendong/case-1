@@ -43,7 +43,7 @@ MooseFS 的运行情况:
 1、使用新的整块磁盘做chunkserver的存储，新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
 ```
 mkdir -p /mnt/mfschunks1
-mount /dev/sdb
+mount /dev/sdb1 /mnt/mfschunks1
 ```
 如果/dev/sdb没有进行格式化，用如下命令进行硬盘格式化，前提是/dev/sdb盘可以进行格式化
 ```
