@@ -187,7 +187,7 @@ fuse: if you are sure this is safe, use the 'nonempty' mount option
 error in fuse_mount
 ```
 
-解决方案如下
+解决方案如下，如果不行的话删除mfs，然后重新mount
 ```
 umount /mnt/mfs
 ```
