@@ -1,4 +1,4 @@
-ssh root@219.224.135.46
+ssh root@219.224.135.47
 
 ping 192.168.1.6 (sugon ds600 G10)
 
@@ -15,5 +15,5 @@ iscsiadm -m node -p 192.168.1.6 -l
 fdisk -l
 
 mkdir -p /mnt/ds600
-mount /dev/sdb /mnt/ds600
+mount /dev/sdc /mnt/ds600
 
