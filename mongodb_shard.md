@@ -287,9 +287,9 @@ db.boat.ensureIndex({"id": "hashed"})
 (7) mongodump 备份 与 mongorestore 恢复
 ```
 cd /home/ubuntu3/linhao/mongodump/
-mongodump --host 219.224.135.47 --port 27019 -d news -o ./
+mongodump --forceTableScan --host 219.224.135.47 --port 27019 -d news -o ./
 mongorestore --host 219.224.135.92 --db news --directoryperdb news/
-mongodump --host 219.224.135.47 --port 27019 -d 54api_weibo_v2 -o ./
+mongodump --forceTableScan --host 219.224.135.47 --port 27019 -d 54api_weibo_v2 -o ./
 mongorestore --host 219.224.135.92 --db news --directoryperdb 54api_weibo_v2/
 ```
 
