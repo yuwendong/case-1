@@ -31,8 +31,8 @@ USER_DOMAIN = 'user_domain' # user domain hash
 DOMAIN_LIST = ['folk', 'media', 'opinion_leader', 'oversea', 'other']
 
 # community_information
-MONGODB_HOST = '219.224.135.92'
-MONGODB_PORT = 27017
+MONGODB_HOST = '219.224.135.47'
+MONGODB_PORT = 27019
 conn = pymongo.Connection(host=MONGODB_HOST, port=MONGODB_PORT)
 MONGODB_WEIBO = '54api_weibo_v2'
 MONGODB_WEIBO_TOPIC_COLLECTION = 'master_timeline_topic'
