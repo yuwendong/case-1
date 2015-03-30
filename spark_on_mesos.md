@@ -33,6 +33,11 @@ $ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
 参见http://mesos.apache.org/gettingstarted/
 尽量使用Apache官网下载方案，git版本不稳定
 
+安装结束后，查看/etc/ld.so.conf，加入下面一行，若已存在则忽略这步。
+```
+/usr/local/lib
+```
+执行ldconfig -v，使生效。
 mesos启动后可通过219.224.135.46:5050查看Web UI界面
 
 二、Spark配置

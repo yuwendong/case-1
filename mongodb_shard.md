@@ -13,12 +13,12 @@ adduser mongodb
 
 
 ##2 mongodb_shard结构说明
-本次配置涉及到6台服务器，45，46，47，48，60, 126构成3个shard
+本次配置涉及到5台服务器，45，47，48，60, 126构成3个shard
 需要存在的结构：replication sets，mongod，mongod config sever，mongos。
-45,48————shard1（rs0）
-46,47————shard2（rs1）
+45,48————shard1（rs1）
+47————shard2（rs0）
 126,60————shard3(rs2)
-replication sets:（45,48），（46,47）,(126,60)一主一从即primary，secondary
+replication sets:（45,48），（47）,(126,60)一主一从即primary，secondary
 mongod config sever:47,48,60
 mongos:47,48,60
 
@@ -40,11 +40,12 @@ mkdir /var/lib/mongodb_config_server
 
 3.2 replication sets
 1）创建replication set1：rs0
-219.224.135.46:
+219.224.135.47, 创建replication set:rs0
 ```
 cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
+numactl --interleave=all ./mongod --port=27016 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0_mirage --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
 ```
-创建replication set:rs0
+47上启动另一个mongod服务
 ```
 numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0 --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
 ```
@@ -53,15 +54,6 @@ numactl --interleave=all ./mongod --port=27017 --replSet=rs0 --dbpath=/var/lib/m
 创建成功会有如下说明：
 ```
 child process started successfully, parent existing
-```
-在47上做如上操作
-初始化replication set1:rs0
-使用mongo进入一个primary mongod
-```
-mongo --port 27017 --host 219.224.135.46
-rs.initiate();
-rs.add('219.224.135.47');
-rs.status();    #查看replication set的状态
 ```
 
 2）创建replication set:rs1
@@ -315,6 +307,28 @@ mongorestore --host 219.224.135.92 --db news --directoryperdb 54api_weibo_v2/
 ./mongos --configdb 219.224.135.60:27018,219.224.135.47:27018,219.224.135.48:27018 --port 27019 --logpath /var/log/mongodb/mongos.log --logappend --fork
 ```
 
-（4）shard服务迁移
+（4）shard服务迁移（将rs0由46:27017+47:27017变为47:27016+47:27017）
 
 参考http://docs.mongodb.org/manual/tutorial/migrate-sharded-cluster-to-new-hardware/
+
+1) Disable the Balancer
+
+2) 连接219.224.135.46:27017, 即rs0的primary，stepdown()，让47:27017成为primary
+
+3) 将46上/var/lib/mongodb_rs0拷贝到47/var/lib/mongodb_rs0_mirage上
+
+4) 启动47上的mongod服务，使用47:27016
+```
+ssh root@219.224.135.47
+cd /home/mongodb/mongodb-linux-x86_64-2.6.4/bin
+numactl --interleave=all ./mongod --port=27016 --replSet=rs0 --dbpath=/var/lib/mongodb_rs0_mirage --logpath=/var/log/mongodb/mongodb.log --logappend --fork --smallfiles
+```
+
+5) 更新replica set rs0配置信息
+```
+cfg = rs.conf()
+cfg.members[0].host = "219.224.135.47:27016"
+rs.reconfig(cfg)
+rs.conf()
+rs.status()
+```

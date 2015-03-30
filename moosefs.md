@@ -26,7 +26,7 @@ https://www.evernote.com/shard/s442/sh/7553c5b5-56d6-4c38-a7f6-58215cd38e0d/3f5e
 
 * 修改/etc/hosts，增加下面一行
 ```
-219.224.135.47 mfsmaster
+219.224.135.92 mfsmaster
 ```
 * 启动mfsmaster 
 ```
@@ -43,7 +43,7 @@ MooseFS 的运行情况:
 1、使用新的整块磁盘做chunkserver的存储，新磁盘分区格式化：对/dev/sdb采用ext3格式化，并进行mount，参考https://help.ubuntu.com/community/InstallingANewHardDrive
 ```
 mkdir -p /mnt/mfschunks1
-mount /dev/sdb
+mount /dev/sdb1 /mnt/mfschunks1
 ```
 如果/dev/sdb没有进行格式化，用如下命令进行硬盘格式化，前提是/dev/sdb盘可以进行格式化
 ```
@@ -187,7 +187,7 @@ fuse: if you are sure this is safe, use the 'nonempty' mount option
 error in fuse_mount
 ```
 
-解决方案如下
+解决方案如下，如果不行的话删除mfs，然后重新mount
 ```
 umount /mnt/mfs
 ```
