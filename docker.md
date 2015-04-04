@@ -1,5 +1,7 @@
 # Docker封装具体实施步骤
 
+安装基础镜像：http://www.it165.net/os/html/201408/9126.html
+
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
 
 (2)根据项目所依赖的运行环境编写Dockerfile文件。
