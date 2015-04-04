@@ -2,7 +2,23 @@
 
 ## 1 使用docker在91、92、93上部署scrapy_guba_redis 
 
-### 1.1 安装ubuntu操作系统基础镜像ubuntu:base 参考http://www.it165.net/os/html/201408/9126.html
+### 1.1 安装ubuntu操作系统基础镜像ubuntu:base
+
+参考http://www.it165.net/os/html/201408/9126.html
+
+(1)从openvz下载一个ubuntu14.04的模板
+```
+wget http://download.openvz.org/template/precreated/ubuntu-14.04-x86_64.tar.gz
+```
+
+(2)创建ubuntu:base基础镜像
+```
+cat ubuntu-14.04-x86_64.tar.gz |docker import - ubuntu:base
+```
+
+### 1.2 创建ubuntu操作系统latest镜像ubuntu:latest
+
+(1)docker run -t -i ubuntu:base /bin/bash 进入虚拟机 编辑apt软件源vim /etc/apt/sources.list，删除里面的内容，粘帖上xubuntu 14.04.1 LTS的源
 ```
 # deb cdrom:[Xubuntu 14.04.1 LTS _Trusty Tahr_ - Release amd64 (20140723)]/ trusty main multiverse restricted universe
 
@@ -65,14 +81,53 @@ deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main
 # deb-src http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main
 ```
 
+(2)apt-get update更新, exit虚拟机, docker ps -a, docker commit containerid ubuntu, 从而创建ubuntu:latest镜像
+
+### 1.3 从ubuntu:latest创建面向scrapy任务的scrapy_guba_redis:0.1.0镜像
+
+(1)clone 代码库
 ```
-docker build
+mkdir docker_scrapy_guba_redis
+cd docker_scrapy_guba_redis
+git clone https://github.com/linhaobuaa/scrapy_guba_redis.git 
 ```
 
+(2)vim Dockerfile
+```
+FROM ubuntu:latest
+
+MAINTAINER HuangXiaojun
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && apt-get install -y gcc make python-dev python-setuptools git
+
+RUN apt-get install libxml2 libxml2-dev libxslt-dev libxslt1-dev
+ADD scrapy_guba_redis /
+RUN easy_install pip
+RUN apt-get install python-lxml openssl
+RUN apt-get install libffi-dev
+RUN apt-get install -y libssl-dev
+RUN easy_install pyOpenSSL
+RUN pip install scrapy
+RUN pip install beautifulsoup
+RUN pip install redis
+RUN pip install pymongo
+```
+
+(3) docker build -t scrapy_guba_redis:0.1.0 .
+
+(4) 运行list爬虫
 ```
 docker run scrapy_guba_redis:0.1.0 scrapy crawl guba_stock_list_realtime_redis_spider --loglevel=INFO
 ```
 
+(5) 运行detail爬虫
+```
+docker run scrapy_guba_redis:0.1.0 scrapy crawl guba_stock_detail_realtime_redis_spider --loglevel=INFO
+```
+
+## 2 其他说明
 
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
 
