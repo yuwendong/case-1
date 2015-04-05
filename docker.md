@@ -133,6 +133,30 @@ docker commit containerid rcsc/scrapy_guba_redis
 docker push rscs/scrapy_guba_redis
 ```
 
+### 1.5 提交任务到marathon
+(1) 编辑Docker_list.json如下
+```
+{
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "scrapy_guba_redis:0.1.0"
+    }
+  },
+  "id": "scrapygubaredislist",
+  "instances": 1,
+  "cpus": 1,
+  "mem": 512,
+  "uris": [],
+  "cmd": "scrapy crawl guba_stock_list_realtime_redis_spider --loglevel=INFO --logfile=list.log"
+}
+```
+
+(2) 提交任务到marathon master
+```
+curl -X POST -H "Content-Type: application/json" 219.224.135.91:8080/v2/apps -d@Docker_list.json
+```
+
 ## 2 其他说明
 
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
