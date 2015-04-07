@@ -184,7 +184,7 @@ openssl req -x509 -batch -nodes -newkey rsa:2048 -keyout logstash-forwarder.key 
 docker pull denibertovic/logstash
 git clone https://github.com/denibertovic/logstash-dockerfile.git
 cd logstash-dockerfile
-docker run --name logstash -p 5043:5043 -p 514:514 -v /tmp/logs:/opt/logs -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -i -t denibertovic/logstash
+docker run --name logstash -p 5043:5043 -p 514:514 -v /tmp/logs:/opt/logs -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -d -t denibertovic/logstash
 ```
 
 (4) setup logstash-forwarder
