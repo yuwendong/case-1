@@ -166,7 +166,7 @@ curl -X POST -H "Content-Type: application/json" 219.224.135.91:8080/v2/apps -d@
 docker pull denibertovic/elasticsearch
 git clone https://github.com/denibertovic/elasticsearch-dockerfile.git
 cd elasticsearch-dockerfile
-docker run --name elasticsearch -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -d -t denibertovic/elasticsearch
+docker run --name elasticsearch -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -p 9300:9300 -d -t denibertovic/elasticsearch
 ```
 
 (2) setup kibana
@@ -184,7 +184,7 @@ openssl req -x509 -batch -nodes -newkey rsa:2048 -keyout logstash-forwarder.key 
 docker pull denibertovic/logstash
 git clone https://github.com/denibertovic/logstash-dockerfile.git
 cd logstash-dockerfile
-docker run --name logstash -p 5043:5043 -p 514:514 -v /tmp/logs:/opt/logs -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -d -t denibertovic/logstash
+docker run --name logstash -p 5043:5043 -p 514:514 -p 9292:9292 -v /tmp/logs:/opt/logs -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -d -t denibertovic/logstash
 ```
 
 (4) setup logstash-forwarder
