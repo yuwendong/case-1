@@ -159,6 +159,42 @@ curl -X POST -H "Content-Type: application/json" 219.224.135.91:8080/v2/apps -d@
 
 (3) marathon管理页面http://219.224.135.91:8080
 
+### 1.6 docker 
+
+(1) setup elasticsearch  
+```
+docker pull denibertovic/elasticsearch
+git clone https://github.com/denibertovic/elasticsearch-dockerfile.git
+cd elasticsearch-dockerfile
+docker run --name elasticsearch -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -d -t denibertovic/elasticsearch
+```
+
+(2) setup kibana
+```
+docker pull denibertovic/kibana
+git clone https://github.com/denibertovic/kibana-dockerfile.git
+cd kibana-dockerfile
+docker run --name kibana -d -p 5601:5601 -v /tmp/logs:/logs -v `pwd`/config-example:/kibana/config -t denibertovic/kibana
+```
+
+(3) setup logstash
+```
+mkdir certs && cd certs
+openssl req -x509 -batch -nodes -newkey rsa:2048 -keyout logstash-forwarder.key -out logstash-forwarder.crt
+docker pull denibertovic/logstash
+git clone https://github.com/denibertovic/logstash-dockerfile.git
+cd logstash-dockerfile
+docker run --name logstash -p 5043:5043 -p 514:514 -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -i -t denibertovic/logstash
+```
+
+(4) setup logstash-forwarder
+```
+docker pull denibertovic/logstash-forwarder
+git clone https://github.com/denibertovic/logstash-forwarder-dockerfile.git
+cd logstash-forwarder-dockerfile
+docker run --name forwarder -d -v /tmp/feeds -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -e LOGSTASH_SERVER="219.224.135.91:5043" -t denibertovic/logstash-forwarder
+```
+
 ## 2 其他说明
 
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
