@@ -198,8 +198,7 @@ docker build -t logstash-forwarder .
 docker run --name forwarder -v /tmp/test:/tmp/test -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -v /tmp/feeds -d -t logstash-forwarder
 ```
 
-(5) 每台机器上部署一个scrapy
-
+(5) 每台机器上部署一个scrapy 参考https://github.com/linhaobuaa/docker_scrapy_guba_redis/tree/master
 
 
 ## 2 其他说明
