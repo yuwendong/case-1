@@ -159,7 +159,9 @@ curl -X POST -H "Content-Type: application/json" 219.224.135.91:8080/v2/apps -d@
 
 (3) marathon管理页面http://219.224.135.91:8080
 
-### 1.6 docker 
+### 1.6 使用docker部署elasticsearch+logstash+kibana+logstash_forwarder收集scrapy docker产生的日志
+
+说明：在219.224.135.91上使用docker部署elasticsearch+logstash+kibana，在91、92、93上使用docker分别部署scrapy+logstash_forwarder
 
 (1) setup elasticsearch  
 ```
@@ -169,7 +171,7 @@ cd elasticsearch-dockerfile
 docker run --name elasticsearch -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -p 9300:9300 -d -t denibertovic/elasticsearch
 ```
 
-(2) setup kibana
+(2) setup kibana  http://219.224.135.91:5601
 ```
 docker pull denibertovic/kibana
 git clone https://github.com/denibertovic/kibana-dockerfile.git
@@ -178,22 +180,27 @@ docker run --name kibana -d -p 5601:5601 -v /tmp/logs:/logs -v `pwd`/config-exam
 ```
 
 (3) setup logstash
+注意把产生的certs传给logstash-forwarder
 ```
-mkdir certs && cd certs
-openssl req -x509 -batch -nodes -newkey rsa:2048 -keyout logstash-forwarder.key -out logstash-forwarder.crt
-docker pull denibertovic/logstash
 git clone https://github.com/denibertovic/logstash-dockerfile.git
 cd logstash-dockerfile
-docker run --name logstash -p 5043:5043 -p 514:514 -p 9292:9292 -v /tmp/logs:/opt/logs -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -d -t denibertovic/logstash
+mkdir -p certs && cd certs
+openssl req -subj '/CN=localhost/' -x509 -batch -nodes -newkey rsa:2048 -keyout logstash-forwarder.key -out logstash-forwarder.crt
+docker pull denibertovic/logstash
+docker run --name logstash -p 5043:5043 -p 514:514 -v `pwd`/certs:/opt/certs -v `pwd`/conf-example:/opt/conf --link elasticsearch:elasticsearch -d -t denibertovic/logstash
 ```
 
-(4) setup logstash-forwarder
+(4) 每台机上部署一个 logstash-forwarder 参考https://github.com/linhaobuaa/logstash-forwarder-dockerfile
 ```
-docker pull denibertovic/logstash-forwarder
-git clone https://github.com/denibertovic/logstash-forwarder-dockerfile.git
+git clone https://github.com/linhaobuaa/logstash-forwarder-dockerfile
 cd logstash-forwarder-dockerfile
-docker run --name forwarder -d -v /tmp/feeds -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -e LOGSTASH_SERVER="219.224.135.91:5043" -t denibertovic/logstash-forwarder
+docker build -t logstash-forwarder .
+docker run --name forwarder -v /tmp/test:/tmp/test -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -v /tmp/feeds -d -t logstash-forwarder
 ```
+
+(5) 每台机器上部署一个scrapy
+
+
 
 ## 2 其他说明
 
