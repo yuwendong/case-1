@@ -168,7 +168,14 @@ curl -X POST -H "Content-Type: application/json" 219.224.135.91:8080/v2/apps -d@
 docker pull denibertovic/elasticsearch
 git clone https://github.com/denibertovic/elasticsearch-dockerfile.git
 cd elasticsearch-dockerfile
-docker run --name elasticsearch -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -p 9300:9300 -d -t denibertovic/elasticsearch
+docker run --name elasticsearch -v /var/lib/elasticsearch_data_for_scrapy_log:/var/lib/elasticsearch_data_for_scrapy_log -v /var/log/elasticsearch_log_for_scrapy_log:/var/log/elasticsearch_log_for_scrapy_log -v `pwd`/config-example:/opt/elasticsearch/config -p 9200:9200 -p 9300:9300 -d -t denibertovic/elasticsearch
+```
+注意修改/config-example/elasticsearch.yml
+```
+node.name: "ubuntu6"
+path.data: /var/lib/elasticsearch_data_for_scrapy_log
+path.logs: /var/log/elasticsearch_log_for_scrapy_log
+network.publish_host: 219.224.135.91
 ```
 
 (2) setup kibana  http://219.224.135.91:5601
@@ -177,6 +184,10 @@ docker pull denibertovic/kibana
 git clone https://github.com/denibertovic/kibana-dockerfile.git
 cd kibana-dockerfile
 docker run --name kibana -d -p 5601:5601 -v /tmp/logs:/logs -v `pwd`/config-example:/kibana/config -t denibertovic/kibana
+```
+注意修改config-example/kibana.yml
+```
+elasticsearch_url: "http://219.224.135.91:9200"
 ```
 
 (3) setup logstash
@@ -194,12 +205,24 @@ docker run --name logstash -p 5043:5043 -p 514:514 -v `pwd`/certs:/opt/certs -v 
 ```
 git clone https://github.com/linhaobuaa/logstash-forwarder-dockerfile
 cd logstash-forwarder-dockerfile
-docker build -t logstash-forwarder .
-docker run --name forwarder -v /tmp/test:/tmp/test -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -v /tmp/feeds -d -t logstash-forwarder
+docker build -t logstash-forwarder:0.1.0 .
+docker run --name forwarder -v `pwd`/conf-example:/opt/conf -v `pwd`/certs:/opt/certs -v /tmp/feeds -d -t logstash-forwarder:0.1.0
 ```
 
 (5) 每台机器上部署一个scrapy 参考https://github.com/linhaobuaa/docker_scrapy_guba_redis/tree/master
 
+
+(6) 部署maestro
+```
+git clone https://github.com/signalfuse/maestro-ng.git
+cd mastro-ng
+python setup.py install
+cd docker_scrapy_guba_redis
+91: maestro -f scrapy_guba_redis.yaml start logstash
+91: maestro -f scrapy_guba_redis.yaml start -d scrapy_91
+92: maestro -f scrapy_guba_redis.yaml start -d scrapy_92
+93: maestro -f scrapy_guba_redis.yaml start -d scrapy_93
+```
 
 ## 2 其他说明
 
