@@ -224,6 +224,11 @@ cd docker_scrapy_guba_redis
 93: maestro -f scrapy_guba_redis.yaml start -d scrapy_93
 ```
 
+(7) 219.224.135.94 docker部署存储es
+```
+docker build -t elasticsearch:0.1.0 .
+```
+
 ## 2 其他说明
 
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
