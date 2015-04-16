@@ -2,6 +2,19 @@
 
 ## 1 使用docker在91、92、93上部署scrapy_guba_redis 
 
+### 1.0 docker install on ubuntu
+
+参考http://my.oschina.net/jk409/blog/309396方法二
+```
+curl -sSL https://get.docker.io/ubuntu/ | sudo sh
+echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+apt-get update
+apt-get install -y lxc-docker
+
+docker -d -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+```
+
 ### 1.1 安装ubuntu操作系统基础镜像ubuntu:base
 
 参考http://www.it165.net/os/html/201408/9126.html
