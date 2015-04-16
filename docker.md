@@ -237,9 +237,24 @@ cd docker_scrapy_guba_redis
 93: maestro -f scrapy_guba_redis.yaml start -d scrapy_93
 ```
 
-(7) 219.224.135.94 docker部署存储es
+(7)数据存储部分设计 MONGODB+ELASTICSEARCH+KIBANA
+*219.224.135.94、95 docker部署存储两个Mongodb Replicaset 参考https://github.com/linhaobuaa/docker-mongodb-replica-set
+
+*219.224.135.94 docker部署存储es
 ```
-docker build -t elasticsearch:0.1.0 .
+docker build -t scrapy_guba_elasticsearch:0.1.0 .
+```
+
+*219.224.135.94部署kibana 作数据分析 219.224.135.94:5601
+```
+git clone https://github.com/denibertovic/kibana-dockerfile.git
+cd kibana-dockerfile
+docker build -t scrapy_guba_kibana:0.1.0 .
+docker run --name kibana -d -p 5601:5601 -v /tmp/logs:/logs -v /home/docker/kibana-dockerfile/config-example:/kibana/config -t scrapy_guba_kibana:0.1.0
+```
+注意修改config-example/kibana.yml
+```
+elasticsearch_url: "http://219.224.135.94:9200"
 ```
 
 ## 2 其他说明
