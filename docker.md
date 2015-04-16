@@ -257,6 +257,28 @@ docker run --name kibana -d -p 5601:5601 -v /tmp/logs:/logs -v /home/docker/kiba
 elasticsearch_url: "http://219.224.135.94:9200"
 ```
 
+(8) mongodb-es-river plugin
+```
+http://219.224.135.94:9200/_plugin/marvel/sense/index.html
+
+PUT /_river/test_river_guba_post/_meta
+{
+  "type": "mongodb",
+  "mongodb": { 
+    "servers":
+    [
+      { "host": "219.224.135.94", "port": "27020" }
+    ],
+    "db": "guba", 
+    "collection": "post_stock_600010"
+  }, 
+  "index": { 
+    "name": "600010",
+    "type": "94_27020"
+  }
+}
+```
+
 ## 2 其他说明
 
 (1)利用docker容器技术对本项目进行封装，首先考虑该项目所依赖的运行环境编写Do    ckerfile文件；然后利用该文件构建相应的docker镜像；最后将本项目存储于mongodb>    上的数据转入到docker本地的mongodb中。具体步骤如下：
