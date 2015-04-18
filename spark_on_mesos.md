@@ -66,7 +66,7 @@ MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 3.配置pyspark包
 ```
 $ cd /home/spark/spark-1.0.1-bin-hadoop1/python
-$ scp -r pyspark /usr/lib/python2.7/
+$ cp -r pyspark /usr/lib/python2.7/
 ```
 4.配置环境变量
 
