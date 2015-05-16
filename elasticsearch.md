@@ -156,4 +156,156 @@ PUT /_river/test_river_master_timeline_weibo_topic_5460e65501d4a554d8b00894/_met
     "type": "5460e65501d4a554d8b00894"
   }
 }
+
+
+DELETE guba
+
+DELETE _river/test_river_guba
+
+PUT /_river/test_river_guba_post/_meta
+{
+  "type": "mongodb",
+  "mongodb": { 
+    "servers":
+    [
+      { "host": "219.224.135.46", "port": "27019" }
+    ],
+    "db": "guba", 
+    "collection": "stock"
+  }, 
+  "index": { 
+    "name": "guba",
+    "type": "stock"
+  }
+}
+
+PUT /_river/test_river_guba/_meta
+{
+  "type": "mongodb",
+  "mongodb": { 
+    "servers":
+    [
+      { "host": "219.224.135.46", "port": "27019" }
+    ],
+    "db": "guba", 
+    "collection": "post"
+  }, 
+  "index": { 
+    "name": "guba",
+    "type": "post"
+  }
+}
+
+GET _river/_search
+
+GET guba/post/_search
+
+GET /_river/test_river_guba/_meta
+
+
+GET guba/post/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "sentiment": 1
+          }
+        },
+        {
+          "term": {
+            "has_sentiment": 1
+          }
+        },
+        {
+          "term": {
+            "ad": 1
+          }
+        },
+        {
+          "range": {
+            "releaseTime": {
+              "gte": "2014-10-01 11:00:00",
+              "lte": "2014-10-22 13:30:00"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "clicks_sum": {
+      "sum": {
+        "field": "clicks"
+      }
+    }
+  }
+}
+
+DELETE /_template/template_guba
+
+PUT /_template/template_guba
+{
+  "template": "guba",
+  "order": 0,
+  "settings": {
+    "number_of_shards": 3
+  },
+  "mappings": {
+    "post": {
+      "properties": {
+        "releaseTime": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
+        }
+      }
+    }
+  }
+}
+
+PUT /_template/template_guba_all
+{
+  "template": "guba*",
+  "order": 0,
+  "settings": {
+    "number_of_shards": 3
+  },
+  "mappings": {
+    "post": {
+      "properties": {
+        "releaseTime": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
+        }
+      }
+    }
+  }
+}
+
+GET _template/template_guba
+
+GET guba/_search/
+{
+  "query": {
+    "range": {
+      "releaseTime": {
+        "gte": "2014-10-13 10:14:00",
+        "lte": "2014-10-13 11:14:00"
+      }
+    }
+  },
+  "aggs": {
+    "stock_name": {
+      "terms": {
+        "field": "stock_id"
+      },
+      "aggs" : {
+          "sentiment_stats" : {
+            "terms" : { "field" : "sentiment" }
+          }
+      }
+    }
+  }
+}
 ```
