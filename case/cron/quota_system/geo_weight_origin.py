@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
-from config import db
+#from config import db
 from model import GeoWeight, QuotaGeoPenetration
 from config import xapian_search_user as user_search
+
+sys.path.append('../../')
+from global_config import db
 
 province_dict = {'34':'安徽','11':'北京', '50':'重庆', '35':'福建', '62':'甘肃', '44':'广东', '45':'广西',\
                  '52':'贵州', '46':'海南', '13':'河北', '23':'黑龙江', '41':'河南', '42':'湖北', '43':'湖南',\

@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
-from config import db
+#from config import db
 from model import QuotaSensitivity, QuotaSentiment, QuotaDuration, QuotaQuickness, \
                   QuotaCoverage, QuotaMediaImportance, QuotaPersonSensitivity
 from model import QuotaFSensitivity, QuotaFSentiment,QuotaFSensitivity, QuotaFTransmission, QuotaFInvolved, QuotaIndex
 
+
+sys.path.append('../../')
+from global_config import db
 
 def ComputeFSensitivity(topic, start_ts, end_ts):
     items = db.session.query(QuotaSensitivity).filter(QuotaSensitivity.topic==topic ,\

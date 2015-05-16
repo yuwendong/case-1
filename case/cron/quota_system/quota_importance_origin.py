@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
 import random
-from config import db
+#from config import db
 from model import QuotaImportance
+
+sys.path.append('../../')
+from global_config import db
 
 # 若topic不存在，添加该话题的importance默认值；若topic存在，则不进行修改
 def origin_quota_importance(topic, start_ts, end_ts):

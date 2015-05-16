@@ -58,7 +58,7 @@ elif IS_PROD == 3:
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu4/ljh/csv/stub/master_timeline_weibo_'
     
-xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
+#xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
 
 # Create application
 app = Flask('xxx')
