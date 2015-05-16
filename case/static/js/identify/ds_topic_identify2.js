@@ -1813,13 +1813,11 @@ function tr_pusher_request_callback(data,start_row,end_row){
   if (data.length){
    $("#loading_current_data5").text("计算完成!");
   }
- console.log(data); 
-  var html = "";
   //注意这里的翻页还要做处理
     N=data.length;
    
    for(var i = start_row; i < end_row; i += 1){
-    var html ='' 
+    var html = "";
     var firstuser_item = data[i]
     var rank = firstuser_item[0]
     var uid = firstuser_item[1]
@@ -1865,19 +1863,13 @@ function tr_pusher_request_callback(data,start_row,end_row){
     html += '<a target="_blank" href="' + user_link + '">用户</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="#">画像</a>&nbsp;-&nbsp;';
     html += '<a target="_blank" href="' + repost_tree_link + '">转发树</a>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-    html += '</li>';
-    //console.log('html'+html);
-    $('#trend_pusher_ul').append(html);
-    //console.log(document.getElementById('trend_pusher_ul').innerHTML);
-    }
-   //console.log(html);
-   //$('#trend_pusher_ul').append('out:123');
-   //console.log(document.getElementById('trend_pusher_ul').innerHTML);
-   //$("#trend_pusher_ul").append(html);
-   //$("#pusher_content_control_height").css("height", $("#weibo_ul").css("height"));
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    html += '</li>'
+    $("#trend_pusher_ul").append(html);
+   } 
+   $("#pusher_content_control_height").css("height", $("#weibo_ul").css("height"));
    trendpusher_more(data,start_row,end_row);
 
 }

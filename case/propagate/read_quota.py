@@ -3,7 +3,7 @@ import json
 import math
 import operator
 from case.extensions import db
-from utils import weiboinfo2url
+from utils import weiboinfo2url, deal_with
 from case.time_utils import datetime2ts, ts2date
 from case.global_config import xapian_search_user as user_search
 from case.model import PropagateCount, PropagateKeywords, PropagateWeibos# , AttentionCount, QuicknessCount  需要查询的表
@@ -217,17 +217,15 @@ def _top_weibos(weibos_dict, top=TOP_READ):
     results_list_new = []
     if weibos_dict != {}:
         results = sorted(weibos_dict.iteritems(), key=lambda(k,v): v[0], reverse=False)
-        #print '_top_weibos_results_orgin:', len(results)
-        #print '_top_weibos_results:', len(results)-top
         results = results[len(results) - top:]
-        
         for k, v in results:
-            #print '@@@@@@@@:',v[1]
             results_list.extend(v[1])
         for i in range(len(results_list)):
             results_list_new.append(results_list[len(results_list)-1-i])
-    #print 'list:', results_list
-    #print 'list_lens:', len(results_list)
+
+    for r in results_list_new:
+        r['_id'] = deal_with(r['_id'])
+
     return results_list_new
 
 def _json_loads(weibos):

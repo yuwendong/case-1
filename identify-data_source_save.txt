@@ -5,7 +5,7 @@
     1 微博通道
       1）数据来源说明:
          微博话题名 --
-             mongodb (host=219.224.135.46 port=27019)
+             mongodb (host=219.224.135.47 port=27019)
                  db: 54api_weibo_v2
                  话题名collection: master_timeline_topic  
 
@@ -16,7 +16,7 @@
                                 （weibo_topic_id对应于mongodb中master_timeline_topic中话题id）
                  查询形式: 通过/home/xapian/xapian_weibo_topic/stub/ 中的stub文件获取
  
-             mongodb (host=219.224.135.46 port=27019) - (注：创建xapian用)
+             mongodb (host=219.224.135.47 port=27019) - (注：创建xapian用)
                  db: 54api_weibo_v2
                  话题名collection: 'master_timeline_weibo_topic_' + topic_id
                                   (topic_id对应于master_timeline_topic中话题id)
@@ -26,11 +26,11 @@
              xapian (host=219.224.135.48)
                  路径: /home/xapian/xapian_user/
 
-             mongodb (host=219.224.135.46 port=27019)
+             mongodb (host=219.224.135.47 port=27019)
                  db: 54api_weibo_v2
                  用户信息collection: master_timeline_user
 
-             scripy (API_HOST=219.224.135.46 API_PORT=9115)
+             scripy (API_HOST=219.224.135.47 API_PORT=9115)
                  BASE_URL_UID = 'http://%s:%s/queryWeiboUsers?users={user}&type=1' % (API_HOST, API_PORT)
 
          微博用户领域信息 --
@@ -39,27 +39,27 @@
                 key: 'user_domain'
 
          时间分析趋势图 --
-             mysql (host=219.224.135.46)
+             mysql (host=219.224.135.47)
                  db: weibocase
                  table: propagate_count表
 
          时间分析关键词 --
-             mysql（host=219.224.135.46）
+             mysql（host=219.224.135.47）
                  db: weibocase
                  table: propagate_keywords表
               
                  
       2) 输出数据说明:
          话题（计算该模块前必须先存储话题信息）
-             存储路径: mysql(host=219.224.135.46) 
+             存储路径: mysql(host=219.224.135.47) 
              db: weibocase
              存储形式: topics表
          话题模块计算状态
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: topic_status表
          早期参与者（整体）
-             存储路径: mysql(host=219.224.135.46)
+             存储路径: mysql(host=219.224.135.47)
              db: weibocase
              存储形式: first_user表
          早期参与者（分领域）
@@ -86,7 +86,7 @@
     
     2 新闻通道
       1）数据来源说明:
-         mongodb (host=219.224.135.46 port=27019)
+         mongodb (host=219.224.135.47 port=27019)
          db: news
          新闻话题名称collection: news_topic
          话题新闻内容collection: 'post_' + news_topic_id
@@ -96,13 +96,13 @@
 
       2) 输出数据说明:
          早期参与媒体（early_join_news）
-              存储路径: mysql(host=219.224.135.46)
+              存储路径: mysql(host=219.224.135.47)
               存储形式: first_user_news表
          趋势制造媒体（trend_maker_news）
-              存储路径: mysql(host=219.224.135.46)
+              存储路径: mysql(host=219.224.135.47)
               存储形式: trend_maker_news表
          趋势推动媒体（trend_pusher_news）
-              存储路径: mysql(host=219.224.135.46)
+              存储路径: mysql(host=219.224.135.47)
               存储形式: trend_pusher_news表
           
          

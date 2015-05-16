@@ -3,7 +3,7 @@ import json
 import math
 import operator
 from case.extensions import db
-from utils import weiboinfo2url
+from utils import weiboinfo2url, deal_with
 from case.time_utils import datetime2ts, ts2date
 from case.global_config import xapian_search_user as user_search
 from case.model import PropagateCountNews, PropagateKeywordsNews, PropagateNews# , AttentionCount, QuicknessCount  需要查询的表
@@ -67,13 +67,9 @@ def Merge_propagate(items):
         results['topic'] = item.topic
         results['end'] = item.end
         for k in domain_list:
-            #print '*'*10,json.loads(item.dcount)
             try:
                 dcount = json.loads(item.dcount)
-                #print '*'*10, dcount[k]
-                #print '-'*10, results['dcount'][k]
                 results['dcount'][k] += dcount[k]
-                #print '-'*10,results['dcount'][k]
             except KeyError:
                 continue
 
@@ -154,12 +150,7 @@ def _top_keywords(kcount_dict, top=TOP_READ):
 
 def ReadPropagateKeywordsNews(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_LIMIT, unit=MinInterval, top=TOP_READ):
     kcounts_dict = {}
-    # print '*'*5
-    # print topic, end_ts, during, mtype
-    # print during-unit
     if during <= unit:
-        # print '*'*10
-        # print topic, end_ts, during, mtype
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         item = db.session.query(PropagateKeywordsNews).filter(PropagateKeywordsNews.end==upbound, \
                                                           PropagateKeywordsNews.topic==topic, \
@@ -167,11 +158,9 @@ def ReadPropagateKeywordsNews(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_L
                                                           PropagateKeywordsNews.range==unit, \
                                                           PropagateKeywordsNews.limit==limit).first()
         if item:
-            #print '*'*10, item
             kcounts_dict = parseKcount(item.kcount)
 
     else:
-        #print '---'*10
         start_ts = end_ts - during
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         lowbound = (start_ts / unit) * unit
@@ -194,7 +183,6 @@ def ReadPropagateKeywordsNews(topic, end_ts, during, mtype, limit=TOP_KEYWORDS_L
     return kcounts_dict
 
 def getuserinfo(uid):
-    #print 'uid:',uid, type(uid)
     user = acquire_user_by_id(uid)
     if not user:
         username = 'Unkonwn'
@@ -210,7 +198,6 @@ def acquire_user_by_id(uid):
     if user_result:
         user['name'] = user_result['name']
         user['image'] = user_result['profile_image_url']
-        #print 'user', user
     return user
 
 def parseNews(news):
@@ -222,30 +209,19 @@ def parseNews(news):
 
     for weibo in news:
         try:
-            _id = weibo['_id']
-            #username, profileimage = getuserinfo(weibo['user'])
-            #print 'username', profileimage
+            _id = deal_with(weibo['_id'])
             replies = 1
-            #print 'reposts_count', reposts_count
-            #weibo['weibo_link'] = weiboinfo2url(weibo['user'],_id)
-            #weibo['username'] = username
-            #weibo['profile_image_url'] = profileimage
             weibo['timestamp'] = ts2date(weibo['timestamp'])
             weibo['content168'] = weibo['content168']
-            #print 'weibo:', weibo
             news_dict[_id] = [replies, weibo]
         except:
             continue
-    #print 'there :', news_dict
+
     return news_dict
 
 def ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT, unit=MinInterval, top=TOP_READ):
     results_dict = {}
-    print end_ts, during
-    #print '*'*5
-    #print topic, end_ts, during, mtype, limit
     if during <= unit:
-        #print '-'*5
         upbound = int(math.ceil(end_ts / (unit * 1.0)) * unit)
         item =db.session.query(PropagateNews).filter(PropagateNews.end==upbound, \
                                                        PropagateNews.topic==topic, \
@@ -253,10 +229,7 @@ def ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT
                                                        PropagateNews.range==unit, \
                                                        PropagateNews.limit==limit).first()
         if item:
-            #print '$$'*5
-            #print item.news
             results_dict = parseNews(item.news)
-            #print '-------', news_dict
 
     else:
         start_ts = end_ts - during
@@ -270,9 +243,7 @@ def ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT
                                                          PropagateNews.limit==limit).all()
         for item in items:
             news_dict = parseNews(item.news)
-            #print 'news_dict:', news_dict
             for k ,v in news_dict.iteritems():
-                #print 'here'
                 try:
                     results_dict[k][0] += v[0]
                     results_dict[k][1].append(v[1])
@@ -280,7 +251,7 @@ def ReadPropagateWeibosNews(topic, end_ts, during, mtype, limit=TOP_WEIBOS_LIMIT
                     results_dict[k] = v
                     results_dict[k][0] = v[0]
                     results_dict[k][1] = [v[1]]
-                #print 'results_dict:', results_dict
+
     results_dict = _top_weibos(results_dict, top)
     return results_dict
 

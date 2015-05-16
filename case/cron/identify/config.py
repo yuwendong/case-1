@@ -16,7 +16,7 @@ DOMAIN_ZH_LIST = [u'文化', u'教育', u'娱乐', u'时尚', u'财经', u'媒�
                   u'高校微博', u'境内机构', u'境外机构', u'境内媒体', u'境外媒体', u'民间组织', u'律师', \
                   u'政府官员', u'媒体人士', u'活跃人士', u'草根', u'其它']
 
-MYSQL_HOST = '219.224.135.46'
+MYSQL_HOST = '219.224.135.47'
 MYSQL_USER = 'root'
 MYSQL_DB = 'weibocase'
 MONGODB_HOST = '219.224.135.47'
@@ -29,11 +29,11 @@ REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
 
 xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)
-API_SERVER_HOST = '219.224.135.46'
+API_SERVER_HOST = '219.224.135.47'
 API_SERVER_PORT = 9115
 
 #增加的db
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
 
 # Create application
 app = Flask('xxx')

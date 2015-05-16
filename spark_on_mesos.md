@@ -33,6 +33,11 @@ $ scp ~/.ssh/id_dsa.pub root@219.224.135.60:~/.ssh/authorized_keys
 参见http://mesos.apache.org/gettingstarted/
 尽量使用Apache官网下载方案，git版本不稳定
 
+安装结束后，查看/etc/ld.so.conf，加入下面一行，若已存在则忽略这步。
+```
+/usr/local/lib
+```
+执行ldconfig -v，使生效。
 mesos启动后可通过219.224.135.46:5050查看Web UI界面
 
 二、Spark配置
@@ -61,7 +66,7 @@ MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 3.配置pyspark包
 ```
 $ cd /home/spark/spark-1.0.1-bin-hadoop1/python
-$ scp -r pyspark /usr/lib/python2.7/
+$ cp -r pyspark /usr/lib/python2.7/
 ```
 4.配置环境变量
 
@@ -80,16 +85,54 @@ $ source /etc/environment
 
 三、可能遇到的问题
 
-1.cannot locate package
-先检查package名字是否输入错误(注意字母l和数字1）
+１.编译mesos时可能会遇到could not find the main class: org.codehaus.plexus.classworlds.launcher.Launcher. Program will exit，原因是maven环境没有配置好
+
+配置maven环境变量
+在/etc/environment中添加以下语句：
 ```
-sudo apt-get update
+$ M2_HOME=/usr/share/maven
+$ M2=/usr/share/maven/bin
 ```
+在命令行输入以下语句，并重新登录服务器，使修改生效
+```
+$ source /etc/environment
+```
+输入以下命令检查maven是否配置完成
+```
+$ mvn -version
+```
+若仍有错误，则java配置有问题，继续执行以下步骤。
+将当前机器java版本设置成java-7-oracle，参考http://www.linuxdiyf.com/linux/2788.html
+若未安装java7则进行安装
+```
+$ sudo apt-get install python-software-properties
+$ sudo add-apt-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install oracle-jdk7-installer
+```
+并在/etc/environment中添加环境变量，重新登录后生效
+```
+$ CLASSPATH=/usr/lib/jvm/java-7-oracle/lib
+$ JAVA_HOME=/usr/lib/jvm/java-7-oracle
+```
+
 2.E: Sub-process /usr/bin/dpkg returned an error code (1)
 参考http://bbs.ednchina.com/BLOG_ARTICLE_3010256.HTM
 
 3.no space on device
 参考http://blog.csdn.net/pang040328/article/details/40041821
+
+4.ubuntu encountered a section with no package header
+参考http://blog.csdn.net/hs794502825/article/details/7835902
+
+５.cannot locate package
+先检查package名字是否输入错误(注意字母l和数字1）
+```
+sudo apt-get update
+```
+
+6.初始化月份字符串错误error initializing month string
+参考http://blog.csdn.net/plunger2011/article/details/25806133
 
 四、mesos启动
 

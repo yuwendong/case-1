@@ -54,11 +54,11 @@ elif IS_PROD == 3:
     LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
     REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
     REDIS_PORT = 6379
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu4/ljh/csv/stub/topic/master_timeline_weibo_topic'
     
 
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
 
 # Create application
 app = Flask('xxx')

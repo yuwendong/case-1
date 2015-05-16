@@ -56,9 +56,9 @@ elif IS_PROD == 3:
     LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/' # 无  
     REDIS_HOST = '219.224.135.49'  #索引的redis服务器为49，应该用不到
     REDIS_PORT = 6379
-    MONGODB_HOST = '219.224.135.46'
+    MONGODB_HOST = '219.224.135.47'
     MONGODB_PORT = 27019
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu4/ljh/csv/stub/topic/master_timeline_weibo_topic'
     
 #xapian_search_user = XapianSearch(path=XAPIAN_USER_DATA_PATH, name='master_timeline_user', schema_version=1)

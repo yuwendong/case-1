@@ -202,6 +202,7 @@ TrendsLine.prototype.initPullWeibos = function(){
     var that = this;
     for(name in names){
         var ajax_url = this.weibos_ajax_url(this.query, this.end_ts, this.during, name, this.top_weibos_limit);
+        console.log(ajax_url);
         this.call_sync_ajax_request(ajax_url, this.ajax_method, range_weibos_callback);
     }
     function range_weibos_callback(data){

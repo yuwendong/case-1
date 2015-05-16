@@ -5,7 +5,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
 INDEX_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_20130901'
 # Create application
 app = Flask(__name__)

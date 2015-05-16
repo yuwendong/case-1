@@ -12,7 +12,7 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
 2.1 case/global_config.py
 
 ```
-    MYSQL_HOST = '219.224.135.46'
+    MYSQL_HOST = '219.224.135.47'
     MYSQL_USER = 'root'
     MYSQL_DB = 'weibocase'
     XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
@@ -25,7 +25,7 @@ run.py作为测试入口，在浏览器上通过219.224.135.47:9005/moodlens/wei
     XAPIAN_WEIBO_DATA_PATH = '/home/ubuntu3/huxiaoqian/case/20140724/20140724/'
     XAPIAN_USER_DATA_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/user-datapath/'
     LEVELDBPATH = '/home/ubuntu3/huxiaoqian/case_test/data/leveldbpath/'
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.46/weibocase?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:@219.224.135.47/weibocase?charset=utf8'
     DYNAMIC_XAPIAN_WEIBO_STUB_PATH = '/home/ubuntu3/huxiaoqian/case_test/data/stubpath/master_timeline_weibo_'
 ```
 
