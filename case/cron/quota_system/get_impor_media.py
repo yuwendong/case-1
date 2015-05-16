@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
 import csv
 import redis
-from config import xapian_search_user as user_search # 修改对应的config
+#from config import xapian_search_user as user_search # 修改对应的config
+
+sys.path.append('../../')
+from global_config import xapian_search_user as user_search
 
 REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379

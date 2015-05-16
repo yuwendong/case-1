@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('../../')
 
-from config import db
+from global_config import db
 
 __all__ = ['Topics', 'SentimentKeywords', 'SentimentWeibos', 'SentimentPoint', 'SentimentCount', 'SentimentCountRatio',\
         'OpinionTopic', 'OpinionWeibos', 'Opinion', 'OpinionHot', 'CityTopicCount', 'PropagateCount', 'PropagateKeywords', \

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
-from config import db
+#from config import db
 from model import ClassSensitivity, WordSensitivity, PlaceSensitivity ,PersonSensitivity
 
+sys.path.append('../../')
+from global_config import db
 
 def set2list(word_set):
     word_list = list(word_set)

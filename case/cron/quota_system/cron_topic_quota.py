@@ -6,11 +6,11 @@ import csv
 import redis
 import time
 import random
-from config import db, emotions_kv #, REDIS_HOST, REDIS_PORT
-from config import xapian_search_user as user_search
-sys.path.append('../')
-from time_utils import datetime2ts, ts2HourlyTime, ts2datetime
-from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
+from config import emotions_kv #, REDIS_HOST, REDIS_PORT
+#from config import xapian_search_user as user_search
+#sys.path.append('../')
+#from time_utils import datetime2ts, ts2HourlyTime, ts2datetime
+#from dynamic_xapian_weibo import getXapianWeiboByDate, getXapianWeiboByDuration, getXapianWeiboByTopic
 from model import TopicStatus, QuotaAttention, QuotaAttentionExp, QuotaGeoPenetration,\
                   QuotaQuickness, QuotaSentiment, QuotaDurationExp,\
                   QuotaDuration, QuotaSensitivity, QuotaMediaImportance,\
@@ -24,8 +24,15 @@ from sensitivity_word_origin import save_sensitivity
 from getkeywords import get_keywords
 from quota_importance_origin import origin_quota_importance
 from compute_fquota import ComputeIndex
-import sys
-sys.path.append('../libsvm-3.17/python/')
+from parameter import weibo_topic2xapian
+#
+sys.path.append('../../')
+from global_config import db
+from global_config import xapian_search_user as user_search
+from dynamic_xapian_weibo import getXapianWeiboByTopic
+from time_utils import datetime2ts, ts2HourlyTime, ts2datetime
+
+sys.path.append('../../libsvm-3.17/python/')
 from sta_ad import start as ystart
 
 '''
@@ -140,9 +147,10 @@ def quota_attention(topic, xapian_search_weibo, start_ts, end_ts, save_field=fie
 
     domain_uid = set() # domain_uid = set(uid1,uid2,...) 存放参与讨论的媒体集合 
     pset = {} # pset = {province1:set1(uid), province2:set2(uid)......}存放相同城市的数量统计,使用set排除了一个用户发布多条消息的情况
+    '''
     for province in province_dict:
         pset[province] = set()
-    
+    '''
     #print 'pset:',pset
 
     for domain in domain_list:
@@ -157,10 +165,12 @@ def quota_attention(topic, xapian_search_weibo, start_ts, end_ts, save_field=fie
             uiddomain = uid2domain(weibo['user'])
             ts = weibo['timestamp']
             # uid>>province>>ccount
+            '''
             province = get_province(weibo['user'])
         
             if province:
                 pset[province].add(weibo['user'])
+            '''
             if uiddomain:
                 try:
                     domaincount[uiddomain] += 1
@@ -452,8 +462,14 @@ def cal_topic_quotasystem_count_by_date(topic, start, end):
         time_date = ts2datetime(time)
         datestr_list.append(time_date.replace('-', ''))
     print 'datestr_list:', datestr_list
+    # 
+    topic_xapian_id = weibo_topic2xapian(topic, start, end)
+    print 'topic_xapian_id:', topic_xapian_id
+    xapian_search_weibo = getXapianWeiboByTopic(topic_xapian_id)
+    '''
     xapian_search_weibo = getXapianWeiboByDuration(datestr_list) # 这里是根据时间段进行查询的
     xapian_search_topic = getXapianWeiboByTopic(topic) # 直接查topic建立的索引
+    '''
     if xapian_search_weibo:
         print '******start_compute'
         quota_attention(topic, xapian_search_weibo, start_ts=start, end_ts=end)
@@ -465,9 +481,9 @@ def cal_topic_quotasystem_count_by_date(topic, start, end):
         print 'save importance success'
         quota_sentiment(topic, xapian_search_weibo, start_ts=start, end_ts=end)
         print 'save sentiment success'
-        quota_coverage(topic, xapian_search_topic, start_ts=start, end_ts=end) # 覆盖度计算
+        quota_coverage(topic, xapian_search_weibo, start_ts=start, end_ts=end) # 覆盖度计算
         print 'save coverage success'
-        quota_person_sensitivity(topic, xapian_search_topic, start_ts=start, end_ts=end) # 敏感人物参与度
+        quota_person_sensitivity(topic, xapian_search_weibo, start_ts=start, end_ts=end) # 敏感人物参与度
         print 'save person_sensitivity success'
 # 考虑怎么把使用数据相似性很高的合并在一起，减少检索的次数
 
@@ -483,7 +499,6 @@ if __name__=='__main__':
     start = datetime2ts('2013-09-02')
     end = datetime2ts('2013-09-05') + Day
     db_date = int(time.time()) # 入库时间
-    
     save_item = TopicStatus(module, status, topic, start, end, db_date)
     db.session.add(save_item)
     db.session.commit()
@@ -492,6 +507,7 @@ if __name__=='__main__':
     coverage_exp = 3000
     save_exp(topic, start, end, attention_exp, duration_exp, coverage_exp) # 给关注度经验值和持续度经验值默认值
     save_sensitivity(topic, start, end) # 给类型敏感词表、词汇敏感词表、地点敏感词表进行初始化----三张表中均为每个话题一条记录
+    print 'start_worker'
     worker(topic, start, end)
     
     ComputeIndex(topic, start, end)

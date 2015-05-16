@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
 import operator
-from config import db
+#from config import db
 from model import PropagateKeywords
+
+sys.path.append('../../')
+from global_config import db
 
 Minute = 60
 Fifteenminutes = 15 * 60

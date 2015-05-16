@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
 import time
-from config import db
+#from config import db
 from model import TopicStatus, Topics, QuotaAttention, QuotaMediaImportance, QuotaGeoPenetration,\
                   QuotaQuickness, QuotaSentiment, QuotaDuration, QuotaSensitivity, QuotaImportance, QuotaCoverage,\
                   QuotaPersonSensitivity
+
+sys.path.append('../../')
+from global_config import db
 
 def save_attention_quota(topic, start_ts, end_ts, domain, attention):
     # being used to test, it's should be modified

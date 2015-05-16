@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
-from config import db
+#from config import db
 from model import QuotaAttentionExp, QuotaDurationExp, CoverageExp
+
+sys.path.append('../../')
+from global_config import db
 
 Minute = 60
 Fifteenminutes = 15 * 60
